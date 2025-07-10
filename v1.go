@@ -3,15 +3,7 @@
 package stigg
 
 import (
-	"context"
-	"errors"
-	"fmt"
-	"net/http"
-
-	"github.com/stainless-sdks/stigg-go/internal/apijson"
-	"github.com/stainless-sdks/stigg-go/internal/requestconfig"
 	"github.com/stainless-sdks/stigg-go/option"
-	"github.com/stainless-sdks/stigg-go/packages/respjson"
 )
 
 // V1Service contains methods and other services that help with interacting with
@@ -22,6 +14,7 @@ import (
 // the [NewV1Service] method instead.
 type V1Service struct {
 	Options     []option.RequestOption
+	Customers   V1CustomerService
 	Permissions V1PermissionService
 }
 
@@ -31,53 +24,7 @@ type V1Service struct {
 func NewV1Service(opts ...option.RequestOption) (r V1Service) {
 	r = V1Service{}
 	r.Options = opts
+	r.Customers = NewV1CustomerService(opts...)
 	r.Permissions = NewV1PermissionService(opts...)
 	return
-}
-
-// Get a single customer by id
-func (r *V1Service) GetCustomer(ctx context.Context, refID string, query V1GetCustomerParams, opts ...option.RequestOption) (res *V1GetCustomerResponse, err error) {
-	if !param.IsOmitted(query.XAPIKey) {
-		opts = append(opts, option.WithHeader("X-API-KEY", fmt.Sprintf("%s", query.XAPIKey)))
-	}
-	if !param.IsOmitted(query.XEnvironmentID) {
-		opts = append(opts, option.WithHeader("X-ENVIRONMENT-ID", fmt.Sprintf("%s", query.XEnvironmentID)))
-	}
-	opts = append(r.Options[:], opts...)
-	if refID == "" {
-		err = errors.New("missing required refId parameter")
-		return
-	}
-	path := fmt.Sprintf("api/v1/customers/%s", refID)
-	err = requestconfig.ExecuteNewRequest(ctx, http.MethodGet, path, nil, &res, opts...)
-	return
-}
-
-type V1GetCustomerResponse struct {
-	// Unique identifier for the entity
-	ID string `json:"id,required"`
-	// The email of the customer
-	Email string `json:"email,required"`
-	// The name of the customer
-	Name string `json:"name,required"`
-	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
-	JSON struct {
-		ID          respjson.Field
-		Email       respjson.Field
-		Name        respjson.Field
-		ExtraFields map[string]respjson.Field
-		raw         string
-	} `json:"-"`
-}
-
-// Returns the unmodified JSON received from the API
-func (r V1GetCustomerResponse) RawJSON() string { return r.JSON.raw }
-func (r *V1GetCustomerResponse) UnmarshalJSON(data []byte) error {
-	return apijson.UnmarshalRoot(data, r)
-}
-
-type V1GetCustomerParams struct {
-	XAPIKey        string `header:"X-API-KEY,required" json:"-"`
-	XEnvironmentID string `header:"X-ENVIRONMENT-ID,required" json:"-"`
-	paramObj
 }
