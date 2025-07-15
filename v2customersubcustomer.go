@@ -34,7 +34,7 @@ func NewV2CustomerSubCustomerService(opts ...option.RequestOption) (r V2Customer
 }
 
 // Get a single customer by id
-func (r *V2CustomerSubCustomerService) GetSubCustomer(ctx context.Context, refID string, query V2CustomerSubCustomerGetSubCustomerParams, opts ...option.RequestOption) (res *V2CustomerSubCustomerGetSubCustomerResponse, err error) {
+func (r *V2CustomerSubCustomerService) Get(ctx context.Context, refID string, query V2CustomerSubCustomerGetParams, opts ...option.RequestOption) (res *V2CustomerSubCustomerGetResponse, err error) {
 	if !param.IsOmitted(query.XAPIKey) {
 		opts = append(opts, option.WithHeader("X-API-KEY", fmt.Sprintf("%s", query.XAPIKey)))
 	}
@@ -51,7 +51,7 @@ func (r *V2CustomerSubCustomerService) GetSubCustomer(ctx context.Context, refID
 	return
 }
 
-type V2CustomerSubCustomerGetSubCustomerResponse struct {
+type V2CustomerSubCustomerGetResponse struct {
 	// Unique identifier for the entity
 	ID string `json:"id,required"`
 	// The email of the customer
@@ -69,12 +69,12 @@ type V2CustomerSubCustomerGetSubCustomerResponse struct {
 }
 
 // Returns the unmodified JSON received from the API
-func (r V2CustomerSubCustomerGetSubCustomerResponse) RawJSON() string { return r.JSON.raw }
-func (r *V2CustomerSubCustomerGetSubCustomerResponse) UnmarshalJSON(data []byte) error {
+func (r V2CustomerSubCustomerGetResponse) RawJSON() string { return r.JSON.raw }
+func (r *V2CustomerSubCustomerGetResponse) UnmarshalJSON(data []byte) error {
 	return apijson.UnmarshalRoot(data, r)
 }
 
-type V2CustomerSubCustomerGetSubCustomerParams struct {
+type V2CustomerSubCustomerGetParams struct {
 	XAPIKey        string `header:"X-API-KEY,required" json:"-"`
 	XEnvironmentID string `header:"X-ENVIRONMENT-ID,required" json:"-"`
 	paramObj

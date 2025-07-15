@@ -36,7 +36,7 @@ func NewV1CustomerService(opts ...option.RequestOption) (r V1CustomerService) {
 }
 
 // Get a single customer by id
-func (r *V1CustomerService) GetCustomer(ctx context.Context, refID string, query V1CustomerGetCustomerParams, opts ...option.RequestOption) (res *V1CustomerGetCustomerResponse, err error) {
+func (r *V1CustomerService) Get(ctx context.Context, refID string, query V1CustomerGetParams, opts ...option.RequestOption) (res *V1CustomerGetResponse, err error) {
 	if !param.IsOmitted(query.XAPIKey) {
 		opts = append(opts, option.WithHeader("X-API-KEY", fmt.Sprintf("%s", query.XAPIKey)))
 	}
@@ -53,7 +53,7 @@ func (r *V1CustomerService) GetCustomer(ctx context.Context, refID string, query
 	return
 }
 
-type V1CustomerGetCustomerResponse struct {
+type V1CustomerGetResponse struct {
 	// Unique identifier for the entity
 	ID string `json:"id,required"`
 	// The email of the customer
@@ -71,12 +71,12 @@ type V1CustomerGetCustomerResponse struct {
 }
 
 // Returns the unmodified JSON received from the API
-func (r V1CustomerGetCustomerResponse) RawJSON() string { return r.JSON.raw }
-func (r *V1CustomerGetCustomerResponse) UnmarshalJSON(data []byte) error {
+func (r V1CustomerGetResponse) RawJSON() string { return r.JSON.raw }
+func (r *V1CustomerGetResponse) UnmarshalJSON(data []byte) error {
 	return apijson.UnmarshalRoot(data, r)
 }
 
-type V1CustomerGetCustomerParams struct {
+type V1CustomerGetParams struct {
 	XAPIKey        string `header:"X-API-KEY,required" json:"-"`
 	XEnvironmentID string `header:"X-ENVIRONMENT-ID,required" json:"-"`
 	paramObj

@@ -4,21 +4,21 @@
 
 Response Types:
 
-- <a href="https://pkg.go.dev/github.com/stainless-sdks/stigg-go">stigg</a>.<a href="https://pkg.go.dev/github.com/stainless-sdks/stigg-go#V1CustomerGetCustomerResponse">V1CustomerGetCustomerResponse</a>
+- <a href="https://pkg.go.dev/github.com/stainless-sdks/stigg-go">stigg</a>.<a href="https://pkg.go.dev/github.com/stainless-sdks/stigg-go#V1CustomerGetResponse">V1CustomerGetResponse</a>
 
 Methods:
 
-- <code title="get /api/v1/customers/{refId}">client.V1.Customers.<a href="https://pkg.go.dev/github.com/stainless-sdks/stigg-go#V1CustomerService.GetCustomer">GetCustomer</a>(ctx <a href="https://pkg.go.dev/context">context</a>.<a href="https://pkg.go.dev/context#Context">Context</a>, refID <a href="https://pkg.go.dev/builtin#string">string</a>, query <a href="https://pkg.go.dev/github.com/stainless-sdks/stigg-go">stigg</a>.<a href="https://pkg.go.dev/github.com/stainless-sdks/stigg-go#V1CustomerGetCustomerParams">V1CustomerGetCustomerParams</a>) (<a href="https://pkg.go.dev/github.com/stainless-sdks/stigg-go">stigg</a>.<a href="https://pkg.go.dev/github.com/stainless-sdks/stigg-go#V1CustomerGetCustomerResponse">V1CustomerGetCustomerResponse</a>, <a href="https://pkg.go.dev/builtin#error">error</a>)</code>
+- <code title="get /api/v1/customers/{refId}">client.V1.Customers.<a href="https://pkg.go.dev/github.com/stainless-sdks/stigg-go#V1CustomerService.Get">Get</a>(ctx <a href="https://pkg.go.dev/context">context</a>.<a href="https://pkg.go.dev/context#Context">Context</a>, refID <a href="https://pkg.go.dev/builtin#string">string</a>, query <a href="https://pkg.go.dev/github.com/stainless-sdks/stigg-go">stigg</a>.<a href="https://pkg.go.dev/github.com/stainless-sdks/stigg-go#V1CustomerGetParams">V1CustomerGetParams</a>) (<a href="https://pkg.go.dev/github.com/stainless-sdks/stigg-go">stigg</a>.<a href="https://pkg.go.dev/github.com/stainless-sdks/stigg-go#V1CustomerGetResponse">V1CustomerGetResponse</a>, <a href="https://pkg.go.dev/builtin#error">error</a>)</code>
 
 ### SubCustomer
 
 Response Types:
 
-- <a href="https://pkg.go.dev/github.com/stainless-sdks/stigg-go">stigg</a>.<a href="https://pkg.go.dev/github.com/stainless-sdks/stigg-go#V1CustomerSubCustomerGetSubCustomerResponse">V1CustomerSubCustomerGetSubCustomerResponse</a>
+- <a href="https://pkg.go.dev/github.com/stainless-sdks/stigg-go">stigg</a>.<a href="https://pkg.go.dev/github.com/stainless-sdks/stigg-go#V1CustomerSubCustomerGetResponse">V1CustomerSubCustomerGetResponse</a>
 
 Methods:
 
-- <code title="get /api/v1/customers/{refId}">client.V1.Customers.SubCustomer.<a href="https://pkg.go.dev/github.com/stainless-sdks/stigg-go#V1CustomerSubCustomerService.GetSubCustomer">GetSubCustomer</a>(ctx <a href="https://pkg.go.dev/context">context</a>.<a href="https://pkg.go.dev/context#Context">Context</a>, refID <a href="https://pkg.go.dev/builtin#string">string</a>, query <a href="https://pkg.go.dev/github.com/stainless-sdks/stigg-go">stigg</a>.<a href="https://pkg.go.dev/github.com/stainless-sdks/stigg-go#V1CustomerSubCustomerGetSubCustomerParams">V1CustomerSubCustomerGetSubCustomerParams</a>) (<a href="https://pkg.go.dev/github.com/stainless-sdks/stigg-go">stigg</a>.<a href="https://pkg.go.dev/github.com/stainless-sdks/stigg-go#V1CustomerSubCustomerGetSubCustomerResponse">V1CustomerSubCustomerGetSubCustomerResponse</a>, <a href="https://pkg.go.dev/builtin#error">error</a>)</code>
+- <code title="get /api/v1/customers/{refId}">client.V1.Customers.SubCustomer.<a href="https://pkg.go.dev/github.com/stainless-sdks/stigg-go#V1CustomerSubCustomerService.Get">Get</a>(ctx <a href="https://pkg.go.dev/context">context</a>.<a href="https://pkg.go.dev/context#Context">Context</a>, refID <a href="https://pkg.go.dev/builtin#string">string</a>, query <a href="https://pkg.go.dev/github.com/stainless-sdks/stigg-go">stigg</a>.<a href="https://pkg.go.dev/github.com/stainless-sdks/stigg-go#V1CustomerSubCustomerGetParams">V1CustomerSubCustomerGetParams</a>) (<a href="https://pkg.go.dev/github.com/stainless-sdks/stigg-go">stigg</a>.<a href="https://pkg.go.dev/github.com/stainless-sdks/stigg-go#V1CustomerSubCustomerGetResponse">V1CustomerSubCustomerGetResponse</a>, <a href="https://pkg.go.dev/builtin#error">error</a>)</code>
 
 ## Permissions
 
@@ -36,21 +36,21 @@ Methods:
 
 Response Types:
 
-- <a href="https://pkg.go.dev/github.com/stainless-sdks/stigg-go">stigg</a>.<a href="https://pkg.go.dev/github.com/stainless-sdks/stigg-go#V2CustomerGetCustomerResponse">V2CustomerGetCustomerResponse</a>
+- <a href="https://pkg.go.dev/github.com/stainless-sdks/stigg-go">stigg</a>.<a href="https://pkg.go.dev/github.com/stainless-sdks/stigg-go#V2CustomerGetResponse">V2CustomerGetResponse</a>
 
 Methods:
 
-- <code title="get /api/v1/customers/{refId}">client.V2.Customers.<a href="https://pkg.go.dev/github.com/stainless-sdks/stigg-go#V2CustomerService.GetCustomer">GetCustomer</a>(ctx <a href="https://pkg.go.dev/context">context</a>.<a href="https://pkg.go.dev/context#Context">Context</a>, refID <a href="https://pkg.go.dev/builtin#string">string</a>, query <a href="https://pkg.go.dev/github.com/stainless-sdks/stigg-go">stigg</a>.<a href="https://pkg.go.dev/github.com/stainless-sdks/stigg-go#V2CustomerGetCustomerParams">V2CustomerGetCustomerParams</a>) (<a href="https://pkg.go.dev/github.com/stainless-sdks/stigg-go">stigg</a>.<a href="https://pkg.go.dev/github.com/stainless-sdks/stigg-go#V2CustomerGetCustomerResponse">V2CustomerGetCustomerResponse</a>, <a href="https://pkg.go.dev/builtin#error">error</a>)</code>
+- <code title="get /api/v1/customers/{refId}">client.V2.Customers.<a href="https://pkg.go.dev/github.com/stainless-sdks/stigg-go#V2CustomerService.Get">Get</a>(ctx <a href="https://pkg.go.dev/context">context</a>.<a href="https://pkg.go.dev/context#Context">Context</a>, refID <a href="https://pkg.go.dev/builtin#string">string</a>, query <a href="https://pkg.go.dev/github.com/stainless-sdks/stigg-go">stigg</a>.<a href="https://pkg.go.dev/github.com/stainless-sdks/stigg-go#V2CustomerGetParams">V2CustomerGetParams</a>) (<a href="https://pkg.go.dev/github.com/stainless-sdks/stigg-go">stigg</a>.<a href="https://pkg.go.dev/github.com/stainless-sdks/stigg-go#V2CustomerGetResponse">V2CustomerGetResponse</a>, <a href="https://pkg.go.dev/builtin#error">error</a>)</code>
 
 ### SubCustomer
 
 Response Types:
 
-- <a href="https://pkg.go.dev/github.com/stainless-sdks/stigg-go">stigg</a>.<a href="https://pkg.go.dev/github.com/stainless-sdks/stigg-go#V2CustomerSubCustomerGetSubCustomerResponse">V2CustomerSubCustomerGetSubCustomerResponse</a>
+- <a href="https://pkg.go.dev/github.com/stainless-sdks/stigg-go">stigg</a>.<a href="https://pkg.go.dev/github.com/stainless-sdks/stigg-go#V2CustomerSubCustomerGetResponse">V2CustomerSubCustomerGetResponse</a>
 
 Methods:
 
-- <code title="get /api/v1/customers/{refId}">client.V2.Customers.SubCustomer.<a href="https://pkg.go.dev/github.com/stainless-sdks/stigg-go#V2CustomerSubCustomerService.GetSubCustomer">GetSubCustomer</a>(ctx <a href="https://pkg.go.dev/context">context</a>.<a href="https://pkg.go.dev/context#Context">Context</a>, refID <a href="https://pkg.go.dev/builtin#string">string</a>, query <a href="https://pkg.go.dev/github.com/stainless-sdks/stigg-go">stigg</a>.<a href="https://pkg.go.dev/github.com/stainless-sdks/stigg-go#V2CustomerSubCustomerGetSubCustomerParams">V2CustomerSubCustomerGetSubCustomerParams</a>) (<a href="https://pkg.go.dev/github.com/stainless-sdks/stigg-go">stigg</a>.<a href="https://pkg.go.dev/github.com/stainless-sdks/stigg-go#V2CustomerSubCustomerGetSubCustomerResponse">V2CustomerSubCustomerGetSubCustomerResponse</a>, <a href="https://pkg.go.dev/builtin#error">error</a>)</code>
+- <code title="get /api/v1/customers/{refId}">client.V2.Customers.SubCustomer.<a href="https://pkg.go.dev/github.com/stainless-sdks/stigg-go#V2CustomerSubCustomerService.Get">Get</a>(ctx <a href="https://pkg.go.dev/context">context</a>.<a href="https://pkg.go.dev/context#Context">Context</a>, refID <a href="https://pkg.go.dev/builtin#string">string</a>, query <a href="https://pkg.go.dev/github.com/stainless-sdks/stigg-go">stigg</a>.<a href="https://pkg.go.dev/github.com/stainless-sdks/stigg-go#V2CustomerSubCustomerGetParams">V2CustomerSubCustomerGetParams</a>) (<a href="https://pkg.go.dev/github.com/stainless-sdks/stigg-go">stigg</a>.<a href="https://pkg.go.dev/github.com/stainless-sdks/stigg-go#V2CustomerSubCustomerGetResponse">V2CustomerSubCustomerGetResponse</a>, <a href="https://pkg.go.dev/builtin#error">error</a>)</code>
 
 ## Permissions
 
