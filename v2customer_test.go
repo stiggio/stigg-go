@@ -13,7 +13,7 @@ import (
 	"github.com/stainless-sdks/stigg-go/option"
 )
 
-func TestV2CustomerGetCustomer(t *testing.T) {
+func TestV2CustomerGet(t *testing.T) {
 	t.Skip("skipped: tests are disabled for the time being")
 	baseURL := "http://localhost:4010"
 	if envURL, ok := os.LookupEnv("TEST_API_BASE_URL"); ok {
@@ -26,10 +26,10 @@ func TestV2CustomerGetCustomer(t *testing.T) {
 		option.WithBaseURL(baseURL),
 		option.WithAPIKey("My API Key"),
 	)
-	_, err := client.V2.Customers.GetCustomer(
+	_, err := client.V2.Customers.Get(
 		context.TODO(),
 		"refId",
-		stigg.V2CustomerGetCustomerParams{
+		stigg.V2CustomerGetParams{
 			XAPIKey:        "X-API-KEY",
 			XEnvironmentID: "X-ENVIRONMENT-ID",
 		},
