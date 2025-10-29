@@ -7,10 +7,12 @@ import (
 	"errors"
 	"fmt"
 	"net/http"
+	"slices"
 
 	"github.com/stainless-sdks/stigg-go/internal/apijson"
 	"github.com/stainless-sdks/stigg-go/internal/requestconfig"
 	"github.com/stainless-sdks/stigg-go/option"
+	"github.com/stainless-sdks/stigg-go/packages/param"
 	"github.com/stainless-sdks/stigg-go/packages/respjson"
 )
 
@@ -43,7 +45,7 @@ func (r *V2CustomerService) Get(ctx context.Context, refID string, query V2Custo
 	if !param.IsOmitted(query.XEnvironmentID) {
 		opts = append(opts, option.WithHeader("X-ENVIRONMENT-ID", fmt.Sprintf("%s", query.XEnvironmentID)))
 	}
-	opts = append(r.Options[:], opts...)
+	opts = slices.Concat(r.Options, opts)
 	if refID == "" {
 		err = errors.New("missing required refId parameter")
 		return

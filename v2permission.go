@@ -6,6 +6,7 @@ import (
 	"context"
 	"net/http"
 	"net/url"
+	"slices"
 
 	"github.com/stainless-sdks/stigg-go/internal/apijson"
 	"github.com/stainless-sdks/stigg-go/internal/apiquery"
@@ -36,7 +37,7 @@ func NewV2PermissionService(opts ...option.RequestOption) (r V2PermissionService
 
 // Check multiple permissions for a user
 func (r *V2PermissionService) Check(ctx context.Context, params V2PermissionCheckParams, opts ...option.RequestOption) (res *V2PermissionCheckResponse, err error) {
-	opts = append(r.Options[:], opts...)
+	opts = slices.Concat(r.Options, opts)
 	path := "api/v1/permissions/check"
 	err = requestconfig.ExecuteNewRequest(ctx, http.MethodPost, path, params, &res, opts...)
 	return
