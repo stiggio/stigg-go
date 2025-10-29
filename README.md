@@ -1,6 +1,10 @@
 # Stigg Go API Library
 
+<!-- x-release-please-start-version -->
+
 <a href="https://pkg.go.dev/github.com/stainless-sdks/stigg-go"><img src="https://pkg.go.dev/badge/github.com/stainless-sdks/stigg-go.svg" alt="Go Reference"></a>
+
+<!-- x-release-please-end -->
 
 The Stigg Go library provides convenient access to the Stigg REST API
 from applications written in Go.
@@ -23,7 +27,7 @@ go get -u 'github.com/stainless-sdks/stigg-go@v0.0.1-alpha.0'
 
 ## Requirements
 
-This library requires Go 1.18+.
+This library requires Go 1.22+.
 
 ## Usage
 
