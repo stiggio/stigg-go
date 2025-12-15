@@ -24,15 +24,9 @@ func TestUsage(t *testing.T) {
 		option.WithBaseURL(baseURL),
 		option.WithAPIKey("My API Key"),
 	)
-	response, err := client.V1.Permissions.Check(context.TODO(), stigg.V1PermissionCheckParams{
-		UserID: "REPLACE_ME",
-		ResourcesAndActions: []stigg.V1PermissionCheckParamsResourcesAndAction{{
-			Action:   "read",
-			Resource: "product",
-		}},
-	})
+	customerResponse, err := client.V1.Customers.Get(context.TODO(), "REPLACE_ME")
 	if err != nil {
 		t.Fatalf("err should be nil: %s", err.Error())
 	}
-	t.Logf("%+v\n", response.PermittedList)
+	t.Logf("%+v\n", customerResponse.Data)
 }

@@ -4,7 +4,6 @@ package stigg_test
 
 import (
 	"context"
-	"errors"
 	"os"
 	"testing"
 
@@ -13,8 +12,7 @@ import (
 	"github.com/stainless-sdks/stigg-go/option"
 )
 
-func TestV1PermissionCheck(t *testing.T) {
-	t.Skip("Prism tests are disabled")
+func TestAutoPagination(t *testing.T) {
 	baseURL := "http://localhost:4010"
 	if envURL, ok := os.LookupEnv("TEST_API_BASE_URL"); ok {
 		baseURL = envURL
@@ -26,18 +24,15 @@ func TestV1PermissionCheck(t *testing.T) {
 		option.WithBaseURL(baseURL),
 		option.WithAPIKey("My API Key"),
 	)
-	_, err := client.V1.Permissions.Check(context.TODO(), stigg.V1PermissionCheckParams{
-		UserID: "userId",
-		ResourcesAndActions: []stigg.V1PermissionCheckParamsResourcesAndAction{{
-			Action:   "read",
-			Resource: "product",
-		}},
+	iter := client.V1.Customers.ListAutoPaging(context.TODO(), stigg.V1CustomerListParams{
+		Limit: stigg.Int(30),
 	})
-	if err != nil {
-		var apierr *stigg.Error
-		if errors.As(err, &apierr) {
-			t.Log(string(apierr.DumpRequest(true)))
-		}
+	// Prism mock isn't going to give us real pagination
+	for i := 0; i < 3 && iter.Next(); i++ {
+		customer := iter.Current()
+		t.Logf("%+v\n", customer.CursorID)
+	}
+	if err := iter.Err(); err != nil {
 		t.Fatalf("err should be nil: %s", err.Error())
 	}
 }
