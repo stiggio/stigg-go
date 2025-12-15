@@ -7,11 +7,15 @@ import (
 	"errors"
 	"fmt"
 	"net/http"
+	"net/url"
 	"slices"
+	"time"
 
 	"github.com/stainless-sdks/stigg-go/internal/apijson"
+	"github.com/stainless-sdks/stigg-go/internal/apiquery"
 	"github.com/stainless-sdks/stigg-go/internal/requestconfig"
 	"github.com/stainless-sdks/stigg-go/option"
+	"github.com/stainless-sdks/stigg-go/packages/pagination"
 	"github.com/stainless-sdks/stigg-go/packages/param"
 	"github.com/stainless-sdks/stigg-go/packages/respjson"
 )
@@ -23,8 +27,8 @@ import (
 // automatically. You should not instantiate this service directly, and instead use
 // the [NewV1CustomerService] method instead.
 type V1CustomerService struct {
-	Options     []option.RequestOption
-	SubCustomer V1CustomerSubCustomerService
+	Options       []option.RequestOption
+	PaymentMethod V1CustomerPaymentMethodService
 }
 
 // NewV1CustomerService generates a new service that applies the given options to
@@ -33,53 +37,454 @@ type V1CustomerService struct {
 func NewV1CustomerService(opts ...option.RequestOption) (r V1CustomerService) {
 	r = V1CustomerService{}
 	r.Options = opts
-	r.SubCustomer = NewV1CustomerSubCustomerService(opts...)
+	r.PaymentMethod = NewV1CustomerPaymentMethodService(opts...)
 	return
 }
 
-// Get a single customer by id
-func (r *V1CustomerService) Get(ctx context.Context, refID string, query V1CustomerGetParams, opts ...option.RequestOption) (res *V1CustomerGetResponse, err error) {
-	if !param.IsOmitted(query.XAPIKey) {
-		opts = append(opts, option.WithHeader("X-API-KEY", fmt.Sprintf("%s", query.XAPIKey)))
-	}
-	if !param.IsOmitted(query.XEnvironmentID) {
-		opts = append(opts, option.WithHeader("X-ENVIRONMENT-ID", fmt.Sprintf("%s", query.XEnvironmentID)))
-	}
+// Create a new Customer
+func (r *V1CustomerService) New(ctx context.Context, body V1CustomerNewParams, opts ...option.RequestOption) (res *CustomerResponse, err error) {
 	opts = slices.Concat(r.Options, opts)
-	if refID == "" {
-		err = errors.New("missing required refId parameter")
+	path := "api/v1/customers"
+	err = requestconfig.ExecuteNewRequest(ctx, http.MethodPost, path, body, &res, opts...)
+	return
+}
+
+// Get a single Customer by id
+func (r *V1CustomerService) Get(ctx context.Context, id string, opts ...option.RequestOption) (res *CustomerResponse, err error) {
+	opts = slices.Concat(r.Options, opts)
+	if id == "" {
+		err = errors.New("missing required id parameter")
 		return
 	}
-	path := fmt.Sprintf("api/v1/customers/%s", refID)
+	path := fmt.Sprintf("api/v1/customers/%s", id)
 	err = requestconfig.ExecuteNewRequest(ctx, http.MethodGet, path, nil, &res, opts...)
 	return
 }
 
-type V1CustomerGetResponse struct {
-	// Unique identifier for the entity
-	ID string `json:"id,required"`
-	// The email of the customer
-	Email string `json:"email,required"`
-	// The name of the customer
-	Name string `json:"name,required"`
+// Update an existing Customer
+func (r *V1CustomerService) Update(ctx context.Context, id string, body V1CustomerUpdateParams, opts ...option.RequestOption) (res *CustomerResponse, err error) {
+	opts = slices.Concat(r.Options, opts)
+	if id == "" {
+		err = errors.New("missing required id parameter")
+		return
+	}
+	path := fmt.Sprintf("api/v1/customers/%s", id)
+	err = requestconfig.ExecuteNewRequest(ctx, http.MethodPatch, path, body, &res, opts...)
+	return
+}
+
+// Get a list of Customers
+func (r *V1CustomerService) List(ctx context.Context, query V1CustomerListParams, opts ...option.RequestOption) (res *pagination.MyCursorIDPage[V1CustomerListResponse], err error) {
+	var raw *http.Response
+	opts = slices.Concat(r.Options, opts)
+	opts = append([]option.RequestOption{option.WithResponseInto(&raw)}, opts...)
+	path := "api/v1/customers"
+	cfg, err := requestconfig.NewRequestConfig(ctx, http.MethodGet, path, query, &res, opts...)
+	if err != nil {
+		return nil, err
+	}
+	err = cfg.Execute()
+	if err != nil {
+		return nil, err
+	}
+	res.SetPageConfig(cfg, raw)
+	return res, nil
+}
+
+// Get a list of Customers
+func (r *V1CustomerService) ListAutoPaging(ctx context.Context, query V1CustomerListParams, opts ...option.RequestOption) *pagination.MyCursorIDPageAutoPager[V1CustomerListResponse] {
+	return pagination.NewMyCursorIDPageAutoPager(r.List(ctx, query, opts...))
+}
+
+// Perform archive on a Customer
+func (r *V1CustomerService) Archive(ctx context.Context, id string, opts ...option.RequestOption) (res *CustomerResponse, err error) {
+	opts = slices.Concat(r.Options, opts)
+	if id == "" {
+		err = errors.New("missing required id parameter")
+		return
+	}
+	path := fmt.Sprintf("api/v1/customers/%s/archive", id)
+	err = requestconfig.ExecuteNewRequest(ctx, http.MethodPost, path, nil, &res, opts...)
+	return
+}
+
+// Perform unarchive on a Customer
+func (r *V1CustomerService) Unarchive(ctx context.Context, id string, opts ...option.RequestOption) (res *CustomerResponse, err error) {
+	opts = slices.Concat(r.Options, opts)
+	if id == "" {
+		err = errors.New("missing required id parameter")
+		return
+	}
+	path := fmt.Sprintf("api/v1/customers/%s/unarchive", id)
+	err = requestconfig.ExecuteNewRequest(ctx, http.MethodPost, path, nil, &res, opts...)
+	return
+}
+
+type CustomerResponse struct {
+	Data CustomerResponseData `json:"data,required"`
 	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
 	JSON struct {
-		ID          respjson.Field
-		Email       respjson.Field
-		Name        respjson.Field
+		Data        respjson.Field
 		ExtraFields map[string]respjson.Field
 		raw         string
 	} `json:"-"`
 }
 
 // Returns the unmodified JSON received from the API
-func (r V1CustomerGetResponse) RawJSON() string { return r.JSON.raw }
-func (r *V1CustomerGetResponse) UnmarshalJSON(data []byte) error {
+func (r CustomerResponse) RawJSON() string { return r.JSON.raw }
+func (r *CustomerResponse) UnmarshalJSON(data []byte) error {
 	return apijson.UnmarshalRoot(data, r)
 }
 
-type V1CustomerGetParams struct {
-	XAPIKey        string `header:"X-API-KEY,required" json:"-"`
-	XEnvironmentID string `header:"X-ENVIRONMENT-ID,required" json:"-"`
+type CustomerResponseData struct {
+	// Timestamp of when the record was deleted
+	ArchivedAt time.Time `json:"archivedAt,required" format:"date-time"`
+	// Timestamp of when the record was created
+	CreatedAt time.Time `json:"createdAt,required" format:"date-time"`
+	// The email of the customer
+	Email string `json:"email,required" format:"email"`
+	// Customer slug
+	ExternalID string `json:"externalId,required"`
+	// The name of the customer
+	Name string `json:"name,required"`
+	// Timestamp of when the record was last updated
+	UpdatedAt time.Time `json:"updatedAt,required" format:"date-time"`
+	// The default payment method details
+	DefaultPaymentMethod CustomerResponseDataDefaultPaymentMethod `json:"defaultPaymentMethod,nullable"`
+	// List of integrations
+	Integrations []CustomerResponseDataIntegration `json:"integrations"`
+	// Additional metadata
+	Metadata map[string]string `json:"metadata"`
+	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
+	JSON struct {
+		ArchivedAt           respjson.Field
+		CreatedAt            respjson.Field
+		Email                respjson.Field
+		ExternalID           respjson.Field
+		Name                 respjson.Field
+		UpdatedAt            respjson.Field
+		DefaultPaymentMethod respjson.Field
+		Integrations         respjson.Field
+		Metadata             respjson.Field
+		ExtraFields          map[string]respjson.Field
+		raw                  string
+	} `json:"-"`
+}
+
+// Returns the unmodified JSON received from the API
+func (r CustomerResponseData) RawJSON() string { return r.JSON.raw }
+func (r *CustomerResponseData) UnmarshalJSON(data []byte) error {
+	return apijson.UnmarshalRoot(data, r)
+}
+
+// The default payment method details
+type CustomerResponseDataDefaultPaymentMethod struct {
+	// The default payment method id
+	BillingID string `json:"billingId,required"`
+	// The expiration month of the default payment method
+	CardExpiryMonth float64 `json:"cardExpiryMonth,required"`
+	// The expiration year of the default payment method
+	CardExpiryYear float64 `json:"cardExpiryYear,required"`
+	// The last 4 digits of the default payment method
+	CardLast4Digits string `json:"cardLast4Digits,required"`
+	// The default payment method type
+	//
+	// Any of "CARD", "BANK", "CASH_APP".
+	Type string `json:"type,required"`
+	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
+	JSON struct {
+		BillingID       respjson.Field
+		CardExpiryMonth respjson.Field
+		CardExpiryYear  respjson.Field
+		CardLast4Digits respjson.Field
+		Type            respjson.Field
+		ExtraFields     map[string]respjson.Field
+		raw             string
+	} `json:"-"`
+}
+
+// Returns the unmodified JSON received from the API
+func (r CustomerResponseDataDefaultPaymentMethod) RawJSON() string { return r.JSON.raw }
+func (r *CustomerResponseDataDefaultPaymentMethod) UnmarshalJSON(data []byte) error {
+	return apijson.UnmarshalRoot(data, r)
+}
+
+type CustomerResponseDataIntegration struct {
+	// Integration details
+	ID string `json:"id,required"`
+	// Synced entity id
+	SyncedEntityID string `json:"syncedEntityId,required"`
+	// The vendor identifier of integration
+	//
+	// Any of "AUTH0", "ZUORA", "STRIPE", "HUBSPOT", "AWS_MARKETPLACE", "SNOWFLAKE",
+	// "SALESFORCE", "BIG_QUERY", "OPEN_FGA", "APP_STORE".
+	VendorIdentifier string `json:"vendorIdentifier,required"`
+	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
+	JSON struct {
+		ID               respjson.Field
+		SyncedEntityID   respjson.Field
+		VendorIdentifier respjson.Field
+		ExtraFields      map[string]respjson.Field
+		raw              string
+	} `json:"-"`
+}
+
+// Returns the unmodified JSON received from the API
+func (r CustomerResponseDataIntegration) RawJSON() string { return r.JSON.raw }
+func (r *CustomerResponseDataIntegration) UnmarshalJSON(data []byte) error {
+	return apijson.UnmarshalRoot(data, r)
+}
+
+type V1CustomerListResponse struct {
+	// Timestamp of when the record was deleted
+	ArchivedAt time.Time `json:"archivedAt,required" format:"date-time"`
+	// Timestamp of when the record was created
+	CreatedAt time.Time `json:"createdAt,required" format:"date-time"`
+	// Cursor ID for query pagination
+	CursorID string `json:"cursor_id,required" format:"uuid"`
+	// The email of the customer
+	Email string `json:"email,required" format:"email"`
+	// Customer slug
+	ExternalID string `json:"externalId,required"`
+	// The name of the customer
+	Name string `json:"name,required"`
+	// Timestamp of when the record was last updated
+	UpdatedAt time.Time `json:"updatedAt,required" format:"date-time"`
+	// The default payment method details
+	DefaultPaymentMethod V1CustomerListResponseDefaultPaymentMethod `json:"defaultPaymentMethod,nullable"`
+	// List of integrations
+	Integrations []V1CustomerListResponseIntegration `json:"integrations"`
+	// Additional metadata
+	Metadata map[string]string `json:"metadata"`
+	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
+	JSON struct {
+		ArchivedAt           respjson.Field
+		CreatedAt            respjson.Field
+		CursorID             respjson.Field
+		Email                respjson.Field
+		ExternalID           respjson.Field
+		Name                 respjson.Field
+		UpdatedAt            respjson.Field
+		DefaultPaymentMethod respjson.Field
+		Integrations         respjson.Field
+		Metadata             respjson.Field
+		ExtraFields          map[string]respjson.Field
+		raw                  string
+	} `json:"-"`
+}
+
+// Returns the unmodified JSON received from the API
+func (r V1CustomerListResponse) RawJSON() string { return r.JSON.raw }
+func (r *V1CustomerListResponse) UnmarshalJSON(data []byte) error {
+	return apijson.UnmarshalRoot(data, r)
+}
+
+// The default payment method details
+type V1CustomerListResponseDefaultPaymentMethod struct {
+	// The default payment method id
+	BillingID string `json:"billingId,required"`
+	// The expiration month of the default payment method
+	CardExpiryMonth float64 `json:"cardExpiryMonth,required"`
+	// The expiration year of the default payment method
+	CardExpiryYear float64 `json:"cardExpiryYear,required"`
+	// The last 4 digits of the default payment method
+	CardLast4Digits string `json:"cardLast4Digits,required"`
+	// The default payment method type
+	//
+	// Any of "CARD", "BANK", "CASH_APP".
+	Type string `json:"type,required"`
+	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
+	JSON struct {
+		BillingID       respjson.Field
+		CardExpiryMonth respjson.Field
+		CardExpiryYear  respjson.Field
+		CardLast4Digits respjson.Field
+		Type            respjson.Field
+		ExtraFields     map[string]respjson.Field
+		raw             string
+	} `json:"-"`
+}
+
+// Returns the unmodified JSON received from the API
+func (r V1CustomerListResponseDefaultPaymentMethod) RawJSON() string { return r.JSON.raw }
+func (r *V1CustomerListResponseDefaultPaymentMethod) UnmarshalJSON(data []byte) error {
+	return apijson.UnmarshalRoot(data, r)
+}
+
+type V1CustomerListResponseIntegration struct {
+	// Integration details
+	ID string `json:"id,required"`
+	// Synced entity id
+	SyncedEntityID string `json:"syncedEntityId,required"`
+	// The vendor identifier of integration
+	//
+	// Any of "AUTH0", "ZUORA", "STRIPE", "HUBSPOT", "AWS_MARKETPLACE", "SNOWFLAKE",
+	// "SALESFORCE", "BIG_QUERY", "OPEN_FGA", "APP_STORE".
+	VendorIdentifier string `json:"vendorIdentifier,required"`
+	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
+	JSON struct {
+		ID               respjson.Field
+		SyncedEntityID   respjson.Field
+		VendorIdentifier respjson.Field
+		ExtraFields      map[string]respjson.Field
+		raw              string
+	} `json:"-"`
+}
+
+// Returns the unmodified JSON received from the API
+func (r V1CustomerListResponseIntegration) RawJSON() string { return r.JSON.raw }
+func (r *V1CustomerListResponseIntegration) UnmarshalJSON(data []byte) error {
+	return apijson.UnmarshalRoot(data, r)
+}
+
+type V1CustomerNewParams struct {
+	// The email of the customer
+	Email param.Opt[string] `json:"email,omitzero,required" format:"email"`
+	// The name of the customer
+	Name param.Opt[string] `json:"name,omitzero,required"`
+	// Customer slug
+	ExternalID string `json:"externalId,required"`
+	// The default payment method details
+	DefaultPaymentMethod V1CustomerNewParamsDefaultPaymentMethod `json:"defaultPaymentMethod,omitzero"`
+	// List of integrations
+	Integrations []V1CustomerNewParamsIntegration `json:"integrations,omitzero"`
+	// Additional metadata
+	Metadata map[string]string `json:"metadata,omitzero"`
 	paramObj
+}
+
+func (r V1CustomerNewParams) MarshalJSON() (data []byte, err error) {
+	type shadow V1CustomerNewParams
+	return param.MarshalObject(r, (*shadow)(&r))
+}
+func (r *V1CustomerNewParams) UnmarshalJSON(data []byte) error {
+	return apijson.UnmarshalRoot(data, r)
+}
+
+// The default payment method details
+//
+// The properties BillingID, CardExpiryMonth, CardExpiryYear, CardLast4Digits, Type
+// are required.
+type V1CustomerNewParamsDefaultPaymentMethod struct {
+	// The default payment method id
+	BillingID param.Opt[string] `json:"billingId,omitzero,required"`
+	// The expiration month of the default payment method
+	CardExpiryMonth param.Opt[float64] `json:"cardExpiryMonth,omitzero,required"`
+	// The expiration year of the default payment method
+	CardExpiryYear param.Opt[float64] `json:"cardExpiryYear,omitzero,required"`
+	// The last 4 digits of the default payment method
+	CardLast4Digits param.Opt[string] `json:"cardLast4Digits,omitzero,required"`
+	// The default payment method type
+	//
+	// Any of "CARD", "BANK", "CASH_APP".
+	Type string `json:"type,omitzero,required"`
+	paramObj
+}
+
+func (r V1CustomerNewParamsDefaultPaymentMethod) MarshalJSON() (data []byte, err error) {
+	type shadow V1CustomerNewParamsDefaultPaymentMethod
+	return param.MarshalObject(r, (*shadow)(&r))
+}
+func (r *V1CustomerNewParamsDefaultPaymentMethod) UnmarshalJSON(data []byte) error {
+	return apijson.UnmarshalRoot(data, r)
+}
+
+func init() {
+	apijson.RegisterFieldValidator[V1CustomerNewParamsDefaultPaymentMethod](
+		"type", "CARD", "BANK", "CASH_APP",
+	)
+}
+
+// The properties ID, SyncedEntityID, VendorIdentifier are required.
+type V1CustomerNewParamsIntegration struct {
+	// Synced entity id
+	SyncedEntityID param.Opt[string] `json:"syncedEntityId,omitzero,required"`
+	// Integration details
+	ID string `json:"id,required"`
+	// The vendor identifier of integration
+	//
+	// Any of "AUTH0", "ZUORA", "STRIPE", "HUBSPOT", "AWS_MARKETPLACE", "SNOWFLAKE",
+	// "SALESFORCE", "BIG_QUERY", "OPEN_FGA", "APP_STORE".
+	VendorIdentifier string `json:"vendorIdentifier,omitzero,required"`
+	paramObj
+}
+
+func (r V1CustomerNewParamsIntegration) MarshalJSON() (data []byte, err error) {
+	type shadow V1CustomerNewParamsIntegration
+	return param.MarshalObject(r, (*shadow)(&r))
+}
+func (r *V1CustomerNewParamsIntegration) UnmarshalJSON(data []byte) error {
+	return apijson.UnmarshalRoot(data, r)
+}
+
+func init() {
+	apijson.RegisterFieldValidator[V1CustomerNewParamsIntegration](
+		"vendorIdentifier", "AUTH0", "ZUORA", "STRIPE", "HUBSPOT", "AWS_MARKETPLACE", "SNOWFLAKE", "SALESFORCE", "BIG_QUERY", "OPEN_FGA", "APP_STORE",
+	)
+}
+
+type V1CustomerUpdateParams struct {
+	// The email of the customer
+	Email param.Opt[string] `json:"email,omitzero" format:"email"`
+	// The name of the customer
+	Name param.Opt[string] `json:"name,omitzero"`
+	// List of integrations
+	Integrations []V1CustomerUpdateParamsIntegration `json:"integrations,omitzero"`
+	// Additional metadata
+	Metadata map[string]string `json:"metadata,omitzero"`
+	paramObj
+}
+
+func (r V1CustomerUpdateParams) MarshalJSON() (data []byte, err error) {
+	type shadow V1CustomerUpdateParams
+	return param.MarshalObject(r, (*shadow)(&r))
+}
+func (r *V1CustomerUpdateParams) UnmarshalJSON(data []byte) error {
+	return apijson.UnmarshalRoot(data, r)
+}
+
+// The properties ID, SyncedEntityID, VendorIdentifier are required.
+type V1CustomerUpdateParamsIntegration struct {
+	// Synced entity id
+	SyncedEntityID param.Opt[string] `json:"syncedEntityId,omitzero,required"`
+	// Integration details
+	ID string `json:"id,required"`
+	// The vendor identifier of integration
+	//
+	// Any of "AUTH0", "ZUORA", "STRIPE", "HUBSPOT", "AWS_MARKETPLACE", "SNOWFLAKE",
+	// "SALESFORCE", "BIG_QUERY", "OPEN_FGA", "APP_STORE".
+	VendorIdentifier string `json:"vendorIdentifier,omitzero,required"`
+	paramObj
+}
+
+func (r V1CustomerUpdateParamsIntegration) MarshalJSON() (data []byte, err error) {
+	type shadow V1CustomerUpdateParamsIntegration
+	return param.MarshalObject(r, (*shadow)(&r))
+}
+func (r *V1CustomerUpdateParamsIntegration) UnmarshalJSON(data []byte) error {
+	return apijson.UnmarshalRoot(data, r)
+}
+
+func init() {
+	apijson.RegisterFieldValidator[V1CustomerUpdateParamsIntegration](
+		"vendorIdentifier", "AUTH0", "ZUORA", "STRIPE", "HUBSPOT", "AWS_MARKETPLACE", "SNOWFLAKE", "SALESFORCE", "BIG_QUERY", "OPEN_FGA", "APP_STORE",
+	)
+}
+
+type V1CustomerListParams struct {
+	// Ending before this UUID for pagination
+	EndingBefore param.Opt[string] `query:"ending_before,omitzero" format:"uuid" json:"-"`
+	// Items per page
+	Limit param.Opt[int64] `query:"limit,omitzero" json:"-"`
+	// Starting after this UUID for pagination
+	StartingAfter param.Opt[string] `query:"starting_after,omitzero" format:"uuid" json:"-"`
+	paramObj
+}
+
+// URLQuery serializes [V1CustomerListParams]'s query parameters as `url.Values`.
+func (r V1CustomerListParams) URLQuery() (v url.Values, err error) {
+	return apiquery.MarshalWithSettings(r, apiquery.QuerySettings{
+		ArrayFormat:  apiquery.ArrayQueryFormatComma,
+		NestedFormat: apiquery.NestedQueryFormatBrackets,
+	})
 }

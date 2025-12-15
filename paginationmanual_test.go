@@ -4,7 +4,6 @@ package stigg_test
 
 import (
 	"context"
-	"errors"
 	"os"
 	"testing"
 
@@ -13,8 +12,7 @@ import (
 	"github.com/stainless-sdks/stigg-go/option"
 )
 
-func TestV2CustomerGet(t *testing.T) {
-	t.Skip("Prism tests are disabled")
+func TestManualPagination(t *testing.T) {
 	baseURL := "http://localhost:4010"
 	if envURL, ok := os.LookupEnv("TEST_API_BASE_URL"); ok {
 		baseURL = envURL
@@ -26,19 +24,23 @@ func TestV2CustomerGet(t *testing.T) {
 		option.WithBaseURL(baseURL),
 		option.WithAPIKey("My API Key"),
 	)
-	_, err := client.V2.Customers.Get(
-		context.TODO(),
-		"refId",
-		stigg.V2CustomerGetParams{
-			XAPIKey:        "X-API-KEY",
-			XEnvironmentID: "X-ENVIRONMENT-ID",
-		},
-	)
+	page, err := client.V1.Customers.List(context.TODO(), stigg.V1CustomerListParams{
+		Limit: stigg.Int(30),
+	})
 	if err != nil {
-		var apierr *stigg.Error
-		if errors.As(err, &apierr) {
-			t.Log(string(apierr.DumpRequest(true)))
-		}
 		t.Fatalf("err should be nil: %s", err.Error())
+	}
+	for _, customer := range page.Data {
+		t.Logf("%+v\n", customer.CursorID)
+	}
+	// Prism mock isn't going to give us real pagination
+	page, err = page.GetNextPage()
+	if err != nil {
+		t.Fatalf("err should be nil: %s", err.Error())
+	}
+	if page != nil {
+		for _, customer := range page.Data {
+			t.Logf("%+v\n", customer.CursorID)
+		}
 	}
 }

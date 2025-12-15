@@ -48,17 +48,11 @@ func main() {
 	client := stigg.NewClient(
 		option.WithAPIKey("My API Key"), // defaults to os.LookupEnv("STIGG_API_KEY")
 	)
-	response, err := client.V1.Permissions.Check(context.TODO(), stigg.V1PermissionCheckParams{
-		UserID: "REPLACE_ME",
-		ResourcesAndActions: []stigg.V1PermissionCheckParamsResourcesAndAction{{
-			Action:   "read",
-			Resource: "product",
-		}},
-	})
+	customerResponse, err := client.V1.Customers.Get(context.TODO(), "REPLACE_ME")
 	if err != nil {
 		panic(err.Error())
 	}
-	fmt.Printf("%+v\n", response.PermittedList)
+	fmt.Printf("%+v\n", customerResponse.Data)
 }
 
 ```
@@ -264,7 +258,7 @@ client := stigg.NewClient(
 	option.WithHeader("X-Some-Header", "custom_header_info"),
 )
 
-client.V1.Permissions.Check(context.TODO(), ...,
+client.V1.Customers.Get(context.TODO(), ...,
 	// Override the header
 	option.WithHeader("X-Some-Header", "some_other_custom_header_info"),
 	// Add an undocumented field to the request body, using sjson syntax
@@ -282,8 +276,37 @@ This library provides some conveniences for working with paginated list endpoint
 
 You can use `.ListAutoPaging()` methods to iterate through items across all pages:
 
+```go
+iter := client.V1.Customers.ListAutoPaging(context.TODO(), stigg.V1CustomerListParams{
+	Limit: stigg.Int(30),
+})
+// Automatically fetches more pages as needed.
+for iter.Next() {
+	v1CustomerListResponse := iter.Current()
+	fmt.Printf("%+v\n", v1CustomerListResponse)
+}
+if err := iter.Err(); err != nil {
+	panic(err.Error())
+}
+```
+
 Or you can use simple `.List()` methods to fetch a single page and receive a standard response object
 with additional helper methods like `.GetNextPage()`, e.g.:
+
+```go
+page, err := client.V1.Customers.List(context.TODO(), stigg.V1CustomerListParams{
+	Limit: stigg.Int(30),
+})
+for page != nil {
+	for _, customer := range page.Data {
+		fmt.Printf("%+v\n", customer)
+	}
+	page, err = page.GetNextPage()
+}
+if err != nil {
+	panic(err.Error())
+}
+```
 
 ### Errors
 
@@ -295,20 +318,14 @@ When the API returns a non-success status code, we return an error with type
 To handle errors, we recommend that you use the `errors.As` pattern:
 
 ```go
-_, err := client.V1.Permissions.Check(context.TODO(), stigg.V1PermissionCheckParams{
-	UserID: "REPLACE_ME",
-	ResourcesAndActions: []stigg.V1PermissionCheckParamsResourcesAndAction{{
-		Action:   "read",
-		Resource: "product",
-	}},
-})
+_, err := client.V1.Customers.Get(context.TODO(), "REPLACE_ME")
 if err != nil {
 	var apierr *stigg.Error
 	if errors.As(err, &apierr) {
 		println(string(apierr.DumpRequest(true)))  // Prints the serialized HTTP request
 		println(string(apierr.DumpResponse(true))) // Prints the serialized HTTP response
 	}
-	panic(err.Error()) // GET "/api/v1/permissions/check": 400 Bad Request { ... }
+	panic(err.Error()) // GET "/api/v1/customers/{id}": 400 Bad Request { ... }
 }
 ```
 
@@ -326,15 +343,9 @@ To set a per-retry timeout, use `option.WithRequestTimeout()`.
 // This sets the timeout for the request, including all the retries.
 ctx, cancel := context.WithTimeout(context.Background(), 5*time.Minute)
 defer cancel()
-client.V1.Permissions.Check(
+client.V1.Customers.Get(
 	ctx,
-	stigg.V1PermissionCheckParams{
-		UserID: "REPLACE_ME",
-		ResourcesAndActions: []stigg.V1PermissionCheckParamsResourcesAndAction{{
-			Action:   "read",
-			Resource: "product",
-		}},
-	},
+	"REPLACE_ME",
 	// This sets the per-retry timeout
 	option.WithRequestTimeout(20*time.Second),
 )
@@ -368,15 +379,9 @@ client := stigg.NewClient(
 )
 
 // Override per-request:
-client.V1.Permissions.Check(
+client.V1.Customers.Get(
 	context.TODO(),
-	stigg.V1PermissionCheckParams{
-		UserID: "REPLACE_ME",
-		ResourcesAndActions: []stigg.V1PermissionCheckParamsResourcesAndAction{{
-			Action:   "read",
-			Resource: "product",
-		}},
-	},
+	"REPLACE_ME",
 	option.WithMaxRetries(5),
 )
 ```
@@ -389,21 +394,15 @@ you need to examine response headers, status codes, or other details.
 ```go
 // Create a variable to store the HTTP response
 var response *http.Response
-response, err := client.V1.Permissions.Check(
+customerResponse, err := client.V1.Customers.Get(
 	context.TODO(),
-	stigg.V1PermissionCheckParams{
-		UserID: "REPLACE_ME",
-		ResourcesAndActions: []stigg.V1PermissionCheckParamsResourcesAndAction{{
-			Action:   "read",
-			Resource: "product",
-		}},
-	},
+	"REPLACE_ME",
 	option.WithResponseInto(&response),
 )
 if err != nil {
 	// handle error
 }
-fmt.Printf("%+v\n", response)
+fmt.Printf("%+v\n", customerResponse)
 
 fmt.Printf("Status Code: %d\n", response.StatusCode)
 fmt.Printf("Headers: %+#v\n", response.Header)

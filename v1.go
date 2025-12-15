@@ -13,9 +13,8 @@ import (
 // automatically. You should not instantiate this service directly, and instead use
 // the [NewV1Service] method instead.
 type V1Service struct {
-	Options     []option.RequestOption
-	Customers   V1CustomerService
-	Permissions V1PermissionService
+	Options   []option.RequestOption
+	Customers V1CustomerService
 }
 
 // NewV1Service generates a new service that applies the given options to each
@@ -25,6 +24,5 @@ func NewV1Service(opts ...option.RequestOption) (r V1Service) {
 	r = V1Service{}
 	r.Options = opts
 	r.Customers = NewV1CustomerService(opts...)
-	r.Permissions = NewV1PermissionService(opts...)
 	return
 }
