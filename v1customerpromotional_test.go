@@ -1,0 +1,92 @@
+// File generated from our OpenAPI spec by Stainless. See CONTRIBUTING.md for details.
+
+package stigg_test
+
+import (
+	"context"
+	"errors"
+	"os"
+	"testing"
+	"time"
+
+	"github.com/stainless-sdks/stigg-go"
+	"github.com/stainless-sdks/stigg-go/internal/testutil"
+	"github.com/stainless-sdks/stigg-go/option"
+)
+
+func TestV1CustomerPromotionalNew(t *testing.T) {
+	t.Skip("Prism tests are disabled")
+	baseURL := "http://localhost:4010"
+	if envURL, ok := os.LookupEnv("TEST_API_BASE_URL"); ok {
+		baseURL = envURL
+	}
+	if !testutil.CheckTestServer(t, baseURL) {
+		return
+	}
+	client := stigg.NewClient(
+		option.WithBaseURL(baseURL),
+		option.WithAPIKey("My API Key"),
+	)
+	_, err := client.V1.Customers.Promotional.New(
+		context.TODO(),
+		"customerId",
+		stigg.V1CustomerPromotionalNewParams{
+			PromotionalEntitlements: []stigg.V1CustomerPromotionalNewParamsPromotionalEntitlement{{
+				CustomEndDate:     stigg.Time(time.Now()),
+				EnumValues:        []string{"string"},
+				FeatureID:         "featureId",
+				HasSoftLimit:      stigg.Bool(true),
+				HasUnlimitedUsage: stigg.Bool(true),
+				IsVisible:         stigg.Bool(true),
+				MonthlyResetPeriodConfiguration: stigg.V1CustomerPromotionalNewParamsPromotionalEntitlementMonthlyResetPeriodConfiguration{
+					AccordingTo: "SubscriptionStart",
+				},
+				Period:      "1 week",
+				ResetPeriod: "YEAR",
+				UsageLimit:  stigg.Int(-9007199254740991),
+				WeeklyResetPeriodConfiguration: stigg.V1CustomerPromotionalNewParamsPromotionalEntitlementWeeklyResetPeriodConfiguration{
+					AccordingTo: "SubscriptionStart",
+				},
+				YearlyResetPeriodConfiguration: stigg.V1CustomerPromotionalNewParamsPromotionalEntitlementYearlyResetPeriodConfiguration{
+					AccordingTo: "SubscriptionStart",
+				},
+			}},
+		},
+	)
+	if err != nil {
+		var apierr *stigg.Error
+		if errors.As(err, &apierr) {
+			t.Log(string(apierr.DumpRequest(true)))
+		}
+		t.Fatalf("err should be nil: %s", err.Error())
+	}
+}
+
+func TestV1CustomerPromotionalRevoke(t *testing.T) {
+	t.Skip("Prism tests are disabled")
+	baseURL := "http://localhost:4010"
+	if envURL, ok := os.LookupEnv("TEST_API_BASE_URL"); ok {
+		baseURL = envURL
+	}
+	if !testutil.CheckTestServer(t, baseURL) {
+		return
+	}
+	client := stigg.NewClient(
+		option.WithBaseURL(baseURL),
+		option.WithAPIKey("My API Key"),
+	)
+	_, err := client.V1.Customers.Promotional.Revoke(
+		context.TODO(),
+		"featureId",
+		stigg.V1CustomerPromotionalRevokeParams{
+			CustomerID: "customerId",
+		},
+	)
+	if err != nil {
+		var apierr *stigg.Error
+		if errors.As(err, &apierr) {
+			t.Log(string(apierr.DumpRequest(true)))
+		}
+		t.Fatalf("err should be nil: %s", err.Error())
+	}
+}

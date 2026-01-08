@@ -28,6 +28,8 @@ import (
 type V1CustomerService struct {
 	Options       []option.RequestOption
 	PaymentMethod V1CustomerPaymentMethodService
+	Usage         V1CustomerUsageService
+	Promotional   V1CustomerPromotionalService
 }
 
 // NewV1CustomerService generates a new service that applies the given options to
@@ -37,6 +39,8 @@ func NewV1CustomerService(opts ...option.RequestOption) (r V1CustomerService) {
 	r = V1CustomerService{}
 	r.Options = opts
 	r.PaymentMethod = NewV1CustomerPaymentMethodService(opts...)
+	r.Usage = NewV1CustomerUsageService(opts...)
+	r.Promotional = NewV1CustomerPromotionalService(opts...)
 	return
 }
 
