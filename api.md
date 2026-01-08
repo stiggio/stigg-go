@@ -1,5 +1,15 @@
 # V1
 
+Response Types:
+
+- <a href="https://pkg.go.dev/github.com/stainless-sdks/stigg-go">stigg</a>.<a href="https://pkg.go.dev/github.com/stainless-sdks/stigg-go#V1NewEventResponse">V1NewEventResponse</a>
+- <a href="https://pkg.go.dev/github.com/stainless-sdks/stigg-go">stigg</a>.<a href="https://pkg.go.dev/github.com/stainless-sdks/stigg-go#V1NewUsageResponse">V1NewUsageResponse</a>
+
+Methods:
+
+- <code title="post /api/v1/events">client.V1.<a href="https://pkg.go.dev/github.com/stainless-sdks/stigg-go#V1Service.NewEvent">NewEvent</a>(ctx <a href="https://pkg.go.dev/context">context</a>.<a href="https://pkg.go.dev/context#Context">Context</a>, body <a href="https://pkg.go.dev/github.com/stainless-sdks/stigg-go">stigg</a>.<a href="https://pkg.go.dev/github.com/stainless-sdks/stigg-go#V1NewEventParams">V1NewEventParams</a>) (<a href="https://pkg.go.dev/github.com/stainless-sdks/stigg-go">stigg</a>.<a href="https://pkg.go.dev/github.com/stainless-sdks/stigg-go#V1NewEventResponse">V1NewEventResponse</a>, <a href="https://pkg.go.dev/builtin#error">error</a>)</code>
+- <code title="post /api/v1/usage">client.V1.<a href="https://pkg.go.dev/github.com/stainless-sdks/stigg-go#V1Service.NewUsage">NewUsage</a>(ctx <a href="https://pkg.go.dev/context">context</a>.<a href="https://pkg.go.dev/context#Context">Context</a>, body <a href="https://pkg.go.dev/github.com/stainless-sdks/stigg-go">stigg</a>.<a href="https://pkg.go.dev/github.com/stainless-sdks/stigg-go#V1NewUsageParams">V1NewUsageParams</a>) (<a href="https://pkg.go.dev/github.com/stainless-sdks/stigg-go">stigg</a>.<a href="https://pkg.go.dev/github.com/stainless-sdks/stigg-go#V1NewUsageResponse">V1NewUsageResponse</a>, <a href="https://pkg.go.dev/builtin#error">error</a>)</code>
+
 ## Customers
 
 Response Types:
@@ -22,3 +32,73 @@ Methods:
 
 - <code title="post /api/v1/customers/{id}/payment-method">client.V1.Customers.PaymentMethod.<a href="https://pkg.go.dev/github.com/stainless-sdks/stigg-go#V1CustomerPaymentMethodService.Attach">Attach</a>(ctx <a href="https://pkg.go.dev/context">context</a>.<a href="https://pkg.go.dev/context#Context">Context</a>, id <a href="https://pkg.go.dev/builtin#string">string</a>, body <a href="https://pkg.go.dev/github.com/stainless-sdks/stigg-go">stigg</a>.<a href="https://pkg.go.dev/github.com/stainless-sdks/stigg-go#V1CustomerPaymentMethodAttachParams">V1CustomerPaymentMethodAttachParams</a>) (<a href="https://pkg.go.dev/github.com/stainless-sdks/stigg-go">stigg</a>.<a href="https://pkg.go.dev/github.com/stainless-sdks/stigg-go#CustomerResponse">CustomerResponse</a>, <a href="https://pkg.go.dev/builtin#error">error</a>)</code>
 - <code title="delete /api/v1/customers/{id}/payment-method">client.V1.Customers.PaymentMethod.<a href="https://pkg.go.dev/github.com/stainless-sdks/stigg-go#V1CustomerPaymentMethodService.Detach">Detach</a>(ctx <a href="https://pkg.go.dev/context">context</a>.<a href="https://pkg.go.dev/context#Context">Context</a>, id <a href="https://pkg.go.dev/builtin#string">string</a>) (<a href="https://pkg.go.dev/github.com/stainless-sdks/stigg-go">stigg</a>.<a href="https://pkg.go.dev/github.com/stainless-sdks/stigg-go#CustomerResponse">CustomerResponse</a>, <a href="https://pkg.go.dev/builtin#error">error</a>)</code>
+
+### Usage
+
+Response Types:
+
+- <a href="https://pkg.go.dev/github.com/stainless-sdks/stigg-go">stigg</a>.<a href="https://pkg.go.dev/github.com/stainless-sdks/stigg-go#V1CustomerUsageGetResponse">V1CustomerUsageGetResponse</a>
+
+Methods:
+
+- <code title="get /api/v1/customers/{customerId}/usage/features/{featureId}">client.V1.Customers.Usage.<a href="https://pkg.go.dev/github.com/stainless-sdks/stigg-go#V1CustomerUsageService.Get">Get</a>(ctx <a href="https://pkg.go.dev/context">context</a>.<a href="https://pkg.go.dev/context#Context">Context</a>, featureID <a href="https://pkg.go.dev/builtin#string">string</a>, params <a href="https://pkg.go.dev/github.com/stainless-sdks/stigg-go">stigg</a>.<a href="https://pkg.go.dev/github.com/stainless-sdks/stigg-go#V1CustomerUsageGetParams">V1CustomerUsageGetParams</a>) (<a href="https://pkg.go.dev/github.com/stainless-sdks/stigg-go">stigg</a>.<a href="https://pkg.go.dev/github.com/stainless-sdks/stigg-go#V1CustomerUsageGetResponse">V1CustomerUsageGetResponse</a>, <a href="https://pkg.go.dev/builtin#error">error</a>)</code>
+
+### Promotional
+
+Response Types:
+
+- <a href="https://pkg.go.dev/github.com/stainless-sdks/stigg-go">stigg</a>.<a href="https://pkg.go.dev/github.com/stainless-sdks/stigg-go#V1CustomerPromotionalNewResponse">V1CustomerPromotionalNewResponse</a>
+- <a href="https://pkg.go.dev/github.com/stainless-sdks/stigg-go">stigg</a>.<a href="https://pkg.go.dev/github.com/stainless-sdks/stigg-go#V1CustomerPromotionalRevokeResponse">V1CustomerPromotionalRevokeResponse</a>
+
+Methods:
+
+- <code title="post /api/v1/customers/{customerId}/promotional">client.V1.Customers.Promotional.<a href="https://pkg.go.dev/github.com/stainless-sdks/stigg-go#V1CustomerPromotionalService.New">New</a>(ctx <a href="https://pkg.go.dev/context">context</a>.<a href="https://pkg.go.dev/context#Context">Context</a>, customerID <a href="https://pkg.go.dev/builtin#string">string</a>, body <a href="https://pkg.go.dev/github.com/stainless-sdks/stigg-go">stigg</a>.<a href="https://pkg.go.dev/github.com/stainless-sdks/stigg-go#V1CustomerPromotionalNewParams">V1CustomerPromotionalNewParams</a>) (<a href="https://pkg.go.dev/github.com/stainless-sdks/stigg-go">stigg</a>.<a href="https://pkg.go.dev/github.com/stainless-sdks/stigg-go#V1CustomerPromotionalNewResponse">V1CustomerPromotionalNewResponse</a>, <a href="https://pkg.go.dev/builtin#error">error</a>)</code>
+- <code title="delete /api/v1/customers/{customerId}/promotional/featureId/{featureId}">client.V1.Customers.Promotional.<a href="https://pkg.go.dev/github.com/stainless-sdks/stigg-go#V1CustomerPromotionalService.Revoke">Revoke</a>(ctx <a href="https://pkg.go.dev/context">context</a>.<a href="https://pkg.go.dev/context#Context">Context</a>, featureID <a href="https://pkg.go.dev/builtin#string">string</a>, body <a href="https://pkg.go.dev/github.com/stainless-sdks/stigg-go">stigg</a>.<a href="https://pkg.go.dev/github.com/stainless-sdks/stigg-go#V1CustomerPromotionalRevokeParams">V1CustomerPromotionalRevokeParams</a>) (<a href="https://pkg.go.dev/github.com/stainless-sdks/stigg-go">stigg</a>.<a href="https://pkg.go.dev/github.com/stainless-sdks/stigg-go#V1CustomerPromotionalRevokeResponse">V1CustomerPromotionalRevokeResponse</a>, <a href="https://pkg.go.dev/builtin#error">error</a>)</code>
+
+## Subscriptions
+
+Response Types:
+
+- <a href="https://pkg.go.dev/github.com/stainless-sdks/stigg-go">stigg</a>.<a href="https://pkg.go.dev/github.com/stainless-sdks/stigg-go#V1SubscriptionNewResponse">V1SubscriptionNewResponse</a>
+- <a href="https://pkg.go.dev/github.com/stainless-sdks/stigg-go">stigg</a>.<a href="https://pkg.go.dev/github.com/stainless-sdks/stigg-go#V1SubscriptionGetResponse">V1SubscriptionGetResponse</a>
+- <a href="https://pkg.go.dev/github.com/stainless-sdks/stigg-go">stigg</a>.<a href="https://pkg.go.dev/github.com/stainless-sdks/stigg-go#V1SubscriptionListResponse">V1SubscriptionListResponse</a>
+- <a href="https://pkg.go.dev/github.com/stainless-sdks/stigg-go">stigg</a>.<a href="https://pkg.go.dev/github.com/stainless-sdks/stigg-go#V1SubscriptionDelegateResponse">V1SubscriptionDelegateResponse</a>
+- <a href="https://pkg.go.dev/github.com/stainless-sdks/stigg-go">stigg</a>.<a href="https://pkg.go.dev/github.com/stainless-sdks/stigg-go#V1SubscriptionMigrateResponse">V1SubscriptionMigrateResponse</a>
+- <a href="https://pkg.go.dev/github.com/stainless-sdks/stigg-go">stigg</a>.<a href="https://pkg.go.dev/github.com/stainless-sdks/stigg-go#V1SubscriptionPreviewResponse">V1SubscriptionPreviewResponse</a>
+- <a href="https://pkg.go.dev/github.com/stainless-sdks/stigg-go">stigg</a>.<a href="https://pkg.go.dev/github.com/stainless-sdks/stigg-go#V1SubscriptionTransferResponse">V1SubscriptionTransferResponse</a>
+
+Methods:
+
+- <code title="post /api/v1/subscriptions">client.V1.Subscriptions.<a href="https://pkg.go.dev/github.com/stainless-sdks/stigg-go#V1SubscriptionService.New">New</a>(ctx <a href="https://pkg.go.dev/context">context</a>.<a href="https://pkg.go.dev/context#Context">Context</a>, body <a href="https://pkg.go.dev/github.com/stainless-sdks/stigg-go">stigg</a>.<a href="https://pkg.go.dev/github.com/stainless-sdks/stigg-go#V1SubscriptionNewParams">V1SubscriptionNewParams</a>) (<a href="https://pkg.go.dev/github.com/stainless-sdks/stigg-go">stigg</a>.<a href="https://pkg.go.dev/github.com/stainless-sdks/stigg-go#V1SubscriptionNewResponse">V1SubscriptionNewResponse</a>, <a href="https://pkg.go.dev/builtin#error">error</a>)</code>
+- <code title="get /api/v1/subscriptions/{id}">client.V1.Subscriptions.<a href="https://pkg.go.dev/github.com/stainless-sdks/stigg-go#V1SubscriptionService.Get">Get</a>(ctx <a href="https://pkg.go.dev/context">context</a>.<a href="https://pkg.go.dev/context#Context">Context</a>, id <a href="https://pkg.go.dev/builtin#string">string</a>) (<a href="https://pkg.go.dev/github.com/stainless-sdks/stigg-go">stigg</a>.<a href="https://pkg.go.dev/github.com/stainless-sdks/stigg-go#V1SubscriptionGetResponse">V1SubscriptionGetResponse</a>, <a href="https://pkg.go.dev/builtin#error">error</a>)</code>
+- <code title="get /api/v1/subscriptions">client.V1.Subscriptions.<a href="https://pkg.go.dev/github.com/stainless-sdks/stigg-go#V1SubscriptionService.List">List</a>(ctx <a href="https://pkg.go.dev/context">context</a>.<a href="https://pkg.go.dev/context#Context">Context</a>, query <a href="https://pkg.go.dev/github.com/stainless-sdks/stigg-go">stigg</a>.<a href="https://pkg.go.dev/github.com/stainless-sdks/stigg-go#V1SubscriptionListParams">V1SubscriptionListParams</a>) (<a href="https://pkg.go.dev/github.com/stainless-sdks/stigg-go">stigg</a>.<a href="https://pkg.go.dev/github.com/stainless-sdks/stigg-go#V1SubscriptionListResponse">V1SubscriptionListResponse</a>, <a href="https://pkg.go.dev/builtin#error">error</a>)</code>
+- <code title="post /api/v1/subscriptions/{id}/delegate">client.V1.Subscriptions.<a href="https://pkg.go.dev/github.com/stainless-sdks/stigg-go#V1SubscriptionService.Delegate">Delegate</a>(ctx <a href="https://pkg.go.dev/context">context</a>.<a href="https://pkg.go.dev/context#Context">Context</a>, id <a href="https://pkg.go.dev/builtin#string">string</a>, body <a href="https://pkg.go.dev/github.com/stainless-sdks/stigg-go">stigg</a>.<a href="https://pkg.go.dev/github.com/stainless-sdks/stigg-go#V1SubscriptionDelegateParams">V1SubscriptionDelegateParams</a>) (<a href="https://pkg.go.dev/github.com/stainless-sdks/stigg-go">stigg</a>.<a href="https://pkg.go.dev/github.com/stainless-sdks/stigg-go#V1SubscriptionDelegateResponse">V1SubscriptionDelegateResponse</a>, <a href="https://pkg.go.dev/builtin#error">error</a>)</code>
+- <code title="post /api/v1/subscriptions/{id}/migrate">client.V1.Subscriptions.<a href="https://pkg.go.dev/github.com/stainless-sdks/stigg-go#V1SubscriptionService.Migrate">Migrate</a>(ctx <a href="https://pkg.go.dev/context">context</a>.<a href="https://pkg.go.dev/context#Context">Context</a>, id <a href="https://pkg.go.dev/builtin#string">string</a>, body <a href="https://pkg.go.dev/github.com/stainless-sdks/stigg-go">stigg</a>.<a href="https://pkg.go.dev/github.com/stainless-sdks/stigg-go#V1SubscriptionMigrateParams">V1SubscriptionMigrateParams</a>) (<a href="https://pkg.go.dev/github.com/stainless-sdks/stigg-go">stigg</a>.<a href="https://pkg.go.dev/github.com/stainless-sdks/stigg-go#V1SubscriptionMigrateResponse">V1SubscriptionMigrateResponse</a>, <a href="https://pkg.go.dev/builtin#error">error</a>)</code>
+- <code title="post /api/v1/subscriptions/preview">client.V1.Subscriptions.<a href="https://pkg.go.dev/github.com/stainless-sdks/stigg-go#V1SubscriptionService.Preview">Preview</a>(ctx <a href="https://pkg.go.dev/context">context</a>.<a href="https://pkg.go.dev/context#Context">Context</a>, body <a href="https://pkg.go.dev/github.com/stainless-sdks/stigg-go">stigg</a>.<a href="https://pkg.go.dev/github.com/stainless-sdks/stigg-go#V1SubscriptionPreviewParams">V1SubscriptionPreviewParams</a>) (<a href="https://pkg.go.dev/github.com/stainless-sdks/stigg-go">stigg</a>.<a href="https://pkg.go.dev/github.com/stainless-sdks/stigg-go#V1SubscriptionPreviewResponse">V1SubscriptionPreviewResponse</a>, <a href="https://pkg.go.dev/builtin#error">error</a>)</code>
+- <code title="post /api/v1/subscriptions/{id}/transfer">client.V1.Subscriptions.<a href="https://pkg.go.dev/github.com/stainless-sdks/stigg-go#V1SubscriptionService.Transfer">Transfer</a>(ctx <a href="https://pkg.go.dev/context">context</a>.<a href="https://pkg.go.dev/context#Context">Context</a>, id <a href="https://pkg.go.dev/builtin#string">string</a>, body <a href="https://pkg.go.dev/github.com/stainless-sdks/stigg-go">stigg</a>.<a href="https://pkg.go.dev/github.com/stainless-sdks/stigg-go#V1SubscriptionTransferParams">V1SubscriptionTransferParams</a>) (<a href="https://pkg.go.dev/github.com/stainless-sdks/stigg-go">stigg</a>.<a href="https://pkg.go.dev/github.com/stainless-sdks/stigg-go#V1SubscriptionTransferResponse">V1SubscriptionTransferResponse</a>, <a href="https://pkg.go.dev/builtin#error">error</a>)</code>
+
+### FutureUpdate
+
+Response Types:
+
+- <a href="https://pkg.go.dev/github.com/stainless-sdks/stigg-go">stigg</a>.<a href="https://pkg.go.dev/github.com/stainless-sdks/stigg-go#V1SubscriptionFutureUpdateCancelPendingPaymentResponse">V1SubscriptionFutureUpdateCancelPendingPaymentResponse</a>
+- <a href="https://pkg.go.dev/github.com/stainless-sdks/stigg-go">stigg</a>.<a href="https://pkg.go.dev/github.com/stainless-sdks/stigg-go#V1SubscriptionFutureUpdateCancelScheduleResponse">V1SubscriptionFutureUpdateCancelScheduleResponse</a>
+
+Methods:
+
+- <code title="delete /api/v1/subscriptions/{id}/future-update/pending-payment">client.V1.Subscriptions.FutureUpdate.<a href="https://pkg.go.dev/github.com/stainless-sdks/stigg-go#V1SubscriptionFutureUpdateService.CancelPendingPayment">CancelPendingPayment</a>(ctx <a href="https://pkg.go.dev/context">context</a>.<a href="https://pkg.go.dev/context#Context">Context</a>, id <a href="https://pkg.go.dev/builtin#string">string</a>) (<a href="https://pkg.go.dev/github.com/stainless-sdks/stigg-go">stigg</a>.<a href="https://pkg.go.dev/github.com/stainless-sdks/stigg-go#V1SubscriptionFutureUpdateCancelPendingPaymentResponse">V1SubscriptionFutureUpdateCancelPendingPaymentResponse</a>, <a href="https://pkg.go.dev/builtin#error">error</a>)</code>
+- <code title="delete /api/v1/subscriptions/{id}/future-update/schedule">client.V1.Subscriptions.FutureUpdate.<a href="https://pkg.go.dev/github.com/stainless-sdks/stigg-go#V1SubscriptionFutureUpdateService.CancelSchedule">CancelSchedule</a>(ctx <a href="https://pkg.go.dev/context">context</a>.<a href="https://pkg.go.dev/context#Context">Context</a>, id <a href="https://pkg.go.dev/builtin#string">string</a>) (<a href="https://pkg.go.dev/github.com/stainless-sdks/stigg-go">stigg</a>.<a href="https://pkg.go.dev/github.com/stainless-sdks/stigg-go#V1SubscriptionFutureUpdateCancelScheduleResponse">V1SubscriptionFutureUpdateCancelScheduleResponse</a>, <a href="https://pkg.go.dev/builtin#error">error</a>)</code>
+
+## Coupons
+
+Response Types:
+
+- <a href="https://pkg.go.dev/github.com/stainless-sdks/stigg-go">stigg</a>.<a href="https://pkg.go.dev/github.com/stainless-sdks/stigg-go#V1CouponNewResponse">V1CouponNewResponse</a>
+- <a href="https://pkg.go.dev/github.com/stainless-sdks/stigg-go">stigg</a>.<a href="https://pkg.go.dev/github.com/stainless-sdks/stigg-go#V1CouponGetResponse">V1CouponGetResponse</a>
+- <a href="https://pkg.go.dev/github.com/stainless-sdks/stigg-go">stigg</a>.<a href="https://pkg.go.dev/github.com/stainless-sdks/stigg-go#V1CouponListResponse">V1CouponListResponse</a>
+
+Methods:
+
+- <code title="post /api/v1/coupons">client.V1.Coupons.<a href="https://pkg.go.dev/github.com/stainless-sdks/stigg-go#V1CouponService.New">New</a>(ctx <a href="https://pkg.go.dev/context">context</a>.<a href="https://pkg.go.dev/context#Context">Context</a>, body <a href="https://pkg.go.dev/github.com/stainless-sdks/stigg-go">stigg</a>.<a href="https://pkg.go.dev/github.com/stainless-sdks/stigg-go#V1CouponNewParams">V1CouponNewParams</a>) (<a href="https://pkg.go.dev/github.com/stainless-sdks/stigg-go">stigg</a>.<a href="https://pkg.go.dev/github.com/stainless-sdks/stigg-go#V1CouponNewResponse">V1CouponNewResponse</a>, <a href="https://pkg.go.dev/builtin#error">error</a>)</code>
+- <code title="get /api/v1/coupons/{id}">client.V1.Coupons.<a href="https://pkg.go.dev/github.com/stainless-sdks/stigg-go#V1CouponService.Get">Get</a>(ctx <a href="https://pkg.go.dev/context">context</a>.<a href="https://pkg.go.dev/context#Context">Context</a>, id <a href="https://pkg.go.dev/builtin#string">string</a>) (<a href="https://pkg.go.dev/github.com/stainless-sdks/stigg-go">stigg</a>.<a href="https://pkg.go.dev/github.com/stainless-sdks/stigg-go#V1CouponGetResponse">V1CouponGetResponse</a>, <a href="https://pkg.go.dev/builtin#error">error</a>)</code>
+- <code title="get /api/v1/coupons">client.V1.Coupons.<a href="https://pkg.go.dev/github.com/stainless-sdks/stigg-go#V1CouponService.List">List</a>(ctx <a href="https://pkg.go.dev/context">context</a>.<a href="https://pkg.go.dev/context#Context">Context</a>, query <a href="https://pkg.go.dev/github.com/stainless-sdks/stigg-go">stigg</a>.<a href="https://pkg.go.dev/github.com/stainless-sdks/stigg-go#V1CouponListParams">V1CouponListParams</a>) (<a href="https://pkg.go.dev/github.com/stainless-sdks/stigg-go">stigg</a>.<a href="https://pkg.go.dev/github.com/stainless-sdks/stigg-go#V1CouponListResponse">V1CouponListResponse</a>, <a href="https://pkg.go.dev/builtin#error">error</a>)</code>
