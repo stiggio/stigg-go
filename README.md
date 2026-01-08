@@ -276,8 +276,37 @@ This library provides some conveniences for working with paginated list endpoint
 
 You can use `.ListAutoPaging()` methods to iterate through items across all pages:
 
+```go
+iter := client.V1.Customers.ListAutoPaging(context.TODO(), stigg.V1CustomerListParams{
+	Limit: stigg.Int(30),
+})
+// Automatically fetches more pages as needed.
+for iter.Next() {
+	v1CustomerListResponse := iter.Current()
+	fmt.Printf("%+v\n", v1CustomerListResponse)
+}
+if err := iter.Err(); err != nil {
+	panic(err.Error())
+}
+```
+
 Or you can use simple `.List()` methods to fetch a single page and receive a standard response object
 with additional helper methods like `.GetNextPage()`, e.g.:
+
+```go
+page, err := client.V1.Customers.List(context.TODO(), stigg.V1CustomerListParams{
+	Limit: stigg.Int(30),
+})
+for page != nil {
+	for _, customer := range page.Data {
+		fmt.Printf("%+v\n", customer)
+	}
+	page, err = page.GetNextPage()
+}
+if err != nil {
+	panic(err.Error())
+}
+```
 
 ### Errors
 

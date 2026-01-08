@@ -15,6 +15,7 @@ import (
 	"github.com/stainless-sdks/stigg-go/internal/apiquery"
 	"github.com/stainless-sdks/stigg-go/internal/requestconfig"
 	"github.com/stainless-sdks/stigg-go/option"
+	"github.com/stainless-sdks/stigg-go/packages/pagination"
 	"github.com/stainless-sdks/stigg-go/packages/param"
 	"github.com/stainless-sdks/stigg-go/packages/respjson"
 )
@@ -73,11 +74,26 @@ func (r *V1CustomerService) Update(ctx context.Context, id string, body V1Custom
 }
 
 // Get a list of Customers
-func (r *V1CustomerService) List(ctx context.Context, query V1CustomerListParams, opts ...option.RequestOption) (res *V1CustomerListResponse, err error) {
+func (r *V1CustomerService) List(ctx context.Context, query V1CustomerListParams, opts ...option.RequestOption) (res *pagination.MyCursorIDPage[V1CustomerListResponse], err error) {
+	var raw *http.Response
 	opts = slices.Concat(r.Options, opts)
+	opts = append([]option.RequestOption{option.WithResponseInto(&raw)}, opts...)
 	path := "api/v1/customers"
-	err = requestconfig.ExecuteNewRequest(ctx, http.MethodGet, path, query, &res, opts...)
-	return
+	cfg, err := requestconfig.NewRequestConfig(ctx, http.MethodGet, path, query, &res, opts...)
+	if err != nil {
+		return nil, err
+	}
+	err = cfg.Execute()
+	if err != nil {
+		return nil, err
+	}
+	res.SetPageConfig(cfg, raw)
+	return res, nil
+}
+
+// Get a list of Customers
+func (r *V1CustomerService) ListAutoPaging(ctx context.Context, query V1CustomerListParams, opts ...option.RequestOption) *pagination.MyCursorIDPageAutoPager[V1CustomerListResponse] {
+	return pagination.NewMyCursorIDPageAutoPager(r.List(ctx, query, opts...))
 }
 
 // Perform archive on a Customer
@@ -220,28 +236,12 @@ func (r *CustomerResponseDataIntegration) UnmarshalJSON(data []byte) error {
 }
 
 type V1CustomerListResponse struct {
-	Data []V1CustomerListResponseData `json:"data,required"`
-	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
-	JSON struct {
-		Data        respjson.Field
-		ExtraFields map[string]respjson.Field
-		raw         string
-	} `json:"-"`
-}
-
-// Returns the unmodified JSON received from the API
-func (r V1CustomerListResponse) RawJSON() string { return r.JSON.raw }
-func (r *V1CustomerListResponse) UnmarshalJSON(data []byte) error {
-	return apijson.UnmarshalRoot(data, r)
-}
-
-type V1CustomerListResponseData struct {
 	// Timestamp of when the record was deleted
 	ArchivedAt time.Time `json:"archivedAt,required" format:"date-time"`
 	// Timestamp of when the record was created
 	CreatedAt time.Time `json:"createdAt,required" format:"date-time"`
 	// Cursor ID for query pagination
-	CursorID string `json:"cursorId,required" format:"uuid"`
+	CursorID string `json:"cursor_id,required" format:"uuid"`
 	// The email of the customer
 	Email string `json:"email,required" format:"email"`
 	// Customer slug
@@ -251,9 +251,9 @@ type V1CustomerListResponseData struct {
 	// Timestamp of when the record was last updated
 	UpdatedAt time.Time `json:"updatedAt,required" format:"date-time"`
 	// The default payment method details
-	DefaultPaymentMethod V1CustomerListResponseDataDefaultPaymentMethod `json:"defaultPaymentMethod,nullable"`
+	DefaultPaymentMethod V1CustomerListResponseDefaultPaymentMethod `json:"defaultPaymentMethod,nullable"`
 	// List of integrations
-	Integrations []V1CustomerListResponseDataIntegration `json:"integrations"`
+	Integrations []V1CustomerListResponseIntegration `json:"integrations"`
 	// Additional metadata
 	Metadata map[string]string `json:"metadata"`
 	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
@@ -274,13 +274,13 @@ type V1CustomerListResponseData struct {
 }
 
 // Returns the unmodified JSON received from the API
-func (r V1CustomerListResponseData) RawJSON() string { return r.JSON.raw }
-func (r *V1CustomerListResponseData) UnmarshalJSON(data []byte) error {
+func (r V1CustomerListResponse) RawJSON() string { return r.JSON.raw }
+func (r *V1CustomerListResponse) UnmarshalJSON(data []byte) error {
 	return apijson.UnmarshalRoot(data, r)
 }
 
 // The default payment method details
-type V1CustomerListResponseDataDefaultPaymentMethod struct {
+type V1CustomerListResponseDefaultPaymentMethod struct {
 	// The default payment method id
 	BillingID string `json:"billingId,required"`
 	// The expiration month of the default payment method
@@ -306,12 +306,12 @@ type V1CustomerListResponseDataDefaultPaymentMethod struct {
 }
 
 // Returns the unmodified JSON received from the API
-func (r V1CustomerListResponseDataDefaultPaymentMethod) RawJSON() string { return r.JSON.raw }
-func (r *V1CustomerListResponseDataDefaultPaymentMethod) UnmarshalJSON(data []byte) error {
+func (r V1CustomerListResponseDefaultPaymentMethod) RawJSON() string { return r.JSON.raw }
+func (r *V1CustomerListResponseDefaultPaymentMethod) UnmarshalJSON(data []byte) error {
 	return apijson.UnmarshalRoot(data, r)
 }
 
-type V1CustomerListResponseDataIntegration struct {
+type V1CustomerListResponseIntegration struct {
 	// Integration details
 	ID string `json:"id,required"`
 	// Synced entity id
@@ -332,8 +332,8 @@ type V1CustomerListResponseDataIntegration struct {
 }
 
 // Returns the unmodified JSON received from the API
-func (r V1CustomerListResponseDataIntegration) RawJSON() string { return r.JSON.raw }
-func (r *V1CustomerListResponseDataIntegration) UnmarshalJSON(data []byte) error {
+func (r V1CustomerListResponseIntegration) RawJSON() string { return r.JSON.raw }
+func (r *V1CustomerListResponseIntegration) UnmarshalJSON(data []byte) error {
 	return apijson.UnmarshalRoot(data, r)
 }
 
@@ -473,11 +473,11 @@ func init() {
 
 type V1CustomerListParams struct {
 	// Ending before this UUID for pagination
-	EndingBefore param.Opt[string] `query:"endingBefore,omitzero" format:"uuid" json:"-"`
+	EndingBefore param.Opt[string] `query:"ending_before,omitzero" format:"uuid" json:"-"`
 	// Items per page
 	Limit param.Opt[int64] `query:"limit,omitzero" json:"-"`
 	// Starting after this UUID for pagination
-	StartingAfter param.Opt[string] `query:"startingAfter,omitzero" format:"uuid" json:"-"`
+	StartingAfter param.Opt[string] `query:"starting_after,omitzero" format:"uuid" json:"-"`
 	paramObj
 }
 
