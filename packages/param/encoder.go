@@ -7,7 +7,7 @@ import (
 	"strings"
 	"time"
 
-	shimjson "github.com/stainless-sdks/stigg-go/internal/encoding/json"
+	shimjson "github.com/stiggio/stigg-go/internal/encoding/json"
 
 	"github.com/tidwall/sjson"
 )

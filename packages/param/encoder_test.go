@@ -5,7 +5,7 @@ import (
 	"testing"
 	"time"
 
-	"github.com/stainless-sdks/stigg-go/packages/param"
+	"github.com/stiggio/stigg-go/packages/param"
 )
 
 type Struct struct {

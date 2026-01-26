@@ -6,11 +6,11 @@ import (
 	"net/http"
 	"reflect"
 
-	"github.com/stainless-sdks/stigg-go/internal/apijson"
-	"github.com/stainless-sdks/stigg-go/internal/requestconfig"
-	"github.com/stainless-sdks/stigg-go/option"
-	"github.com/stainless-sdks/stigg-go/packages/param"
-	"github.com/stainless-sdks/stigg-go/packages/respjson"
+	"github.com/stiggio/stigg-go/internal/apijson"
+	"github.com/stiggio/stigg-go/internal/requestconfig"
+	"github.com/stiggio/stigg-go/option"
+	"github.com/stiggio/stigg-go/packages/param"
+	"github.com/stiggio/stigg-go/packages/respjson"
 )
 
 // aliased to make [param.APIUnion] private when embedding

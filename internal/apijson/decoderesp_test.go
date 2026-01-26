@@ -2,8 +2,8 @@ package apijson_test
 
 import (
 	"encoding/json"
-	"github.com/stainless-sdks/stigg-go/internal/apijson"
-	"github.com/stainless-sdks/stigg-go/packages/respjson"
+	"github.com/stiggio/stigg-go/internal/apijson"
+	"github.com/stiggio/stigg-go/packages/respjson"
 	"testing"
 )
 

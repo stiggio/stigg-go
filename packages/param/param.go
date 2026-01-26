@@ -2,7 +2,7 @@ package param
 
 import (
 	"encoding/json"
-	"github.com/stainless-sdks/stigg-go/internal/encoding/json/sentinel"
+	"github.com/stiggio/stigg-go/internal/encoding/json/sentinel"
 	"reflect"
 )
 

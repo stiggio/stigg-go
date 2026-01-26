@@ -9,10 +9,10 @@ import (
 	"net/http"
 	"slices"
 
-	"github.com/stainless-sdks/stigg-go/internal/apijson"
-	"github.com/stainless-sdks/stigg-go/internal/requestconfig"
-	"github.com/stainless-sdks/stigg-go/option"
-	"github.com/stainless-sdks/stigg-go/packages/param"
+	"github.com/stiggio/stigg-go/internal/apijson"
+	"github.com/stiggio/stigg-go/internal/requestconfig"
+	"github.com/stiggio/stigg-go/option"
+	"github.com/stiggio/stigg-go/packages/param"
 )
 
 // V1CustomerPaymentMethodService contains methods and other services that help
