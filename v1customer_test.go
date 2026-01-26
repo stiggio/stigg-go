@@ -27,7 +27,8 @@ func TestV1CustomerNewWithOptionalParams(t *testing.T) {
 		option.WithAPIKey("My API Key"),
 	)
 	_, err := client.V1.Customers.New(context.TODO(), stigg.V1CustomerNewParams{
-		ID: "id",
+		ID:       "id",
+		CouponID: stigg.String("couponId"),
 		DefaultPaymentMethod: stigg.V1CustomerNewParamsDefaultPaymentMethod{
 			BillingID:       stigg.String("billingId"),
 			CardExpiryMonth: stigg.Float(0),
@@ -95,7 +96,8 @@ func TestV1CustomerUpdateWithOptionalParams(t *testing.T) {
 		context.TODO(),
 		"x",
 		stigg.V1CustomerUpdateParams{
-			Email: stigg.String("dev@stainless.com"),
+			CouponID: stigg.String("couponId"),
+			Email:    stigg.String("dev@stainless.com"),
 			Integrations: []stigg.V1CustomerUpdateParamsIntegration{{
 				ID:               "id",
 				SyncedEntityID:   stigg.String("syncedEntityId"),
