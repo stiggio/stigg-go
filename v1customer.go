@@ -133,6 +133,8 @@ type CustomerResponseData struct {
 	CreatedAt time.Time `json:"createdAt,required" format:"date-time"`
 	// Timestamp of when the record was last updated
 	UpdatedAt time.Time `json:"updatedAt,required" format:"date-time"`
+	// Customer level coupon
+	CouponID string `json:"couponId,nullable"`
 	// The default payment method details
 	DefaultPaymentMethod CustomerResponseDataDefaultPaymentMethod `json:"defaultPaymentMethod,nullable"`
 	// The email of the customer
@@ -149,6 +151,7 @@ type CustomerResponseData struct {
 		ArchivedAt           respjson.Field
 		CreatedAt            respjson.Field
 		UpdatedAt            respjson.Field
+		CouponID             respjson.Field
 		DefaultPaymentMethod respjson.Field
 		Email                respjson.Field
 		Integrations         respjson.Field
@@ -250,6 +253,8 @@ type V1CustomerListResponseData struct {
 	CursorID string `json:"cursorId,required" format:"uuid"`
 	// Timestamp of when the record was last updated
 	UpdatedAt time.Time `json:"updatedAt,required" format:"date-time"`
+	// Customer level coupon
+	CouponID string `json:"couponId,nullable"`
 	// The default payment method details
 	DefaultPaymentMethod V1CustomerListResponseDataDefaultPaymentMethod `json:"defaultPaymentMethod,nullable"`
 	// The email of the customer
@@ -267,6 +272,7 @@ type V1CustomerListResponseData struct {
 		CreatedAt            respjson.Field
 		CursorID             respjson.Field
 		UpdatedAt            respjson.Field
+		CouponID             respjson.Field
 		DefaultPaymentMethod respjson.Field
 		Email                respjson.Field
 		Integrations         respjson.Field
@@ -344,6 +350,8 @@ func (r *V1CustomerListResponseDataIntegration) UnmarshalJSON(data []byte) error
 type V1CustomerNewParams struct {
 	// Customer slug
 	ID string `json:"id,required"`
+	// Customer level coupon
+	CouponID param.Opt[string] `json:"couponId,omitzero"`
 	// The email of the customer
 	Email param.Opt[string] `json:"email,omitzero" format:"email"`
 	// The name of the customer
@@ -428,6 +436,8 @@ func init() {
 }
 
 type V1CustomerUpdateParams struct {
+	// Customer level coupon
+	CouponID param.Opt[string] `json:"couponId,omitzero"`
 	// The email of the customer
 	Email param.Opt[string] `json:"email,omitzero" format:"email"`
 	// The name of the customer
