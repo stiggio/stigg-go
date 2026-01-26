@@ -8,8 +8,8 @@ import (
 	"os"
 	"slices"
 
-	"github.com/stainless-sdks/stigg-go/internal/requestconfig"
-	"github.com/stainless-sdks/stigg-go/option"
+	"github.com/stiggio/stigg-go/internal/requestconfig"
+	"github.com/stiggio/stigg-go/option"
 )
 
 // Client creates a struct with services and top level methods that help with

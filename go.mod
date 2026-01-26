@@ -1,4 +1,4 @@
-module github.com/stainless-sdks/stigg-go
+module github.com/stiggio/stigg-go
 
 go 1.22
 

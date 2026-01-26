@@ -14,7 +14,7 @@ import (
 	"encoding"
 	"encoding/base64"
 	"fmt"
-	"github.com/stainless-sdks/stigg-go/internal/encoding/json/shims"
+	"github.com/stiggio/stigg-go/internal/encoding/json/shims"
 	"reflect"
 	"strconv"
 	"strings"

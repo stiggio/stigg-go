@@ -1,7 +1,7 @@
 package sentinel
 
 import (
-	"github.com/stainless-sdks/stigg-go/internal/encoding/json/shims"
+	"github.com/stiggio/stigg-go/internal/encoding/json/shims"
 	"reflect"
 	"sync"
 )

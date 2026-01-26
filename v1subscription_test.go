@@ -9,9 +9,9 @@ import (
 	"testing"
 	"time"
 
-	"github.com/stainless-sdks/stigg-go"
-	"github.com/stainless-sdks/stigg-go/internal/testutil"
-	"github.com/stainless-sdks/stigg-go/option"
+	"github.com/stiggio/stigg-go"
+	"github.com/stiggio/stigg-go/internal/testutil"
+	"github.com/stiggio/stigg-go/option"
 )
 
 func TestV1SubscriptionNewWithOptionalParams(t *testing.T) {

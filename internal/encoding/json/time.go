@@ -2,7 +2,7 @@
 package json
 
 import (
-	"github.com/stainless-sdks/stigg-go/internal/encoding/json/shims"
+	"github.com/stiggio/stigg-go/internal/encoding/json/shims"
 	"reflect"
 	"time"
 )

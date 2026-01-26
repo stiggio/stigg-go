@@ -3,8 +3,8 @@ package respjson_test
 import (
 	"encoding/json"
 	"fmt"
-	"github.com/stainless-sdks/stigg-go/internal/apijson"
-	rj "github.com/stainless-sdks/stigg-go/packages/respjson"
+	"github.com/stiggio/stigg-go/internal/apijson"
+	rj "github.com/stiggio/stigg-go/packages/respjson"
 	"reflect"
 	"testing"
 )
