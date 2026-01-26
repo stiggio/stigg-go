@@ -1,8 +1,8 @@
 package paramutil
 
 import (
-	"github.com/stainless-sdks/stigg-go/packages/param"
-	"github.com/stainless-sdks/stigg-go/packages/respjson"
+	"github.com/stiggio/stigg-go/packages/param"
+	"github.com/stiggio/stigg-go/packages/respjson"
 )
 
 func AddrIfPresent[T comparable](v param.Opt[T]) *T {

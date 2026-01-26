@@ -2,7 +2,7 @@ package param_test
 
 import (
 	"encoding/json"
-	"github.com/stainless-sdks/stigg-go/packages/param"
+	"github.com/stiggio/stigg-go/packages/param"
 	"testing"
 )
 

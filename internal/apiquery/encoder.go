@@ -9,7 +9,7 @@ import (
 	"sync"
 	"time"
 
-	"github.com/stainless-sdks/stigg-go/packages/param"
+	"github.com/stiggio/stigg-go/packages/param"
 )
 
 var encoders sync.Map // map[reflect.Type]encoderFunc

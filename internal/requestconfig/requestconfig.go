@@ -18,10 +18,10 @@ import (
 	"strings"
 	"time"
 
-	"github.com/stainless-sdks/stigg-go/internal"
-	"github.com/stainless-sdks/stigg-go/internal/apierror"
-	"github.com/stainless-sdks/stigg-go/internal/apiform"
-	"github.com/stainless-sdks/stigg-go/internal/apiquery"
+	"github.com/stiggio/stigg-go/internal"
+	"github.com/stiggio/stigg-go/internal/apierror"
+	"github.com/stiggio/stigg-go/internal/apiform"
+	"github.com/stiggio/stigg-go/internal/apiquery"
 )
 
 func getDefaultHeaders() map[string]string {

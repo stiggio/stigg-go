@@ -3,8 +3,8 @@
 package stigg
 
 import (
-	"github.com/stainless-sdks/stigg-go/internal/apierror"
-	"github.com/stainless-sdks/stigg-go/packages/param"
+	"github.com/stiggio/stigg-go/internal/apierror"
+	"github.com/stiggio/stigg-go/packages/param"
 )
 
 // aliased to make [param.APIUnion] private when embedding

@@ -3,8 +3,8 @@ package apijson_test
 import (
 	"encoding/json"
 	"fmt"
-	"github.com/stainless-sdks/stigg-go/internal/apijson"
-	"github.com/stainless-sdks/stigg-go/packages/param"
+	"github.com/stiggio/stigg-go/internal/apijson"
+	"github.com/stiggio/stigg-go/packages/param"
 	"reflect"
 	"testing"
 )

@@ -9,10 +9,10 @@ import (
 	"net/http"
 	"slices"
 
-	"github.com/stainless-sdks/stigg-go/internal/apijson"
-	"github.com/stainless-sdks/stigg-go/internal/requestconfig"
-	"github.com/stainless-sdks/stigg-go/option"
-	"github.com/stainless-sdks/stigg-go/packages/respjson"
+	"github.com/stiggio/stigg-go/internal/apijson"
+	"github.com/stiggio/stigg-go/internal/requestconfig"
+	"github.com/stiggio/stigg-go/option"
+	"github.com/stiggio/stigg-go/packages/respjson"
 )
 
 // V1SubscriptionFutureUpdateService contains methods and other services that help
@@ -75,7 +75,7 @@ func (r *V1SubscriptionFutureUpdateCancelPendingPaymentResponse) UnmarshalJSON(d
 }
 
 type V1SubscriptionFutureUpdateCancelPendingPaymentResponseData struct {
-	// external id of the canceled future update subscription
+	// Subscription ID
 	ID string `json:"id,required"`
 	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
 	JSON struct {
@@ -110,7 +110,7 @@ func (r *V1SubscriptionFutureUpdateCancelScheduleResponse) UnmarshalJSON(data []
 }
 
 type V1SubscriptionFutureUpdateCancelScheduleResponseData struct {
-	// external id of the canceled future update subscription
+	// Subscription ID
 	ID string `json:"id,required"`
 	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
 	JSON struct {

@@ -1,7 +1,7 @@
 package apijson
 
 import (
-	"github.com/stainless-sdks/stigg-go/packages/respjson"
+	"github.com/stiggio/stigg-go/packages/respjson"
 	"reflect"
 )
 

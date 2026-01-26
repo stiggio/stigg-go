@@ -1,8 +1,8 @@
 package sentinel_test
 
 import (
-	"github.com/stainless-sdks/stigg-go/internal/encoding/json/sentinel"
-	"github.com/stainless-sdks/stigg-go/packages/param"
+	"github.com/stiggio/stigg-go/internal/encoding/json/sentinel"
+	"github.com/stiggio/stigg-go/packages/param"
 	"reflect"
 	"slices"
 	"testing"
