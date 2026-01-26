@@ -162,6 +162,7 @@ func (r *V1SubscriptionNewResponseData) UnmarshalJSON(data []byte) error {
 }
 
 type V1SubscriptionNewResponseDataSubscription struct {
+	// Subscription ID
 	ID string `json:"id,required"`
 	// Billing ID
 	BillingID string `json:"billingId,required"`
@@ -265,6 +266,7 @@ func (r *V1SubscriptionGetResponse) UnmarshalJSON(data []byte) error {
 }
 
 type V1SubscriptionGetResponseData struct {
+	// Subscription ID
 	ID string `json:"id,required"`
 	// Billing ID
 	BillingID string `json:"billingId,required"`
@@ -368,6 +370,7 @@ func (r *V1SubscriptionListResponse) UnmarshalJSON(data []byte) error {
 }
 
 type V1SubscriptionListResponseData struct {
+	// Subscription ID
 	ID string `json:"id,required"`
 	// Billing ID
 	BillingID string `json:"billingId,required"`
@@ -474,6 +477,7 @@ func (r *V1SubscriptionDelegateResponse) UnmarshalJSON(data []byte) error {
 }
 
 type V1SubscriptionDelegateResponseData struct {
+	// Subscription ID
 	ID string `json:"id,required"`
 	// Billing ID
 	BillingID string `json:"billingId,required"`
@@ -577,6 +581,7 @@ func (r *V1SubscriptionMigrateResponse) UnmarshalJSON(data []byte) error {
 }
 
 type V1SubscriptionMigrateResponseData struct {
+	// Subscription ID
 	ID string `json:"id,required"`
 	// Billing ID
 	BillingID string `json:"billingId,required"`
@@ -1004,6 +1009,7 @@ func (r *V1SubscriptionTransferResponse) UnmarshalJSON(data []byte) error {
 }
 
 type V1SubscriptionTransferResponseData struct {
+	// Subscription ID
 	ID string `json:"id,required"`
 	// Billing ID
 	BillingID string `json:"billingId,required"`
