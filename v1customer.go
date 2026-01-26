@@ -125,35 +125,35 @@ func (r *CustomerResponse) UnmarshalJSON(data []byte) error {
 }
 
 type CustomerResponseData struct {
+	// Customer slug
+	ID string `json:"id,required"`
 	// Timestamp of when the record was deleted
 	ArchivedAt time.Time `json:"archivedAt,required" format:"date-time"`
 	// Timestamp of when the record was created
 	CreatedAt time.Time `json:"createdAt,required" format:"date-time"`
-	// The email of the customer
-	Email string `json:"email,required" format:"email"`
-	// Customer slug
-	ExternalID string `json:"externalId,required"`
-	// The name of the customer
-	Name string `json:"name,required"`
 	// Timestamp of when the record was last updated
 	UpdatedAt time.Time `json:"updatedAt,required" format:"date-time"`
 	// The default payment method details
 	DefaultPaymentMethod CustomerResponseDataDefaultPaymentMethod `json:"defaultPaymentMethod,nullable"`
+	// The email of the customer
+	Email string `json:"email,nullable" format:"email"`
 	// List of integrations
 	Integrations []CustomerResponseDataIntegration `json:"integrations"`
 	// Additional metadata
 	Metadata map[string]string `json:"metadata"`
+	// The name of the customer
+	Name string `json:"name,nullable"`
 	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
 	JSON struct {
+		ID                   respjson.Field
 		ArchivedAt           respjson.Field
 		CreatedAt            respjson.Field
-		Email                respjson.Field
-		ExternalID           respjson.Field
-		Name                 respjson.Field
 		UpdatedAt            respjson.Field
 		DefaultPaymentMethod respjson.Field
+		Email                respjson.Field
 		Integrations         respjson.Field
 		Metadata             respjson.Field
+		Name                 respjson.Field
 		ExtraFields          map[string]respjson.Field
 		raw                  string
 	} `json:"-"`
@@ -240,38 +240,38 @@ func (r *V1CustomerListResponse) UnmarshalJSON(data []byte) error {
 }
 
 type V1CustomerListResponseData struct {
+	// Customer slug
+	ID string `json:"id,required"`
 	// Timestamp of when the record was deleted
 	ArchivedAt time.Time `json:"archivedAt,required" format:"date-time"`
 	// Timestamp of when the record was created
 	CreatedAt time.Time `json:"createdAt,required" format:"date-time"`
 	// Cursor ID for query pagination
 	CursorID string `json:"cursorId,required" format:"uuid"`
-	// The email of the customer
-	Email string `json:"email,required" format:"email"`
-	// Customer slug
-	ExternalID string `json:"externalId,required"`
-	// The name of the customer
-	Name string `json:"name,required"`
 	// Timestamp of when the record was last updated
 	UpdatedAt time.Time `json:"updatedAt,required" format:"date-time"`
 	// The default payment method details
 	DefaultPaymentMethod V1CustomerListResponseDataDefaultPaymentMethod `json:"defaultPaymentMethod,nullable"`
+	// The email of the customer
+	Email string `json:"email,nullable" format:"email"`
 	// List of integrations
 	Integrations []V1CustomerListResponseDataIntegration `json:"integrations"`
 	// Additional metadata
 	Metadata map[string]string `json:"metadata"`
+	// The name of the customer
+	Name string `json:"name,nullable"`
 	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
 	JSON struct {
+		ID                   respjson.Field
 		ArchivedAt           respjson.Field
 		CreatedAt            respjson.Field
 		CursorID             respjson.Field
-		Email                respjson.Field
-		ExternalID           respjson.Field
-		Name                 respjson.Field
 		UpdatedAt            respjson.Field
 		DefaultPaymentMethod respjson.Field
+		Email                respjson.Field
 		Integrations         respjson.Field
 		Metadata             respjson.Field
+		Name                 respjson.Field
 		ExtraFields          map[string]respjson.Field
 		raw                  string
 	} `json:"-"`
@@ -342,12 +342,12 @@ func (r *V1CustomerListResponseDataIntegration) UnmarshalJSON(data []byte) error
 }
 
 type V1CustomerNewParams struct {
-	// The email of the customer
-	Email param.Opt[string] `json:"email,omitzero,required" format:"email"`
-	// The name of the customer
-	Name param.Opt[string] `json:"name,omitzero,required"`
 	// Customer slug
-	ExternalID string `json:"externalId,required"`
+	ID string `json:"id,required"`
+	// The email of the customer
+	Email param.Opt[string] `json:"email,omitzero" format:"email"`
+	// The name of the customer
+	Name param.Opt[string] `json:"name,omitzero"`
 	// The default payment method details
 	DefaultPaymentMethod V1CustomerNewParamsDefaultPaymentMethod `json:"defaultPaymentMethod,omitzero"`
 	// List of integrations
