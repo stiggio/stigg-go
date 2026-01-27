@@ -15,6 +15,7 @@ import (
 	"github.com/stiggio/stigg-go/internal/apiquery"
 	"github.com/stiggio/stigg-go/internal/requestconfig"
 	"github.com/stiggio/stigg-go/option"
+	"github.com/stiggio/stigg-go/packages/pagination"
 	"github.com/stiggio/stigg-go/packages/param"
 	"github.com/stiggio/stigg-go/packages/respjson"
 )
@@ -75,11 +76,26 @@ func (r *V1CustomerService) Update(ctx context.Context, id string, body V1Custom
 }
 
 // Get a list of Customers
-func (r *V1CustomerService) List(ctx context.Context, query V1CustomerListParams, opts ...option.RequestOption) (res *V1CustomerListResponse, err error) {
+func (r *V1CustomerService) List(ctx context.Context, query V1CustomerListParams, opts ...option.RequestOption) (res *pagination.MyCursorIDPage[V1CustomerListResponse], err error) {
+	var raw *http.Response
 	opts = slices.Concat(r.Options, opts)
+	opts = append([]option.RequestOption{option.WithResponseInto(&raw)}, opts...)
 	path := "api/v1/customers"
-	err = requestconfig.ExecuteNewRequest(ctx, http.MethodGet, path, query, &res, opts...)
-	return
+	cfg, err := requestconfig.NewRequestConfig(ctx, http.MethodGet, path, query, &res, opts...)
+	if err != nil {
+		return nil, err
+	}
+	err = cfg.Execute()
+	if err != nil {
+		return nil, err
+	}
+	res.SetPageConfig(cfg, raw)
+	return res, nil
+}
+
+// Get a list of Customers
+func (r *V1CustomerService) ListAutoPaging(ctx context.Context, query V1CustomerListParams, opts ...option.RequestOption) *pagination.MyCursorIDPageAutoPager[V1CustomerListResponse] {
+	return pagination.NewMyCursorIDPageAutoPager(r.List(ctx, query, opts...))
 }
 
 // Perform archive on a Customer
@@ -225,25 +241,6 @@ func (r *CustomerResponseDataIntegration) UnmarshalJSON(data []byte) error {
 }
 
 type V1CustomerListResponse struct {
-	Data []V1CustomerListResponseData `json:"data,required"`
-	// Pagination information including cursors for navigation
-	Pagination V1CustomerListResponsePagination `json:"pagination,required"`
-	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
-	JSON struct {
-		Data        respjson.Field
-		Pagination  respjson.Field
-		ExtraFields map[string]respjson.Field
-		raw         string
-	} `json:"-"`
-}
-
-// Returns the unmodified JSON received from the API
-func (r V1CustomerListResponse) RawJSON() string { return r.JSON.raw }
-func (r *V1CustomerListResponse) UnmarshalJSON(data []byte) error {
-	return apijson.UnmarshalRoot(data, r)
-}
-
-type V1CustomerListResponseData struct {
 	// Customer slug
 	ID string `json:"id,required"`
 	// Timestamp of when the record was deleted
@@ -255,11 +252,11 @@ type V1CustomerListResponseData struct {
 	// Customer level coupon
 	CouponID string `json:"couponId,nullable"`
 	// The default payment method details
-	DefaultPaymentMethod V1CustomerListResponseDataDefaultPaymentMethod `json:"defaultPaymentMethod,nullable"`
+	DefaultPaymentMethod V1CustomerListResponseDefaultPaymentMethod `json:"defaultPaymentMethod,nullable"`
 	// The email of the customer
 	Email string `json:"email,nullable" format:"email"`
 	// List of integrations
-	Integrations []V1CustomerListResponseDataIntegration `json:"integrations"`
+	Integrations []V1CustomerListResponseIntegration `json:"integrations"`
 	// Additional metadata
 	Metadata map[string]string `json:"metadata"`
 	// The name of the customer
@@ -282,13 +279,13 @@ type V1CustomerListResponseData struct {
 }
 
 // Returns the unmodified JSON received from the API
-func (r V1CustomerListResponseData) RawJSON() string { return r.JSON.raw }
-func (r *V1CustomerListResponseData) UnmarshalJSON(data []byte) error {
+func (r V1CustomerListResponse) RawJSON() string { return r.JSON.raw }
+func (r *V1CustomerListResponse) UnmarshalJSON(data []byte) error {
 	return apijson.UnmarshalRoot(data, r)
 }
 
 // The default payment method details
-type V1CustomerListResponseDataDefaultPaymentMethod struct {
+type V1CustomerListResponseDefaultPaymentMethod struct {
 	// The default payment method id
 	BillingID string `json:"billingId,required"`
 	// The expiration month of the default payment method
@@ -314,12 +311,12 @@ type V1CustomerListResponseDataDefaultPaymentMethod struct {
 }
 
 // Returns the unmodified JSON received from the API
-func (r V1CustomerListResponseDataDefaultPaymentMethod) RawJSON() string { return r.JSON.raw }
-func (r *V1CustomerListResponseDataDefaultPaymentMethod) UnmarshalJSON(data []byte) error {
+func (r V1CustomerListResponseDefaultPaymentMethod) RawJSON() string { return r.JSON.raw }
+func (r *V1CustomerListResponseDefaultPaymentMethod) UnmarshalJSON(data []byte) error {
 	return apijson.UnmarshalRoot(data, r)
 }
 
-type V1CustomerListResponseDataIntegration struct {
+type V1CustomerListResponseIntegration struct {
 	// Integration details
 	ID string `json:"id,required"`
 	// Synced entity id
@@ -340,30 +337,8 @@ type V1CustomerListResponseDataIntegration struct {
 }
 
 // Returns the unmodified JSON received from the API
-func (r V1CustomerListResponseDataIntegration) RawJSON() string { return r.JSON.raw }
-func (r *V1CustomerListResponseDataIntegration) UnmarshalJSON(data []byte) error {
-	return apijson.UnmarshalRoot(data, r)
-}
-
-// Pagination information including cursors for navigation
-type V1CustomerListResponsePagination struct {
-	// Cursor to fetch the next page (use with after parameter), null if no more pages
-	Next string `json:"next,required" format:"uuid"`
-	// Cursor to fetch the previous page (use with before parameter), null if no
-	// previous pages
-	Prev string `json:"prev,required" format:"uuid"`
-	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
-	JSON struct {
-		Next        respjson.Field
-		Prev        respjson.Field
-		ExtraFields map[string]respjson.Field
-		raw         string
-	} `json:"-"`
-}
-
-// Returns the unmodified JSON received from the API
-func (r V1CustomerListResponsePagination) RawJSON() string { return r.JSON.raw }
-func (r *V1CustomerListResponsePagination) UnmarshalJSON(data []byte) error {
+func (r V1CustomerListResponseIntegration) RawJSON() string { return r.JSON.raw }
+func (r *V1CustomerListResponseIntegration) UnmarshalJSON(data []byte) error {
 	return apijson.UnmarshalRoot(data, r)
 }
 

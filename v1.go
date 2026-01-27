@@ -231,7 +231,7 @@ type V1NewUsageParamsUsage struct {
 	// Timestamp of when the record was created
 	CreatedAt param.Opt[time.Time] `json:"createdAt,omitzero" format:"date-time"`
 	// Additional dimensions for the usage report
-	Dimensions map[string]V1NewUsageParamsUsageDimensionUnion `json:"dimensions,omitzero"`
+	Dimensions map[string]string `json:"dimensions,omitzero"`
 	// The method by which the usage value should be updated
 	//
 	// Any of "DELTA", "SET".
@@ -251,32 +251,4 @@ func init() {
 	apijson.RegisterFieldValidator[V1NewUsageParamsUsage](
 		"updateBehavior", "DELTA", "SET",
 	)
-}
-
-// Only one field can be non-zero.
-//
-// Use [param.IsOmitted] to confirm if a field is set.
-type V1NewUsageParamsUsageDimensionUnion struct {
-	OfString param.Opt[string]  `json:",omitzero,inline"`
-	OfFloat  param.Opt[float64] `json:",omitzero,inline"`
-	OfBool   param.Opt[bool]    `json:",omitzero,inline"`
-	paramUnion
-}
-
-func (u V1NewUsageParamsUsageDimensionUnion) MarshalJSON() ([]byte, error) {
-	return param.MarshalUnion(u, u.OfString, u.OfFloat, u.OfBool)
-}
-func (u *V1NewUsageParamsUsageDimensionUnion) UnmarshalJSON(data []byte) error {
-	return apijson.UnmarshalRoot(data, u)
-}
-
-func (u *V1NewUsageParamsUsageDimensionUnion) asAny() any {
-	if !param.IsOmitted(u.OfString) {
-		return &u.OfString.Value
-	} else if !param.IsOmitted(u.OfFloat) {
-		return &u.OfFloat.Value
-	} else if !param.IsOmitted(u.OfBool) {
-		return &u.OfBool.Value
-	}
-	return nil
 }
