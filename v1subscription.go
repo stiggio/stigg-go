@@ -355,9 +355,12 @@ func (r *V1SubscriptionGetResponseData) UnmarshalJSON(data []byte) error {
 
 type V1SubscriptionListResponse struct {
 	Data []V1SubscriptionListResponseData `json:"data,required"`
+	// Pagination information including cursors for navigation
+	Pagination V1SubscriptionListResponsePagination `json:"pagination,required"`
 	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
 	JSON struct {
 		Data        respjson.Field
+		Pagination  respjson.Field
 		ExtraFields map[string]respjson.Field
 		raw         string
 	} `json:"-"`
@@ -376,8 +379,6 @@ type V1SubscriptionListResponseData struct {
 	BillingID string `json:"billingId,required"`
 	// Created at
 	CreatedAt time.Time `json:"createdAt,required" format:"date-time"`
-	// Cursor ID for query pagination
-	CursorID string `json:"cursorId,required" format:"uuid"`
 	// Customer ID
 	CustomerID string `json:"customerId,required"`
 	// Payment collection
@@ -431,7 +432,6 @@ type V1SubscriptionListResponseData struct {
 		ID                        respjson.Field
 		BillingID                 respjson.Field
 		CreatedAt                 respjson.Field
-		CursorID                  respjson.Field
 		CustomerID                respjson.Field
 		PaymentCollection         respjson.Field
 		PlanID                    respjson.Field
@@ -457,6 +457,28 @@ type V1SubscriptionListResponseData struct {
 // Returns the unmodified JSON received from the API
 func (r V1SubscriptionListResponseData) RawJSON() string { return r.JSON.raw }
 func (r *V1SubscriptionListResponseData) UnmarshalJSON(data []byte) error {
+	return apijson.UnmarshalRoot(data, r)
+}
+
+// Pagination information including cursors for navigation
+type V1SubscriptionListResponsePagination struct {
+	// Cursor to fetch the next page (use with after parameter), null if no more pages
+	Next string `json:"next,required" format:"uuid"`
+	// Cursor to fetch the previous page (use with before parameter), null if no
+	// previous pages
+	Prev string `json:"prev,required" format:"uuid"`
+	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
+	JSON struct {
+		Next        respjson.Field
+		Prev        respjson.Field
+		ExtraFields map[string]respjson.Field
+		raw         string
+	} `json:"-"`
+}
+
+// Returns the unmodified JSON received from the API
+func (r V1SubscriptionListResponsePagination) RawJSON() string { return r.JSON.raw }
+func (r *V1SubscriptionListResponsePagination) UnmarshalJSON(data []byte) error {
 	return apijson.UnmarshalRoot(data, r)
 }
 
@@ -1188,14 +1210,14 @@ func init() {
 }
 
 type V1SubscriptionListParams struct {
+	// Starting after this UUID for pagination
+	After param.Opt[string] `query:"after,omitzero" format:"uuid" json:"-"`
+	// Ending before this UUID for pagination
+	Before param.Opt[string] `query:"before,omitzero" format:"uuid" json:"-"`
 	// Filter by customer ID
 	CustomerID param.Opt[string] `query:"customerId,omitzero" json:"-"`
-	// Ending before this UUID for pagination
-	EndingBefore param.Opt[string] `query:"endingBefore,omitzero" format:"uuid" json:"-"`
 	// Items per page
 	Limit param.Opt[int64] `query:"limit,omitzero" json:"-"`
-	// Starting after this UUID for pagination
-	StartingAfter param.Opt[string] `query:"startingAfter,omitzero" format:"uuid" json:"-"`
 	// Filter by subscription status (comma-separated for multiple statuses, e.g.,
 	// ACTIVE,IN_TRIAL)
 	Status param.Opt[string] `query:"status,omitzero" json:"-"`
