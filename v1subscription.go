@@ -1399,9 +1399,12 @@ func (r *V1SubscriptionPreviewParamsAppliedCouponDiscount) UnmarshalJSON(data []
 	return apijson.UnmarshalRoot(data, r)
 }
 
-// The property Amount is required.
+// The properties Amount, Currency are required.
 type V1SubscriptionPreviewParamsAppliedCouponDiscountAmountsOff struct {
+	// The price amount
 	Amount float64 `json:"amount,required"`
+	// The price currency
+	//
 	// Any of "usd", "aed", "all", "amd", "ang", "aud", "awg", "azn", "bam", "bbd",
 	// "bdt", "bgn", "bif", "bmd", "bnd", "bsd", "bwp", "byn", "bzd", "brl", "cad",
 	// "cdf", "chf", "cny", "czk", "dkk", "dop", "dzd", "egp", "etb", "eur", "fjd",
@@ -1413,7 +1416,7 @@ type V1SubscriptionPreviewParamsAppliedCouponDiscountAmountsOff struct {
 	// "sek", "sgd", "sle", "sll", "sos", "szl", "thb", "tjs", "top", "try", "ttd",
 	// "tzs", "uah", "uzs", "vnd", "vuv", "wst", "xaf", "xcd", "yer", "zar", "zmw",
 	// "clp", "djf", "gnf", "ugx", "pyg", "xof", "xpf".
-	Currency string `json:"currency,omitzero"`
+	Currency string `json:"currency,omitzero,required"`
 	paramObj
 }
 
