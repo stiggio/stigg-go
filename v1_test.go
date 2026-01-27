@@ -69,10 +69,8 @@ func TestV1NewUsage(t *testing.T) {
 			FeatureID:  "featureId",
 			Value:      -9007199254740991,
 			CreatedAt:  stigg.Time(time.Now()),
-			Dimensions: map[string]stigg.V1NewUsageParamsUsageDimensionUnion{
-				"foo": {
-					OfString: stigg.String("string"),
-				},
+			Dimensions: map[string]string{
+				"foo": "string",
 			},
 			ResourceID:     stigg.String("resourceId"),
 			UpdateBehavior: "DELTA",
