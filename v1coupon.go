@@ -282,9 +282,12 @@ func (r *V1CouponGetResponseDataAmountsOff) UnmarshalJSON(data []byte) error {
 
 type V1CouponListResponse struct {
 	Data []V1CouponListResponseData `json:"data,required"`
+	// Pagination information including cursors for navigation
+	Pagination V1CouponListResponsePagination `json:"pagination,required"`
 	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
 	JSON struct {
 		Data        respjson.Field
+		Pagination  respjson.Field
 		ExtraFields map[string]respjson.Field
 		raw         string
 	} `json:"-"`
@@ -307,8 +310,6 @@ type V1CouponListResponseData struct {
 	BillingLinkURL string `json:"billingLinkUrl,required"`
 	// Timestamp of when the record was created
 	CreatedAt time.Time `json:"createdAt,required" format:"date-time"`
-	// Cursor ID for query pagination
-	CursorID string `json:"cursorId,required" format:"uuid"`
 	// Description of the coupon
 	Description string `json:"description,required"`
 	// Duration of the coupon validity in months
@@ -338,7 +339,6 @@ type V1CouponListResponseData struct {
 		BillingID        respjson.Field
 		BillingLinkURL   respjson.Field
 		CreatedAt        respjson.Field
-		CursorID         respjson.Field
 		Description      respjson.Field
 		DurationInMonths respjson.Field
 		Name             respjson.Field
@@ -387,6 +387,28 @@ type V1CouponListResponseDataAmountsOff struct {
 // Returns the unmodified JSON received from the API
 func (r V1CouponListResponseDataAmountsOff) RawJSON() string { return r.JSON.raw }
 func (r *V1CouponListResponseDataAmountsOff) UnmarshalJSON(data []byte) error {
+	return apijson.UnmarshalRoot(data, r)
+}
+
+// Pagination information including cursors for navigation
+type V1CouponListResponsePagination struct {
+	// Cursor to fetch the next page (use with after parameter), null if no more pages
+	Next string `json:"next,required" format:"uuid"`
+	// Cursor to fetch the previous page (use with before parameter), null if no
+	// previous pages
+	Prev string `json:"prev,required" format:"uuid"`
+	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
+	JSON struct {
+		Next        respjson.Field
+		Prev        respjson.Field
+		ExtraFields map[string]respjson.Field
+		raw         string
+	} `json:"-"`
+}
+
+// Returns the unmodified JSON received from the API
+func (r V1CouponListResponsePagination) RawJSON() string { return r.JSON.raw }
+func (r *V1CouponListResponsePagination) UnmarshalJSON(data []byte) error {
 	return apijson.UnmarshalRoot(data, r)
 }
 
@@ -452,12 +474,12 @@ func init() {
 }
 
 type V1CouponListParams struct {
+	// Starting after this UUID for pagination
+	After param.Opt[string] `query:"after,omitzero" format:"uuid" json:"-"`
 	// Ending before this UUID for pagination
-	EndingBefore param.Opt[string] `query:"endingBefore,omitzero" format:"uuid" json:"-"`
+	Before param.Opt[string] `query:"before,omitzero" format:"uuid" json:"-"`
 	// Items per page
 	Limit param.Opt[int64] `query:"limit,omitzero" json:"-"`
-	// Starting after this UUID for pagination
-	StartingAfter param.Opt[string] `query:"startingAfter,omitzero" format:"uuid" json:"-"`
 	paramObj
 }
 

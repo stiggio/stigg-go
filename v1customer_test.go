@@ -132,9 +132,9 @@ func TestV1CustomerListWithOptionalParams(t *testing.T) {
 		option.WithAPIKey("My API Key"),
 	)
 	_, err := client.V1.Customers.List(context.TODO(), stigg.V1CustomerListParams{
-		EndingBefore:  stigg.String("182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e"),
-		Limit:         stigg.Int(1),
-		StartingAfter: stigg.String("182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e"),
+		After:  stigg.String("182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e"),
+		Before: stigg.String("182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e"),
+		Limit:  stigg.Int(1),
 	})
 	if err != nil {
 		var apierr *stigg.Error
