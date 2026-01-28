@@ -39,7 +39,7 @@ func NewV1CouponService(opts ...option.RequestOption) (r V1CouponService) {
 	return
 }
 
-// Create a new Coupon
+// Create coupon
 func (r *V1CouponService) New(ctx context.Context, body V1CouponNewParams, opts ...option.RequestOption) (res *V1CouponNewResponse, err error) {
 	opts = slices.Concat(r.Options, opts)
 	path := "api/v1/coupons"
@@ -47,7 +47,7 @@ func (r *V1CouponService) New(ctx context.Context, body V1CouponNewParams, opts 
 	return
 }
 
-// Get a single Coupon by id
+// Get a single coupon by ID
 func (r *V1CouponService) Get(ctx context.Context, id string, opts ...option.RequestOption) (res *V1CouponGetResponse, err error) {
 	opts = slices.Concat(r.Options, opts)
 	if id == "" {
@@ -59,7 +59,7 @@ func (r *V1CouponService) Get(ctx context.Context, id string, opts ...option.Req
 	return
 }
 
-// Get a list of Coupons
+// Get a list of coupons
 func (r *V1CouponService) List(ctx context.Context, query V1CouponListParams, opts ...option.RequestOption) (res *pagination.MyCursorIDPage[V1CouponListResponse], err error) {
 	var raw *http.Response
 	opts = slices.Concat(r.Options, opts)
@@ -77,12 +77,14 @@ func (r *V1CouponService) List(ctx context.Context, query V1CouponListParams, op
 	return res, nil
 }
 
-// Get a list of Coupons
+// Get a list of coupons
 func (r *V1CouponService) ListAutoPaging(ctx context.Context, query V1CouponListParams, opts ...option.RequestOption) *pagination.MyCursorIDPageAutoPager[V1CouponListResponse] {
 	return pagination.NewMyCursorIDPageAutoPager(r.List(ctx, query, opts...))
 }
 
+// Response object
 type V1CouponNewResponse struct {
+	// Discount instrument with percentage or fixed amount
 	Data V1CouponNewResponseData `json:"data,required"`
 	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
 	JSON struct {
@@ -98,6 +100,7 @@ func (r *V1CouponNewResponse) UnmarshalJSON(data []byte) error {
 	return apijson.UnmarshalRoot(data, r)
 }
 
+// Discount instrument with percentage or fixed amount
 type V1CouponNewResponseData struct {
 	// The unique identifier for the entity
 	ID string `json:"id,required"`
@@ -157,6 +160,7 @@ func (r *V1CouponNewResponseData) UnmarshalJSON(data []byte) error {
 	return apijson.UnmarshalRoot(data, r)
 }
 
+// Monetary amount with currency
 type V1CouponNewResponseDataAmountsOff struct {
 	// The price amount
 	Amount float64 `json:"amount,required"`
@@ -189,7 +193,9 @@ func (r *V1CouponNewResponseDataAmountsOff) UnmarshalJSON(data []byte) error {
 	return apijson.UnmarshalRoot(data, r)
 }
 
+// Response object
 type V1CouponGetResponse struct {
+	// Discount instrument with percentage or fixed amount
 	Data V1CouponGetResponseData `json:"data,required"`
 	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
 	JSON struct {
@@ -205,6 +211,7 @@ func (r *V1CouponGetResponse) UnmarshalJSON(data []byte) error {
 	return apijson.UnmarshalRoot(data, r)
 }
 
+// Discount instrument with percentage or fixed amount
 type V1CouponGetResponseData struct {
 	// The unique identifier for the entity
 	ID string `json:"id,required"`
@@ -264,6 +271,7 @@ func (r *V1CouponGetResponseData) UnmarshalJSON(data []byte) error {
 	return apijson.UnmarshalRoot(data, r)
 }
 
+// Monetary amount with currency
 type V1CouponGetResponseDataAmountsOff struct {
 	// The price amount
 	Amount float64 `json:"amount,required"`
@@ -296,6 +304,7 @@ func (r *V1CouponGetResponseDataAmountsOff) UnmarshalJSON(data []byte) error {
 	return apijson.UnmarshalRoot(data, r)
 }
 
+// Discount instrument with percentage or fixed amount
 type V1CouponListResponse struct {
 	// The unique identifier for the entity
 	ID string `json:"id,required"`
@@ -355,6 +364,7 @@ func (r *V1CouponListResponse) UnmarshalJSON(data []byte) error {
 	return apijson.UnmarshalRoot(data, r)
 }
 
+// Monetary amount with currency
 type V1CouponListResponseAmountsOff struct {
 	// The price amount
 	Amount float64 `json:"amount,required"`
@@ -438,6 +448,8 @@ func (r *V1CouponNewParams) UnmarshalJSON(data []byte) error {
 	return apijson.UnmarshalRoot(data, r)
 }
 
+// Monetary amount with currency
+//
 // The properties Amount, Currency are required.
 type V1CouponNewParamsAmountsOff struct {
 	// The price amount
@@ -474,11 +486,11 @@ func init() {
 }
 
 type V1CouponListParams struct {
-	// Starting after this UUID for pagination
+	// Return items that come after this cursor
 	After param.Opt[string] `query:"after,omitzero" format:"uuid" json:"-"`
-	// Ending before this UUID for pagination
+	// Return items that come before this cursor
 	Before param.Opt[string] `query:"before,omitzero" format:"uuid" json:"-"`
-	// Items per page
+	// Maximum number of items to return
 	Limit param.Opt[int64] `query:"limit,omitzero" json:"-"`
 	paramObj
 }

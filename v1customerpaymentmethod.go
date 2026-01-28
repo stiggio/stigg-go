@@ -34,7 +34,7 @@ func NewV1CustomerPaymentMethodService(opts ...option.RequestOption) (r V1Custom
 	return
 }
 
-// Perform payment-method attachment on a Customer
+// Attach payment method
 func (r *V1CustomerPaymentMethodService) Attach(ctx context.Context, id string, body V1CustomerPaymentMethodAttachParams, opts ...option.RequestOption) (res *CustomerResponse, err error) {
 	opts = slices.Concat(r.Options, opts)
 	if id == "" {
@@ -46,7 +46,7 @@ func (r *V1CustomerPaymentMethodService) Attach(ctx context.Context, id string, 
 	return
 }
 
-// Perform payment-method detachment on a Customer
+// Detach payment method
 func (r *V1CustomerPaymentMethodService) Detach(ctx context.Context, id string, opts ...option.RequestOption) (res *CustomerResponse, err error) {
 	opts = slices.Concat(r.Options, opts)
 	if id == "" {
@@ -68,6 +68,8 @@ type V1CustomerPaymentMethodAttachParams struct {
 	// Any of "AUTH0", "ZUORA", "STRIPE", "HUBSPOT", "AWS_MARKETPLACE", "SNOWFLAKE",
 	// "SALESFORCE", "BIG_QUERY", "OPEN_FGA", "APP_STORE".
 	VendorIdentifier V1CustomerPaymentMethodAttachParamsVendorIdentifier `json:"vendorIdentifier,omitzero,required"`
+	// Customers selected currency
+	//
 	// Any of "usd", "aed", "all", "amd", "ang", "aud", "awg", "azn", "bam", "bbd",
 	// "bdt", "bgn", "bif", "bmd", "bnd", "bsd", "bwp", "byn", "bzd", "brl", "cad",
 	// "cdf", "chf", "cny", "czk", "dkk", "dop", "dzd", "egp", "etb", "eur", "fjd",
@@ -107,6 +109,7 @@ const (
 	V1CustomerPaymentMethodAttachParamsVendorIdentifierAppStore       V1CustomerPaymentMethodAttachParamsVendorIdentifier = "APP_STORE"
 )
 
+// Customers selected currency
 type V1CustomerPaymentMethodAttachParamsBillingCurrency string
 
 const (

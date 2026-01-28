@@ -40,7 +40,7 @@ func NewV1Service(opts ...option.RequestOption) (r V1Service) {
 	return
 }
 
-// Create events
+// Report usage events
 func (r *V1Service) NewEvent(ctx context.Context, body V1NewEventParams, opts ...option.RequestOption) (res *V1NewEventResponse, err error) {
 	opts = slices.Concat(r.Options, opts)
 	path := "api/v1/events"
@@ -48,7 +48,7 @@ func (r *V1Service) NewEvent(ctx context.Context, body V1NewEventParams, opts ..
 	return
 }
 
-// Create a new Usage
+// Report usage measurements
 func (r *V1Service) NewUsage(ctx context.Context, body V1NewUsageParams, opts ...option.RequestOption) (res *V1NewUsageResponse, err error) {
 	opts = slices.Concat(r.Options, opts)
 	path := "api/v1/usage"
@@ -56,7 +56,10 @@ func (r *V1Service) NewUsage(ctx context.Context, body V1NewUsageParams, opts ..
 	return
 }
 
+// Response object
 type V1NewEventResponse struct {
+	// Empty success response confirming that events were successfully ingested and
+	// queued for processing by Stigg's metering system.
 	Data any `json:"data,required"`
 	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
 	JSON struct {
@@ -72,7 +75,10 @@ func (r *V1NewEventResponse) UnmarshalJSON(data []byte) error {
 	return apijson.UnmarshalRoot(data, r)
 }
 
+// Response containing reported usage measurements with current usage values,
+// period information, and reset dates for each measurement.
 type V1NewUsageResponse struct {
+	// Array of usage measurements with current values and period info
 	Data []V1NewUsageResponseData `json:"data,required"`
 	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
 	JSON struct {
@@ -88,6 +94,7 @@ func (r *V1NewUsageResponse) UnmarshalJSON(data []byte) error {
 	return apijson.UnmarshalRoot(data, r)
 }
 
+// Recorded usage with period info
 type V1NewUsageResponseData struct {
 	// Unique identifier for the entity
 	ID string `json:"id,required"`
@@ -151,6 +158,8 @@ func (r *V1NewEventParams) UnmarshalJSON(data []byte) error {
 	return apijson.UnmarshalRoot(data, r)
 }
 
+// Raw usage event
+//
 // The properties CustomerID, EventName, IdempotencyKey are required.
 type V1NewEventParamsEvent struct {
 	// Customer id
@@ -218,6 +227,8 @@ func (r *V1NewUsageParams) UnmarshalJSON(data []byte) error {
 	return apijson.UnmarshalRoot(data, r)
 }
 
+// Single usage measurement
+//
 // The properties CustomerID, FeatureID, Value are required.
 type V1NewUsageParamsUsage struct {
 	// Customer id
