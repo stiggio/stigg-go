@@ -4,7 +4,6 @@ package pagination
 
 import (
 	"net/http"
-	"reflect"
 
 	"github.com/stiggio/stigg-go/internal/apijson"
 	"github.com/stiggio/stigg-go/internal/requestconfig"
@@ -19,11 +18,31 @@ type paramUnion = param.APIUnion
 // aliased to make [param.APIObject] private when embedding
 type paramObj = param.APIObject
 
+type MyCursorIDPagePagination struct {
+	Next string `json:"next"`
+	Prev string `json:"prev"`
+	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
+	JSON struct {
+		Next        respjson.Field
+		Prev        respjson.Field
+		ExtraFields map[string]respjson.Field
+		raw         string
+	} `json:"-"`
+}
+
+// Returns the unmodified JSON received from the API
+func (r MyCursorIDPagePagination) RawJSON() string { return r.JSON.raw }
+func (r *MyCursorIDPagePagination) UnmarshalJSON(data []byte) error {
+	return apijson.UnmarshalRoot(data, r)
+}
+
 type MyCursorIDPage[T any] struct {
-	Data []T `json:"data"`
+	Data       []T                      `json:"data"`
+	Pagination MyCursorIDPagePagination `json:"pagination"`
 	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
 	JSON struct {
 		Data        respjson.Field
+		Pagination  respjson.Field
 		ExtraFields map[string]respjson.Field
 		raw         string
 	} `json:"-"`
@@ -44,16 +63,25 @@ func (r *MyCursorIDPage[T]) GetNextPage() (res *MyCursorIDPage[T], err error) {
 	if len(r.Data) == 0 {
 		return nil, nil
 	}
-	items := r.Data
-	if items == nil || len(items) == 0 {
-		return nil, nil
-	}
 	cfg := r.cfg.Clone(r.cfg.Context)
-	value := reflect.ValueOf(items[len(items)-1])
-	field := value.FieldByName("CursorID")
-	err = cfg.Apply(option.WithQuery("starting_after", field.Interface().(string)))
-	if err != nil {
-		return nil, err
+	if r.cfg.Request.URL.Query().Has("before") {
+		next := r.Pagination.Prev
+		if next == "" {
+			return nil, nil
+		}
+		err = cfg.Apply(option.WithQuery("before", next))
+		if err != nil {
+			return nil, err
+		}
+	} else {
+		next := r.Pagination.Next
+		if next == "" {
+			return nil, nil
+		}
+		err = cfg.Apply(option.WithQuery("after", next))
+		if err != nil {
+			return nil, err
+		}
 	}
 	var raw *http.Response
 	cfg.ResponseInto = &raw

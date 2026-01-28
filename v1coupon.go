@@ -15,6 +15,7 @@ import (
 	"github.com/stiggio/stigg-go/internal/apiquery"
 	"github.com/stiggio/stigg-go/internal/requestconfig"
 	"github.com/stiggio/stigg-go/option"
+	"github.com/stiggio/stigg-go/packages/pagination"
 	"github.com/stiggio/stigg-go/packages/param"
 	"github.com/stiggio/stigg-go/packages/respjson"
 )
@@ -59,11 +60,26 @@ func (r *V1CouponService) Get(ctx context.Context, id string, opts ...option.Req
 }
 
 // Get a list of Coupons
-func (r *V1CouponService) List(ctx context.Context, query V1CouponListParams, opts ...option.RequestOption) (res *V1CouponListResponse, err error) {
+func (r *V1CouponService) List(ctx context.Context, query V1CouponListParams, opts ...option.RequestOption) (res *pagination.MyCursorIDPage[V1CouponListResponse], err error) {
+	var raw *http.Response
 	opts = slices.Concat(r.Options, opts)
+	opts = append([]option.RequestOption{option.WithResponseInto(&raw)}, opts...)
 	path := "api/v1/coupons"
-	err = requestconfig.ExecuteNewRequest(ctx, http.MethodGet, path, query, &res, opts...)
-	return
+	cfg, err := requestconfig.NewRequestConfig(ctx, http.MethodGet, path, query, &res, opts...)
+	if err != nil {
+		return nil, err
+	}
+	err = cfg.Execute()
+	if err != nil {
+		return nil, err
+	}
+	res.SetPageConfig(cfg, raw)
+	return res, nil
+}
+
+// Get a list of Coupons
+func (r *V1CouponService) ListAutoPaging(ctx context.Context, query V1CouponListParams, opts ...option.RequestOption) *pagination.MyCursorIDPageAutoPager[V1CouponListResponse] {
+	return pagination.NewMyCursorIDPageAutoPager(r.List(ctx, query, opts...))
 }
 
 type V1CouponNewResponse struct {
@@ -281,29 +297,10 @@ func (r *V1CouponGetResponseDataAmountsOff) UnmarshalJSON(data []byte) error {
 }
 
 type V1CouponListResponse struct {
-	Data []V1CouponListResponseData `json:"data,required"`
-	// Pagination information including cursors for navigation
-	Pagination V1CouponListResponsePagination `json:"pagination,required"`
-	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
-	JSON struct {
-		Data        respjson.Field
-		Pagination  respjson.Field
-		ExtraFields map[string]respjson.Field
-		raw         string
-	} `json:"-"`
-}
-
-// Returns the unmodified JSON received from the API
-func (r V1CouponListResponse) RawJSON() string { return r.JSON.raw }
-func (r *V1CouponListResponse) UnmarshalJSON(data []byte) error {
-	return apijson.UnmarshalRoot(data, r)
-}
-
-type V1CouponListResponseData struct {
 	// The unique identifier for the entity
 	ID string `json:"id,required"`
 	// Fixed amount discounts in different currencies
-	AmountsOff []V1CouponListResponseDataAmountsOff `json:"amountsOff,required"`
+	AmountsOff []V1CouponListResponseAmountsOff `json:"amountsOff,required"`
 	// The unique identifier for the entity in the billing provider
 	BillingID string `json:"billingId,required"`
 	// The URL to the entity in the billing provider
@@ -321,15 +318,15 @@ type V1CouponListResponseData struct {
 	// The source of the coupon
 	//
 	// Any of "STIGG", "STIGG_ADHOC", "STRIPE".
-	Source string `json:"source,required"`
+	Source V1CouponListResponseSource `json:"source,required"`
 	// Current status of the coupon
 	//
 	// Any of "ACTIVE", "ARCHIVED".
-	Status string `json:"status,required"`
+	Status V1CouponListResponseStatus `json:"status,required"`
 	// Type of the coupon (percentage or fixed amount)
 	//
 	// Any of "FIXED", "PERCENTAGE".
-	Type string `json:"type,required"`
+	Type V1CouponListResponseType `json:"type,required"`
 	// Timestamp of when the record was last updated
 	UpdatedAt time.Time `json:"updatedAt,required" format:"date-time"`
 	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
@@ -353,12 +350,12 @@ type V1CouponListResponseData struct {
 }
 
 // Returns the unmodified JSON received from the API
-func (r V1CouponListResponseData) RawJSON() string { return r.JSON.raw }
-func (r *V1CouponListResponseData) UnmarshalJSON(data []byte) error {
+func (r V1CouponListResponse) RawJSON() string { return r.JSON.raw }
+func (r *V1CouponListResponse) UnmarshalJSON(data []byte) error {
 	return apijson.UnmarshalRoot(data, r)
 }
 
-type V1CouponListResponseDataAmountsOff struct {
+type V1CouponListResponseAmountsOff struct {
 	// The price amount
 	Amount float64 `json:"amount,required"`
 	// The price currency
@@ -385,32 +382,35 @@ type V1CouponListResponseDataAmountsOff struct {
 }
 
 // Returns the unmodified JSON received from the API
-func (r V1CouponListResponseDataAmountsOff) RawJSON() string { return r.JSON.raw }
-func (r *V1CouponListResponseDataAmountsOff) UnmarshalJSON(data []byte) error {
+func (r V1CouponListResponseAmountsOff) RawJSON() string { return r.JSON.raw }
+func (r *V1CouponListResponseAmountsOff) UnmarshalJSON(data []byte) error {
 	return apijson.UnmarshalRoot(data, r)
 }
 
-// Pagination information including cursors for navigation
-type V1CouponListResponsePagination struct {
-	// Cursor to fetch the next page (use with after parameter), null if no more pages
-	Next string `json:"next,required" format:"uuid"`
-	// Cursor to fetch the previous page (use with before parameter), null if no
-	// previous pages
-	Prev string `json:"prev,required" format:"uuid"`
-	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
-	JSON struct {
-		Next        respjson.Field
-		Prev        respjson.Field
-		ExtraFields map[string]respjson.Field
-		raw         string
-	} `json:"-"`
-}
+// The source of the coupon
+type V1CouponListResponseSource string
 
-// Returns the unmodified JSON received from the API
-func (r V1CouponListResponsePagination) RawJSON() string { return r.JSON.raw }
-func (r *V1CouponListResponsePagination) UnmarshalJSON(data []byte) error {
-	return apijson.UnmarshalRoot(data, r)
-}
+const (
+	V1CouponListResponseSourceStigg      V1CouponListResponseSource = "STIGG"
+	V1CouponListResponseSourceStiggAdhoc V1CouponListResponseSource = "STIGG_ADHOC"
+	V1CouponListResponseSourceStripe     V1CouponListResponseSource = "STRIPE"
+)
+
+// Current status of the coupon
+type V1CouponListResponseStatus string
+
+const (
+	V1CouponListResponseStatusActive   V1CouponListResponseStatus = "ACTIVE"
+	V1CouponListResponseStatusArchived V1CouponListResponseStatus = "ARCHIVED"
+)
+
+// Type of the coupon (percentage or fixed amount)
+type V1CouponListResponseType string
+
+const (
+	V1CouponListResponseTypeFixed      V1CouponListResponseType = "FIXED"
+	V1CouponListResponseTypePercentage V1CouponListResponseType = "PERCENTAGE"
+)
 
 type V1CouponNewParams struct {
 	// Description of the coupon

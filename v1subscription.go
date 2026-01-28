@@ -15,6 +15,7 @@ import (
 	"github.com/stiggio/stigg-go/internal/apiquery"
 	"github.com/stiggio/stigg-go/internal/requestconfig"
 	"github.com/stiggio/stigg-go/option"
+	"github.com/stiggio/stigg-go/packages/pagination"
 	"github.com/stiggio/stigg-go/packages/param"
 	"github.com/stiggio/stigg-go/packages/respjson"
 )
@@ -61,11 +62,26 @@ func (r *V1SubscriptionService) Get(ctx context.Context, id string, opts ...opti
 }
 
 // Get a list of Subscriptions
-func (r *V1SubscriptionService) List(ctx context.Context, query V1SubscriptionListParams, opts ...option.RequestOption) (res *V1SubscriptionListResponse, err error) {
+func (r *V1SubscriptionService) List(ctx context.Context, query V1SubscriptionListParams, opts ...option.RequestOption) (res *pagination.MyCursorIDPage[V1SubscriptionListResponse], err error) {
+	var raw *http.Response
 	opts = slices.Concat(r.Options, opts)
+	opts = append([]option.RequestOption{option.WithResponseInto(&raw)}, opts...)
 	path := "api/v1/subscriptions"
-	err = requestconfig.ExecuteNewRequest(ctx, http.MethodGet, path, query, &res, opts...)
-	return
+	cfg, err := requestconfig.NewRequestConfig(ctx, http.MethodGet, path, query, &res, opts...)
+	if err != nil {
+		return nil, err
+	}
+	err = cfg.Execute()
+	if err != nil {
+		return nil, err
+	}
+	res.SetPageConfig(cfg, raw)
+	return res, nil
+}
+
+// Get a list of Subscriptions
+func (r *V1SubscriptionService) ListAutoPaging(ctx context.Context, query V1SubscriptionListParams, opts ...option.RequestOption) *pagination.MyCursorIDPageAutoPager[V1SubscriptionListResponse] {
+	return pagination.NewMyCursorIDPageAutoPager(r.List(ctx, query, opts...))
 }
 
 // Perform delegate on a Subscription
@@ -354,25 +370,6 @@ func (r *V1SubscriptionGetResponseData) UnmarshalJSON(data []byte) error {
 }
 
 type V1SubscriptionListResponse struct {
-	Data []V1SubscriptionListResponseData `json:"data,required"`
-	// Pagination information including cursors for navigation
-	Pagination V1SubscriptionListResponsePagination `json:"pagination,required"`
-	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
-	JSON struct {
-		Data        respjson.Field
-		Pagination  respjson.Field
-		ExtraFields map[string]respjson.Field
-		raw         string
-	} `json:"-"`
-}
-
-// Returns the unmodified JSON received from the API
-func (r V1SubscriptionListResponse) RawJSON() string { return r.JSON.raw }
-func (r *V1SubscriptionListResponse) UnmarshalJSON(data []byte) error {
-	return apijson.UnmarshalRoot(data, r)
-}
-
-type V1SubscriptionListResponseData struct {
 	// Subscription ID
 	ID string `json:"id,required"`
 	// Billing ID
@@ -384,20 +381,20 @@ type V1SubscriptionListResponseData struct {
 	// Payment collection
 	//
 	// Any of "NOT_REQUIRED", "PROCESSING", "FAILED", "ACTION_REQUIRED".
-	PaymentCollection string `json:"paymentCollection,required"`
+	PaymentCollection V1SubscriptionListResponsePaymentCollection `json:"paymentCollection,required"`
 	// Plan ID
 	PlanID string `json:"planId,required"`
 	// Pricing type
 	//
 	// Any of "FREE", "PAID", "CUSTOM".
-	PricingType string `json:"pricingType,required"`
+	PricingType V1SubscriptionListResponsePricingType `json:"pricingType,required"`
 	// Subscription start date
 	StartDate time.Time `json:"startDate,required" format:"date-time"`
 	// Subscription status
 	//
 	// Any of "PAYMENT_PENDING", "ACTIVE", "EXPIRED", "IN_TRIAL", "CANCELED",
 	// "NOT_STARTED".
-	Status string `json:"status,required"`
+	Status V1SubscriptionListResponseStatus `json:"status,required"`
 	// Subscription cancellation date
 	CancellationDate time.Time `json:"cancellationDate,nullable" format:"date-time"`
 	// Subscription cancel reason
@@ -406,7 +403,7 @@ type V1SubscriptionListResponseData struct {
 	// "DETACH_BILLING", "TRIAL_ENDED", "Immediate", "TRIAL_CONVERTED",
 	// "PENDING_PAYMENT_EXPIRED", "ScheduledCancellation", "CustomerArchived",
 	// "AutoCancellationRule".
-	CancelReason string `json:"cancelReason,nullable"`
+	CancelReason V1SubscriptionListResponseCancelReason `json:"cancelReason,nullable"`
 	// End of the current billing period
 	CurrentBillingPeriodEnd time.Time `json:"currentBillingPeriodEnd,nullable" format:"date-time"`
 	// Start of the current billing period
@@ -422,7 +419,7 @@ type V1SubscriptionListResponseData struct {
 	// The method used to collect payments for a subscription
 	//
 	// Any of "CHARGE", "INVOICE", "NONE".
-	PaymentCollectionMethod string `json:"paymentCollectionMethod,nullable"`
+	PaymentCollectionMethod V1SubscriptionListResponsePaymentCollectionMethod `json:"paymentCollectionMethod,nullable"`
 	// Resource ID
 	ResourceID string `json:"resourceId,nullable"`
 	// Subscription trial end date
@@ -455,32 +452,67 @@ type V1SubscriptionListResponseData struct {
 }
 
 // Returns the unmodified JSON received from the API
-func (r V1SubscriptionListResponseData) RawJSON() string { return r.JSON.raw }
-func (r *V1SubscriptionListResponseData) UnmarshalJSON(data []byte) error {
+func (r V1SubscriptionListResponse) RawJSON() string { return r.JSON.raw }
+func (r *V1SubscriptionListResponse) UnmarshalJSON(data []byte) error {
 	return apijson.UnmarshalRoot(data, r)
 }
 
-// Pagination information including cursors for navigation
-type V1SubscriptionListResponsePagination struct {
-	// Cursor to fetch the next page (use with after parameter), null if no more pages
-	Next string `json:"next,required" format:"uuid"`
-	// Cursor to fetch the previous page (use with before parameter), null if no
-	// previous pages
-	Prev string `json:"prev,required" format:"uuid"`
-	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
-	JSON struct {
-		Next        respjson.Field
-		Prev        respjson.Field
-		ExtraFields map[string]respjson.Field
-		raw         string
-	} `json:"-"`
-}
+// Payment collection
+type V1SubscriptionListResponsePaymentCollection string
 
-// Returns the unmodified JSON received from the API
-func (r V1SubscriptionListResponsePagination) RawJSON() string { return r.JSON.raw }
-func (r *V1SubscriptionListResponsePagination) UnmarshalJSON(data []byte) error {
-	return apijson.UnmarshalRoot(data, r)
-}
+const (
+	V1SubscriptionListResponsePaymentCollectionNotRequired    V1SubscriptionListResponsePaymentCollection = "NOT_REQUIRED"
+	V1SubscriptionListResponsePaymentCollectionProcessing     V1SubscriptionListResponsePaymentCollection = "PROCESSING"
+	V1SubscriptionListResponsePaymentCollectionFailed         V1SubscriptionListResponsePaymentCollection = "FAILED"
+	V1SubscriptionListResponsePaymentCollectionActionRequired V1SubscriptionListResponsePaymentCollection = "ACTION_REQUIRED"
+)
+
+// Pricing type
+type V1SubscriptionListResponsePricingType string
+
+const (
+	V1SubscriptionListResponsePricingTypeFree   V1SubscriptionListResponsePricingType = "FREE"
+	V1SubscriptionListResponsePricingTypePaid   V1SubscriptionListResponsePricingType = "PAID"
+	V1SubscriptionListResponsePricingTypeCustom V1SubscriptionListResponsePricingType = "CUSTOM"
+)
+
+// Subscription status
+type V1SubscriptionListResponseStatus string
+
+const (
+	V1SubscriptionListResponseStatusPaymentPending V1SubscriptionListResponseStatus = "PAYMENT_PENDING"
+	V1SubscriptionListResponseStatusActive         V1SubscriptionListResponseStatus = "ACTIVE"
+	V1SubscriptionListResponseStatusExpired        V1SubscriptionListResponseStatus = "EXPIRED"
+	V1SubscriptionListResponseStatusInTrial        V1SubscriptionListResponseStatus = "IN_TRIAL"
+	V1SubscriptionListResponseStatusCanceled       V1SubscriptionListResponseStatus = "CANCELED"
+	V1SubscriptionListResponseStatusNotStarted     V1SubscriptionListResponseStatus = "NOT_STARTED"
+)
+
+// Subscription cancel reason
+type V1SubscriptionListResponseCancelReason string
+
+const (
+	V1SubscriptionListResponseCancelReasonUpgradeOrDowngrade    V1SubscriptionListResponseCancelReason = "UPGRADE_OR_DOWNGRADE"
+	V1SubscriptionListResponseCancelReasonCancelledByBilling    V1SubscriptionListResponseCancelReason = "CANCELLED_BY_BILLING"
+	V1SubscriptionListResponseCancelReasonExpired               V1SubscriptionListResponseCancelReason = "EXPIRED"
+	V1SubscriptionListResponseCancelReasonDetachBilling         V1SubscriptionListResponseCancelReason = "DETACH_BILLING"
+	V1SubscriptionListResponseCancelReasonTrialEnded            V1SubscriptionListResponseCancelReason = "TRIAL_ENDED"
+	V1SubscriptionListResponseCancelReasonImmediate             V1SubscriptionListResponseCancelReason = "Immediate"
+	V1SubscriptionListResponseCancelReasonTrialConverted        V1SubscriptionListResponseCancelReason = "TRIAL_CONVERTED"
+	V1SubscriptionListResponseCancelReasonPendingPaymentExpired V1SubscriptionListResponseCancelReason = "PENDING_PAYMENT_EXPIRED"
+	V1SubscriptionListResponseCancelReasonScheduledCancellation V1SubscriptionListResponseCancelReason = "ScheduledCancellation"
+	V1SubscriptionListResponseCancelReasonCustomerArchived      V1SubscriptionListResponseCancelReason = "CustomerArchived"
+	V1SubscriptionListResponseCancelReasonAutoCancellationRule  V1SubscriptionListResponseCancelReason = "AutoCancellationRule"
+)
+
+// The method used to collect payments for a subscription
+type V1SubscriptionListResponsePaymentCollectionMethod string
+
+const (
+	V1SubscriptionListResponsePaymentCollectionMethodCharge  V1SubscriptionListResponsePaymentCollectionMethod = "CHARGE"
+	V1SubscriptionListResponsePaymentCollectionMethodInvoice V1SubscriptionListResponsePaymentCollectionMethod = "INVOICE"
+	V1SubscriptionListResponsePaymentCollectionMethodNone    V1SubscriptionListResponsePaymentCollectionMethod = "NONE"
+)
 
 type V1SubscriptionDelegateResponse struct {
 	Data V1SubscriptionDelegateResponseData `json:"data,required"`
@@ -1367,9 +1399,12 @@ func (r *V1SubscriptionPreviewParamsAppliedCouponDiscount) UnmarshalJSON(data []
 	return apijson.UnmarshalRoot(data, r)
 }
 
-// The property Amount is required.
+// The properties Amount, Currency are required.
 type V1SubscriptionPreviewParamsAppliedCouponDiscountAmountsOff struct {
+	// The price amount
 	Amount float64 `json:"amount,required"`
+	// The price currency
+	//
 	// Any of "usd", "aed", "all", "amd", "ang", "aud", "awg", "azn", "bam", "bbd",
 	// "bdt", "bgn", "bif", "bmd", "bnd", "bsd", "bwp", "byn", "bzd", "brl", "cad",
 	// "cdf", "chf", "cny", "czk", "dkk", "dop", "dzd", "egp", "etb", "eur", "fjd",
@@ -1381,7 +1416,7 @@ type V1SubscriptionPreviewParamsAppliedCouponDiscountAmountsOff struct {
 	// "sek", "sgd", "sle", "sll", "sos", "szl", "thb", "tjs", "top", "try", "ttd",
 	// "tzs", "uah", "uzs", "vnd", "vuv", "wst", "xaf", "xcd", "yer", "zar", "zmw",
 	// "clp", "djf", "gnf", "ugx", "pyg", "xof", "xpf".
-	Currency string `json:"currency,omitzero"`
+	Currency string `json:"currency,omitzero,required"`
 	paramObj
 }
 
