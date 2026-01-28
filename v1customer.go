@@ -43,7 +43,7 @@ func NewV1CustomerService(opts ...option.RequestOption) (r V1CustomerService) {
 	return
 }
 
-// Create a new Customer
+// Provision customer
 func (r *V1CustomerService) New(ctx context.Context, body V1CustomerNewParams, opts ...option.RequestOption) (res *CustomerResponse, err error) {
 	opts = slices.Concat(r.Options, opts)
 	path := "api/v1/customers"
@@ -51,7 +51,7 @@ func (r *V1CustomerService) New(ctx context.Context, body V1CustomerNewParams, o
 	return
 }
 
-// Get a single Customer by id
+// Get a single customer by ID
 func (r *V1CustomerService) Get(ctx context.Context, id string, opts ...option.RequestOption) (res *CustomerResponse, err error) {
 	opts = slices.Concat(r.Options, opts)
 	if id == "" {
@@ -63,7 +63,7 @@ func (r *V1CustomerService) Get(ctx context.Context, id string, opts ...option.R
 	return
 }
 
-// Update an existing Customer
+// Update a customer
 func (r *V1CustomerService) Update(ctx context.Context, id string, body V1CustomerUpdateParams, opts ...option.RequestOption) (res *CustomerResponse, err error) {
 	opts = slices.Concat(r.Options, opts)
 	if id == "" {
@@ -75,7 +75,7 @@ func (r *V1CustomerService) Update(ctx context.Context, id string, body V1Custom
 	return
 }
 
-// Get a list of Customers
+// Get a list of customers
 func (r *V1CustomerService) List(ctx context.Context, query V1CustomerListParams, opts ...option.RequestOption) (res *pagination.MyCursorIDPage[V1CustomerListResponse], err error) {
 	var raw *http.Response
 	opts = slices.Concat(r.Options, opts)
@@ -93,12 +93,12 @@ func (r *V1CustomerService) List(ctx context.Context, query V1CustomerListParams
 	return res, nil
 }
 
-// Get a list of Customers
+// Get a list of customers
 func (r *V1CustomerService) ListAutoPaging(ctx context.Context, query V1CustomerListParams, opts ...option.RequestOption) *pagination.MyCursorIDPageAutoPager[V1CustomerListResponse] {
 	return pagination.NewMyCursorIDPageAutoPager(r.List(ctx, query, opts...))
 }
 
-// Perform archive on a Customer
+// Archive customer
 func (r *V1CustomerService) Archive(ctx context.Context, id string, opts ...option.RequestOption) (res *CustomerResponse, err error) {
 	opts = slices.Concat(r.Options, opts)
 	if id == "" {
@@ -110,7 +110,7 @@ func (r *V1CustomerService) Archive(ctx context.Context, id string, opts ...opti
 	return
 }
 
-// Perform unarchive on a Customer
+// Unarchive customer
 func (r *V1CustomerService) Unarchive(ctx context.Context, id string, opts ...option.RequestOption) (res *CustomerResponse, err error) {
 	opts = slices.Concat(r.Options, opts)
 	if id == "" {
@@ -122,7 +122,9 @@ func (r *V1CustomerService) Unarchive(ctx context.Context, id string, opts ...op
 	return
 }
 
+// Response object
 type CustomerResponse struct {
+	// A customer can be either an organization or an individual
 	Data CustomerResponseData `json:"data,required"`
 	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
 	JSON struct {
@@ -138,6 +140,7 @@ func (r *CustomerResponse) UnmarshalJSON(data []byte) error {
 	return apijson.UnmarshalRoot(data, r)
 }
 
+// A customer can be either an organization or an individual
 type CustomerResponseData struct {
 	// Customer slug
 	ID string `json:"id,required"`
@@ -214,6 +217,7 @@ func (r *CustomerResponseDataDefaultPaymentMethod) UnmarshalJSON(data []byte) er
 	return apijson.UnmarshalRoot(data, r)
 }
 
+// External billing or CRM integration link
 type CustomerResponseDataIntegration struct {
 	// Integration details
 	ID string `json:"id,required"`
@@ -240,6 +244,7 @@ func (r *CustomerResponseDataIntegration) UnmarshalJSON(data []byte) error {
 	return apijson.UnmarshalRoot(data, r)
 }
 
+// A customer can be either an organization or an individual
 type V1CustomerListResponse struct {
 	// Customer slug
 	ID string `json:"id,required"`
@@ -316,6 +321,7 @@ func (r *V1CustomerListResponseDefaultPaymentMethod) UnmarshalJSON(data []byte) 
 	return apijson.UnmarshalRoot(data, r)
 }
 
+// External billing or CRM integration link
 type V1CustomerListResponseIntegration struct {
 	// Integration details
 	ID string `json:"id,required"`
@@ -402,6 +408,8 @@ func init() {
 	)
 }
 
+// External billing or CRM integration link
+//
 // The properties ID, SyncedEntityID, VendorIdentifier are required.
 type V1CustomerNewParamsIntegration struct {
 	// Synced entity id
@@ -452,6 +460,8 @@ func (r *V1CustomerUpdateParams) UnmarshalJSON(data []byte) error {
 	return apijson.UnmarshalRoot(data, r)
 }
 
+// External billing or CRM integration link
+//
 // The properties ID, SyncedEntityID, VendorIdentifier are required.
 type V1CustomerUpdateParamsIntegration struct {
 	// Synced entity id
@@ -481,11 +491,11 @@ func init() {
 }
 
 type V1CustomerListParams struct {
-	// Starting after this UUID for pagination
+	// Return items that come after this cursor
 	After param.Opt[string] `query:"after,omitzero" format:"uuid" json:"-"`
-	// Ending before this UUID for pagination
+	// Return items that come before this cursor
 	Before param.Opt[string] `query:"before,omitzero" format:"uuid" json:"-"`
-	// Items per page
+	// Maximum number of items to return
 	Limit param.Opt[int64] `query:"limit,omitzero" json:"-"`
 	paramObj
 }
