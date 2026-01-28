@@ -41,7 +41,7 @@ func NewV1SubscriptionService(opts ...option.RequestOption) (r V1SubscriptionSer
 	return
 }
 
-// Create a new Subscription
+// Provision subscription
 func (r *V1SubscriptionService) New(ctx context.Context, body V1SubscriptionNewParams, opts ...option.RequestOption) (res *V1SubscriptionNewResponse, err error) {
 	opts = slices.Concat(r.Options, opts)
 	path := "api/v1/subscriptions"
@@ -49,7 +49,7 @@ func (r *V1SubscriptionService) New(ctx context.Context, body V1SubscriptionNewP
 	return
 }
 
-// Get a single Subscription by id
+// Get a single subscription by ID
 func (r *V1SubscriptionService) Get(ctx context.Context, id string, opts ...option.RequestOption) (res *V1SubscriptionGetResponse, err error) {
 	opts = slices.Concat(r.Options, opts)
 	if id == "" {
@@ -61,7 +61,7 @@ func (r *V1SubscriptionService) Get(ctx context.Context, id string, opts ...opti
 	return
 }
 
-// Get a list of Subscriptions
+// Get a list of subscriptions
 func (r *V1SubscriptionService) List(ctx context.Context, query V1SubscriptionListParams, opts ...option.RequestOption) (res *pagination.MyCursorIDPage[V1SubscriptionListResponse], err error) {
 	var raw *http.Response
 	opts = slices.Concat(r.Options, opts)
@@ -79,12 +79,12 @@ func (r *V1SubscriptionService) List(ctx context.Context, query V1SubscriptionLi
 	return res, nil
 }
 
-// Get a list of Subscriptions
+// Get a list of subscriptions
 func (r *V1SubscriptionService) ListAutoPaging(ctx context.Context, query V1SubscriptionListParams, opts ...option.RequestOption) *pagination.MyCursorIDPageAutoPager[V1SubscriptionListResponse] {
 	return pagination.NewMyCursorIDPageAutoPager(r.List(ctx, query, opts...))
 }
 
-// Perform delegate on a Subscription
+// Delegate subscription payment to customer
 func (r *V1SubscriptionService) Delegate(ctx context.Context, id string, body V1SubscriptionDelegateParams, opts ...option.RequestOption) (res *V1SubscriptionDelegateResponse, err error) {
 	opts = slices.Concat(r.Options, opts)
 	if id == "" {
@@ -96,7 +96,7 @@ func (r *V1SubscriptionService) Delegate(ctx context.Context, id string, body V1
 	return
 }
 
-// Perform migrate to latest plan version on a Subscription
+// Migrate subscription to latest plan version
 func (r *V1SubscriptionService) Migrate(ctx context.Context, id string, body V1SubscriptionMigrateParams, opts ...option.RequestOption) (res *V1SubscriptionMigrateResponse, err error) {
 	opts = slices.Concat(r.Options, opts)
 	if id == "" {
@@ -108,7 +108,7 @@ func (r *V1SubscriptionService) Migrate(ctx context.Context, id string, body V1S
 	return
 }
 
-// Create a new Subscription Preview
+// Preview subscription
 func (r *V1SubscriptionService) Preview(ctx context.Context, body V1SubscriptionPreviewParams, opts ...option.RequestOption) (res *V1SubscriptionPreviewResponse, err error) {
 	opts = slices.Concat(r.Options, opts)
 	path := "api/v1/subscriptions/preview"
@@ -116,7 +116,7 @@ func (r *V1SubscriptionService) Preview(ctx context.Context, body V1Subscription
 	return
 }
 
-// Perform transfer to resource on a Subscription
+// Transfer subscription to resource
 func (r *V1SubscriptionService) Transfer(ctx context.Context, id string, body V1SubscriptionTransferParams, opts ...option.RequestOption) (res *V1SubscriptionTransferResponse, err error) {
 	opts = slices.Concat(r.Options, opts)
 	if id == "" {
@@ -128,7 +128,9 @@ func (r *V1SubscriptionService) Transfer(ctx context.Context, id string, body V1
 	return
 }
 
+// Response object
 type V1SubscriptionNewResponse struct {
+	// Provisioning result with status and subscription or checkout URL.
 	Data V1SubscriptionNewResponseData `json:"data,required"`
 	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
 	JSON struct {
@@ -144,6 +146,7 @@ func (r *V1SubscriptionNewResponse) UnmarshalJSON(data []byte) error {
 	return apijson.UnmarshalRoot(data, r)
 }
 
+// Provisioning result with status and subscription or checkout URL.
 type V1SubscriptionNewResponseData struct {
 	// Unique identifier for the provisioned subscription
 	ID           string                                     `json:"id,required"`
@@ -157,7 +160,8 @@ type V1SubscriptionNewResponseData struct {
 	// URL to complete payment when PAYMENT_REQUIRED
 	CheckoutURL string `json:"checkoutUrl,nullable"`
 	// Whether the subscription is scheduled for future activation
-	IsScheduled  bool                                      `json:"isScheduled"`
+	IsScheduled bool `json:"isScheduled"`
+	// Created subscription (when status is SUCCESS)
 	Subscription V1SubscriptionNewResponseDataSubscription `json:"subscription"`
 	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
 	JSON struct {
@@ -221,6 +225,7 @@ func (r *V1SubscriptionNewResponseDataEntitlement) UnmarshalJSON(data []byte) er
 }
 
 type V1SubscriptionNewResponseDataEntitlementFeature struct {
+	// Feature ID
 	RefID string `json:"refId,required"`
 	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
 	JSON struct {
@@ -236,6 +241,7 @@ func (r *V1SubscriptionNewResponseDataEntitlementFeature) UnmarshalJSON(data []b
 	return apijson.UnmarshalRoot(data, r)
 }
 
+// Created subscription (when status is SUCCESS)
 type V1SubscriptionNewResponseDataSubscription struct {
 	// Subscription ID
 	ID string `json:"id,required"`
@@ -292,7 +298,6 @@ type V1SubscriptionNewResponseDataSubscription struct {
 	ResourceID string `json:"resourceId,nullable"`
 	// Subscription trial end date
 	TrialEndDate time.Time `json:"trialEndDate,nullable" format:"date-time"`
-	UnitQuantity float64   `json:"unitQuantity"`
 	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
 	JSON struct {
 		ID                        respjson.Field
@@ -316,7 +321,6 @@ type V1SubscriptionNewResponseDataSubscription struct {
 		Prices                    respjson.Field
 		ResourceID                respjson.Field
 		TrialEndDate              respjson.Field
-		UnitQuantity              respjson.Field
 		ExtraFields               map[string]respjson.Field
 		raw                       string
 	} `json:"-"`
@@ -495,7 +499,9 @@ func (r *V1SubscriptionNewResponseDataSubscriptionPriceTierUnitPrice) UnmarshalJ
 	return apijson.UnmarshalRoot(data, r)
 }
 
+// Response object
 type V1SubscriptionGetResponse struct {
+	// Customer subscription to a plan
 	Data V1SubscriptionGetResponseData `json:"data,required"`
 	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
 	JSON struct {
@@ -511,6 +517,7 @@ func (r *V1SubscriptionGetResponse) UnmarshalJSON(data []byte) error {
 	return apijson.UnmarshalRoot(data, r)
 }
 
+// Customer subscription to a plan
 type V1SubscriptionGetResponseData struct {
 	// Subscription ID
 	ID string `json:"id,required"`
@@ -567,7 +574,6 @@ type V1SubscriptionGetResponseData struct {
 	ResourceID string `json:"resourceId,nullable"`
 	// Subscription trial end date
 	TrialEndDate time.Time `json:"trialEndDate,nullable" format:"date-time"`
-	UnitQuantity float64   `json:"unitQuantity"`
 	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
 	JSON struct {
 		ID                        respjson.Field
@@ -591,7 +597,6 @@ type V1SubscriptionGetResponseData struct {
 		Prices                    respjson.Field
 		ResourceID                respjson.Field
 		TrialEndDate              respjson.Field
-		UnitQuantity              respjson.Field
 		ExtraFields               map[string]respjson.Field
 		raw                       string
 	} `json:"-"`
@@ -627,6 +632,7 @@ func (r *V1SubscriptionGetResponseDataPrice) UnmarshalJSON(data []byte) error {
 	return apijson.UnmarshalRoot(data, r)
 }
 
+// Customer subscription to a plan
 type V1SubscriptionListResponse struct {
 	// Subscription ID
 	ID string `json:"id,required"`
@@ -683,7 +689,6 @@ type V1SubscriptionListResponse struct {
 	ResourceID string `json:"resourceId,nullable"`
 	// Subscription trial end date
 	TrialEndDate time.Time `json:"trialEndDate,nullable" format:"date-time"`
-	UnitQuantity float64   `json:"unitQuantity"`
 	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
 	JSON struct {
 		ID                        respjson.Field
@@ -707,7 +712,6 @@ type V1SubscriptionListResponse struct {
 		Prices                    respjson.Field
 		ResourceID                respjson.Field
 		TrialEndDate              respjson.Field
-		UnitQuantity              respjson.Field
 		ExtraFields               map[string]respjson.Field
 		raw                       string
 	} `json:"-"`
@@ -800,7 +804,9 @@ func (r *V1SubscriptionListResponsePrice) UnmarshalJSON(data []byte) error {
 	return apijson.UnmarshalRoot(data, r)
 }
 
+// Response object
 type V1SubscriptionDelegateResponse struct {
+	// Customer subscription to a plan
 	Data V1SubscriptionDelegateResponseData `json:"data,required"`
 	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
 	JSON struct {
@@ -816,6 +822,7 @@ func (r *V1SubscriptionDelegateResponse) UnmarshalJSON(data []byte) error {
 	return apijson.UnmarshalRoot(data, r)
 }
 
+// Customer subscription to a plan
 type V1SubscriptionDelegateResponseData struct {
 	// Subscription ID
 	ID string `json:"id,required"`
@@ -872,7 +879,6 @@ type V1SubscriptionDelegateResponseData struct {
 	ResourceID string `json:"resourceId,nullable"`
 	// Subscription trial end date
 	TrialEndDate time.Time `json:"trialEndDate,nullable" format:"date-time"`
-	UnitQuantity float64   `json:"unitQuantity"`
 	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
 	JSON struct {
 		ID                        respjson.Field
@@ -896,7 +902,6 @@ type V1SubscriptionDelegateResponseData struct {
 		Prices                    respjson.Field
 		ResourceID                respjson.Field
 		TrialEndDate              respjson.Field
-		UnitQuantity              respjson.Field
 		ExtraFields               map[string]respjson.Field
 		raw                       string
 	} `json:"-"`
@@ -932,7 +937,9 @@ func (r *V1SubscriptionDelegateResponseDataPrice) UnmarshalJSON(data []byte) err
 	return apijson.UnmarshalRoot(data, r)
 }
 
+// Response object
 type V1SubscriptionMigrateResponse struct {
+	// Customer subscription to a plan
 	Data V1SubscriptionMigrateResponseData `json:"data,required"`
 	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
 	JSON struct {
@@ -948,6 +955,7 @@ func (r *V1SubscriptionMigrateResponse) UnmarshalJSON(data []byte) error {
 	return apijson.UnmarshalRoot(data, r)
 }
 
+// Customer subscription to a plan
 type V1SubscriptionMigrateResponseData struct {
 	// Subscription ID
 	ID string `json:"id,required"`
@@ -1004,7 +1012,6 @@ type V1SubscriptionMigrateResponseData struct {
 	ResourceID string `json:"resourceId,nullable"`
 	// Subscription trial end date
 	TrialEndDate time.Time `json:"trialEndDate,nullable" format:"date-time"`
-	UnitQuantity float64   `json:"unitQuantity"`
 	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
 	JSON struct {
 		ID                        respjson.Field
@@ -1028,7 +1035,6 @@ type V1SubscriptionMigrateResponseData struct {
 		Prices                    respjson.Field
 		ResourceID                respjson.Field
 		TrialEndDate              respjson.Field
-		UnitQuantity              respjson.Field
 		ExtraFields               map[string]respjson.Field
 		raw                       string
 	} `json:"-"`
@@ -1064,7 +1070,9 @@ func (r *V1SubscriptionMigrateResponseDataPrice) UnmarshalJSON(data []byte) erro
 	return apijson.UnmarshalRoot(data, r)
 }
 
+// Response object
 type V1SubscriptionPreviewResponse struct {
+	// Pricing preview with invoices
 	Data V1SubscriptionPreviewResponseData `json:"data,required"`
 	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
 	JSON struct {
@@ -1080,13 +1088,20 @@ func (r *V1SubscriptionPreviewResponse) UnmarshalJSON(data []byte) error {
 	return apijson.UnmarshalRoot(data, r)
 }
 
+// Pricing preview with invoices
 type V1SubscriptionPreviewResponseData struct {
-	ImmediateInvoice    V1SubscriptionPreviewResponseDataImmediateInvoice   `json:"immediateInvoice,required"`
-	BillingPeriodRange  V1SubscriptionPreviewResponseDataBillingPeriodRange `json:"billingPeriodRange"`
-	FreeItems           []V1SubscriptionPreviewResponseDataFreeItem         `json:"freeItems"`
-	HasScheduledUpdates bool                                                `json:"hasScheduledUpdates"`
-	IsPlanDowngrade     bool                                                `json:"isPlanDowngrade"`
-	RecurringInvoice    V1SubscriptionPreviewResponseDataRecurringInvoice   `json:"recurringInvoice"`
+	// Invoice due immediately
+	ImmediateInvoice V1SubscriptionPreviewResponseDataImmediateInvoice `json:"immediateInvoice,required"`
+	// Billing period range
+	BillingPeriodRange V1SubscriptionPreviewResponseDataBillingPeriodRange `json:"billingPeriodRange"`
+	// Free items included
+	FreeItems []V1SubscriptionPreviewResponseDataFreeItem `json:"freeItems"`
+	// Whether updates are scheduled
+	HasScheduledUpdates bool `json:"hasScheduledUpdates"`
+	// Whether this is a downgrade
+	IsPlanDowngrade bool `json:"isPlanDowngrade"`
+	// Recurring invoice preview
+	RecurringInvoice V1SubscriptionPreviewResponseDataRecurringInvoice `json:"recurringInvoice"`
 	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
 	JSON struct {
 		ImmediateInvoice    respjson.Field
@@ -1106,16 +1121,26 @@ func (r *V1SubscriptionPreviewResponseData) UnmarshalJSON(data []byte) error {
 	return apijson.UnmarshalRoot(data, r)
 }
 
+// Invoice due immediately
 type V1SubscriptionPreviewResponseDataImmediateInvoice struct {
-	SubTotal           float64                                                             `json:"subTotal,required"`
-	Total              float64                                                             `json:"total,required"`
+	// Subtotal before discounts
+	SubTotal float64 `json:"subTotal,required"`
+	// Invoice total
+	Total float64 `json:"total,required"`
+	// Billing period covered
 	BillingPeriodRange V1SubscriptionPreviewResponseDataImmediateInvoiceBillingPeriodRange `json:"billingPeriodRange"`
-	Currency           string                                                              `json:"currency,nullable"`
-	Discount           float64                                                             `json:"discount"`
-	DiscountDetails    V1SubscriptionPreviewResponseDataImmediateInvoiceDiscountDetails    `json:"discountDetails"`
-	Discounts          []V1SubscriptionPreviewResponseDataImmediateInvoiceDiscount         `json:"discounts"`
-	Lines              []V1SubscriptionPreviewResponseDataImmediateInvoiceLine             `json:"lines"`
-	Tax                float64                                                             `json:"tax"`
+	// Currency code
+	Currency string `json:"currency,nullable"`
+	// Total discount amount
+	Discount float64 `json:"discount"`
+	// Discount breakdown
+	DiscountDetails V1SubscriptionPreviewResponseDataImmediateInvoiceDiscountDetails `json:"discountDetails"`
+	// Applied discounts
+	Discounts []V1SubscriptionPreviewResponseDataImmediateInvoiceDiscount `json:"discounts"`
+	// Line items
+	Lines []V1SubscriptionPreviewResponseDataImmediateInvoiceLine `json:"lines"`
+	// Tax amount
+	Tax float64 `json:"tax"`
 	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
 	JSON struct {
 		SubTotal           respjson.Field
@@ -1138,6 +1163,7 @@ func (r *V1SubscriptionPreviewResponseDataImmediateInvoice) UnmarshalJSON(data [
 	return apijson.UnmarshalRoot(data, r)
 }
 
+// Billing period covered
 type V1SubscriptionPreviewResponseDataImmediateInvoiceBillingPeriodRange struct {
 	// Billing period end date
 	End time.Time `json:"end,required" format:"date-time"`
@@ -1160,10 +1186,14 @@ func (r *V1SubscriptionPreviewResponseDataImmediateInvoiceBillingPeriodRange) Un
 	return apijson.UnmarshalRoot(data, r)
 }
 
+// Discount breakdown
 type V1SubscriptionPreviewResponseDataImmediateInvoiceDiscountDetails struct {
-	Code        string  `json:"code"`
+	// Promo code used
+	Code string `json:"code"`
+	// Fixed discount amount
 	FixedAmount float64 `json:"fixedAmount"`
-	Percentage  float64 `json:"percentage"`
+	// Percentage discount
+	Percentage float64 `json:"percentage"`
 	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
 	JSON struct {
 		Code        respjson.Field
@@ -1182,10 +1212,14 @@ func (r *V1SubscriptionPreviewResponseDataImmediateInvoiceDiscountDetails) Unmar
 	return apijson.UnmarshalRoot(data, r)
 }
 
+// Applied discount amount
 type V1SubscriptionPreviewResponseDataImmediateInvoiceDiscount struct {
-	Amount      float64 `json:"amount,required"`
-	Currency    string  `json:"currency,required"`
-	Description string  `json:"description,required"`
+	// Discount amount
+	Amount float64 `json:"amount,required"`
+	// Currency code
+	Currency string `json:"currency,required"`
+	// Discount description
+	Description string `json:"description,required"`
 	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
 	JSON struct {
 		Amount      respjson.Field
@@ -1204,12 +1238,18 @@ func (r *V1SubscriptionPreviewResponseDataImmediateInvoiceDiscount) UnmarshalJSO
 	return apijson.UnmarshalRoot(data, r)
 }
 
+// Invoice line item
 type V1SubscriptionPreviewResponseDataImmediateInvoiceLine struct {
-	Currency    string  `json:"currency,required"`
-	Description string  `json:"description,required"`
-	SubTotal    float64 `json:"subTotal,required"`
-	UnitPrice   float64 `json:"unitPrice,required"`
-	Quantity    float64 `json:"quantity"`
+	// Currency code
+	Currency string `json:"currency,required"`
+	// Line item description
+	Description string `json:"description,required"`
+	// Line subtotal
+	SubTotal float64 `json:"subTotal,required"`
+	// Price per unit
+	UnitPrice float64 `json:"unitPrice,required"`
+	// Quantity
+	Quantity float64 `json:"quantity"`
 	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
 	JSON struct {
 		Currency    respjson.Field
@@ -1228,6 +1268,7 @@ func (r *V1SubscriptionPreviewResponseDataImmediateInvoiceLine) UnmarshalJSON(da
 	return apijson.UnmarshalRoot(data, r)
 }
 
+// Billing period range
 type V1SubscriptionPreviewResponseDataBillingPeriodRange struct {
 	// Billing period end date
 	End time.Time `json:"end" format:"date-time"`
@@ -1248,8 +1289,11 @@ func (r *V1SubscriptionPreviewResponseDataBillingPeriodRange) UnmarshalJSON(data
 	return apijson.UnmarshalRoot(data, r)
 }
 
+// Free item in subscription
 type V1SubscriptionPreviewResponseDataFreeItem struct {
-	AddonID  string  `json:"addonId,required"`
+	// Addon ID
+	AddonID string `json:"addonId,required"`
+	// Quantity
 	Quantity float64 `json:"quantity,required"`
 	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
 	JSON struct {
@@ -1266,16 +1310,26 @@ func (r *V1SubscriptionPreviewResponseDataFreeItem) UnmarshalJSON(data []byte) e
 	return apijson.UnmarshalRoot(data, r)
 }
 
+// Recurring invoice preview
 type V1SubscriptionPreviewResponseDataRecurringInvoice struct {
-	SubTotal           float64                                                             `json:"subTotal,required"`
-	Total              float64                                                             `json:"total,required"`
+	// Subtotal before discounts
+	SubTotal float64 `json:"subTotal,required"`
+	// Invoice total
+	Total float64 `json:"total,required"`
+	// Billing period covered
 	BillingPeriodRange V1SubscriptionPreviewResponseDataRecurringInvoiceBillingPeriodRange `json:"billingPeriodRange"`
-	Currency           string                                                              `json:"currency,nullable"`
-	Discount           float64                                                             `json:"discount"`
-	DiscountDetails    V1SubscriptionPreviewResponseDataRecurringInvoiceDiscountDetails    `json:"discountDetails"`
-	Discounts          []V1SubscriptionPreviewResponseDataRecurringInvoiceDiscount         `json:"discounts"`
-	Lines              []V1SubscriptionPreviewResponseDataRecurringInvoiceLine             `json:"lines"`
-	Tax                float64                                                             `json:"tax"`
+	// Currency code
+	Currency string `json:"currency,nullable"`
+	// Total discount amount
+	Discount float64 `json:"discount"`
+	// Discount breakdown
+	DiscountDetails V1SubscriptionPreviewResponseDataRecurringInvoiceDiscountDetails `json:"discountDetails"`
+	// Applied discounts
+	Discounts []V1SubscriptionPreviewResponseDataRecurringInvoiceDiscount `json:"discounts"`
+	// Line items
+	Lines []V1SubscriptionPreviewResponseDataRecurringInvoiceLine `json:"lines"`
+	// Tax amount
+	Tax float64 `json:"tax"`
 	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
 	JSON struct {
 		SubTotal           respjson.Field
@@ -1298,6 +1352,7 @@ func (r *V1SubscriptionPreviewResponseDataRecurringInvoice) UnmarshalJSON(data [
 	return apijson.UnmarshalRoot(data, r)
 }
 
+// Billing period covered
 type V1SubscriptionPreviewResponseDataRecurringInvoiceBillingPeriodRange struct {
 	// Billing period end date
 	End time.Time `json:"end,required" format:"date-time"`
@@ -1320,10 +1375,14 @@ func (r *V1SubscriptionPreviewResponseDataRecurringInvoiceBillingPeriodRange) Un
 	return apijson.UnmarshalRoot(data, r)
 }
 
+// Discount breakdown
 type V1SubscriptionPreviewResponseDataRecurringInvoiceDiscountDetails struct {
-	Code        string  `json:"code"`
+	// Promo code used
+	Code string `json:"code"`
+	// Fixed discount amount
 	FixedAmount float64 `json:"fixedAmount"`
-	Percentage  float64 `json:"percentage"`
+	// Percentage discount
+	Percentage float64 `json:"percentage"`
 	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
 	JSON struct {
 		Code        respjson.Field
@@ -1342,10 +1401,14 @@ func (r *V1SubscriptionPreviewResponseDataRecurringInvoiceDiscountDetails) Unmar
 	return apijson.UnmarshalRoot(data, r)
 }
 
+// Applied discount amount
 type V1SubscriptionPreviewResponseDataRecurringInvoiceDiscount struct {
-	Amount      float64 `json:"amount,required"`
-	Currency    string  `json:"currency,required"`
-	Description string  `json:"description,required"`
+	// Discount amount
+	Amount float64 `json:"amount,required"`
+	// Currency code
+	Currency string `json:"currency,required"`
+	// Discount description
+	Description string `json:"description,required"`
 	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
 	JSON struct {
 		Amount      respjson.Field
@@ -1364,12 +1427,18 @@ func (r *V1SubscriptionPreviewResponseDataRecurringInvoiceDiscount) UnmarshalJSO
 	return apijson.UnmarshalRoot(data, r)
 }
 
+// Invoice line item
 type V1SubscriptionPreviewResponseDataRecurringInvoiceLine struct {
-	Currency    string  `json:"currency,required"`
-	Description string  `json:"description,required"`
-	SubTotal    float64 `json:"subTotal,required"`
-	UnitPrice   float64 `json:"unitPrice,required"`
-	Quantity    float64 `json:"quantity"`
+	// Currency code
+	Currency string `json:"currency,required"`
+	// Line item description
+	Description string `json:"description,required"`
+	// Line subtotal
+	SubTotal float64 `json:"subTotal,required"`
+	// Price per unit
+	UnitPrice float64 `json:"unitPrice,required"`
+	// Quantity
+	Quantity float64 `json:"quantity"`
 	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
 	JSON struct {
 		Currency    respjson.Field
@@ -1388,7 +1457,9 @@ func (r *V1SubscriptionPreviewResponseDataRecurringInvoiceLine) UnmarshalJSON(da
 	return apijson.UnmarshalRoot(data, r)
 }
 
+// Response object
 type V1SubscriptionTransferResponse struct {
+	// Customer subscription to a plan
 	Data V1SubscriptionTransferResponseData `json:"data,required"`
 	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
 	JSON struct {
@@ -1404,6 +1475,7 @@ func (r *V1SubscriptionTransferResponse) UnmarshalJSON(data []byte) error {
 	return apijson.UnmarshalRoot(data, r)
 }
 
+// Customer subscription to a plan
 type V1SubscriptionTransferResponseData struct {
 	// Subscription ID
 	ID string `json:"id,required"`
@@ -1460,7 +1532,6 @@ type V1SubscriptionTransferResponseData struct {
 	ResourceID string `json:"resourceId,nullable"`
 	// Subscription trial end date
 	TrialEndDate time.Time `json:"trialEndDate,nullable" format:"date-time"`
-	UnitQuantity float64   `json:"unitQuantity"`
 	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
 	JSON struct {
 		ID                        respjson.Field
@@ -1484,7 +1555,6 @@ type V1SubscriptionTransferResponseData struct {
 		Prices                    respjson.Field
 		ResourceID                respjson.Field
 		TrialEndDate              respjson.Field
-		UnitQuantity              respjson.Field
 		ExtraFields               map[string]respjson.Field
 		raw                       string
 	} `json:"-"`
@@ -1525,8 +1595,6 @@ type V1SubscriptionNewParams struct {
 	CustomerID string `json:"customerId,required"`
 	// Plan ID to provision
 	PlanID string `json:"planId,required"`
-	// Unique identifier for the subscription
-	ID param.Opt[string] `json:"id,omitzero"`
 	// The ISO 3166-1 alpha-2 country code for billing
 	BillingCountryCode param.Opt[string] `json:"billingCountryCode,omitzero"`
 	// External billing system identifier
@@ -1537,19 +1605,25 @@ type V1SubscriptionNewParams struct {
 	ResourceID param.Opt[string] `json:"resourceId,omitzero"`
 	// Salesforce ID
 	SalesforceID param.Opt[string] `json:"salesforceId,omitzero"`
+	// Unique identifier for the subscription
+	ID param.Opt[string] `json:"id,omitzero"`
 	// Whether to wait for payment confirmation before returning the subscription
 	AwaitPaymentConfirmation param.Opt[bool] `json:"awaitPaymentConfirmation,omitzero"`
 	// Subscription start date
-	StartDate          param.Opt[time.Time]                      `json:"startDate,omitzero" format:"date-time"`
-	UnitQuantity       param.Opt[float64]                        `json:"unitQuantity,omitzero"`
-	Budget             V1SubscriptionNewParamsBudget             `json:"budget,omitzero"`
-	MinimumSpend       V1SubscriptionNewParamsMinimumSpend       `json:"minimumSpend,omitzero"`
-	Addons             []V1SubscriptionNewParamsAddon            `json:"addons,omitzero"`
+	StartDate    param.Opt[time.Time]                `json:"startDate,omitzero" format:"date-time"`
+	UnitQuantity param.Opt[float64]                  `json:"unitQuantity,omitzero"`
+	Budget       V1SubscriptionNewParamsBudget       `json:"budget,omitzero"`
+	MinimumSpend V1SubscriptionNewParamsMinimumSpend `json:"minimumSpend,omitzero"`
+	Addons       []V1SubscriptionNewParamsAddon      `json:"addons,omitzero"`
+	// Coupon configuration
 	AppliedCoupon      V1SubscriptionNewParamsAppliedCoupon      `json:"appliedCoupon,omitzero"`
 	BillingInformation V1SubscriptionNewParamsBillingInformation `json:"billingInformation,omitzero"`
+	// Billing period (MONTHLY or ANNUALLY)
+	//
 	// Any of "MONTHLY", "ANNUALLY".
-	BillingPeriod   V1SubscriptionNewParamsBillingPeriod   `json:"billingPeriod,omitzero"`
-	Charges         []V1SubscriptionNewParamsCharge        `json:"charges,omitzero"`
+	BillingPeriod V1SubscriptionNewParamsBillingPeriod `json:"billingPeriod,omitzero"`
+	Charges       []V1SubscriptionNewParamsCharge      `json:"charges,omitzero"`
+	// Checkout page configuration for payment collection
 	CheckoutOptions V1SubscriptionNewParamsCheckoutOptions `json:"checkoutOptions,omitzero"`
 	// Additional metadata for the subscription
 	Metadata map[string]string `json:"metadata,omitzero"`
@@ -1561,8 +1635,9 @@ type V1SubscriptionNewParams struct {
 	// Strategy for scheduling subscription changes
 	//
 	// Any of "END_OF_BILLING_PERIOD", "END_OF_BILLING_MONTH", "IMMEDIATE".
-	ScheduleStrategy           V1SubscriptionNewParamsScheduleStrategy           `json:"scheduleStrategy,omitzero"`
-	SubscriptionEntitlements   []V1SubscriptionNewParamsSubscriptionEntitlement  `json:"subscriptionEntitlements,omitzero"`
+	ScheduleStrategy         V1SubscriptionNewParamsScheduleStrategy          `json:"scheduleStrategy,omitzero"`
+	SubscriptionEntitlements []V1SubscriptionNewParamsSubscriptionEntitlement `json:"subscriptionEntitlements,omitzero"`
+	// Trial period override settings
 	TrialOverrideConfiguration V1SubscriptionNewParamsTrialOverrideConfiguration `json:"trialOverrideConfiguration,omitzero"`
 	paramObj
 }
@@ -1592,12 +1667,18 @@ func (r *V1SubscriptionNewParamsAddon) UnmarshalJSON(data []byte) error {
 	return apijson.UnmarshalRoot(data, r)
 }
 
+// Coupon configuration
 type V1SubscriptionNewParamsAppliedCoupon struct {
-	BillingCouponID param.Opt[string]                                 `json:"billingCouponId,omitzero"`
-	CouponID        param.Opt[string]                                 `json:"couponId,omitzero"`
-	PromotionCode   param.Opt[string]                                 `json:"promotionCode,omitzero"`
-	Configuration   V1SubscriptionNewParamsAppliedCouponConfiguration `json:"configuration,omitzero"`
-	Discount        V1SubscriptionNewParamsAppliedCouponDiscount      `json:"discount,omitzero"`
+	// Billing provider coupon ID
+	BillingCouponID param.Opt[string] `json:"billingCouponId,omitzero"`
+	// Stigg coupon ID
+	CouponID param.Opt[string] `json:"couponId,omitzero"`
+	// Promotion code to apply
+	PromotionCode param.Opt[string] `json:"promotionCode,omitzero"`
+	// Coupon timing configuration
+	Configuration V1SubscriptionNewParamsAppliedCouponConfiguration `json:"configuration,omitzero"`
+	// Ad-hoc discount configuration
+	Discount V1SubscriptionNewParamsAppliedCouponDiscount `json:"discount,omitzero"`
 	paramObj
 }
 
@@ -1609,6 +1690,7 @@ func (r *V1SubscriptionNewParamsAppliedCoupon) UnmarshalJSON(data []byte) error 
 	return apijson.UnmarshalRoot(data, r)
 }
 
+// Coupon timing configuration
 type V1SubscriptionNewParamsAppliedCouponConfiguration struct {
 	// Coupon start date
 	StartDate param.Opt[time.Time] `json:"startDate,omitzero" format:"date-time"`
@@ -1623,12 +1705,18 @@ func (r *V1SubscriptionNewParamsAppliedCouponConfiguration) UnmarshalJSON(data [
 	return apijson.UnmarshalRoot(data, r)
 }
 
+// Ad-hoc discount configuration
 type V1SubscriptionNewParamsAppliedCouponDiscount struct {
-	Description      param.Opt[string]                                        `json:"description,omitzero"`
-	DurationInMonths param.Opt[float64]                                       `json:"durationInMonths,omitzero"`
-	Name             param.Opt[string]                                        `json:"name,omitzero"`
-	PercentOff       param.Opt[float64]                                       `json:"percentOff,omitzero"`
-	AmountsOff       []V1SubscriptionNewParamsAppliedCouponDiscountAmountsOff `json:"amountsOff,omitzero"`
+	// Ad-hoc discount
+	Description param.Opt[string] `json:"description,omitzero"`
+	// Duration in months
+	DurationInMonths param.Opt[float64] `json:"durationInMonths,omitzero"`
+	// Discount name
+	Name param.Opt[string] `json:"name,omitzero"`
+	// Percentage discount
+	PercentOff param.Opt[float64] `json:"percentOff,omitzero"`
+	// Fixed amounts off by currency
+	AmountsOff []V1SubscriptionNewParamsAppliedCouponDiscountAmountsOff `json:"amountsOff,omitzero"`
 	paramObj
 }
 
@@ -1640,9 +1728,12 @@ func (r *V1SubscriptionNewParamsAppliedCouponDiscount) UnmarshalJSON(data []byte
 	return apijson.UnmarshalRoot(data, r)
 }
 
-// The property Amount is required.
+// The properties Amount, Currency are required.
 type V1SubscriptionNewParamsAppliedCouponDiscountAmountsOff struct {
+	// The price amount
 	Amount float64 `json:"amount,required"`
+	// The price currency
+	//
 	// Any of "usd", "aed", "all", "amd", "ang", "aud", "awg", "azn", "bam", "bbd",
 	// "bdt", "bgn", "bif", "bmd", "bnd", "bsd", "bwp", "byn", "bzd", "brl", "cad",
 	// "cdf", "chf", "cny", "czk", "dkk", "dop", "dzd", "egp", "etb", "eur", "fjd",
@@ -1654,7 +1745,7 @@ type V1SubscriptionNewParamsAppliedCouponDiscountAmountsOff struct {
 	// "sek", "sgd", "sle", "sll", "sos", "szl", "thb", "tjs", "top", "try", "ttd",
 	// "tzs", "uah", "uzs", "vnd", "vuv", "wst", "xaf", "xcd", "yer", "zar", "zmw",
 	// "clp", "djf", "gnf", "ugx", "pyg", "xof", "xpf".
-	Currency string `json:"currency,omitzero"`
+	Currency string `json:"currency,omitzero,required"`
 	paramObj
 }
 
@@ -1750,6 +1841,7 @@ func (r *V1SubscriptionNewParamsBillingInformationTaxID) UnmarshalJSON(data []by
 	return apijson.UnmarshalRoot(data, r)
 }
 
+// Billing period (MONTHLY or ANNUALLY)
 type V1SubscriptionNewParamsBillingPeriod string
 
 const (
@@ -1774,6 +1866,8 @@ func (r *V1SubscriptionNewParamsBudget) UnmarshalJSON(data []byte) error {
 	return apijson.UnmarshalRoot(data, r)
 }
 
+// Charge item
+//
 // The properties ID, Quantity, Type are required.
 type V1SubscriptionNewParamsCharge struct {
 	// Charge ID
@@ -1801,6 +1895,8 @@ func init() {
 	)
 }
 
+// Checkout page configuration for payment collection
+//
 // The properties CancelURL, SuccessURL are required.
 type V1SubscriptionNewParamsCheckoutOptions struct {
 	// URL to redirect to if checkout is canceled
@@ -2080,6 +2176,7 @@ const (
 
 // The properties FeatureID, UsageLimit are required.
 type V1SubscriptionNewParamsSubscriptionEntitlement struct {
+	// Feature ID
 	FeatureID  string          `json:"featureId,required"`
 	UsageLimit float64         `json:"usageLimit,required"`
 	IsGranted  param.Opt[bool] `json:"isGranted,omitzero"`
@@ -2094,6 +2191,8 @@ func (r *V1SubscriptionNewParamsSubscriptionEntitlement) UnmarshalJSON(data []by
 	return apijson.UnmarshalRoot(data, r)
 }
 
+// Trial period override settings
+//
 // The property IsTrial is required.
 type V1SubscriptionNewParamsTrialOverrideConfiguration struct {
 	// Whether the subscription should start with a trial period
@@ -2122,16 +2221,15 @@ func init() {
 }
 
 type V1SubscriptionListParams struct {
-	// Starting after this UUID for pagination
+	// Return items that come after this cursor
 	After param.Opt[string] `query:"after,omitzero" format:"uuid" json:"-"`
-	// Ending before this UUID for pagination
+	// Return items that come before this cursor
 	Before param.Opt[string] `query:"before,omitzero" format:"uuid" json:"-"`
 	// Filter by customer ID
 	CustomerID param.Opt[string] `query:"customerId,omitzero" json:"-"`
-	// Items per page
+	// Maximum number of items to return
 	Limit param.Opt[int64] `query:"limit,omitzero" json:"-"`
-	// Filter by subscription status (comma-separated for multiple statuses, e.g.,
-	// ACTIVE,IN_TRIAL)
+	// Filter by status (comma-separated)
 	Status param.Opt[string] `query:"status,omitzero" json:"-"`
 	paramObj
 }
@@ -2146,7 +2244,9 @@ func (r V1SubscriptionListParams) URLQuery() (v url.Values, err error) {
 }
 
 type V1SubscriptionDelegateParams struct {
-	// The customer ID to delegate the subscription to
+	// The unique identifier of the customer who will assume payment responsibility for
+	// this subscription. This customer must already exist in your Stigg account and
+	// have a valid payment method if the subscription requires payment.
 	TargetCustomerID string `json:"targetCustomerId,required"`
 	paramObj
 }
@@ -2160,7 +2260,7 @@ func (r *V1SubscriptionDelegateParams) UnmarshalJSON(data []byte) error {
 }
 
 type V1SubscriptionMigrateParams struct {
-	// When to migrate the subscription: IMMEDIATE or END_OF_BILLING_PERIOD
+	// When to migrate (immediate or period end)
 	//
 	// Any of "END_OF_BILLING_PERIOD", "IMMEDIATE".
 	SubscriptionMigrationTime V1SubscriptionMigrateParamsSubscriptionMigrationTime `json:"subscriptionMigrationTime,omitzero"`
@@ -2175,7 +2275,7 @@ func (r *V1SubscriptionMigrateParams) UnmarshalJSON(data []byte) error {
 	return apijson.UnmarshalRoot(data, r)
 }
 
-// When to migrate the subscription: IMMEDIATE or END_OF_BILLING_PERIOD
+// When to migrate (immediate or period end)
 type V1SubscriptionMigrateParamsSubscriptionMigrationTime string
 
 const (
@@ -2187,22 +2287,36 @@ type V1SubscriptionPreviewParams struct {
 	// Customer ID
 	CustomerID string `json:"customerId,required"`
 	// Plan ID
-	PlanID             string            `json:"planId,required"`
+	PlanID string `json:"planId,required"`
+	// ISO 3166-1 country code for localization
 	BillingCountryCode param.Opt[string] `json:"billingCountryCode,omitzero"`
-	PayingCustomerID   param.Opt[string] `json:"payingCustomerId,omitzero"`
-	ResourceID         param.Opt[string] `json:"resourceId,omitzero"`
+	// Paying customer ID for delegated billing
+	PayingCustomerID param.Opt[string] `json:"payingCustomerId,omitzero"`
+	// Resource ID for multi-instance subscriptions
+	ResourceID param.Opt[string] `json:"resourceId,omitzero"`
 	// Subscription start date
-	StartDate          param.Opt[time.Time]                          `json:"startDate,omitzero" format:"date-time"`
-	UnitQuantity       param.Opt[float64]                            `json:"unitQuantity,omitzero"`
-	Addons             []V1SubscriptionPreviewParamsAddon            `json:"addons,omitzero"`
-	AppliedCoupon      V1SubscriptionPreviewParamsAppliedCoupon      `json:"appliedCoupon,omitzero"`
-	BillableFeatures   []V1SubscriptionPreviewParamsBillableFeature  `json:"billableFeatures,omitzero"`
+	StartDate param.Opt[time.Time] `json:"startDate,omitzero" format:"date-time"`
+	// Unit quantity for per-unit pricing
+	UnitQuantity param.Opt[float64] `json:"unitQuantity,omitzero"`
+	// Addons to include
+	Addons []V1SubscriptionPreviewParamsAddon `json:"addons,omitzero"`
+	// Coupon or discount to apply
+	AppliedCoupon V1SubscriptionPreviewParamsAppliedCoupon `json:"appliedCoupon,omitzero"`
+	// Billable features with quantities
+	BillableFeatures []V1SubscriptionPreviewParamsBillableFeature `json:"billableFeatures,omitzero"`
+	// Billing and tax configuration
 	BillingInformation V1SubscriptionPreviewParamsBillingInformation `json:"billingInformation,omitzero"`
+	// Billing period (MONTHLY or ANNUALLY)
+	//
 	// Any of "MONTHLY", "ANNUALLY".
 	BillingPeriod V1SubscriptionPreviewParamsBillingPeriod `json:"billingPeriod,omitzero"`
-	Charges       []V1SubscriptionPreviewParamsCharge      `json:"charges,omitzero"`
+	// One-time or recurring charges
+	Charges []V1SubscriptionPreviewParamsCharge `json:"charges,omitzero"`
+	// When to apply subscription changes
+	//
 	// Any of "END_OF_BILLING_PERIOD", "END_OF_BILLING_MONTH", "IMMEDIATE".
-	ScheduleStrategy           V1SubscriptionPreviewParamsScheduleStrategy           `json:"scheduleStrategy,omitzero"`
+	ScheduleStrategy V1SubscriptionPreviewParamsScheduleStrategy `json:"scheduleStrategy,omitzero"`
+	// Trial period override settings
 	TrialOverrideConfiguration V1SubscriptionPreviewParamsTrialOverrideConfiguration `json:"trialOverrideConfiguration,omitzero"`
 	paramObj
 }
@@ -2215,10 +2329,13 @@ func (r *V1SubscriptionPreviewParams) UnmarshalJSON(data []byte) error {
 	return apijson.UnmarshalRoot(data, r)
 }
 
+// Addon configuration
+//
 // The property AddonID is required.
 type V1SubscriptionPreviewParamsAddon struct {
 	// Addon ID
-	AddonID  string           `json:"addonId,required"`
+	AddonID string `json:"addonId,required"`
+	// Number of addon instances
 	Quantity param.Opt[int64] `json:"quantity,omitzero"`
 	paramObj
 }
@@ -2231,12 +2348,18 @@ func (r *V1SubscriptionPreviewParamsAddon) UnmarshalJSON(data []byte) error {
 	return apijson.UnmarshalRoot(data, r)
 }
 
+// Coupon or discount to apply
 type V1SubscriptionPreviewParamsAppliedCoupon struct {
-	BillingCouponID param.Opt[string]                                     `json:"billingCouponId,omitzero"`
-	CouponID        param.Opt[string]                                     `json:"couponId,omitzero"`
-	PromotionCode   param.Opt[string]                                     `json:"promotionCode,omitzero"`
-	Configuration   V1SubscriptionPreviewParamsAppliedCouponConfiguration `json:"configuration,omitzero"`
-	Discount        V1SubscriptionPreviewParamsAppliedCouponDiscount      `json:"discount,omitzero"`
+	// Billing provider coupon ID
+	BillingCouponID param.Opt[string] `json:"billingCouponId,omitzero"`
+	// Stigg coupon ID
+	CouponID param.Opt[string] `json:"couponId,omitzero"`
+	// Promotion code to apply
+	PromotionCode param.Opt[string] `json:"promotionCode,omitzero"`
+	// Coupon timing configuration
+	Configuration V1SubscriptionPreviewParamsAppliedCouponConfiguration `json:"configuration,omitzero"`
+	// Ad-hoc discount configuration
+	Discount V1SubscriptionPreviewParamsAppliedCouponDiscount `json:"discount,omitzero"`
 	paramObj
 }
 
@@ -2248,6 +2371,7 @@ func (r *V1SubscriptionPreviewParamsAppliedCoupon) UnmarshalJSON(data []byte) er
 	return apijson.UnmarshalRoot(data, r)
 }
 
+// Coupon timing configuration
 type V1SubscriptionPreviewParamsAppliedCouponConfiguration struct {
 	// Coupon start date
 	StartDate param.Opt[time.Time] `json:"startDate,omitzero" format:"date-time"`
@@ -2262,12 +2386,18 @@ func (r *V1SubscriptionPreviewParamsAppliedCouponConfiguration) UnmarshalJSON(da
 	return apijson.UnmarshalRoot(data, r)
 }
 
+// Ad-hoc discount configuration
 type V1SubscriptionPreviewParamsAppliedCouponDiscount struct {
-	Description      param.Opt[string]                                            `json:"description,omitzero"`
-	DurationInMonths param.Opt[float64]                                           `json:"durationInMonths,omitzero"`
-	Name             param.Opt[string]                                            `json:"name,omitzero"`
-	PercentOff       param.Opt[float64]                                           `json:"percentOff,omitzero"`
-	AmountsOff       []V1SubscriptionPreviewParamsAppliedCouponDiscountAmountsOff `json:"amountsOff,omitzero"`
+	// Ad-hoc discount
+	Description param.Opt[string] `json:"description,omitzero"`
+	// Duration in months
+	DurationInMonths param.Opt[float64] `json:"durationInMonths,omitzero"`
+	// Discount name
+	Name param.Opt[string] `json:"name,omitzero"`
+	// Percentage discount
+	PercentOff param.Opt[float64] `json:"percentOff,omitzero"`
+	// Fixed amounts off by currency
+	AmountsOff []V1SubscriptionPreviewParamsAppliedCouponDiscountAmountsOff `json:"amountsOff,omitzero"`
 	paramObj
 }
 
@@ -2279,9 +2409,12 @@ func (r *V1SubscriptionPreviewParamsAppliedCouponDiscount) UnmarshalJSON(data []
 	return apijson.UnmarshalRoot(data, r)
 }
 
-// The property Amount is required.
+// The properties Amount, Currency are required.
 type V1SubscriptionPreviewParamsAppliedCouponDiscountAmountsOff struct {
+	// The price amount
 	Amount float64 `json:"amount,required"`
+	// The price currency
+	//
 	// Any of "usd", "aed", "all", "amd", "ang", "aud", "awg", "azn", "bam", "bbd",
 	// "bdt", "bgn", "bif", "bmd", "bnd", "bsd", "bwp", "byn", "bzd", "brl", "cad",
 	// "cdf", "chf", "cny", "czk", "dkk", "dop", "dzd", "egp", "etb", "eur", "fjd",
@@ -2293,7 +2426,7 @@ type V1SubscriptionPreviewParamsAppliedCouponDiscountAmountsOff struct {
 	// "sek", "sgd", "sle", "sll", "sos", "szl", "thb", "tjs", "top", "try", "ttd",
 	// "tzs", "uah", "uzs", "vnd", "vuv", "wst", "xaf", "xcd", "yer", "zar", "zmw",
 	// "clp", "djf", "gnf", "ugx", "pyg", "xof", "xpf".
-	Currency string `json:"currency,omitzero"`
+	Currency string `json:"currency,omitzero,required"`
 	paramObj
 }
 
@@ -2311,11 +2444,14 @@ func init() {
 	)
 }
 
+// Feature with quantity
+//
 // The properties FeatureID, Quantity are required.
 type V1SubscriptionPreviewParamsBillableFeature struct {
 	// Feature ID
-	FeatureID string  `json:"featureId,required"`
-	Quantity  float64 `json:"quantity,required"`
+	FeatureID string `json:"featureId,required"`
+	// Quantity of feature units
+	Quantity float64 `json:"quantity,required"`
 	paramObj
 }
 
@@ -2327,19 +2463,32 @@ func (r *V1SubscriptionPreviewParamsBillableFeature) UnmarshalJSON(data []byte) 
 	return apijson.UnmarshalRoot(data, r)
 }
 
+// Billing and tax configuration
 type V1SubscriptionPreviewParamsBillingInformation struct {
-	ChargeOnBehalfOfAccount param.Opt[string]                                           `json:"chargeOnBehalfOfAccount,omitzero"`
-	IntegrationID           param.Opt[string]                                           `json:"integrationId,omitzero"`
-	InvoiceDaysUntilDue     param.Opt[float64]                                          `json:"invoiceDaysUntilDue,omitzero"`
-	IsBackdated             param.Opt[bool]                                             `json:"isBackdated,omitzero"`
-	IsInvoicePaid           param.Opt[bool]                                             `json:"isInvoicePaid,omitzero"`
-	TaxPercentage           param.Opt[float64]                                          `json:"taxPercentage,omitzero"`
-	BillingAddress          V1SubscriptionPreviewParamsBillingInformationBillingAddress `json:"billingAddress,omitzero"`
-	Metadata                any                                                         `json:"metadata,omitzero"`
+	// Connected account ID for platform billing
+	ChargeOnBehalfOfAccount param.Opt[string] `json:"chargeOnBehalfOfAccount,omitzero"`
+	// Billing integration ID
+	IntegrationID param.Opt[string] `json:"integrationId,omitzero"`
+	// Days until invoice is due
+	InvoiceDaysUntilDue param.Opt[float64] `json:"invoiceDaysUntilDue,omitzero"`
+	// Whether subscription is backdated
+	IsBackdated param.Opt[bool] `json:"isBackdated,omitzero"`
+	// Whether invoice is already paid
+	IsInvoicePaid param.Opt[bool] `json:"isInvoicePaid,omitzero"`
+	// Tax percentage to apply
+	TaxPercentage param.Opt[float64] `json:"taxPercentage,omitzero"`
+	// Billing address
+	BillingAddress V1SubscriptionPreviewParamsBillingInformationBillingAddress `json:"billingAddress,omitzero"`
+	// Additional billing metadata
+	Metadata any `json:"metadata,omitzero"`
+	// Proration behavior
+	//
 	// Any of "INVOICE_IMMEDIATELY", "CREATE_PRORATIONS", "NONE".
-	ProrationBehavior string                                               `json:"prorationBehavior,omitzero"`
-	TaxIDs            []V1SubscriptionPreviewParamsBillingInformationTaxID `json:"taxIds,omitzero"`
-	TaxRateIDs        []string                                             `json:"taxRateIds,omitzero"`
+	ProrationBehavior string `json:"prorationBehavior,omitzero"`
+	// Customer tax IDs
+	TaxIDs []V1SubscriptionPreviewParamsBillingInformationTaxID `json:"taxIds,omitzero"`
+	// Tax rate IDs from billing provider
+	TaxRateIDs []string `json:"taxRateIds,omitzero"`
 	paramObj
 }
 
@@ -2357,6 +2506,7 @@ func init() {
 	)
 }
 
+// Billing address
 type V1SubscriptionPreviewParamsBillingInformationBillingAddress struct {
 	City       param.Opt[string] `json:"city,omitzero"`
 	Country    param.Opt[string] `json:"country,omitzero"`
@@ -2375,9 +2525,13 @@ func (r *V1SubscriptionPreviewParamsBillingInformationBillingAddress) UnmarshalJ
 	return apijson.UnmarshalRoot(data, r)
 }
 
+// Tax exemption identifier
+//
 // The properties Type, Value are required.
 type V1SubscriptionPreviewParamsBillingInformationTaxID struct {
-	Type  string `json:"type,required"`
+	// Tax exemption type (e.g., vat, gst)
+	Type string `json:"type,required"`
+	// Tax exemption identifier value
 	Value string `json:"value,required"`
 	paramObj
 }
@@ -2390,6 +2544,7 @@ func (r *V1SubscriptionPreviewParamsBillingInformationTaxID) UnmarshalJSON(data 
 	return apijson.UnmarshalRoot(data, r)
 }
 
+// Billing period (MONTHLY or ANNUALLY)
 type V1SubscriptionPreviewParamsBillingPeriod string
 
 const (
@@ -2397,6 +2552,8 @@ const (
 	V1SubscriptionPreviewParamsBillingPeriodAnnually V1SubscriptionPreviewParamsBillingPeriod = "ANNUALLY"
 )
 
+// Charge item
+//
 // The properties ID, Quantity, Type are required.
 type V1SubscriptionPreviewParamsCharge struct {
 	// Charge ID
@@ -2424,6 +2581,7 @@ func init() {
 	)
 }
 
+// When to apply subscription changes
 type V1SubscriptionPreviewParamsScheduleStrategy string
 
 const (
@@ -2432,11 +2590,16 @@ const (
 	V1SubscriptionPreviewParamsScheduleStrategyImmediate          V1SubscriptionPreviewParamsScheduleStrategy = "IMMEDIATE"
 )
 
+// Trial period override settings
+//
 // The property IsTrial is required.
 type V1SubscriptionPreviewParamsTrialOverrideConfiguration struct {
+	// Whether to start as trial
 	IsTrial bool `json:"isTrial,required"`
 	// Trial end date
 	TrialEndDate param.Opt[time.Time] `json:"trialEndDate,omitzero" format:"date-time"`
+	// Behavior when trial ends
+	//
 	// Any of "CONVERT_TO_PAID", "CANCEL_SUBSCRIPTION".
 	TrialEndBehavior string `json:"trialEndBehavior,omitzero"`
 	paramObj
@@ -2457,8 +2620,7 @@ func init() {
 }
 
 type V1SubscriptionTransferParams struct {
-	// The resource ID to transfer the subscription to. The destination resource must
-	// belong to the same customer.
+	// Resource ID to transfer the subscription to
 	DestinationResourceID string `json:"destinationResourceId,required"`
 	paramObj
 }

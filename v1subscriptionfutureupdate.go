@@ -34,7 +34,7 @@ func NewV1SubscriptionFutureUpdateService(opts ...option.RequestOption) (r V1Sub
 	return
 }
 
-// Perform cancel future update on a Subscription
+// Cancel pending payment update
 func (r *V1SubscriptionFutureUpdateService) CancelPendingPayment(ctx context.Context, id string, opts ...option.RequestOption) (res *V1SubscriptionFutureUpdateCancelPendingPaymentResponse, err error) {
 	opts = slices.Concat(r.Options, opts)
 	if id == "" {
@@ -46,7 +46,7 @@ func (r *V1SubscriptionFutureUpdateService) CancelPendingPayment(ctx context.Con
 	return
 }
 
-// Perform cancel future update on a Subscription
+// Cancel scheduled update
 func (r *V1SubscriptionFutureUpdateService) CancelSchedule(ctx context.Context, id string, opts ...option.RequestOption) (res *V1SubscriptionFutureUpdateCancelScheduleResponse, err error) {
 	opts = slices.Concat(r.Options, opts)
 	if id == "" {
@@ -58,6 +58,7 @@ func (r *V1SubscriptionFutureUpdateService) CancelSchedule(ctx context.Context, 
 	return
 }
 
+// Response object
 type V1SubscriptionFutureUpdateCancelPendingPaymentResponse struct {
 	Data V1SubscriptionFutureUpdateCancelPendingPaymentResponseData `json:"data,required"`
 	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
@@ -93,6 +94,7 @@ func (r *V1SubscriptionFutureUpdateCancelPendingPaymentResponseData) UnmarshalJS
 	return apijson.UnmarshalRoot(data, r)
 }
 
+// Response object
 type V1SubscriptionFutureUpdateCancelScheduleResponse struct {
 	Data V1SubscriptionFutureUpdateCancelScheduleResponseData `json:"data,required"`
 	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
