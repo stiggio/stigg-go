@@ -1,5 +1,15 @@
 # Changelog
 
+## 0.1.0-alpha.3 (2026-01-28)
+
+Full Changelog: [v0.1.0-alpha.2...v0.1.0-alpha.3](https://github.com/stiggio/stigg-go/compare/v0.1.0-alpha.2...v0.1.0-alpha.3)
+
+### Features
+
+* **api:** api update ([9c94833](https://github.com/stiggio/stigg-go/commit/9c94833e2e97bbab05a3940f6a8cc382c721a9ee))
+* **api:** api update ([4326c32](https://github.com/stiggio/stigg-go/commit/4326c32389a45b94eebcaad7daf1d73149fd81fe))
+* **api:** improved cursor pagination ([116b768](https://github.com/stiggio/stigg-go/commit/116b768e6c87ad5d64892b0545ead907f38164e8))
+
 ## 0.1.0-alpha.2 (2026-01-27)
 
 Full Changelog: [v0.1.0-alpha.1...v0.1.0-alpha.2](https://github.com/stiggio/stigg-go/compare/v0.1.0-alpha.1...v0.1.0-alpha.2)
