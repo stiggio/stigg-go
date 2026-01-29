@@ -14,7 +14,7 @@ import (
 	"github.com/stiggio/stigg-go/option"
 )
 
-func TestV1NewEvent(t *testing.T) {
+func TestV1UsageHistoryWithOptionalParams(t *testing.T) {
 	t.Skip("Prism tests are disabled")
 	baseURL := "http://localhost:4010"
 	if envURL, ok := os.LookupEnv("TEST_API_BASE_URL"); ok {
@@ -27,20 +27,17 @@ func TestV1NewEvent(t *testing.T) {
 		option.WithBaseURL(baseURL),
 		option.WithAPIKey("My API Key"),
 	)
-	_, err := client.V1.NewEvent(context.TODO(), stigg.V1NewEventParams{
-		Events: []stigg.V1NewEventParamsEvent{{
-			CustomerID:     "customerId",
-			EventName:      "x",
-			IdempotencyKey: "x",
-			Dimensions: map[string]stigg.V1NewEventParamsEventDimensionUnion{
-				"foo": {
-					OfString: stigg.String("string"),
-				},
-			},
+	_, err := client.V1.Usage.History(
+		context.TODO(),
+		"featureId",
+		stigg.V1UsageHistoryParams{
+			CustomerID: "customerId",
+			StartDate:  time.Now(),
+			EndDate:    stigg.Time(time.Now()),
+			GroupBy:    stigg.String("groupBy"),
 			ResourceID: stigg.String("resourceId"),
-			Timestamp:  stigg.Time(time.Now()),
-		}},
-	})
+		},
+	)
 	if err != nil {
 		var apierr *stigg.Error
 		if errors.As(err, &apierr) {
@@ -50,7 +47,7 @@ func TestV1NewEvent(t *testing.T) {
 	}
 }
 
-func TestV1NewUsage(t *testing.T) {
+func TestV1UsageReport(t *testing.T) {
 	t.Skip("Prism tests are disabled")
 	baseURL := "http://localhost:4010"
 	if envURL, ok := os.LookupEnv("TEST_API_BASE_URL"); ok {
@@ -63,13 +60,13 @@ func TestV1NewUsage(t *testing.T) {
 		option.WithBaseURL(baseURL),
 		option.WithAPIKey("My API Key"),
 	)
-	_, err := client.V1.NewUsage(context.TODO(), stigg.V1NewUsageParams{
-		Usages: []stigg.V1NewUsageParamsUsage{{
+	_, err := client.V1.Usage.Report(context.TODO(), stigg.V1UsageReportParams{
+		Usages: []stigg.V1UsageReportParamsUsage{{
 			CustomerID: "customerId",
 			FeatureID:  "featureId",
 			Value:      -9007199254740991,
 			CreatedAt:  stigg.Time(time.Now()),
-			Dimensions: map[string]stigg.V1NewUsageParamsUsageDimensionUnion{
+			Dimensions: map[string]stigg.V1UsageReportParamsUsageDimensionUnion{
 				"foo": {
 					OfString: stigg.String("string"),
 				},

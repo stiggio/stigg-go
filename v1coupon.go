@@ -40,7 +40,7 @@ func NewV1CouponService(opts ...option.RequestOption) (r V1CouponService) {
 }
 
 // Create coupon
-func (r *V1CouponService) New(ctx context.Context, body V1CouponNewParams, opts ...option.RequestOption) (res *V1CouponNewResponse, err error) {
+func (r *V1CouponService) New(ctx context.Context, body V1CouponNewParams, opts ...option.RequestOption) (res *Coupon, err error) {
 	opts = slices.Concat(r.Options, opts)
 	path := "api/v1/coupons"
 	err = requestconfig.ExecuteNewRequest(ctx, http.MethodPost, path, body, &res, opts...)
@@ -48,7 +48,7 @@ func (r *V1CouponService) New(ctx context.Context, body V1CouponNewParams, opts 
 }
 
 // Get a single coupon by ID
-func (r *V1CouponService) Get(ctx context.Context, id string, opts ...option.RequestOption) (res *V1CouponGetResponse, err error) {
+func (r *V1CouponService) Get(ctx context.Context, id string, opts ...option.RequestOption) (res *Coupon, err error) {
 	opts = slices.Concat(r.Options, opts)
 	if id == "" {
 		err = errors.New("missing required id parameter")
@@ -83,9 +83,9 @@ func (r *V1CouponService) ListAutoPaging(ctx context.Context, query V1CouponList
 }
 
 // Response object
-type V1CouponNewResponse struct {
+type Coupon struct {
 	// Discount instrument with percentage or fixed amount
-	Data V1CouponNewResponseData `json:"data,required"`
+	Data CouponData `json:"data,required"`
 	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
 	JSON struct {
 		Data        respjson.Field
@@ -95,17 +95,17 @@ type V1CouponNewResponse struct {
 }
 
 // Returns the unmodified JSON received from the API
-func (r V1CouponNewResponse) RawJSON() string { return r.JSON.raw }
-func (r *V1CouponNewResponse) UnmarshalJSON(data []byte) error {
+func (r Coupon) RawJSON() string { return r.JSON.raw }
+func (r *Coupon) UnmarshalJSON(data []byte) error {
 	return apijson.UnmarshalRoot(data, r)
 }
 
 // Discount instrument with percentage or fixed amount
-type V1CouponNewResponseData struct {
+type CouponData struct {
 	// The unique identifier for the entity
 	ID string `json:"id,required"`
 	// Fixed amount discounts in different currencies
-	AmountsOff []V1CouponNewResponseDataAmountsOff `json:"amountsOff,required"`
+	AmountsOff []CouponDataAmountsOff `json:"amountsOff,required"`
 	// The unique identifier for the entity in the billing provider
 	BillingID string `json:"billingId,required"`
 	// The URL to the entity in the billing provider
@@ -155,13 +155,13 @@ type V1CouponNewResponseData struct {
 }
 
 // Returns the unmodified JSON received from the API
-func (r V1CouponNewResponseData) RawJSON() string { return r.JSON.raw }
-func (r *V1CouponNewResponseData) UnmarshalJSON(data []byte) error {
+func (r CouponData) RawJSON() string { return r.JSON.raw }
+func (r *CouponData) UnmarshalJSON(data []byte) error {
 	return apijson.UnmarshalRoot(data, r)
 }
 
 // Monetary amount with currency
-type V1CouponNewResponseDataAmountsOff struct {
+type CouponDataAmountsOff struct {
 	// The price amount
 	Amount float64 `json:"amount,required"`
 	// The price currency
@@ -188,119 +188,8 @@ type V1CouponNewResponseDataAmountsOff struct {
 }
 
 // Returns the unmodified JSON received from the API
-func (r V1CouponNewResponseDataAmountsOff) RawJSON() string { return r.JSON.raw }
-func (r *V1CouponNewResponseDataAmountsOff) UnmarshalJSON(data []byte) error {
-	return apijson.UnmarshalRoot(data, r)
-}
-
-// Response object
-type V1CouponGetResponse struct {
-	// Discount instrument with percentage or fixed amount
-	Data V1CouponGetResponseData `json:"data,required"`
-	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
-	JSON struct {
-		Data        respjson.Field
-		ExtraFields map[string]respjson.Field
-		raw         string
-	} `json:"-"`
-}
-
-// Returns the unmodified JSON received from the API
-func (r V1CouponGetResponse) RawJSON() string { return r.JSON.raw }
-func (r *V1CouponGetResponse) UnmarshalJSON(data []byte) error {
-	return apijson.UnmarshalRoot(data, r)
-}
-
-// Discount instrument with percentage or fixed amount
-type V1CouponGetResponseData struct {
-	// The unique identifier for the entity
-	ID string `json:"id,required"`
-	// Fixed amount discounts in different currencies
-	AmountsOff []V1CouponGetResponseDataAmountsOff `json:"amountsOff,required"`
-	// The unique identifier for the entity in the billing provider
-	BillingID string `json:"billingId,required"`
-	// The URL to the entity in the billing provider
-	BillingLinkURL string `json:"billingLinkUrl,required"`
-	// Timestamp of when the record was created
-	CreatedAt time.Time `json:"createdAt,required" format:"date-time"`
-	// Description of the coupon
-	Description string `json:"description,required"`
-	// Duration of the coupon validity in months
-	DurationInMonths float64 `json:"durationInMonths,required"`
-	// Name of the coupon
-	Name string `json:"name,required"`
-	// Percentage discount off the original price
-	PercentOff float64 `json:"percentOff,required"`
-	// The source of the coupon
-	//
-	// Any of "STIGG", "STIGG_ADHOC", "STRIPE".
-	Source string `json:"source,required"`
-	// Current status of the coupon
-	//
-	// Any of "ACTIVE", "ARCHIVED".
-	Status string `json:"status,required"`
-	// Type of the coupon (percentage or fixed amount)
-	//
-	// Any of "FIXED", "PERCENTAGE".
-	Type string `json:"type,required"`
-	// Timestamp of when the record was last updated
-	UpdatedAt time.Time `json:"updatedAt,required" format:"date-time"`
-	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
-	JSON struct {
-		ID               respjson.Field
-		AmountsOff       respjson.Field
-		BillingID        respjson.Field
-		BillingLinkURL   respjson.Field
-		CreatedAt        respjson.Field
-		Description      respjson.Field
-		DurationInMonths respjson.Field
-		Name             respjson.Field
-		PercentOff       respjson.Field
-		Source           respjson.Field
-		Status           respjson.Field
-		Type             respjson.Field
-		UpdatedAt        respjson.Field
-		ExtraFields      map[string]respjson.Field
-		raw              string
-	} `json:"-"`
-}
-
-// Returns the unmodified JSON received from the API
-func (r V1CouponGetResponseData) RawJSON() string { return r.JSON.raw }
-func (r *V1CouponGetResponseData) UnmarshalJSON(data []byte) error {
-	return apijson.UnmarshalRoot(data, r)
-}
-
-// Monetary amount with currency
-type V1CouponGetResponseDataAmountsOff struct {
-	// The price amount
-	Amount float64 `json:"amount,required"`
-	// The price currency
-	//
-	// Any of "usd", "aed", "all", "amd", "ang", "aud", "awg", "azn", "bam", "bbd",
-	// "bdt", "bgn", "bif", "bmd", "bnd", "bsd", "bwp", "byn", "bzd", "brl", "cad",
-	// "cdf", "chf", "cny", "czk", "dkk", "dop", "dzd", "egp", "etb", "eur", "fjd",
-	// "gbp", "gel", "gip", "gmd", "gyd", "hkd", "hrk", "htg", "idr", "ils", "inr",
-	// "isk", "jmd", "jpy", "kes", "kgs", "khr", "kmf", "krw", "kyd", "kzt", "lbp",
-	// "lkr", "lrd", "lsl", "mad", "mdl", "mga", "mkd", "mmk", "mnt", "mop", "mro",
-	// "mvr", "mwk", "mxn", "myr", "mzn", "nad", "ngn", "nok", "npr", "nzd", "pgk",
-	// "php", "pkr", "pln", "qar", "ron", "rsd", "rub", "rwf", "sar", "sbd", "scr",
-	// "sek", "sgd", "sle", "sll", "sos", "szl", "thb", "tjs", "top", "try", "ttd",
-	// "tzs", "uah", "uzs", "vnd", "vuv", "wst", "xaf", "xcd", "yer", "zar", "zmw",
-	// "clp", "djf", "gnf", "ugx", "pyg", "xof", "xpf".
-	Currency string `json:"currency,required"`
-	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
-	JSON struct {
-		Amount      respjson.Field
-		Currency    respjson.Field
-		ExtraFields map[string]respjson.Field
-		raw         string
-	} `json:"-"`
-}
-
-// Returns the unmodified JSON received from the API
-func (r V1CouponGetResponseDataAmountsOff) RawJSON() string { return r.JSON.raw }
-func (r *V1CouponGetResponseDataAmountsOff) UnmarshalJSON(data []byte) error {
+func (r CouponDataAmountsOff) RawJSON() string { return r.JSON.raw }
+func (r *CouponDataAmountsOff) UnmarshalJSON(data []byte) error {
 	return apijson.UnmarshalRoot(data, r)
 }
 
