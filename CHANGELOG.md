@@ -1,5 +1,13 @@
 # Changelog
 
+## 0.1.0-alpha.5 (2026-01-29)
+
+Full Changelog: [v0.1.0-alpha.4...v0.1.0-alpha.5](https://github.com/stiggio/stigg-go/compare/v0.1.0-alpha.4...v0.1.0-alpha.5)
+
+### Features
+
+* **api:** update stainless config ([143ef26](https://github.com/stiggio/stigg-go/commit/143ef2615a0112ff8471c5bc5db3a75b95138864))
+
 ## 0.1.0-alpha.4 (2026-01-28)
 
 Full Changelog: [v0.1.0-alpha.3...v0.1.0-alpha.4](https://github.com/stiggio/stigg-go/compare/v0.1.0-alpha.3...v0.1.0-alpha.4)
