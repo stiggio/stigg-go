@@ -7,54 +7,12 @@ import (
 	"errors"
 	"os"
 	"testing"
+	"time"
 
 	"github.com/stiggio/stigg-go"
 	"github.com/stiggio/stigg-go/internal/testutil"
 	"github.com/stiggio/stigg-go/option"
 )
-
-func TestV1CustomerNewWithOptionalParams(t *testing.T) {
-	t.Skip("Prism tests are disabled")
-	baseURL := "http://localhost:4010"
-	if envURL, ok := os.LookupEnv("TEST_API_BASE_URL"); ok {
-		baseURL = envURL
-	}
-	if !testutil.CheckTestServer(t, baseURL) {
-		return
-	}
-	client := stigg.NewClient(
-		option.WithBaseURL(baseURL),
-		option.WithAPIKey("My API Key"),
-	)
-	_, err := client.V1.Customers.New(context.TODO(), stigg.V1CustomerNewParams{
-		ID:       "id",
-		CouponID: stigg.String("couponId"),
-		DefaultPaymentMethod: stigg.V1CustomerNewParamsDefaultPaymentMethod{
-			BillingID:       stigg.String("billingId"),
-			CardExpiryMonth: stigg.Float(0),
-			CardExpiryYear:  stigg.Float(0),
-			CardLast4Digits: stigg.String("cardLast4Digits"),
-			Type:            "CARD",
-		},
-		Email: stigg.String("dev@stainless.com"),
-		Integrations: []stigg.V1CustomerNewParamsIntegration{{
-			ID:               "id",
-			SyncedEntityID:   stigg.String("syncedEntityId"),
-			VendorIdentifier: "AUTH0",
-		}},
-		Metadata: map[string]string{
-			"foo": "string",
-		},
-		Name: stigg.String("name"),
-	})
-	if err != nil {
-		var apierr *stigg.Error
-		if errors.As(err, &apierr) {
-			t.Log(string(apierr.DumpRequest(true)))
-		}
-		t.Fatalf("err should be nil: %s", err.Error())
-	}
-}
 
 func TestV1CustomerGet(t *testing.T) {
 	t.Skip("Prism tests are disabled")
@@ -159,6 +117,83 @@ func TestV1CustomerArchive(t *testing.T) {
 		option.WithAPIKey("My API Key"),
 	)
 	_, err := client.V1.Customers.Archive(context.TODO(), "x")
+	if err != nil {
+		var apierr *stigg.Error
+		if errors.As(err, &apierr) {
+			t.Log(string(apierr.DumpRequest(true)))
+		}
+		t.Fatalf("err should be nil: %s", err.Error())
+	}
+}
+
+func TestV1CustomerImport(t *testing.T) {
+	t.Skip("Prism tests are disabled")
+	baseURL := "http://localhost:4010"
+	if envURL, ok := os.LookupEnv("TEST_API_BASE_URL"); ok {
+		baseURL = envURL
+	}
+	if !testutil.CheckTestServer(t, baseURL) {
+		return
+	}
+	client := stigg.NewClient(
+		option.WithBaseURL(baseURL),
+		option.WithAPIKey("My API Key"),
+	)
+	_, err := client.V1.Customers.Import(context.TODO(), stigg.V1CustomerImportParams{
+		Customers: []stigg.V1CustomerImportParamsCustomer{{
+			ID:    "id",
+			Email: stigg.String("dev@stainless.com"),
+			Name:  stigg.String("name"),
+			Metadata: map[string]string{
+				"foo": "string",
+			},
+			PaymentMethodID: stigg.String("paymentMethodId"),
+			UpdatedAt:       stigg.Time(time.Now()),
+		}},
+	})
+	if err != nil {
+		var apierr *stigg.Error
+		if errors.As(err, &apierr) {
+			t.Log(string(apierr.DumpRequest(true)))
+		}
+		t.Fatalf("err should be nil: %s", err.Error())
+	}
+}
+
+func TestV1CustomerProvisionWithOptionalParams(t *testing.T) {
+	t.Skip("Prism tests are disabled")
+	baseURL := "http://localhost:4010"
+	if envURL, ok := os.LookupEnv("TEST_API_BASE_URL"); ok {
+		baseURL = envURL
+	}
+	if !testutil.CheckTestServer(t, baseURL) {
+		return
+	}
+	client := stigg.NewClient(
+		option.WithBaseURL(baseURL),
+		option.WithAPIKey("My API Key"),
+	)
+	_, err := client.V1.Customers.Provision(context.TODO(), stigg.V1CustomerProvisionParams{
+		ID:       "id",
+		CouponID: stigg.String("couponId"),
+		DefaultPaymentMethod: stigg.V1CustomerProvisionParamsDefaultPaymentMethod{
+			BillingID:       stigg.String("billingId"),
+			CardExpiryMonth: stigg.Float(0),
+			CardExpiryYear:  stigg.Float(0),
+			CardLast4Digits: stigg.String("cardLast4Digits"),
+			Type:            "CARD",
+		},
+		Email: stigg.String("dev@stainless.com"),
+		Integrations: []stigg.V1CustomerProvisionParamsIntegration{{
+			ID:               "id",
+			SyncedEntityID:   stigg.String("syncedEntityId"),
+			VendorIdentifier: "AUTH0",
+		}},
+		Metadata: map[string]string{
+			"foo": "string",
+		},
+		Name: stigg.String("name"),
+	})
 	if err != nil {
 		var apierr *stigg.Error
 		if errors.As(err, &apierr) {

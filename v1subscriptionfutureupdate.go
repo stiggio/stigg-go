@@ -35,7 +35,7 @@ func NewV1SubscriptionFutureUpdateService(opts ...option.RequestOption) (r V1Sub
 }
 
 // Cancel pending payment update
-func (r *V1SubscriptionFutureUpdateService) CancelPendingPayment(ctx context.Context, id string, opts ...option.RequestOption) (res *V1SubscriptionFutureUpdateCancelPendingPaymentResponse, err error) {
+func (r *V1SubscriptionFutureUpdateService) CancelPendingPayment(ctx context.Context, id string, opts ...option.RequestOption) (res *CancelSubscription, err error) {
 	opts = slices.Concat(r.Options, opts)
 	if id == "" {
 		err = errors.New("missing required id parameter")
@@ -47,7 +47,7 @@ func (r *V1SubscriptionFutureUpdateService) CancelPendingPayment(ctx context.Con
 }
 
 // Cancel scheduled update
-func (r *V1SubscriptionFutureUpdateService) CancelSchedule(ctx context.Context, id string, opts ...option.RequestOption) (res *V1SubscriptionFutureUpdateCancelScheduleResponse, err error) {
+func (r *V1SubscriptionFutureUpdateService) CancelSchedule(ctx context.Context, id string, opts ...option.RequestOption) (res *CancelSubscription, err error) {
 	opts = slices.Concat(r.Options, opts)
 	if id == "" {
 		err = errors.New("missing required id parameter")
@@ -59,8 +59,8 @@ func (r *V1SubscriptionFutureUpdateService) CancelSchedule(ctx context.Context, 
 }
 
 // Response object
-type V1SubscriptionFutureUpdateCancelPendingPaymentResponse struct {
-	Data V1SubscriptionFutureUpdateCancelPendingPaymentResponseData `json:"data,required"`
+type CancelSubscription struct {
+	Data CancelSubscriptionData `json:"data,required"`
 	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
 	JSON struct {
 		Data        respjson.Field
@@ -70,12 +70,12 @@ type V1SubscriptionFutureUpdateCancelPendingPaymentResponse struct {
 }
 
 // Returns the unmodified JSON received from the API
-func (r V1SubscriptionFutureUpdateCancelPendingPaymentResponse) RawJSON() string { return r.JSON.raw }
-func (r *V1SubscriptionFutureUpdateCancelPendingPaymentResponse) UnmarshalJSON(data []byte) error {
+func (r CancelSubscription) RawJSON() string { return r.JSON.raw }
+func (r *CancelSubscription) UnmarshalJSON(data []byte) error {
 	return apijson.UnmarshalRoot(data, r)
 }
 
-type V1SubscriptionFutureUpdateCancelPendingPaymentResponseData struct {
+type CancelSubscriptionData struct {
 	// Subscription ID
 	ID string `json:"id,required"`
 	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
@@ -87,43 +87,7 @@ type V1SubscriptionFutureUpdateCancelPendingPaymentResponseData struct {
 }
 
 // Returns the unmodified JSON received from the API
-func (r V1SubscriptionFutureUpdateCancelPendingPaymentResponseData) RawJSON() string {
-	return r.JSON.raw
-}
-func (r *V1SubscriptionFutureUpdateCancelPendingPaymentResponseData) UnmarshalJSON(data []byte) error {
-	return apijson.UnmarshalRoot(data, r)
-}
-
-// Response object
-type V1SubscriptionFutureUpdateCancelScheduleResponse struct {
-	Data V1SubscriptionFutureUpdateCancelScheduleResponseData `json:"data,required"`
-	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
-	JSON struct {
-		Data        respjson.Field
-		ExtraFields map[string]respjson.Field
-		raw         string
-	} `json:"-"`
-}
-
-// Returns the unmodified JSON received from the API
-func (r V1SubscriptionFutureUpdateCancelScheduleResponse) RawJSON() string { return r.JSON.raw }
-func (r *V1SubscriptionFutureUpdateCancelScheduleResponse) UnmarshalJSON(data []byte) error {
-	return apijson.UnmarshalRoot(data, r)
-}
-
-type V1SubscriptionFutureUpdateCancelScheduleResponseData struct {
-	// Subscription ID
-	ID string `json:"id,required"`
-	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
-	JSON struct {
-		ID          respjson.Field
-		ExtraFields map[string]respjson.Field
-		raw         string
-	} `json:"-"`
-}
-
-// Returns the unmodified JSON received from the API
-func (r V1SubscriptionFutureUpdateCancelScheduleResponseData) RawJSON() string { return r.JSON.raw }
-func (r *V1SubscriptionFutureUpdateCancelScheduleResponseData) UnmarshalJSON(data []byte) error {
+func (r CancelSubscriptionData) RawJSON() string { return r.JSON.raw }
+func (r *CancelSubscriptionData) UnmarshalJSON(data []byte) error {
 	return apijson.UnmarshalRoot(data, r)
 }
