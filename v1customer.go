@@ -43,7 +43,8 @@ func NewV1CustomerService(opts ...option.RequestOption) (r V1CustomerService) {
 	return
 }
 
-// Get a single customer by ID
+// Retrieves a customer by their unique identifier, including billing information
+// and subscription status.
 func (r *V1CustomerService) Get(ctx context.Context, id string, opts ...option.RequestOption) (res *CustomerResponse, err error) {
 	opts = slices.Concat(r.Options, opts)
 	if id == "" {
@@ -55,7 +56,8 @@ func (r *V1CustomerService) Get(ctx context.Context, id string, opts ...option.R
 	return
 }
 
-// Update a customer
+// Updates an existing customer's properties such as name, email, and billing
+// information.
 func (r *V1CustomerService) Update(ctx context.Context, id string, body V1CustomerUpdateParams, opts ...option.RequestOption) (res *CustomerResponse, err error) {
 	opts = slices.Concat(r.Options, opts)
 	if id == "" {
@@ -67,7 +69,7 @@ func (r *V1CustomerService) Update(ctx context.Context, id string, body V1Custom
 	return
 }
 
-// Get a list of customers
+// Retrieves a paginated list of customers in the environment.
 func (r *V1CustomerService) List(ctx context.Context, query V1CustomerListParams, opts ...option.RequestOption) (res *pagination.MyCursorIDPage[V1CustomerListResponse], err error) {
 	var raw *http.Response
 	opts = slices.Concat(r.Options, opts)
@@ -85,12 +87,13 @@ func (r *V1CustomerService) List(ctx context.Context, query V1CustomerListParams
 	return res, nil
 }
 
-// Get a list of customers
+// Retrieves a paginated list of customers in the environment.
 func (r *V1CustomerService) ListAutoPaging(ctx context.Context, query V1CustomerListParams, opts ...option.RequestOption) *pagination.MyCursorIDPageAutoPager[V1CustomerListResponse] {
 	return pagination.NewMyCursorIDPageAutoPager(r.List(ctx, query, opts...))
 }
 
-// Archive customer
+// Archives a customer, preventing new subscriptions. Optionally cancels existing
+// subscriptions.
 func (r *V1CustomerService) Archive(ctx context.Context, id string, opts ...option.RequestOption) (res *CustomerResponse, err error) {
 	opts = slices.Concat(r.Options, opts)
 	if id == "" {
@@ -102,7 +105,8 @@ func (r *V1CustomerService) Archive(ctx context.Context, id string, opts ...opti
 	return
 }
 
-// Bulk import customers
+// Imports multiple customers in bulk. Used for migrating customer data from
+// external systems.
 func (r *V1CustomerService) Import(ctx context.Context, body V1CustomerImportParams, opts ...option.RequestOption) (res *V1CustomerImportResponse, err error) {
 	opts = slices.Concat(r.Options, opts)
 	path := "api/v1/customers/import"
@@ -110,7 +114,8 @@ func (r *V1CustomerService) Import(ctx context.Context, body V1CustomerImportPar
 	return
 }
 
-// Provision customer
+// Creates a new customer and optionally provisions an initial subscription in a
+// single operation.
 func (r *V1CustomerService) Provision(ctx context.Context, body V1CustomerProvisionParams, opts ...option.RequestOption) (res *CustomerResponse, err error) {
 	opts = slices.Concat(r.Options, opts)
 	path := "api/v1/customers"
@@ -118,7 +123,7 @@ func (r *V1CustomerService) Provision(ctx context.Context, body V1CustomerProvis
 	return
 }
 
-// Unarchive customer
+// Restores an archived customer, allowing them to create new subscriptions again.
 func (r *V1CustomerService) Unarchive(ctx context.Context, id string, opts ...option.RequestOption) (res *CustomerResponse, err error) {
 	opts = slices.Concat(r.Options, opts)
 	if id == "" {

@@ -42,7 +42,8 @@ func NewV1SubscriptionService(opts ...option.RequestOption) (r V1SubscriptionSer
 	return
 }
 
-// Get a single subscription by ID
+// Retrieves a subscription by its unique identifier, including plan details,
+// billing period, status, and add-ons.
 func (r *V1SubscriptionService) Get(ctx context.Context, id string, opts ...option.RequestOption) (res *Subscription, err error) {
 	opts = slices.Concat(r.Options, opts)
 	if id == "" {
@@ -54,7 +55,8 @@ func (r *V1SubscriptionService) Get(ctx context.Context, id string, opts ...opti
 	return
 }
 
-// Update a subscription
+// Updates an active subscription's properties including billing period, add-ons,
+// unit quantities, and discounts.
 func (r *V1SubscriptionService) Update(ctx context.Context, id string, body V1SubscriptionUpdateParams, opts ...option.RequestOption) (res *Subscription, err error) {
 	opts = slices.Concat(r.Options, opts)
 	if id == "" {
@@ -66,7 +68,8 @@ func (r *V1SubscriptionService) Update(ctx context.Context, id string, body V1Su
 	return
 }
 
-// Get a list of subscriptions
+// Retrieves a paginated list of subscriptions, with optional filters for customer,
+// status, and plan.
 func (r *V1SubscriptionService) List(ctx context.Context, query V1SubscriptionListParams, opts ...option.RequestOption) (res *pagination.MyCursorIDPage[V1SubscriptionListResponse], err error) {
 	var raw *http.Response
 	opts = slices.Concat(r.Options, opts)
@@ -84,12 +87,14 @@ func (r *V1SubscriptionService) List(ctx context.Context, query V1SubscriptionLi
 	return res, nil
 }
 
-// Get a list of subscriptions
+// Retrieves a paginated list of subscriptions, with optional filters for customer,
+// status, and plan.
 func (r *V1SubscriptionService) ListAutoPaging(ctx context.Context, query V1SubscriptionListParams, opts ...option.RequestOption) *pagination.MyCursorIDPageAutoPager[V1SubscriptionListResponse] {
 	return pagination.NewMyCursorIDPageAutoPager(r.List(ctx, query, opts...))
 }
 
-// Cancel subscription
+// Cancels an active subscription, either immediately or at a specified time such
+// as end of billing period.
 func (r *V1SubscriptionService) Cancel(ctx context.Context, id string, body V1SubscriptionCancelParams, opts ...option.RequestOption) (res *Subscription, err error) {
 	opts = slices.Concat(r.Options, opts)
 	if id == "" {
@@ -101,7 +106,8 @@ func (r *V1SubscriptionService) Cancel(ctx context.Context, id string, body V1Su
 	return
 }
 
-// Delegate subscription payment to customer
+// Delegates the payment responsibility of a subscription to a different customer.
+// The delegated customer will be billed for this subscription.
 func (r *V1SubscriptionService) Delegate(ctx context.Context, id string, body V1SubscriptionDelegateParams, opts ...option.RequestOption) (res *Subscription, err error) {
 	opts = slices.Concat(r.Options, opts)
 	if id == "" {
@@ -113,7 +119,8 @@ func (r *V1SubscriptionService) Delegate(ctx context.Context, id string, body V1
 	return
 }
 
-// Bulk import subscriptions
+// Imports multiple subscriptions in bulk. Used for migrating subscription data
+// from external systems.
 func (r *V1SubscriptionService) Import(ctx context.Context, body V1SubscriptionImportParams, opts ...option.RequestOption) (res *V1SubscriptionImportResponse, err error) {
 	opts = slices.Concat(r.Options, opts)
 	path := "api/v1/subscriptions/import"
@@ -121,7 +128,8 @@ func (r *V1SubscriptionService) Import(ctx context.Context, body V1SubscriptionI
 	return
 }
 
-// Migrate subscription to latest plan version
+// Migrates a subscription to the latest published version of its plan or add-ons.
+// Handles prorated charges or credits automatically.
 func (r *V1SubscriptionService) Migrate(ctx context.Context, id string, body V1SubscriptionMigrateParams, opts ...option.RequestOption) (res *Subscription, err error) {
 	opts = slices.Concat(r.Options, opts)
 	if id == "" {
@@ -133,7 +141,8 @@ func (r *V1SubscriptionService) Migrate(ctx context.Context, id string, body V1S
 	return
 }
 
-// Preview subscription
+// Previews the pricing impact of creating or updating a subscription without
+// making changes. Returns estimated costs, taxes, and proration details.
 func (r *V1SubscriptionService) Preview(ctx context.Context, body V1SubscriptionPreviewParams, opts ...option.RequestOption) (res *V1SubscriptionPreviewResponse, err error) {
 	opts = slices.Concat(r.Options, opts)
 	path := "api/v1/subscriptions/preview"
@@ -141,7 +150,8 @@ func (r *V1SubscriptionService) Preview(ctx context.Context, body V1Subscription
 	return
 }
 
-// Provision subscription
+// Creates a new subscription for an existing customer. When payment is required
+// and no payment method exists, returns a checkout URL.
 func (r *V1SubscriptionService) Provision(ctx context.Context, body V1SubscriptionProvisionParams, opts ...option.RequestOption) (res *V1SubscriptionProvisionResponse, err error) {
 	opts = slices.Concat(r.Options, opts)
 	path := "api/v1/subscriptions"
@@ -149,7 +159,8 @@ func (r *V1SubscriptionService) Provision(ctx context.Context, body V1Subscripti
 	return
 }
 
-// Transfer subscription to resource
+// Transfers a subscription to a different resource ID. Used for multi-resource
+// products where subscriptions apply to specific entities like websites or apps.
 func (r *V1SubscriptionService) Transfer(ctx context.Context, id string, body V1SubscriptionTransferParams, opts ...option.RequestOption) (res *Subscription, err error) {
 	opts = slices.Concat(r.Options, opts)
 	if id == "" {

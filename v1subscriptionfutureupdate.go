@@ -34,7 +34,7 @@ func NewV1SubscriptionFutureUpdateService(opts ...option.RequestOption) (r V1Sub
 	return
 }
 
-// Cancel pending payment update
+// Cancels a subscription update that is pending payment completion.
 func (r *V1SubscriptionFutureUpdateService) CancelPendingPayment(ctx context.Context, id string, opts ...option.RequestOption) (res *CancelSubscription, err error) {
 	opts = slices.Concat(r.Options, opts)
 	if id == "" {
@@ -46,7 +46,8 @@ func (r *V1SubscriptionFutureUpdateService) CancelPendingPayment(ctx context.Con
 	return
 }
 
-// Cancel scheduled update
+// Cancels a scheduled subscription update, such as a future downgrade or plan
+// change.
 func (r *V1SubscriptionFutureUpdateService) CancelSchedule(ctx context.Context, id string, opts ...option.RequestOption) (res *CancelSubscription, err error) {
 	opts = slices.Concat(r.Options, opts)
 	if id == "" {
