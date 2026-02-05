@@ -34,7 +34,8 @@ func NewV1EventService(opts ...option.RequestOption) (r V1EventService) {
 	return
 }
 
-// Report usage events
+// Reports raw usage events for event-based metering. Events are ingested
+// asynchronously and aggregated into usage totals.
 func (r *V1EventService) Report(ctx context.Context, body V1EventReportParams, opts ...option.RequestOption) (res *V1EventReportResponse, err error) {
 	opts = slices.Concat(r.Options, opts)
 	path := "api/v1/events"
