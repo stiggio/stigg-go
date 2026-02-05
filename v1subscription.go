@@ -1899,6 +1899,8 @@ func (r *V1SubscriptionDelegateParams) UnmarshalJSON(data []byte) error {
 type V1SubscriptionImportParams struct {
 	// List of subscription objects to import
 	Subscriptions []V1SubscriptionImportParamsSubscription `json:"subscriptions,omitzero,required"`
+	// Integration ID to use for importing subscriptions
+	IntegrationID param.Opt[string] `json:"integrationId,omitzero"`
 	paramObj
 }
 
