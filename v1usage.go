@@ -38,7 +38,7 @@ func NewV1UsageService(opts ...option.RequestOption) (r V1UsageService) {
 	return
 }
 
-// Get usage history
+// Retrieves historical usage data for a customer's metered feature over time.
 func (r *V1UsageService) History(ctx context.Context, featureID string, params V1UsageHistoryParams, opts ...option.RequestOption) (res *V1UsageHistoryResponse, err error) {
 	opts = slices.Concat(r.Options, opts)
 	if params.CustomerID == "" {
@@ -54,7 +54,8 @@ func (r *V1UsageService) History(ctx context.Context, featureID string, params V
 	return
 }
 
-// Report usage measurements
+// Reports usage measurements for metered features. The reported usage is used to
+// track, limit, and bill customer consumption.
 func (r *V1UsageService) Report(ctx context.Context, body V1UsageReportParams, opts ...option.RequestOption) (res *V1UsageReportResponse, err error) {
 	opts = slices.Concat(r.Options, opts)
 	path := "api/v1/usage"

@@ -43,7 +43,8 @@ func NewV1CustomerService(opts ...option.RequestOption) (r V1CustomerService) {
 	return
 }
 
-// Get a single customer by ID
+// Retrieves a customer by their unique identifier, including billing information
+// and subscription status.
 func (r *V1CustomerService) Get(ctx context.Context, id string, opts ...option.RequestOption) (res *CustomerResponse, err error) {
 	opts = slices.Concat(r.Options, opts)
 	if id == "" {
@@ -55,7 +56,8 @@ func (r *V1CustomerService) Get(ctx context.Context, id string, opts ...option.R
 	return
 }
 
-// Update a customer
+// Updates an existing customer's properties such as name, email, and billing
+// information.
 func (r *V1CustomerService) Update(ctx context.Context, id string, body V1CustomerUpdateParams, opts ...option.RequestOption) (res *CustomerResponse, err error) {
 	opts = slices.Concat(r.Options, opts)
 	if id == "" {
@@ -67,7 +69,7 @@ func (r *V1CustomerService) Update(ctx context.Context, id string, body V1Custom
 	return
 }
 
-// Get a list of customers
+// Retrieves a paginated list of customers in the environment.
 func (r *V1CustomerService) List(ctx context.Context, query V1CustomerListParams, opts ...option.RequestOption) (res *pagination.MyCursorIDPage[V1CustomerListResponse], err error) {
 	var raw *http.Response
 	opts = slices.Concat(r.Options, opts)
@@ -85,12 +87,13 @@ func (r *V1CustomerService) List(ctx context.Context, query V1CustomerListParams
 	return res, nil
 }
 
-// Get a list of customers
+// Retrieves a paginated list of customers in the environment.
 func (r *V1CustomerService) ListAutoPaging(ctx context.Context, query V1CustomerListParams, opts ...option.RequestOption) *pagination.MyCursorIDPageAutoPager[V1CustomerListResponse] {
 	return pagination.NewMyCursorIDPageAutoPager(r.List(ctx, query, opts...))
 }
 
-// Archive customer
+// Archives a customer, preventing new subscriptions. Optionally cancels existing
+// subscriptions.
 func (r *V1CustomerService) Archive(ctx context.Context, id string, opts ...option.RequestOption) (res *CustomerResponse, err error) {
 	opts = slices.Concat(r.Options, opts)
 	if id == "" {
@@ -102,7 +105,8 @@ func (r *V1CustomerService) Archive(ctx context.Context, id string, opts ...opti
 	return
 }
 
-// Bulk import customers
+// Imports multiple customers in bulk. Used for migrating customer data from
+// external systems.
 func (r *V1CustomerService) Import(ctx context.Context, body V1CustomerImportParams, opts ...option.RequestOption) (res *V1CustomerImportResponse, err error) {
 	opts = slices.Concat(r.Options, opts)
 	path := "api/v1/customers/import"
@@ -110,7 +114,35 @@ func (r *V1CustomerService) Import(ctx context.Context, body V1CustomerImportPar
 	return
 }
 
-// Provision customer
+// Get a list of customerresources
+func (r *V1CustomerService) ListResources(ctx context.Context, id string, query V1CustomerListResourcesParams, opts ...option.RequestOption) (res *pagination.MyCursorIDPage[V1CustomerListResourcesResponse], err error) {
+	var raw *http.Response
+	opts = slices.Concat(r.Options, opts)
+	opts = append([]option.RequestOption{option.WithResponseInto(&raw)}, opts...)
+	if id == "" {
+		err = errors.New("missing required id parameter")
+		return
+	}
+	path := fmt.Sprintf("api/v1/customers/%s/resources", id)
+	cfg, err := requestconfig.NewRequestConfig(ctx, http.MethodGet, path, query, &res, opts...)
+	if err != nil {
+		return nil, err
+	}
+	err = cfg.Execute()
+	if err != nil {
+		return nil, err
+	}
+	res.SetPageConfig(cfg, raw)
+	return res, nil
+}
+
+// Get a list of customerresources
+func (r *V1CustomerService) ListResourcesAutoPaging(ctx context.Context, id string, query V1CustomerListResourcesParams, opts ...option.RequestOption) *pagination.MyCursorIDPageAutoPager[V1CustomerListResourcesResponse] {
+	return pagination.NewMyCursorIDPageAutoPager(r.ListResources(ctx, id, query, opts...))
+}
+
+// Creates a new customer and optionally provisions an initial subscription in a
+// single operation.
 func (r *V1CustomerService) Provision(ctx context.Context, body V1CustomerProvisionParams, opts ...option.RequestOption) (res *CustomerResponse, err error) {
 	opts = slices.Concat(r.Options, opts)
 	path := "api/v1/customers"
@@ -118,7 +150,7 @@ func (r *V1CustomerService) Provision(ctx context.Context, body V1CustomerProvis
 	return
 }
 
-// Unarchive customer
+// Restores an archived customer, allowing them to create new subscriptions again.
 func (r *V1CustomerService) Unarchive(ctx context.Context, id string, opts ...option.RequestOption) (res *CustomerResponse, err error) {
 	opts = slices.Concat(r.Options, opts)
 	if id == "" {
@@ -392,6 +424,30 @@ func (r *V1CustomerImportResponseData) UnmarshalJSON(data []byte) error {
 	return apijson.UnmarshalRoot(data, r)
 }
 
+// Resource object that belongs to a customer
+type V1CustomerListResourcesResponse struct {
+	// Resource slug
+	ID string `json:"id,required"`
+	// Timestamp of when the record was created
+	CreatedAt time.Time `json:"createdAt,required" format:"date-time"`
+	// Timestamp of when the record was last updated
+	UpdatedAt time.Time `json:"updatedAt,required" format:"date-time"`
+	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
+	JSON struct {
+		ID          respjson.Field
+		CreatedAt   respjson.Field
+		UpdatedAt   respjson.Field
+		ExtraFields map[string]respjson.Field
+		raw         string
+	} `json:"-"`
+}
+
+// Returns the unmodified JSON received from the API
+func (r V1CustomerListResourcesResponse) RawJSON() string { return r.JSON.raw }
+func (r *V1CustomerListResourcesResponse) UnmarshalJSON(data []byte) error {
+	return apijson.UnmarshalRoot(data, r)
+}
+
 type V1CustomerUpdateParams struct {
 	// Customer level coupon
 	CouponID param.Opt[string] `json:"couponId,omitzero"`
@@ -499,6 +555,25 @@ func (r V1CustomerImportParamsCustomer) MarshalJSON() (data []byte, err error) {
 }
 func (r *V1CustomerImportParamsCustomer) UnmarshalJSON(data []byte) error {
 	return apijson.UnmarshalRoot(data, r)
+}
+
+type V1CustomerListResourcesParams struct {
+	// Return items that come after this cursor
+	After param.Opt[string] `query:"after,omitzero" format:"uuid" json:"-"`
+	// Return items that come before this cursor
+	Before param.Opt[string] `query:"before,omitzero" format:"uuid" json:"-"`
+	// Maximum number of items to return
+	Limit param.Opt[int64] `query:"limit,omitzero" json:"-"`
+	paramObj
+}
+
+// URLQuery serializes [V1CustomerListResourcesParams]'s query parameters as
+// `url.Values`.
+func (r V1CustomerListResourcesParams) URLQuery() (v url.Values, err error) {
+	return apiquery.MarshalWithSettings(r, apiquery.QuerySettings{
+		ArrayFormat:  apiquery.ArrayQueryFormatComma,
+		NestedFormat: apiquery.NestedQueryFormatBrackets,
+	})
 }
 
 type V1CustomerProvisionParams struct {

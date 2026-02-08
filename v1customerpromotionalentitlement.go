@@ -37,7 +37,8 @@ func NewV1CustomerPromotionalEntitlementService(opts ...option.RequestOption) (r
 	return
 }
 
-// Create a promotional entitlements
+// Grants promotional entitlements to a customer, providing feature access outside
+// their subscription. Entitlements can be time-limited or permanent.
 func (r *V1CustomerPromotionalEntitlementService) Grant(ctx context.Context, customerID string, body V1CustomerPromotionalEntitlementGrantParams, opts ...option.RequestOption) (res *V1CustomerPromotionalEntitlementGrantResponse, err error) {
 	opts = slices.Concat(r.Options, opts)
 	if customerID == "" {
@@ -49,7 +50,8 @@ func (r *V1CustomerPromotionalEntitlementService) Grant(ctx context.Context, cus
 	return
 }
 
-// Revoke promotional entitlement
+// Revokes a previously granted promotional entitlement from a customer for a
+// specific feature.
 func (r *V1CustomerPromotionalEntitlementService) Revoke(ctx context.Context, featureID string, body V1CustomerPromotionalEntitlementRevokeParams, opts ...option.RequestOption) (res *V1CustomerPromotionalEntitlementRevokeResponse, err error) {
 	opts = slices.Concat(r.Options, opts)
 	if body.CustomerID == "" {

@@ -1,5 +1,17 @@
 # Changelog
 
+## 0.1.0-alpha.6 (2026-02-08)
+
+Full Changelog: [v0.1.0-alpha.5...v0.1.0-alpha.6](https://github.com/stiggio/stigg-go/compare/v0.1.0-alpha.5...v0.1.0-alpha.6)
+
+### Features
+
+* **api:** api update ([1c823bd](https://github.com/stiggio/stigg-go/commit/1c823bd05288d41495fe2295b69c165d56719551))
+* **api:** api update ([be245bb](https://github.com/stiggio/stigg-go/commit/be245bb99ead798783076a5019c5d4c1a72145b9))
+* **api:** api update ([c994cc8](https://github.com/stiggio/stigg-go/commit/c994cc861dc31bb35fe0f168c9dc3131deb2a14e))
+* **api:** manual updates ([66789dc](https://github.com/stiggio/stigg-go/commit/66789dc58bc0600b7c07bcf8df96ed5871349f1c))
+* **api:** manual updates ([8027a42](https://github.com/stiggio/stigg-go/commit/8027a42946d045818d694bfb306568a79339fe47))
+
 ## 0.1.0-alpha.5 (2026-01-29)
 
 Full Changelog: [v0.1.0-alpha.4...v0.1.0-alpha.5](https://github.com/stiggio/stigg-go/compare/v0.1.0-alpha.4...v0.1.0-alpha.5)

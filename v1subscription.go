@@ -4,6 +4,7 @@ package stigg
 
 import (
 	"context"
+	"encoding/json"
 	"errors"
 	"fmt"
 	"net/http"
@@ -41,7 +42,8 @@ func NewV1SubscriptionService(opts ...option.RequestOption) (r V1SubscriptionSer
 	return
 }
 
-// Get a single subscription by ID
+// Retrieves a subscription by its unique identifier, including plan details,
+// billing period, status, and add-ons.
 func (r *V1SubscriptionService) Get(ctx context.Context, id string, opts ...option.RequestOption) (res *Subscription, err error) {
 	opts = slices.Concat(r.Options, opts)
 	if id == "" {
@@ -53,7 +55,8 @@ func (r *V1SubscriptionService) Get(ctx context.Context, id string, opts ...opti
 	return
 }
 
-// Update a subscription
+// Updates an active subscription's properties including billing period, add-ons,
+// unit quantities, and discounts.
 func (r *V1SubscriptionService) Update(ctx context.Context, id string, body V1SubscriptionUpdateParams, opts ...option.RequestOption) (res *Subscription, err error) {
 	opts = slices.Concat(r.Options, opts)
 	if id == "" {
@@ -65,7 +68,8 @@ func (r *V1SubscriptionService) Update(ctx context.Context, id string, body V1Su
 	return
 }
 
-// Get a list of subscriptions
+// Retrieves a paginated list of subscriptions, with optional filters for customer,
+// status, and plan.
 func (r *V1SubscriptionService) List(ctx context.Context, query V1SubscriptionListParams, opts ...option.RequestOption) (res *pagination.MyCursorIDPage[V1SubscriptionListResponse], err error) {
 	var raw *http.Response
 	opts = slices.Concat(r.Options, opts)
@@ -83,12 +87,14 @@ func (r *V1SubscriptionService) List(ctx context.Context, query V1SubscriptionLi
 	return res, nil
 }
 
-// Get a list of subscriptions
+// Retrieves a paginated list of subscriptions, with optional filters for customer,
+// status, and plan.
 func (r *V1SubscriptionService) ListAutoPaging(ctx context.Context, query V1SubscriptionListParams, opts ...option.RequestOption) *pagination.MyCursorIDPageAutoPager[V1SubscriptionListResponse] {
 	return pagination.NewMyCursorIDPageAutoPager(r.List(ctx, query, opts...))
 }
 
-// Cancel subscription
+// Cancels an active subscription, either immediately or at a specified time such
+// as end of billing period.
 func (r *V1SubscriptionService) Cancel(ctx context.Context, id string, body V1SubscriptionCancelParams, opts ...option.RequestOption) (res *Subscription, err error) {
 	opts = slices.Concat(r.Options, opts)
 	if id == "" {
@@ -100,7 +106,8 @@ func (r *V1SubscriptionService) Cancel(ctx context.Context, id string, body V1Su
 	return
 }
 
-// Delegate subscription payment to customer
+// Delegates the payment responsibility of a subscription to a different customer.
+// The delegated customer will be billed for this subscription.
 func (r *V1SubscriptionService) Delegate(ctx context.Context, id string, body V1SubscriptionDelegateParams, opts ...option.RequestOption) (res *Subscription, err error) {
 	opts = slices.Concat(r.Options, opts)
 	if id == "" {
@@ -112,7 +119,8 @@ func (r *V1SubscriptionService) Delegate(ctx context.Context, id string, body V1
 	return
 }
 
-// Bulk import subscriptions
+// Imports multiple subscriptions in bulk. Used for migrating subscription data
+// from external systems.
 func (r *V1SubscriptionService) Import(ctx context.Context, body V1SubscriptionImportParams, opts ...option.RequestOption) (res *V1SubscriptionImportResponse, err error) {
 	opts = slices.Concat(r.Options, opts)
 	path := "api/v1/subscriptions/import"
@@ -120,7 +128,8 @@ func (r *V1SubscriptionService) Import(ctx context.Context, body V1SubscriptionI
 	return
 }
 
-// Migrate subscription to latest plan version
+// Migrates a subscription to the latest published version of its plan or add-ons.
+// Handles prorated charges or credits automatically.
 func (r *V1SubscriptionService) Migrate(ctx context.Context, id string, body V1SubscriptionMigrateParams, opts ...option.RequestOption) (res *Subscription, err error) {
 	opts = slices.Concat(r.Options, opts)
 	if id == "" {
@@ -132,7 +141,8 @@ func (r *V1SubscriptionService) Migrate(ctx context.Context, id string, body V1S
 	return
 }
 
-// Preview subscription
+// Previews the pricing impact of creating or updating a subscription without
+// making changes. Returns estimated costs, taxes, and proration details.
 func (r *V1SubscriptionService) Preview(ctx context.Context, body V1SubscriptionPreviewParams, opts ...option.RequestOption) (res *V1SubscriptionPreviewResponse, err error) {
 	opts = slices.Concat(r.Options, opts)
 	path := "api/v1/subscriptions/preview"
@@ -140,7 +150,8 @@ func (r *V1SubscriptionService) Preview(ctx context.Context, body V1Subscription
 	return
 }
 
-// Provision subscription
+// Creates a new subscription for an existing customer. When payment is required
+// and no payment method exists, returns a checkout URL.
 func (r *V1SubscriptionService) Provision(ctx context.Context, body V1SubscriptionProvisionParams, opts ...option.RequestOption) (res *V1SubscriptionProvisionResponse, err error) {
 	opts = slices.Concat(r.Options, opts)
 	path := "api/v1/subscriptions"
@@ -148,7 +159,8 @@ func (r *V1SubscriptionService) Provision(ctx context.Context, body V1Subscripti
 	return
 }
 
-// Transfer subscription to resource
+// Transfers a subscription to a different resource ID. Used for multi-resource
+// products where subscriptions apply to specific entities like websites or apps.
 func (r *V1SubscriptionService) Transfer(ctx context.Context, id string, body V1SubscriptionTransferParams, opts ...option.RequestOption) (res *Subscription, err error) {
 	opts = slices.Concat(r.Options, opts)
 	if id == "" {
@@ -907,29 +919,29 @@ func (r *V1SubscriptionProvisionResponse) UnmarshalJSON(data []byte) error {
 // Provisioning result with status and subscription or checkout URL.
 type V1SubscriptionProvisionResponseData struct {
 	// Unique identifier for the provisioned subscription
-	ID           string                                           `json:"id,required"`
-	Entitlements []V1SubscriptionProvisionResponseDataEntitlement `json:"entitlements,required"`
+	ID           string                                                `json:"id,required"`
+	Entitlements []V1SubscriptionProvisionResponseDataEntitlementUnion `json:"entitlements,required"`
 	// Provision status: SUCCESS or PAYMENT_REQUIRED
 	//
 	// Any of "SUCCESS", "PAYMENT_REQUIRED".
 	Status string `json:"status,required"`
+	// Created subscription (when status is SUCCESS)
+	Subscription V1SubscriptionProvisionResponseDataSubscription `json:"subscription,required"`
 	// Checkout billing ID when payment is required
-	CheckoutBillingID string `json:"checkoutBillingId,nullable"`
+	CheckoutBillingID string `json:"checkoutBillingId"`
 	// URL to complete payment when PAYMENT_REQUIRED
-	CheckoutURL string `json:"checkoutUrl,nullable"`
+	CheckoutURL string `json:"checkoutUrl"`
 	// Whether the subscription is scheduled for future activation
 	IsScheduled bool `json:"isScheduled"`
-	// Created subscription (when status is SUCCESS)
-	Subscription V1SubscriptionProvisionResponseDataSubscription `json:"subscription"`
 	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
 	JSON struct {
 		ID                respjson.Field
 		Entitlements      respjson.Field
 		Status            respjson.Field
+		Subscription      respjson.Field
 		CheckoutBillingID respjson.Field
 		CheckoutURL       respjson.Field
 		IsScheduled       respjson.Field
-		Subscription      respjson.Field
 		ExtraFields       map[string]respjson.Field
 		raw               string
 	} `json:"-"`
@@ -941,61 +953,231 @@ func (r *V1SubscriptionProvisionResponseData) UnmarshalJSON(data []byte) error {
 	return apijson.UnmarshalRoot(data, r)
 }
 
-type V1SubscriptionProvisionResponseDataEntitlement struct {
-	AccessDeniedReason string  `json:"accessDeniedReason,nullable"`
-	CurrentUsage       float64 `json:"currentUsage"`
-	// entitlement updated at
-	EntitlementUpdatedAt time.Time                                             `json:"entitlementUpdatedAt,nullable" format:"date-time"`
-	Feature              V1SubscriptionProvisionResponseDataEntitlementFeature `json:"feature,nullable"`
-	HasUnlimitedUsage    bool                                                  `json:"hasUnlimitedUsage,nullable"`
-	IsGranted            bool                                                  `json:"isGranted"`
-	// Any of "YEAR", "MONTH", "WEEK", "DAY", "HOUR".
-	ResetPeriod string  `json:"resetPeriod,nullable"`
-	UsageLimit  float64 `json:"usageLimit,nullable"`
-	// usage period anchor
-	UsagePeriodAnchor time.Time `json:"usagePeriodAnchor,nullable" format:"date-time"`
-	// usage period end
-	UsagePeriodEnd time.Time `json:"usagePeriodEnd,nullable" format:"date-time"`
-	// usage period start
-	UsagePeriodStart time.Time `json:"usagePeriodStart,nullable" format:"date-time"`
-	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
-	JSON struct {
+// V1SubscriptionProvisionResponseDataEntitlementUnion contains all possible
+// properties and values from
+// [V1SubscriptionProvisionResponseDataEntitlementSubscriptionFeatureEntitlement],
+// [V1SubscriptionProvisionResponseDataEntitlementSubscriptionCreditEntitlement].
+//
+// Use the methods beginning with 'As' to cast the union to one of its variants.
+type V1SubscriptionProvisionResponseDataEntitlementUnion struct {
+	AccessDeniedReason   string    `json:"accessDeniedReason"`
+	IsGranted            bool      `json:"isGranted"`
+	Type                 string    `json:"type"`
+	CurrentUsage         float64   `json:"currentUsage"`
+	EntitlementUpdatedAt time.Time `json:"entitlementUpdatedAt"`
+	// This field is from variant
+	// [V1SubscriptionProvisionResponseDataEntitlementSubscriptionFeatureEntitlement].
+	Feature V1SubscriptionProvisionResponseDataEntitlementSubscriptionFeatureEntitlementFeature `json:"feature"`
+	// This field is from variant
+	// [V1SubscriptionProvisionResponseDataEntitlementSubscriptionFeatureEntitlement].
+	HasUnlimitedUsage bool `json:"hasUnlimitedUsage"`
+	// This field is from variant
+	// [V1SubscriptionProvisionResponseDataEntitlementSubscriptionFeatureEntitlement].
+	ResetPeriod string  `json:"resetPeriod"`
+	UsageLimit  float64 `json:"usageLimit"`
+	// This field is from variant
+	// [V1SubscriptionProvisionResponseDataEntitlementSubscriptionFeatureEntitlement].
+	UsagePeriodAnchor time.Time `json:"usagePeriodAnchor"`
+	// This field is from variant
+	// [V1SubscriptionProvisionResponseDataEntitlementSubscriptionFeatureEntitlement].
+	UsagePeriodEnd time.Time `json:"usagePeriodEnd"`
+	// This field is from variant
+	// [V1SubscriptionProvisionResponseDataEntitlementSubscriptionFeatureEntitlement].
+	UsagePeriodStart time.Time `json:"usagePeriodStart"`
+	ValidUntil       time.Time `json:"validUntil"`
+	// This field is from variant
+	// [V1SubscriptionProvisionResponseDataEntitlementSubscriptionCreditEntitlement].
+	Currency V1SubscriptionProvisionResponseDataEntitlementSubscriptionCreditEntitlementCurrency `json:"currency"`
+	// This field is from variant
+	// [V1SubscriptionProvisionResponseDataEntitlementSubscriptionCreditEntitlement].
+	UsageUpdatedAt time.Time `json:"usageUpdatedAt"`
+	JSON           struct {
 		AccessDeniedReason   respjson.Field
+		IsGranted            respjson.Field
+		Type                 respjson.Field
 		CurrentUsage         respjson.Field
 		EntitlementUpdatedAt respjson.Field
 		Feature              respjson.Field
 		HasUnlimitedUsage    respjson.Field
-		IsGranted            respjson.Field
 		ResetPeriod          respjson.Field
 		UsageLimit           respjson.Field
 		UsagePeriodAnchor    respjson.Field
 		UsagePeriodEnd       respjson.Field
 		UsagePeriodStart     respjson.Field
+		ValidUntil           respjson.Field
+		Currency             respjson.Field
+		UsageUpdatedAt       respjson.Field
+		raw                  string
+	} `json:"-"`
+}
+
+func (u V1SubscriptionProvisionResponseDataEntitlementUnion) AsSubscriptionFeatureEntitlement() (v V1SubscriptionProvisionResponseDataEntitlementSubscriptionFeatureEntitlement) {
+	apijson.UnmarshalRoot(json.RawMessage(u.JSON.raw), &v)
+	return
+}
+
+func (u V1SubscriptionProvisionResponseDataEntitlementUnion) AsSubscriptionCreditEntitlement() (v V1SubscriptionProvisionResponseDataEntitlementSubscriptionCreditEntitlement) {
+	apijson.UnmarshalRoot(json.RawMessage(u.JSON.raw), &v)
+	return
+}
+
+// Returns the unmodified JSON received from the API
+func (u V1SubscriptionProvisionResponseDataEntitlementUnion) RawJSON() string { return u.JSON.raw }
+
+func (r *V1SubscriptionProvisionResponseDataEntitlementUnion) UnmarshalJSON(data []byte) error {
+	return apijson.UnmarshalRoot(data, r)
+}
+
+type V1SubscriptionProvisionResponseDataEntitlementSubscriptionFeatureEntitlement struct {
+	// Any of "FeatureNotFound", "CustomerNotFound", "CustomerIsArchived",
+	// "CustomerResourceNotFound", "NoActiveSubscription",
+	// "NoFeatureEntitlementInSubscription", "RequestedUsageExceedingLimit",
+	// "RequestedValuesMismatch", "BudgetExceeded", "Unknown", "FeatureTypeMismatch",
+	// "Revoked", "InsufficientCredits", "EntitlementNotFound".
+	AccessDeniedReason string `json:"accessDeniedReason,required"`
+	IsGranted          bool   `json:"isGranted,required"`
+	// Any of "FEATURE".
+	Type         string  `json:"type,required"`
+	CurrentUsage float64 `json:"currentUsage"`
+	// Timestamp of the last update to the entitlement grant or configuration.
+	EntitlementUpdatedAt time.Time                                                                           `json:"entitlementUpdatedAt" format:"date-time"`
+	Feature              V1SubscriptionProvisionResponseDataEntitlementSubscriptionFeatureEntitlementFeature `json:"feature"`
+	HasUnlimitedUsage    bool                                                                                `json:"hasUnlimitedUsage"`
+	// Any of "YEAR", "MONTH", "WEEK", "DAY", "HOUR".
+	ResetPeriod string  `json:"resetPeriod,nullable"`
+	UsageLimit  float64 `json:"usageLimit,nullable"`
+	// The anchor for calculating the usage period for metered entitlements with a
+	// reset period configured
+	UsagePeriodAnchor time.Time `json:"usagePeriodAnchor" format:"date-time"`
+	// The end date of the usage period for metered entitlements with a reset period
+	// configured
+	UsagePeriodEnd time.Time `json:"usagePeriodEnd" format:"date-time"`
+	// The start date of the usage period for metered entitlements with a reset period
+	// configured
+	UsagePeriodStart time.Time `json:"usagePeriodStart" format:"date-time"`
+	// The next time the entitlement should be recalculated
+	ValidUntil time.Time `json:"validUntil" format:"date-time"`
+	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
+	JSON struct {
+		AccessDeniedReason   respjson.Field
+		IsGranted            respjson.Field
+		Type                 respjson.Field
+		CurrentUsage         respjson.Field
+		EntitlementUpdatedAt respjson.Field
+		Feature              respjson.Field
+		HasUnlimitedUsage    respjson.Field
+		ResetPeriod          respjson.Field
+		UsageLimit           respjson.Field
+		UsagePeriodAnchor    respjson.Field
+		UsagePeriodEnd       respjson.Field
+		UsagePeriodStart     respjson.Field
+		ValidUntil           respjson.Field
 		ExtraFields          map[string]respjson.Field
 		raw                  string
 	} `json:"-"`
 }
 
 // Returns the unmodified JSON received from the API
-func (r V1SubscriptionProvisionResponseDataEntitlement) RawJSON() string { return r.JSON.raw }
-func (r *V1SubscriptionProvisionResponseDataEntitlement) UnmarshalJSON(data []byte) error {
+func (r V1SubscriptionProvisionResponseDataEntitlementSubscriptionFeatureEntitlement) RawJSON() string {
+	return r.JSON.raw
+}
+func (r *V1SubscriptionProvisionResponseDataEntitlementSubscriptionFeatureEntitlement) UnmarshalJSON(data []byte) error {
 	return apijson.UnmarshalRoot(data, r)
 }
 
-type V1SubscriptionProvisionResponseDataEntitlementFeature struct {
-	// Feature ID
+type V1SubscriptionProvisionResponseDataEntitlementSubscriptionFeatureEntitlementFeature struct {
+	// The human-readable name of the entitlement, shown in UI elements.
+	DisplayName string `json:"displayName,required"`
+	// The current status of the feature.
+	//
+	// Any of "NEW", "SUSPENDED", "ACTIVE".
+	FeatureStatus string `json:"featureStatus,required"`
+	// The type of feature associated with the entitlement.
+	//
+	// Any of "BOOLEAN", "NUMBER", "ENUM".
+	FeatureType string `json:"featureType,required"`
+	// The unique reference ID of the entitlement.
 	RefID string `json:"refId,required"`
 	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
 	JSON struct {
-		RefID       respjson.Field
+		DisplayName   respjson.Field
+		FeatureStatus respjson.Field
+		FeatureType   respjson.Field
+		RefID         respjson.Field
+		ExtraFields   map[string]respjson.Field
+		raw           string
+	} `json:"-"`
+}
+
+// Returns the unmodified JSON received from the API
+func (r V1SubscriptionProvisionResponseDataEntitlementSubscriptionFeatureEntitlementFeature) RawJSON() string {
+	return r.JSON.raw
+}
+func (r *V1SubscriptionProvisionResponseDataEntitlementSubscriptionFeatureEntitlementFeature) UnmarshalJSON(data []byte) error {
+	return apijson.UnmarshalRoot(data, r)
+}
+
+type V1SubscriptionProvisionResponseDataEntitlementSubscriptionCreditEntitlement struct {
+	// Any of "FeatureNotFound", "CustomerNotFound", "CustomerIsArchived",
+	// "CustomerResourceNotFound", "NoActiveSubscription",
+	// "NoFeatureEntitlementInSubscription", "RequestedUsageExceedingLimit",
+	// "RequestedValuesMismatch", "BudgetExceeded", "Unknown", "FeatureTypeMismatch",
+	// "Revoked", "InsufficientCredits", "EntitlementNotFound".
+	AccessDeniedReason string `json:"accessDeniedReason,required"`
+	// The currency associated with a credit entitlement.
+	Currency     V1SubscriptionProvisionResponseDataEntitlementSubscriptionCreditEntitlementCurrency `json:"currency,required"`
+	CurrentUsage float64                                                                             `json:"currentUsage,required"`
+	IsGranted    bool                                                                                `json:"isGranted,required"`
+	// Any of "CREDIT".
+	Type       string  `json:"type,required"`
+	UsageLimit float64 `json:"usageLimit,required"`
+	// Timestamp of the last update to the credit usage.
+	UsageUpdatedAt time.Time `json:"usageUpdatedAt,required" format:"date-time"`
+	// Timestamp of the last update to the entitlement grant or configuration.
+	EntitlementUpdatedAt time.Time `json:"entitlementUpdatedAt" format:"date-time"`
+	// The next time the entitlement should be recalculated
+	ValidUntil time.Time `json:"validUntil" format:"date-time"`
+	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
+	JSON struct {
+		AccessDeniedReason   respjson.Field
+		Currency             respjson.Field
+		CurrentUsage         respjson.Field
+		IsGranted            respjson.Field
+		Type                 respjson.Field
+		UsageLimit           respjson.Field
+		UsageUpdatedAt       respjson.Field
+		EntitlementUpdatedAt respjson.Field
+		ValidUntil           respjson.Field
+		ExtraFields          map[string]respjson.Field
+		raw                  string
+	} `json:"-"`
+}
+
+// Returns the unmodified JSON received from the API
+func (r V1SubscriptionProvisionResponseDataEntitlementSubscriptionCreditEntitlement) RawJSON() string {
+	return r.JSON.raw
+}
+func (r *V1SubscriptionProvisionResponseDataEntitlementSubscriptionCreditEntitlement) UnmarshalJSON(data []byte) error {
+	return apijson.UnmarshalRoot(data, r)
+}
+
+// The currency associated with a credit entitlement.
+type V1SubscriptionProvisionResponseDataEntitlementSubscriptionCreditEntitlementCurrency struct {
+	// The unique identifier of the custom currency.
+	CurrencyID string `json:"currencyId,required"`
+	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
+	JSON struct {
+		CurrencyID  respjson.Field
 		ExtraFields map[string]respjson.Field
 		raw         string
 	} `json:"-"`
 }
 
 // Returns the unmodified JSON received from the API
-func (r V1SubscriptionProvisionResponseDataEntitlementFeature) RawJSON() string { return r.JSON.raw }
-func (r *V1SubscriptionProvisionResponseDataEntitlementFeature) UnmarshalJSON(data []byte) error {
+func (r V1SubscriptionProvisionResponseDataEntitlementSubscriptionCreditEntitlementCurrency) RawJSON() string {
+	return r.JSON.raw
+}
+func (r *V1SubscriptionProvisionResponseDataEntitlementSubscriptionCreditEntitlementCurrency) UnmarshalJSON(data []byte) error {
 	return apijson.UnmarshalRoot(data, r)
 }
 
@@ -1780,6 +1962,8 @@ func (r *V1SubscriptionDelegateParams) UnmarshalJSON(data []byte) error {
 type V1SubscriptionImportParams struct {
 	// List of subscription objects to import
 	Subscriptions []V1SubscriptionImportParamsSubscription `json:"subscriptions,omitzero,required"`
+	// Integration ID to use for importing subscriptions
+	IntegrationID param.Opt[string] `json:"integrationId,omitzero"`
 	paramObj
 }
 
