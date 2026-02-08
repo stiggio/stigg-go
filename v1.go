@@ -19,6 +19,7 @@ type V1Service struct {
 	Coupons       V1CouponService
 	Events        V1EventService
 	Usage         V1UsageService
+	Products      V1ProductService
 }
 
 // NewV1Service generates a new service that applies the given options to each
@@ -32,5 +33,6 @@ func NewV1Service(opts ...option.RequestOption) (r V1Service) {
 	r.Coupons = NewV1CouponService(opts...)
 	r.Events = NewV1EventService(opts...)
 	r.Usage = NewV1UsageService(opts...)
+	r.Products = NewV1ProductService(opts...)
 	return
 }
