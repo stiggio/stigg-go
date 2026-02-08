@@ -250,7 +250,7 @@ func TestV1SubscriptionDelegate(t *testing.T) {
 	}
 }
 
-func TestV1SubscriptionImport(t *testing.T) {
+func TestV1SubscriptionImportWithOptionalParams(t *testing.T) {
 	t.Skip("Prism tests are disabled")
 	baseURL := "http://localhost:4010"
 	if envURL, ok := os.LookupEnv("TEST_API_BASE_URL"); ok {
@@ -276,6 +276,7 @@ func TestV1SubscriptionImport(t *testing.T) {
 			ResourceID: stigg.String("resourceId"),
 			StartDate:  stigg.Time(time.Now()),
 		}},
+		IntegrationID: stigg.String("integrationId"),
 	})
 	if err != nil {
 		var apierr *stigg.Error

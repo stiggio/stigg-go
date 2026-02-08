@@ -34,7 +34,8 @@ func NewV1CustomerPaymentMethodService(opts ...option.RequestOption) (r V1Custom
 	return
 }
 
-// Attach payment method
+// Attaches a payment method to a customer for billing. Required for paid
+// subscriptions when integrated with a billing provider.
 func (r *V1CustomerPaymentMethodService) Attach(ctx context.Context, id string, body V1CustomerPaymentMethodAttachParams, opts ...option.RequestOption) (res *CustomerResponse, err error) {
 	opts = slices.Concat(r.Options, opts)
 	if id == "" {
@@ -46,7 +47,8 @@ func (r *V1CustomerPaymentMethodService) Attach(ctx context.Context, id string, 
 	return
 }
 
-// Detach payment method
+// Removes the payment method from a customer. Ensure active paid subscriptions
+// have an alternative payment method.
 func (r *V1CustomerPaymentMethodService) Detach(ctx context.Context, id string, opts ...option.RequestOption) (res *CustomerResponse, err error) {
 	opts = slices.Concat(r.Options, opts)
 	if id == "" {

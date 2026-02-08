@@ -39,7 +39,8 @@ func NewV1CouponService(opts ...option.RequestOption) (r V1CouponService) {
 	return
 }
 
-// Create coupon
+// Creates a new discount coupon with percentage or fixed amount off, applicable to
+// customer subscriptions.
 func (r *V1CouponService) New(ctx context.Context, body V1CouponNewParams, opts ...option.RequestOption) (res *Coupon, err error) {
 	opts = slices.Concat(r.Options, opts)
 	path := "api/v1/coupons"
@@ -47,7 +48,7 @@ func (r *V1CouponService) New(ctx context.Context, body V1CouponNewParams, opts 
 	return
 }
 
-// Get a single coupon by ID
+// Retrieves a coupon by its unique identifier.
 func (r *V1CouponService) Get(ctx context.Context, id string, opts ...option.RequestOption) (res *Coupon, err error) {
 	opts = slices.Concat(r.Options, opts)
 	if id == "" {
@@ -59,7 +60,7 @@ func (r *V1CouponService) Get(ctx context.Context, id string, opts ...option.Req
 	return
 }
 
-// Get a list of coupons
+// Retrieves a paginated list of coupons in the environment.
 func (r *V1CouponService) List(ctx context.Context, query V1CouponListParams, opts ...option.RequestOption) (res *pagination.MyCursorIDPage[V1CouponListResponse], err error) {
 	var raw *http.Response
 	opts = slices.Concat(r.Options, opts)
@@ -77,7 +78,7 @@ func (r *V1CouponService) List(ctx context.Context, query V1CouponListParams, op
 	return res, nil
 }
 
-// Get a list of coupons
+// Retrieves a paginated list of coupons in the environment.
 func (r *V1CouponService) ListAutoPaging(ctx context.Context, query V1CouponListParams, opts ...option.RequestOption) *pagination.MyCursorIDPageAutoPager[V1CouponListResponse] {
 	return pagination.NewMyCursorIDPageAutoPager(r.List(ctx, query, opts...))
 }
