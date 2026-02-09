@@ -1679,10 +1679,15 @@ func init() {
 	)
 }
 
-// The property FeatureID is required.
 type V1SubscriptionUpdateParamsPriceOverride struct {
+	// Addon ID
+	AddonID param.Opt[string] `json:"addonId,omitzero"`
+	// Whether this is a base charge override
+	BaseCharge param.Opt[bool] `json:"baseCharge,omitzero"`
+	// The corresponding custom currency id of the recurring credits price
+	CurrencyID param.Opt[string] `json:"currencyId,omitzero"`
 	// Feature ID
-	FeatureID string                                       `json:"featureId,required"`
+	FeatureID param.Opt[string]                            `json:"featureId,omitzero"`
 	Price     V1SubscriptionUpdateParamsPriceOverridePrice `json:"price,omitzero"`
 	paramObj
 }

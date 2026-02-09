@@ -123,7 +123,10 @@ func TestV1SubscriptionUpdateWithOptionalParams(t *testing.T) {
 				},
 			},
 			PriceOverrides: []stigg.V1SubscriptionUpdateParamsPriceOverride{{
-				FeatureID: "featureId",
+				AddonID:    stigg.String("addonId"),
+				BaseCharge: stigg.Bool(true),
+				CurrencyID: stigg.String("currencyId"),
+				FeatureID:  stigg.String("featureId"),
 				Price: stigg.V1SubscriptionUpdateParamsPriceOverridePrice{
 					Amount:   0,
 					Currency: "usd",
