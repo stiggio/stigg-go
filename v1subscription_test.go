@@ -177,11 +177,20 @@ func TestV1SubscriptionListWithOptionalParams(t *testing.T) {
 		option.WithAPIKey("My API Key"),
 	)
 	_, err := client.V1.Subscriptions.List(context.TODO(), stigg.V1SubscriptionListParams{
-		After:      stigg.String("182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e"),
-		Before:     stigg.String("182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e"),
-		CustomerID: stigg.String("customerId"),
-		Limit:      stigg.Int(1),
-		Status:     stigg.String("status"),
+		After:  stigg.String("182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e"),
+		Before: stigg.String("182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e"),
+		CreatedAt: stigg.V1SubscriptionListParamsCreatedAt{
+			Gt:  stigg.Time(time.Now()),
+			Gte: stigg.Time(time.Now()),
+			Lt:  stigg.Time(time.Now()),
+			Lte: stigg.Time(time.Now()),
+		},
+		CustomerID:  stigg.String("customerId"),
+		Limit:       stigg.Int(1),
+		PlanID:      stigg.String("planId"),
+		PricingType: stigg.String("pricingType"),
+		ResourceID:  stigg.String("resourceId"),
+		Status:      stigg.String("status"),
 	})
 	if err != nil {
 		var apierr *stigg.Error

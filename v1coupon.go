@@ -376,12 +376,22 @@ func init() {
 }
 
 type V1CouponListParams struct {
+	// Filter by entity ID
+	ID param.Opt[string] `query:"id,omitzero" json:"-"`
 	// Return items that come after this cursor
 	After param.Opt[string] `query:"after,omitzero" format:"uuid" json:"-"`
 	// Return items that come before this cursor
 	Before param.Opt[string] `query:"before,omitzero" format:"uuid" json:"-"`
 	// Maximum number of items to return
 	Limit param.Opt[int64] `query:"limit,omitzero" json:"-"`
+	// Filter by coupon status. Supports comma-separated values for multiple statuses
+	Status param.Opt[string] `query:"status,omitzero" json:"-"`
+	// Filter by creation date using range operators: gt, gte, lt, lte
+	CreatedAt V1CouponListParamsCreatedAt `query:"createdAt,omitzero" json:"-"`
+	// Filter by coupon type (FIXED or PERCENTAGE)
+	//
+	// Any of "FIXED", "PERCENTAGE".
+	Type V1CouponListParamsType `query:"type,omitzero" json:"-"`
 	paramObj
 }
 
@@ -392,3 +402,33 @@ func (r V1CouponListParams) URLQuery() (v url.Values, err error) {
 		NestedFormat: apiquery.NestedQueryFormatBrackets,
 	})
 }
+
+// Filter by creation date using range operators: gt, gte, lt, lte
+type V1CouponListParamsCreatedAt struct {
+	// Greater than the specified createdAt value
+	Gt param.Opt[time.Time] `query:"gt,omitzero" format:"date-time" json:"-"`
+	// Greater than or equal to the specified createdAt value
+	Gte param.Opt[time.Time] `query:"gte,omitzero" format:"date-time" json:"-"`
+	// Less than the specified createdAt value
+	Lt param.Opt[time.Time] `query:"lt,omitzero" format:"date-time" json:"-"`
+	// Less than or equal to the specified createdAt value
+	Lte param.Opt[time.Time] `query:"lte,omitzero" format:"date-time" json:"-"`
+	paramObj
+}
+
+// URLQuery serializes [V1CouponListParamsCreatedAt]'s query parameters as
+// `url.Values`.
+func (r V1CouponListParamsCreatedAt) URLQuery() (v url.Values, err error) {
+	return apiquery.MarshalWithSettings(r, apiquery.QuerySettings{
+		ArrayFormat:  apiquery.ArrayQueryFormatComma,
+		NestedFormat: apiquery.NestedQueryFormatBrackets,
+	})
+}
+
+// Filter by coupon type (FIXED or PERCENTAGE)
+type V1CouponListParamsType string
+
+const (
+	V1CouponListParamsTypeFixed      V1CouponListParamsType = "FIXED"
+	V1CouponListParamsTypePercentage V1CouponListParamsType = "PERCENTAGE"
+)

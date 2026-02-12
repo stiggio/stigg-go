@@ -92,7 +92,15 @@ func TestV1CustomerListWithOptionalParams(t *testing.T) {
 	_, err := client.V1.Customers.List(context.TODO(), stigg.V1CustomerListParams{
 		After:  stigg.String("182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e"),
 		Before: stigg.String("182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e"),
-		Limit:  stigg.Int(1),
+		CreatedAt: stigg.V1CustomerListParamsCreatedAt{
+			Gt:  stigg.Time(time.Now()),
+			Gte: stigg.Time(time.Now()),
+			Lt:  stigg.Time(time.Now()),
+			Lte: stigg.Time(time.Now()),
+		},
+		Email: stigg.String("email"),
+		Limit: stigg.Int(1),
+		Name:  stigg.String("name"),
 	})
 	if err != nil {
 		var apierr *stigg.Error
