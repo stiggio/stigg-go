@@ -1841,14 +1841,45 @@ type V1SubscriptionListParams struct {
 	CustomerID param.Opt[string] `query:"customerId,omitzero" json:"-"`
 	// Maximum number of items to return
 	Limit param.Opt[int64] `query:"limit,omitzero" json:"-"`
-	// Filter by status (comma-separated)
+	// Filter by plan ID
+	PlanID param.Opt[string] `query:"planId,omitzero" json:"-"`
+	// Filter by pricing type. Supports comma-separated values for multiple types
+	PricingType param.Opt[string] `query:"pricingType,omitzero" json:"-"`
+	// Filter by resource ID
+	ResourceID param.Opt[string] `query:"resourceId,omitzero" json:"-"`
+	// Filter by subscription status. Supports comma-separated values for multiple
+	// statuses
 	Status param.Opt[string] `query:"status,omitzero" json:"-"`
+	// Filter by creation date using range operators: gt, gte, lt, lte
+	CreatedAt V1SubscriptionListParamsCreatedAt `query:"createdAt,omitzero" json:"-"`
 	paramObj
 }
 
 // URLQuery serializes [V1SubscriptionListParams]'s query parameters as
 // `url.Values`.
 func (r V1SubscriptionListParams) URLQuery() (v url.Values, err error) {
+	return apiquery.MarshalWithSettings(r, apiquery.QuerySettings{
+		ArrayFormat:  apiquery.ArrayQueryFormatComma,
+		NestedFormat: apiquery.NestedQueryFormatBrackets,
+	})
+}
+
+// Filter by creation date using range operators: gt, gte, lt, lte
+type V1SubscriptionListParamsCreatedAt struct {
+	// Greater than the specified createdAt value
+	Gt param.Opt[time.Time] `query:"gt,omitzero" format:"date-time" json:"-"`
+	// Greater than or equal to the specified createdAt value
+	Gte param.Opt[time.Time] `query:"gte,omitzero" format:"date-time" json:"-"`
+	// Less than the specified createdAt value
+	Lt param.Opt[time.Time] `query:"lt,omitzero" format:"date-time" json:"-"`
+	// Less than or equal to the specified createdAt value
+	Lte param.Opt[time.Time] `query:"lte,omitzero" format:"date-time" json:"-"`
+	paramObj
+}
+
+// URLQuery serializes [V1SubscriptionListParamsCreatedAt]'s query parameters as
+// `url.Values`.
+func (r V1SubscriptionListParamsCreatedAt) URLQuery() (v url.Values, err error) {
 	return apiquery.MarshalWithSettings(r, apiquery.QuerySettings{
 		ArrayFormat:  apiquery.ArrayQueryFormatComma,
 		NestedFormat: apiquery.NestedQueryFormatBrackets,

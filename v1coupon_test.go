@@ -7,6 +7,7 @@ import (
 	"errors"
 	"os"
 	"testing"
+	"time"
 
 	"github.com/stiggio/stigg-go"
 	"github.com/stiggio/stigg-go/internal/testutil"
@@ -84,9 +85,18 @@ func TestV1CouponListWithOptionalParams(t *testing.T) {
 		option.WithAPIKey("My API Key"),
 	)
 	_, err := client.V1.Coupons.List(context.TODO(), stigg.V1CouponListParams{
+		ID:     stigg.String("id"),
 		After:  stigg.String("182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e"),
 		Before: stigg.String("182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e"),
+		CreatedAt: stigg.V1CouponListParamsCreatedAt{
+			Gt:  stigg.Time(time.Now()),
+			Gte: stigg.Time(time.Now()),
+			Lt:  stigg.Time(time.Now()),
+			Lte: stigg.Time(time.Now()),
+		},
 		Limit:  stigg.Int(1),
+		Status: stigg.String("status"),
+		Type:   stigg.V1CouponListParamsTypeFixed,
 	})
 	if err != nil {
 		var apierr *stigg.Error

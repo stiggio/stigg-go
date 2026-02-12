@@ -153,18 +153,46 @@ func (r *V1ProductListProductsResponseProductSettings) UnmarshalJSON(data []byte
 }
 
 type V1ProductListProductsParams struct {
+	// Filter by entity ID
+	ID param.Opt[string] `query:"id,omitzero" json:"-"`
 	// Return items that come after this cursor
 	After param.Opt[string] `query:"after,omitzero" format:"uuid" json:"-"`
 	// Return items that come before this cursor
 	Before param.Opt[string] `query:"before,omitzero" format:"uuid" json:"-"`
 	// Maximum number of items to return
 	Limit param.Opt[int64] `query:"limit,omitzero" json:"-"`
+	// Filter by product status. Supports comma-separated values for multiple statuses
+	Status param.Opt[string] `query:"status,omitzero" json:"-"`
+	// Filter by creation date using range operators: gt, gte, lt, lte
+	CreatedAt V1ProductListProductsParamsCreatedAt `query:"createdAt,omitzero" json:"-"`
 	paramObj
 }
 
 // URLQuery serializes [V1ProductListProductsParams]'s query parameters as
 // `url.Values`.
 func (r V1ProductListProductsParams) URLQuery() (v url.Values, err error) {
+	return apiquery.MarshalWithSettings(r, apiquery.QuerySettings{
+		ArrayFormat:  apiquery.ArrayQueryFormatComma,
+		NestedFormat: apiquery.NestedQueryFormatBrackets,
+	})
+}
+
+// Filter by creation date using range operators: gt, gte, lt, lte
+type V1ProductListProductsParamsCreatedAt struct {
+	// Greater than the specified createdAt value
+	Gt param.Opt[time.Time] `query:"gt,omitzero" format:"date-time" json:"-"`
+	// Greater than or equal to the specified createdAt value
+	Gte param.Opt[time.Time] `query:"gte,omitzero" format:"date-time" json:"-"`
+	// Less than the specified createdAt value
+	Lt param.Opt[time.Time] `query:"lt,omitzero" format:"date-time" json:"-"`
+	// Less than or equal to the specified createdAt value
+	Lte param.Opt[time.Time] `query:"lte,omitzero" format:"date-time" json:"-"`
+	paramObj
+}
+
+// URLQuery serializes [V1ProductListProductsParamsCreatedAt]'s query parameters as
+// `url.Values`.
+func (r V1ProductListProductsParamsCreatedAt) URLQuery() (v url.Values, err error) {
 	return apiquery.MarshalWithSettings(r, apiquery.QuerySettings{
 		ArrayFormat:  apiquery.ArrayQueryFormatComma,
 		NestedFormat: apiquery.NestedQueryFormatBrackets,
