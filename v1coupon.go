@@ -321,12 +321,12 @@ type V1CouponNewParams struct {
 	PercentOff param.Opt[float64] `json:"percentOff,omitzero,required"`
 	// Fixed amount discounts in different currencies
 	AmountsOff []V1CouponNewParamsAmountsOff `json:"amountsOff,omitzero,required"`
+	// Metadata associated with the entity
+	Metadata map[string]string `json:"metadata,omitzero,required"`
 	// The unique identifier for the entity
 	ID string `json:"id,required"`
 	// Name of the coupon
 	Name string `json:"name,required"`
-	// Metadata associated with the entity
-	AdditionalMetaData any `json:"additionalMetaData,omitzero"`
 	paramObj
 }
 
