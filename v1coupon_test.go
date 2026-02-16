@@ -14,7 +14,7 @@ import (
 	"github.com/stiggio/stigg-go/option"
 )
 
-func TestV1CouponNewWithOptionalParams(t *testing.T) {
+func TestV1CouponNew(t *testing.T) {
 	t.Skip("Prism tests are disabled")
 	baseURL := "http://localhost:4010"
 	if envURL, ok := os.LookupEnv("TEST_API_BASE_URL"); ok {
@@ -33,11 +33,13 @@ func TestV1CouponNewWithOptionalParams(t *testing.T) {
 			Amount:   0,
 			Currency: "usd",
 		}},
-		Description:        stigg.String("description"),
-		DurationInMonths:   stigg.Int(1),
-		Name:               "name",
-		PercentOff:         stigg.Float(1),
-		AdditionalMetaData: map[string]any{},
+		Description:      stigg.String("description"),
+		DurationInMonths: stigg.Int(1),
+		Metadata: map[string]string{
+			"foo": "string",
+		},
+		Name:       "name",
+		PercentOff: stigg.Float(1),
 	})
 	if err != nil {
 		var apierr *stigg.Error
