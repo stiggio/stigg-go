@@ -22,7 +22,9 @@ import (
 // automatically. You should not instantiate this service directly, and instead use
 // the [NewV1EventService] method instead.
 type V1EventService struct {
-	Options []option.RequestOption
+	Options  []option.RequestOption
+	Features V1EventFeatureService
+	Addons   V1EventAddonService
 }
 
 // NewV1EventService generates a new service that applies the given options to each
@@ -31,6 +33,8 @@ type V1EventService struct {
 func NewV1EventService(opts ...option.RequestOption) (r V1EventService) {
 	r = V1EventService{}
 	r.Options = opts
+	r.Features = NewV1EventFeatureService(opts...)
+	r.Addons = NewV1EventAddonService(opts...)
 	return
 }
 
