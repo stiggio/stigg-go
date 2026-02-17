@@ -27,8 +27,6 @@ Methods:
 - <code title="post /api/v1/customers/{id}/payment-method">client.V1.Customers.PaymentMethod.<a href="https://pkg.go.dev/github.com/stiggio/stigg-go#V1CustomerPaymentMethodService.Attach">Attach</a>(ctx <a href="https://pkg.go.dev/context">context</a>.<a href="https://pkg.go.dev/context#Context">Context</a>, id <a href="https://pkg.go.dev/builtin#string">string</a>, body <a href="https://pkg.go.dev/github.com/stiggio/stigg-go">stigg</a>.<a href="https://pkg.go.dev/github.com/stiggio/stigg-go#V1CustomerPaymentMethodAttachParams">V1CustomerPaymentMethodAttachParams</a>) (\*<a href="https://pkg.go.dev/github.com/stiggio/stigg-go">stigg</a>.<a href="https://pkg.go.dev/github.com/stiggio/stigg-go#CustomerResponse">CustomerResponse</a>, <a href="https://pkg.go.dev/builtin#error">error</a>)</code>
 - <code title="delete /api/v1/customers/{id}/payment-method">client.V1.Customers.PaymentMethod.<a href="https://pkg.go.dev/github.com/stiggio/stigg-go#V1CustomerPaymentMethodService.Detach">Detach</a>(ctx <a href="https://pkg.go.dev/context">context</a>.<a href="https://pkg.go.dev/context#Context">Context</a>, id <a href="https://pkg.go.dev/builtin#string">string</a>) (\*<a href="https://pkg.go.dev/github.com/stiggio/stigg-go">stigg</a>.<a href="https://pkg.go.dev/github.com/stiggio/stigg-go#CustomerResponse">CustomerResponse</a>, <a href="https://pkg.go.dev/builtin#error">error</a>)</code>
 
-### PromotionalEntitlements
-
 ## Subscriptions
 
 Response Types:
