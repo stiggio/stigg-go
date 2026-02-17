@@ -83,6 +83,30 @@ func (r *V1CouponService) ListAutoPaging(ctx context.Context, query V1CouponList
 	return pagination.NewMyCursorIDPageAutoPager(r.List(ctx, query, opts...))
 }
 
+// Archives a coupon, preventing it from being applied to new subscriptions.
+func (r *V1CouponService) ArchiveCoupon(ctx context.Context, id string, opts ...option.RequestOption) (res *Coupon, err error) {
+	opts = slices.Concat(r.Options, opts)
+	if id == "" {
+		err = errors.New("missing required id parameter")
+		return
+	}
+	path := fmt.Sprintf("api/v1/coupons/%s/archive", id)
+	err = requestconfig.ExecuteNewRequest(ctx, http.MethodPost, path, nil, &res, opts...)
+	return
+}
+
+// Updates an existing coupon's properties such as name, description, and metadata.
+func (r *V1CouponService) UpdateCoupon(ctx context.Context, id string, body V1CouponUpdateCouponParams, opts ...option.RequestOption) (res *Coupon, err error) {
+	opts = slices.Concat(r.Options, opts)
+	if id == "" {
+		err = errors.New("missing required id parameter")
+		return
+	}
+	path := fmt.Sprintf("api/v1/coupons/%s", id)
+	err = requestconfig.ExecuteNewRequest(ctx, http.MethodPatch, path, body, &res, opts...)
+	return
+}
+
 // Response object
 type Coupon struct {
 	// Discount instrument with percentage or fixed amount
@@ -432,3 +456,21 @@ const (
 	V1CouponListParamsTypeFixed      V1CouponListParamsType = "FIXED"
 	V1CouponListParamsTypePercentage V1CouponListParamsType = "PERCENTAGE"
 )
+
+type V1CouponUpdateCouponParams struct {
+	// Description of the coupon
+	Description param.Opt[string] `json:"description,omitzero"`
+	// Name of the coupon
+	Name param.Opt[string] `json:"name,omitzero"`
+	// Metadata associated with the entity
+	Metadata map[string]string `json:"metadata,omitzero"`
+	paramObj
+}
+
+func (r V1CouponUpdateCouponParams) MarshalJSON() (data []byte, err error) {
+	type shadow V1CouponUpdateCouponParams
+	return param.MarshalObject(r, (*shadow)(&r))
+}
+func (r *V1CouponUpdateCouponParams) UnmarshalJSON(data []byte) error {
+	return apijson.UnmarshalRoot(data, r)
+}

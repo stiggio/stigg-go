@@ -30,6 +30,8 @@ import (
 type V1SubscriptionService struct {
 	Options      []option.RequestOption
 	FutureUpdate V1SubscriptionFutureUpdateService
+	Usage        V1SubscriptionUsageService
+	Invoice      V1SubscriptionInvoiceService
 }
 
 // NewV1SubscriptionService generates a new service that applies the given options
@@ -39,6 +41,8 @@ func NewV1SubscriptionService(opts ...option.RequestOption) (r V1SubscriptionSer
 	r = V1SubscriptionService{}
 	r.Options = opts
 	r.FutureUpdate = NewV1SubscriptionFutureUpdateService(opts...)
+	r.Usage = NewV1SubscriptionUsageService(opts...)
+	r.Invoice = NewV1SubscriptionInvoiceService(opts...)
 	return
 }
 
