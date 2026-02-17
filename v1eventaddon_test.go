@@ -96,7 +96,7 @@ func TestV1EventAddonListAddonsWithOptionalParams(t *testing.T) {
 		},
 		Limit:     stigg.Int(1),
 		ProductID: stigg.String("productId"),
-		Status:    stigg.V1EventAddonListAddonsParamsStatusDraft,
+		Status:    stigg.String("status"),
 	})
 	if err != nil {
 		var apierr *stigg.Error

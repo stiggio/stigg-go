@@ -29,16 +29,6 @@ Methods:
 
 ### PromotionalEntitlements
 
-Response Types:
-
-- <a href="https://pkg.go.dev/github.com/stiggio/stigg-go">stigg</a>.<a href="https://pkg.go.dev/github.com/stiggio/stigg-go#V1CustomerPromotionalEntitlementGrantResponse">V1CustomerPromotionalEntitlementGrantResponse</a>
-- <a href="https://pkg.go.dev/github.com/stiggio/stigg-go">stigg</a>.<a href="https://pkg.go.dev/github.com/stiggio/stigg-go#V1CustomerPromotionalEntitlementRevokeResponse">V1CustomerPromotionalEntitlementRevokeResponse</a>
-
-Methods:
-
-- <code title="post /api/v1/customers/{customerId}/promotional">client.V1.Customers.PromotionalEntitlements.<a href="https://pkg.go.dev/github.com/stiggio/stigg-go#V1CustomerPromotionalEntitlementService.Grant">Grant</a>(ctx <a href="https://pkg.go.dev/context">context</a>.<a href="https://pkg.go.dev/context#Context">Context</a>, customerID <a href="https://pkg.go.dev/builtin#string">string</a>, body <a href="https://pkg.go.dev/github.com/stiggio/stigg-go">stigg</a>.<a href="https://pkg.go.dev/github.com/stiggio/stigg-go#V1CustomerPromotionalEntitlementGrantParams">V1CustomerPromotionalEntitlementGrantParams</a>) (\*<a href="https://pkg.go.dev/github.com/stiggio/stigg-go">stigg</a>.<a href="https://pkg.go.dev/github.com/stiggio/stigg-go#V1CustomerPromotionalEntitlementGrantResponse">V1CustomerPromotionalEntitlementGrantResponse</a>, <a href="https://pkg.go.dev/builtin#error">error</a>)</code>
-- <code title="delete /api/v1/customers/{customerId}/promotional/{featureId}">client.V1.Customers.PromotionalEntitlements.<a href="https://pkg.go.dev/github.com/stiggio/stigg-go#V1CustomerPromotionalEntitlementService.Revoke">Revoke</a>(ctx <a href="https://pkg.go.dev/context">context</a>.<a href="https://pkg.go.dev/context#Context">Context</a>, featureID <a href="https://pkg.go.dev/builtin#string">string</a>, body <a href="https://pkg.go.dev/github.com/stiggio/stigg-go">stigg</a>.<a href="https://pkg.go.dev/github.com/stiggio/stigg-go#V1CustomerPromotionalEntitlementRevokeParams">V1CustomerPromotionalEntitlementRevokeParams</a>) (\*<a href="https://pkg.go.dev/github.com/stiggio/stigg-go">stigg</a>.<a href="https://pkg.go.dev/github.com/stiggio/stigg-go#V1CustomerPromotionalEntitlementRevokeResponse">V1CustomerPromotionalEntitlementRevokeResponse</a>, <a href="https://pkg.go.dev/builtin#error">error</a>)</code>
-
 ## Subscriptions
 
 Response Types:

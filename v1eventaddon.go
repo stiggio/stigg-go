@@ -717,12 +717,10 @@ type V1EventAddonListAddonsParams struct {
 	Limit param.Opt[int64] `query:"limit,omitzero" json:"-"`
 	// Filter by product ID
 	ProductID param.Opt[string] `query:"productId,omitzero" json:"-"`
+	// Filter by addon status. Supports comma-separated values for multiple statuses
+	Status param.Opt[string] `query:"status,omitzero" json:"-"`
 	// Filter by creation date using range operators: gt, gte, lt, lte
 	CreatedAt V1EventAddonListAddonsParamsCreatedAt `query:"createdAt,omitzero" json:"-"`
-	// Filter by addon status. Supports comma-separated values for multiple statuses
-	//
-	// Any of "DRAFT", "PUBLISHED", "ARCHIVED".
-	Status V1EventAddonListAddonsParamsStatus `query:"status,omitzero" json:"-"`
 	paramObj
 }
 
@@ -756,15 +754,6 @@ func (r V1EventAddonListAddonsParamsCreatedAt) URLQuery() (v url.Values, err err
 		NestedFormat: apiquery.NestedQueryFormatBrackets,
 	})
 }
-
-// Filter by addon status. Supports comma-separated values for multiple statuses
-type V1EventAddonListAddonsParamsStatus string
-
-const (
-	V1EventAddonListAddonsParamsStatusDraft     V1EventAddonListAddonsParamsStatus = "DRAFT"
-	V1EventAddonListAddonsParamsStatusPublished V1EventAddonListAddonsParamsStatus = "PUBLISHED"
-	V1EventAddonListAddonsParamsStatusArchived  V1EventAddonListAddonsParamsStatus = "ARCHIVED"
-)
 
 type V1EventAddonPublishAddonParams struct {
 	// The migration type of the package
