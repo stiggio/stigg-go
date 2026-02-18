@@ -80,10 +80,12 @@ Methods:
 Response Types:
 
 - <a href="https://pkg.go.dev/github.com/stiggio/stigg-go">stigg</a>.<a href="https://pkg.go.dev/github.com/stiggio/stigg-go#V1SubscriptionUsageChargeUsageResponse">V1SubscriptionUsageChargeUsageResponse</a>
+- <a href="https://pkg.go.dev/github.com/stiggio/stigg-go">stigg</a>.<a href="https://pkg.go.dev/github.com/stiggio/stigg-go#V1SubscriptionUsageSyncResponse">V1SubscriptionUsageSyncResponse</a>
 
 Methods:
 
 - <code title="post /api/v1/subscriptions/{id}/usage/charge">client.V1.Subscriptions.Usage.<a href="https://pkg.go.dev/github.com/stiggio/stigg-go#V1SubscriptionUsageService.ChargeUsage">ChargeUsage</a>(ctx <a href="https://pkg.go.dev/context">context</a>.<a href="https://pkg.go.dev/context#Context">Context</a>, id <a href="https://pkg.go.dev/builtin#string">string</a>, body <a href="https://pkg.go.dev/github.com/stiggio/stigg-go">stigg</a>.<a href="https://pkg.go.dev/github.com/stiggio/stigg-go#V1SubscriptionUsageChargeUsageParams">V1SubscriptionUsageChargeUsageParams</a>) (\*<a href="https://pkg.go.dev/github.com/stiggio/stigg-go">stigg</a>.<a href="https://pkg.go.dev/github.com/stiggio/stigg-go#V1SubscriptionUsageChargeUsageResponse">V1SubscriptionUsageChargeUsageResponse</a>, <a href="https://pkg.go.dev/builtin#error">error</a>)</code>
+- <code title="post /api/v1/subscriptions/{id}/usage/sync">client.V1.Subscriptions.Usage.<a href="https://pkg.go.dev/github.com/stiggio/stigg-go#V1SubscriptionUsageService.Sync">Sync</a>(ctx <a href="https://pkg.go.dev/context">context</a>.<a href="https://pkg.go.dev/context#Context">Context</a>, id <a href="https://pkg.go.dev/builtin#string">string</a>) (\*<a href="https://pkg.go.dev/github.com/stiggio/stigg-go">stigg</a>.<a href="https://pkg.go.dev/github.com/stiggio/stigg-go#V1SubscriptionUsageSyncResponse">V1SubscriptionUsageSyncResponse</a>, <a href="https://pkg.go.dev/builtin#error">error</a>)</code>
 
 ### Invoice
 

@@ -49,6 +49,19 @@ func (r *V1SubscriptionUsageService) ChargeUsage(ctx context.Context, id string,
 	return
 }
 
+// Triggers a usage sync for a subscription, reporting current usage to the billing
+// provider.
+func (r *V1SubscriptionUsageService) Sync(ctx context.Context, id string, opts ...option.RequestOption) (res *V1SubscriptionUsageSyncResponse, err error) {
+	opts = slices.Concat(r.Options, opts)
+	if id == "" {
+		err = errors.New("missing required id parameter")
+		return
+	}
+	path := fmt.Sprintf("api/v1/subscriptions/%s/usage/sync", id)
+	err = requestconfig.ExecuteNewRequest(ctx, http.MethodPost, path, nil, &res, opts...)
+	return
+}
+
 // Response object
 type V1SubscriptionUsageChargeUsageResponse struct {
 	// Result of charging subscription usage including the billing period and charged
@@ -117,6 +130,42 @@ type V1SubscriptionUsageChargeUsageResponseDataUsageCharged struct {
 // Returns the unmodified JSON received from the API
 func (r V1SubscriptionUsageChargeUsageResponseDataUsageCharged) RawJSON() string { return r.JSON.raw }
 func (r *V1SubscriptionUsageChargeUsageResponseDataUsageCharged) UnmarshalJSON(data []byte) error {
+	return apijson.UnmarshalRoot(data, r)
+}
+
+// Response object
+type V1SubscriptionUsageSyncResponse struct {
+	// Result of triggering a subscription usage sync.
+	Data V1SubscriptionUsageSyncResponseData `json:"data,required"`
+	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
+	JSON struct {
+		Data        respjson.Field
+		ExtraFields map[string]respjson.Field
+		raw         string
+	} `json:"-"`
+}
+
+// Returns the unmodified JSON received from the API
+func (r V1SubscriptionUsageSyncResponse) RawJSON() string { return r.JSON.raw }
+func (r *V1SubscriptionUsageSyncResponse) UnmarshalJSON(data []byte) error {
+	return apijson.UnmarshalRoot(data, r)
+}
+
+// Result of triggering a subscription usage sync.
+type V1SubscriptionUsageSyncResponseData struct {
+	// Whether usage was synced to the billing provider
+	Triggered bool `json:"triggered,required"`
+	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
+	JSON struct {
+		Triggered   respjson.Field
+		ExtraFields map[string]respjson.Field
+		raw         string
+	} `json:"-"`
+}
+
+// Returns the unmodified JSON received from the API
+func (r V1SubscriptionUsageSyncResponseData) RawJSON() string { return r.JSON.raw }
+func (r *V1SubscriptionUsageSyncResponseData) UnmarshalJSON(data []byte) error {
 	return apijson.UnmarshalRoot(data, r)
 }
 
