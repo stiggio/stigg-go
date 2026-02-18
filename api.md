@@ -174,6 +174,20 @@ Methods:
 - <code title="post /api/v1/addons/{id}/draft">client.V1.Events.Addons.Draft.<a href="https://pkg.go.dev/github.com/stiggio/stigg-go#V1EventAddonDraftService.NewAddonDraft">NewAddonDraft</a>(ctx <a href="https://pkg.go.dev/context">context</a>.<a href="https://pkg.go.dev/context#Context">Context</a>, id <a href="https://pkg.go.dev/builtin#string">string</a>) (\*<a href="https://pkg.go.dev/github.com/stiggio/stigg-go">stigg</a>.<a href="https://pkg.go.dev/github.com/stiggio/stigg-go#V1EventAddonDraftNewAddonDraftResponse">V1EventAddonDraftNewAddonDraftResponse</a>, <a href="https://pkg.go.dev/builtin#error">error</a>)</code>
 - <code title="delete /api/v1/addons/{id}/draft">client.V1.Events.Addons.Draft.<a href="https://pkg.go.dev/github.com/stiggio/stigg-go#V1EventAddonDraftService.RemoveAddonDraft">RemoveAddonDraft</a>(ctx <a href="https://pkg.go.dev/context">context</a>.<a href="https://pkg.go.dev/context#Context">Context</a>, id <a href="https://pkg.go.dev/builtin#string">string</a>) (\*<a href="https://pkg.go.dev/github.com/stiggio/stigg-go">stigg</a>.<a href="https://pkg.go.dev/github.com/stiggio/stigg-go#V1EventAddonDraftRemoveAddonDraftResponse">V1EventAddonDraftRemoveAddonDraftResponse</a>, <a href="https://pkg.go.dev/builtin#error">error</a>)</code>
 
+### Plans
+
+Response Types:
+
+- <a href="https://pkg.go.dev/github.com/stiggio/stigg-go">stigg</a>.<a href="https://pkg.go.dev/github.com/stiggio/stigg-go#V1EventPlanNewResponse">V1EventPlanNewResponse</a>
+- <a href="https://pkg.go.dev/github.com/stiggio/stigg-go">stigg</a>.<a href="https://pkg.go.dev/github.com/stiggio/stigg-go#V1EventPlanGetResponse">V1EventPlanGetResponse</a>
+- <a href="https://pkg.go.dev/github.com/stiggio/stigg-go">stigg</a>.<a href="https://pkg.go.dev/github.com/stiggio/stigg-go#V1EventPlanListResponse">V1EventPlanListResponse</a>
+
+Methods:
+
+- <code title="post /api/v1/plans">client.V1.Events.Plans.<a href="https://pkg.go.dev/github.com/stiggio/stigg-go#V1EventPlanService.New">New</a>(ctx <a href="https://pkg.go.dev/context">context</a>.<a href="https://pkg.go.dev/context#Context">Context</a>, body <a href="https://pkg.go.dev/github.com/stiggio/stigg-go">stigg</a>.<a href="https://pkg.go.dev/github.com/stiggio/stigg-go#V1EventPlanNewParams">V1EventPlanNewParams</a>) (\*<a href="https://pkg.go.dev/github.com/stiggio/stigg-go">stigg</a>.<a href="https://pkg.go.dev/github.com/stiggio/stigg-go#V1EventPlanNewResponse">V1EventPlanNewResponse</a>, <a href="https://pkg.go.dev/builtin#error">error</a>)</code>
+- <code title="get /api/v1/plans/{id}">client.V1.Events.Plans.<a href="https://pkg.go.dev/github.com/stiggio/stigg-go#V1EventPlanService.Get">Get</a>(ctx <a href="https://pkg.go.dev/context">context</a>.<a href="https://pkg.go.dev/context#Context">Context</a>, id <a href="https://pkg.go.dev/builtin#string">string</a>) (\*<a href="https://pkg.go.dev/github.com/stiggio/stigg-go">stigg</a>.<a href="https://pkg.go.dev/github.com/stiggio/stigg-go#V1EventPlanGetResponse">V1EventPlanGetResponse</a>, <a href="https://pkg.go.dev/builtin#error">error</a>)</code>
+- <code title="get /api/v1/plans">client.V1.Events.Plans.<a href="https://pkg.go.dev/github.com/stiggio/stigg-go#V1EventPlanService.List">List</a>(ctx <a href="https://pkg.go.dev/context">context</a>.<a href="https://pkg.go.dev/context#Context">Context</a>, query <a href="https://pkg.go.dev/github.com/stiggio/stigg-go">stigg</a>.<a href="https://pkg.go.dev/github.com/stiggio/stigg-go#V1EventPlanListParams">V1EventPlanListParams</a>) (\*<a href="https://pkg.go.dev/github.com/stiggio/stigg-go/packages/pagination">pagination</a>.<a href="https://pkg.go.dev/github.com/stiggio/stigg-go/packages/pagination#MyCursorIDPage">MyCursorIDPage</a>[<a href="https://pkg.go.dev/github.com/stiggio/stigg-go">stigg</a>.<a href="https://pkg.go.dev/github.com/stiggio/stigg-go#V1EventPlanListResponse">V1EventPlanListResponse</a>], <a href="https://pkg.go.dev/builtin#error">error</a>)</code>
+
 ## Usage
 
 Response Types:
