@@ -30,6 +30,8 @@ import (
 type V1SubscriptionService struct {
 	Options      []option.RequestOption
 	FutureUpdate V1SubscriptionFutureUpdateService
+	Usage        V1SubscriptionUsageService
+	Invoice      V1SubscriptionInvoiceService
 }
 
 // NewV1SubscriptionService generates a new service that applies the given options
@@ -39,6 +41,8 @@ func NewV1SubscriptionService(opts ...option.RequestOption) (r V1SubscriptionSer
 	r = V1SubscriptionService{}
 	r.Options = opts
 	r.FutureUpdate = NewV1SubscriptionFutureUpdateService(opts...)
+	r.Usage = NewV1SubscriptionUsageService(opts...)
+	r.Invoice = NewV1SubscriptionInvoiceService(opts...)
 	return
 }
 
@@ -955,8 +959,8 @@ func (r *V1SubscriptionProvisionResponseData) UnmarshalJSON(data []byte) error {
 
 // V1SubscriptionProvisionResponseDataEntitlementUnion contains all possible
 // properties and values from
-// [V1SubscriptionProvisionResponseDataEntitlementSubscriptionFeatureEntitlement],
-// [V1SubscriptionProvisionResponseDataEntitlementSubscriptionCreditEntitlement].
+// [V1SubscriptionProvisionResponseDataEntitlementUnionObjectVariant0],
+// [V1SubscriptionProvisionResponseDataEntitlementUnionObjectVariant1].
 //
 // Use the methods beginning with 'As' to cast the union to one of its variants.
 type V1SubscriptionProvisionResponseDataEntitlementUnion struct {
@@ -966,30 +970,28 @@ type V1SubscriptionProvisionResponseDataEntitlementUnion struct {
 	CurrentUsage         float64   `json:"currentUsage"`
 	EntitlementUpdatedAt time.Time `json:"entitlementUpdatedAt"`
 	// This field is from variant
-	// [V1SubscriptionProvisionResponseDataEntitlementSubscriptionFeatureEntitlement].
-	Feature V1SubscriptionProvisionResponseDataEntitlementSubscriptionFeatureEntitlementFeature `json:"feature"`
+	// [V1SubscriptionProvisionResponseDataEntitlementUnionObjectVariant0].
+	Feature V1SubscriptionProvisionResponseDataEntitlementUnionObjectVariant0Feature `json:"feature"`
 	// This field is from variant
-	// [V1SubscriptionProvisionResponseDataEntitlementSubscriptionFeatureEntitlement].
+	// [V1SubscriptionProvisionResponseDataEntitlementUnionObjectVariant0].
 	HasUnlimitedUsage bool `json:"hasUnlimitedUsage"`
 	// This field is from variant
-	// [V1SubscriptionProvisionResponseDataEntitlementSubscriptionFeatureEntitlement].
+	// [V1SubscriptionProvisionResponseDataEntitlementUnionObjectVariant0].
 	ResetPeriod string  `json:"resetPeriod"`
 	UsageLimit  float64 `json:"usageLimit"`
 	// This field is from variant
-	// [V1SubscriptionProvisionResponseDataEntitlementSubscriptionFeatureEntitlement].
+	// [V1SubscriptionProvisionResponseDataEntitlementUnionObjectVariant0].
 	UsagePeriodAnchor time.Time `json:"usagePeriodAnchor"`
+	UsagePeriodEnd    time.Time `json:"usagePeriodEnd"`
 	// This field is from variant
-	// [V1SubscriptionProvisionResponseDataEntitlementSubscriptionFeatureEntitlement].
-	UsagePeriodEnd time.Time `json:"usagePeriodEnd"`
-	// This field is from variant
-	// [V1SubscriptionProvisionResponseDataEntitlementSubscriptionFeatureEntitlement].
+	// [V1SubscriptionProvisionResponseDataEntitlementUnionObjectVariant0].
 	UsagePeriodStart time.Time `json:"usagePeriodStart"`
 	ValidUntil       time.Time `json:"validUntil"`
 	// This field is from variant
-	// [V1SubscriptionProvisionResponseDataEntitlementSubscriptionCreditEntitlement].
-	Currency V1SubscriptionProvisionResponseDataEntitlementSubscriptionCreditEntitlementCurrency `json:"currency"`
+	// [V1SubscriptionProvisionResponseDataEntitlementUnionObjectVariant1].
+	Currency V1SubscriptionProvisionResponseDataEntitlementUnionObjectVariant1Currency `json:"currency"`
 	// This field is from variant
-	// [V1SubscriptionProvisionResponseDataEntitlementSubscriptionCreditEntitlement].
+	// [V1SubscriptionProvisionResponseDataEntitlementUnionObjectVariant1].
 	UsageUpdatedAt time.Time `json:"usageUpdatedAt"`
 	JSON           struct {
 		AccessDeniedReason   respjson.Field
@@ -1011,12 +1013,12 @@ type V1SubscriptionProvisionResponseDataEntitlementUnion struct {
 	} `json:"-"`
 }
 
-func (u V1SubscriptionProvisionResponseDataEntitlementUnion) AsSubscriptionFeatureEntitlement() (v V1SubscriptionProvisionResponseDataEntitlementSubscriptionFeatureEntitlement) {
+func (u V1SubscriptionProvisionResponseDataEntitlementUnion) AsV1SubscriptionProvisionResponseDataEntitlementUnionObjectVariant0() (v V1SubscriptionProvisionResponseDataEntitlementUnionObjectVariant0) {
 	apijson.UnmarshalRoot(json.RawMessage(u.JSON.raw), &v)
 	return
 }
 
-func (u V1SubscriptionProvisionResponseDataEntitlementUnion) AsSubscriptionCreditEntitlement() (v V1SubscriptionProvisionResponseDataEntitlementSubscriptionCreditEntitlement) {
+func (u V1SubscriptionProvisionResponseDataEntitlementUnion) AsV1SubscriptionProvisionResponseDataEntitlementUnionObjectVariant1() (v V1SubscriptionProvisionResponseDataEntitlementUnionObjectVariant1) {
 	apijson.UnmarshalRoot(json.RawMessage(u.JSON.raw), &v)
 	return
 }
@@ -1028,7 +1030,7 @@ func (r *V1SubscriptionProvisionResponseDataEntitlementUnion) UnmarshalJSON(data
 	return apijson.UnmarshalRoot(data, r)
 }
 
-type V1SubscriptionProvisionResponseDataEntitlementSubscriptionFeatureEntitlement struct {
+type V1SubscriptionProvisionResponseDataEntitlementUnionObjectVariant0 struct {
 	// Any of "FeatureNotFound", "CustomerNotFound", "CustomerIsArchived",
 	// "CustomerResourceNotFound", "NoActiveSubscription",
 	// "NoFeatureEntitlementInSubscription", "RequestedUsageExceedingLimit",
@@ -1040,9 +1042,9 @@ type V1SubscriptionProvisionResponseDataEntitlementSubscriptionFeatureEntitlemen
 	Type         string  `json:"type,required"`
 	CurrentUsage float64 `json:"currentUsage"`
 	// Timestamp of the last update to the entitlement grant or configuration.
-	EntitlementUpdatedAt time.Time                                                                           `json:"entitlementUpdatedAt" format:"date-time"`
-	Feature              V1SubscriptionProvisionResponseDataEntitlementSubscriptionFeatureEntitlementFeature `json:"feature"`
-	HasUnlimitedUsage    bool                                                                                `json:"hasUnlimitedUsage"`
+	EntitlementUpdatedAt time.Time                                                                `json:"entitlementUpdatedAt" format:"date-time"`
+	Feature              V1SubscriptionProvisionResponseDataEntitlementUnionObjectVariant0Feature `json:"feature"`
+	HasUnlimitedUsage    bool                                                                     `json:"hasUnlimitedUsage"`
 	// Any of "YEAR", "MONTH", "WEEK", "DAY", "HOUR".
 	ResetPeriod string  `json:"resetPeriod,nullable"`
 	UsageLimit  float64 `json:"usageLimit,nullable"`
@@ -1078,14 +1080,14 @@ type V1SubscriptionProvisionResponseDataEntitlementSubscriptionFeatureEntitlemen
 }
 
 // Returns the unmodified JSON received from the API
-func (r V1SubscriptionProvisionResponseDataEntitlementSubscriptionFeatureEntitlement) RawJSON() string {
+func (r V1SubscriptionProvisionResponseDataEntitlementUnionObjectVariant0) RawJSON() string {
 	return r.JSON.raw
 }
-func (r *V1SubscriptionProvisionResponseDataEntitlementSubscriptionFeatureEntitlement) UnmarshalJSON(data []byte) error {
+func (r *V1SubscriptionProvisionResponseDataEntitlementUnionObjectVariant0) UnmarshalJSON(data []byte) error {
 	return apijson.UnmarshalRoot(data, r)
 }
 
-type V1SubscriptionProvisionResponseDataEntitlementSubscriptionFeatureEntitlementFeature struct {
+type V1SubscriptionProvisionResponseDataEntitlementUnionObjectVariant0Feature struct {
 	// The human-readable name of the entitlement, shown in UI elements.
 	DisplayName string `json:"displayName,required"`
 	// The current status of the feature.
@@ -1110,14 +1112,14 @@ type V1SubscriptionProvisionResponseDataEntitlementSubscriptionFeatureEntitlemen
 }
 
 // Returns the unmodified JSON received from the API
-func (r V1SubscriptionProvisionResponseDataEntitlementSubscriptionFeatureEntitlementFeature) RawJSON() string {
+func (r V1SubscriptionProvisionResponseDataEntitlementUnionObjectVariant0Feature) RawJSON() string {
 	return r.JSON.raw
 }
-func (r *V1SubscriptionProvisionResponseDataEntitlementSubscriptionFeatureEntitlementFeature) UnmarshalJSON(data []byte) error {
+func (r *V1SubscriptionProvisionResponseDataEntitlementUnionObjectVariant0Feature) UnmarshalJSON(data []byte) error {
 	return apijson.UnmarshalRoot(data, r)
 }
 
-type V1SubscriptionProvisionResponseDataEntitlementSubscriptionCreditEntitlement struct {
+type V1SubscriptionProvisionResponseDataEntitlementUnionObjectVariant1 struct {
 	// Any of "FeatureNotFound", "CustomerNotFound", "CustomerIsArchived",
 	// "CustomerResourceNotFound", "NoActiveSubscription",
 	// "NoFeatureEntitlementInSubscription", "RequestedUsageExceedingLimit",
@@ -1125,9 +1127,9 @@ type V1SubscriptionProvisionResponseDataEntitlementSubscriptionCreditEntitlement
 	// "Revoked", "InsufficientCredits", "EntitlementNotFound".
 	AccessDeniedReason string `json:"accessDeniedReason,required"`
 	// The currency associated with a credit entitlement.
-	Currency     V1SubscriptionProvisionResponseDataEntitlementSubscriptionCreditEntitlementCurrency `json:"currency,required"`
-	CurrentUsage float64                                                                             `json:"currentUsage,required"`
-	IsGranted    bool                                                                                `json:"isGranted,required"`
+	Currency     V1SubscriptionProvisionResponseDataEntitlementUnionObjectVariant1Currency `json:"currency,required"`
+	CurrentUsage float64                                                                   `json:"currentUsage,required"`
+	IsGranted    bool                                                                      `json:"isGranted,required"`
 	// Any of "CREDIT".
 	Type       string  `json:"type,required"`
 	UsageLimit float64 `json:"usageLimit,required"`
@@ -1135,6 +1137,8 @@ type V1SubscriptionProvisionResponseDataEntitlementSubscriptionCreditEntitlement
 	UsageUpdatedAt time.Time `json:"usageUpdatedAt,required" format:"date-time"`
 	// Timestamp of the last update to the entitlement grant or configuration.
 	EntitlementUpdatedAt time.Time `json:"entitlementUpdatedAt" format:"date-time"`
+	// The end date of the current billing period for recurring credit grants.
+	UsagePeriodEnd time.Time `json:"usagePeriodEnd" format:"date-time"`
 	// The next time the entitlement should be recalculated
 	ValidUntil time.Time `json:"validUntil" format:"date-time"`
 	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
@@ -1147,6 +1151,7 @@ type V1SubscriptionProvisionResponseDataEntitlementSubscriptionCreditEntitlement
 		UsageLimit           respjson.Field
 		UsageUpdatedAt       respjson.Field
 		EntitlementUpdatedAt respjson.Field
+		UsagePeriodEnd       respjson.Field
 		ValidUntil           respjson.Field
 		ExtraFields          map[string]respjson.Field
 		raw                  string
@@ -1154,15 +1159,15 @@ type V1SubscriptionProvisionResponseDataEntitlementSubscriptionCreditEntitlement
 }
 
 // Returns the unmodified JSON received from the API
-func (r V1SubscriptionProvisionResponseDataEntitlementSubscriptionCreditEntitlement) RawJSON() string {
+func (r V1SubscriptionProvisionResponseDataEntitlementUnionObjectVariant1) RawJSON() string {
 	return r.JSON.raw
 }
-func (r *V1SubscriptionProvisionResponseDataEntitlementSubscriptionCreditEntitlement) UnmarshalJSON(data []byte) error {
+func (r *V1SubscriptionProvisionResponseDataEntitlementUnionObjectVariant1) UnmarshalJSON(data []byte) error {
 	return apijson.UnmarshalRoot(data, r)
 }
 
 // The currency associated with a credit entitlement.
-type V1SubscriptionProvisionResponseDataEntitlementSubscriptionCreditEntitlementCurrency struct {
+type V1SubscriptionProvisionResponseDataEntitlementUnionObjectVariant1Currency struct {
 	// The unique identifier of the custom currency.
 	CurrencyID string `json:"currencyId,required"`
 	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
@@ -1174,10 +1179,10 @@ type V1SubscriptionProvisionResponseDataEntitlementSubscriptionCreditEntitlement
 }
 
 // Returns the unmodified JSON received from the API
-func (r V1SubscriptionProvisionResponseDataEntitlementSubscriptionCreditEntitlementCurrency) RawJSON() string {
+func (r V1SubscriptionProvisionResponseDataEntitlementUnionObjectVariant1Currency) RawJSON() string {
 	return r.JSON.raw
 }
-func (r *V1SubscriptionProvisionResponseDataEntitlementSubscriptionCreditEntitlementCurrency) UnmarshalJSON(data []byte) error {
+func (r *V1SubscriptionProvisionResponseDataEntitlementUnionObjectVariant1Currency) UnmarshalJSON(data []byte) error {
 	return apijson.UnmarshalRoot(data, r)
 }
 
@@ -1731,10 +1736,15 @@ func init() {
 	)
 }
 
-// The property FeatureID is required.
 type V1SubscriptionUpdateParamsPriceOverride struct {
+	// Addon ID
+	AddonID param.Opt[string] `json:"addonId,omitzero"`
+	// Whether this is a base charge override
+	BaseCharge param.Opt[bool] `json:"baseCharge,omitzero"`
+	// The corresponding custom currency id of the recurring credits price
+	CurrencyID param.Opt[string] `json:"currencyId,omitzero"`
 	// Feature ID
-	FeatureID string                                       `json:"featureId,required"`
+	FeatureID param.Opt[string]                            `json:"featureId,omitzero"`
 	Price     V1SubscriptionUpdateParamsPriceOverridePrice `json:"price,omitzero"`
 	paramObj
 }
@@ -1888,14 +1898,45 @@ type V1SubscriptionListParams struct {
 	CustomerID param.Opt[string] `query:"customerId,omitzero" json:"-"`
 	// Maximum number of items to return
 	Limit param.Opt[int64] `query:"limit,omitzero" json:"-"`
-	// Filter by status (comma-separated)
+	// Filter by plan ID
+	PlanID param.Opt[string] `query:"planId,omitzero" json:"-"`
+	// Filter by pricing type. Supports comma-separated values for multiple types
+	PricingType param.Opt[string] `query:"pricingType,omitzero" json:"-"`
+	// Filter by resource ID
+	ResourceID param.Opt[string] `query:"resourceId,omitzero" json:"-"`
+	// Filter by subscription status. Supports comma-separated values for multiple
+	// statuses
 	Status param.Opt[string] `query:"status,omitzero" json:"-"`
+	// Filter by creation date using range operators: gt, gte, lt, lte
+	CreatedAt V1SubscriptionListParamsCreatedAt `query:"createdAt,omitzero" json:"-"`
 	paramObj
 }
 
 // URLQuery serializes [V1SubscriptionListParams]'s query parameters as
 // `url.Values`.
 func (r V1SubscriptionListParams) URLQuery() (v url.Values, err error) {
+	return apiquery.MarshalWithSettings(r, apiquery.QuerySettings{
+		ArrayFormat:  apiquery.ArrayQueryFormatComma,
+		NestedFormat: apiquery.NestedQueryFormatBrackets,
+	})
+}
+
+// Filter by creation date using range operators: gt, gte, lt, lte
+type V1SubscriptionListParamsCreatedAt struct {
+	// Greater than the specified createdAt value
+	Gt param.Opt[time.Time] `query:"gt,omitzero" format:"date-time" json:"-"`
+	// Greater than or equal to the specified createdAt value
+	Gte param.Opt[time.Time] `query:"gte,omitzero" format:"date-time" json:"-"`
+	// Less than the specified createdAt value
+	Lt param.Opt[time.Time] `query:"lt,omitzero" format:"date-time" json:"-"`
+	// Less than or equal to the specified createdAt value
+	Lte param.Opt[time.Time] `query:"lte,omitzero" format:"date-time" json:"-"`
+	paramObj
+}
+
+// URLQuery serializes [V1SubscriptionListParamsCreatedAt]'s query parameters as
+// `url.Values`.
+func (r V1SubscriptionListParamsCreatedAt) URLQuery() (v url.Values, err error) {
 	return apiquery.MarshalWithSettings(r, apiquery.QuerySettings{
 		ArrayFormat:  apiquery.ArrayQueryFormatComma,
 		NestedFormat: apiquery.NestedQueryFormatBrackets,

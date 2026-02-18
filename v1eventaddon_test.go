@@ -14,7 +14,7 @@ import (
 	"github.com/stiggio/stigg-go/option"
 )
 
-func TestV1CouponNew(t *testing.T) {
+func TestV1EventAddonArchiveAddon(t *testing.T) {
 	t.Skip("Prism tests are disabled")
 	baseURL := "http://localhost:4010"
 	if envURL, ok := os.LookupEnv("TEST_API_BASE_URL"); ok {
@@ -27,19 +27,41 @@ func TestV1CouponNew(t *testing.T) {
 		option.WithBaseURL(baseURL),
 		option.WithAPIKey("My API Key"),
 	)
-	_, err := client.V1.Coupons.New(context.TODO(), stigg.V1CouponNewParams{
-		ID: "id",
-		AmountsOff: []stigg.V1CouponNewParamsAmountsOff{{
-			Amount:   0,
-			Currency: "usd",
-		}},
-		Description:      stigg.String("description"),
-		DurationInMonths: stigg.Int(1),
+	_, err := client.V1.Events.Addons.ArchiveAddon(context.TODO(), "x")
+	if err != nil {
+		var apierr *stigg.Error
+		if errors.As(err, &apierr) {
+			t.Log(string(apierr.DumpRequest(true)))
+		}
+		t.Fatalf("err should be nil: %s", err.Error())
+	}
+}
+
+func TestV1EventAddonNewAddonWithOptionalParams(t *testing.T) {
+	t.Skip("Prism tests are disabled")
+	baseURL := "http://localhost:4010"
+	if envURL, ok := os.LookupEnv("TEST_API_BASE_URL"); ok {
+		baseURL = envURL
+	}
+	if !testutil.CheckTestServer(t, baseURL) {
+		return
+	}
+	client := stigg.NewClient(
+		option.WithBaseURL(baseURL),
+		option.WithAPIKey("My API Key"),
+	)
+	_, err := client.V1.Events.Addons.NewAddon(context.TODO(), stigg.V1EventAddonNewAddonParams{
+		ID:          "id",
+		DisplayName: "displayName",
+		ProductID:   "productId",
+		BillingID:   stigg.String("billingId"),
+		Description: stigg.String("description"),
+		MaxQuantity: stigg.Int(0),
 		Metadata: map[string]string{
 			"foo": "string",
 		},
-		Name:       "name",
-		PercentOff: stigg.Float(1),
+		PricingType: stigg.V1EventAddonNewAddonParamsPricingTypeFree,
+		Status:      stigg.V1EventAddonNewAddonParamsStatusDraft,
 	})
 	if err != nil {
 		var apierr *stigg.Error
@@ -50,7 +72,7 @@ func TestV1CouponNew(t *testing.T) {
 	}
 }
 
-func TestV1CouponGet(t *testing.T) {
+func TestV1EventAddonListAddonsWithOptionalParams(t *testing.T) {
 	t.Skip("Prism tests are disabled")
 	baseURL := "http://localhost:4010"
 	if envURL, ok := os.LookupEnv("TEST_API_BASE_URL"); ok {
@@ -63,42 +85,18 @@ func TestV1CouponGet(t *testing.T) {
 		option.WithBaseURL(baseURL),
 		option.WithAPIKey("My API Key"),
 	)
-	_, err := client.V1.Coupons.Get(context.TODO(), "x")
-	if err != nil {
-		var apierr *stigg.Error
-		if errors.As(err, &apierr) {
-			t.Log(string(apierr.DumpRequest(true)))
-		}
-		t.Fatalf("err should be nil: %s", err.Error())
-	}
-}
-
-func TestV1CouponListWithOptionalParams(t *testing.T) {
-	t.Skip("Prism tests are disabled")
-	baseURL := "http://localhost:4010"
-	if envURL, ok := os.LookupEnv("TEST_API_BASE_URL"); ok {
-		baseURL = envURL
-	}
-	if !testutil.CheckTestServer(t, baseURL) {
-		return
-	}
-	client := stigg.NewClient(
-		option.WithBaseURL(baseURL),
-		option.WithAPIKey("My API Key"),
-	)
-	_, err := client.V1.Coupons.List(context.TODO(), stigg.V1CouponListParams{
-		ID:     stigg.String("id"),
+	_, err := client.V1.Events.Addons.ListAddons(context.TODO(), stigg.V1EventAddonListAddonsParams{
 		After:  stigg.String("182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e"),
 		Before: stigg.String("182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e"),
-		CreatedAt: stigg.V1CouponListParamsCreatedAt{
+		CreatedAt: stigg.V1EventAddonListAddonsParamsCreatedAt{
 			Gt:  stigg.Time(time.Now()),
 			Gte: stigg.Time(time.Now()),
 			Lt:  stigg.Time(time.Now()),
 			Lte: stigg.Time(time.Now()),
 		},
-		Limit:  stigg.Int(1),
-		Status: stigg.String("status"),
-		Type:   stigg.V1CouponListParamsTypeFixed,
+		Limit:     stigg.Int(1),
+		ProductID: stigg.String("productId"),
+		Status:    stigg.String("status"),
 	})
 	if err != nil {
 		var apierr *stigg.Error
@@ -109,7 +107,7 @@ func TestV1CouponListWithOptionalParams(t *testing.T) {
 	}
 }
 
-func TestV1CouponArchiveCoupon(t *testing.T) {
+func TestV1EventAddonPublishAddon(t *testing.T) {
 	t.Skip("Prism tests are disabled")
 	baseURL := "http://localhost:4010"
 	if envURL, ok := os.LookupEnv("TEST_API_BASE_URL"); ok {
@@ -122,7 +120,13 @@ func TestV1CouponArchiveCoupon(t *testing.T) {
 		option.WithBaseURL(baseURL),
 		option.WithAPIKey("My API Key"),
 	)
-	_, err := client.V1.Coupons.ArchiveCoupon(context.TODO(), "x")
+	_, err := client.V1.Events.Addons.PublishAddon(
+		context.TODO(),
+		"x",
+		stigg.V1EventAddonPublishAddonParams{
+			MigrationType: stigg.V1EventAddonPublishAddonParamsMigrationTypeNewCustomers,
+		},
+	)
 	if err != nil {
 		var apierr *stigg.Error
 		if errors.As(err, &apierr) {
@@ -132,7 +136,7 @@ func TestV1CouponArchiveCoupon(t *testing.T) {
 	}
 }
 
-func TestV1CouponUpdateCouponWithOptionalParams(t *testing.T) {
+func TestV1EventAddonGetAddon(t *testing.T) {
 	t.Skip("Prism tests are disabled")
 	baseURL := "http://localhost:4010"
 	if envURL, ok := os.LookupEnv("TEST_API_BASE_URL"); ok {
@@ -145,15 +149,41 @@ func TestV1CouponUpdateCouponWithOptionalParams(t *testing.T) {
 		option.WithBaseURL(baseURL),
 		option.WithAPIKey("My API Key"),
 	)
-	_, err := client.V1.Coupons.UpdateCoupon(
+	_, err := client.V1.Events.Addons.GetAddon(context.TODO(), "x")
+	if err != nil {
+		var apierr *stigg.Error
+		if errors.As(err, &apierr) {
+			t.Log(string(apierr.DumpRequest(true)))
+		}
+		t.Fatalf("err should be nil: %s", err.Error())
+	}
+}
+
+func TestV1EventAddonUpdateAddonWithOptionalParams(t *testing.T) {
+	t.Skip("Prism tests are disabled")
+	baseURL := "http://localhost:4010"
+	if envURL, ok := os.LookupEnv("TEST_API_BASE_URL"); ok {
+		baseURL = envURL
+	}
+	if !testutil.CheckTestServer(t, baseURL) {
+		return
+	}
+	client := stigg.NewClient(
+		option.WithBaseURL(baseURL),
+		option.WithAPIKey("My API Key"),
+	)
+	_, err := client.V1.Events.Addons.UpdateAddon(
 		context.TODO(),
 		"x",
-		stigg.V1CouponUpdateCouponParams{
-			Description: stigg.String("description"),
+		stigg.V1EventAddonUpdateAddonParams{
+			BillingID:    stigg.String("billingId"),
+			Dependencies: []string{"string"},
+			Description:  stigg.String("description"),
+			DisplayName:  stigg.String("displayName"),
+			MaxQuantity:  stigg.Int(0),
 			Metadata: map[string]string{
 				"foo": "string",
 			},
-			Name: stigg.String("name"),
 		},
 	)
 	if err != nil {

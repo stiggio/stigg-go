@@ -83,6 +83,30 @@ func (r *V1CouponService) ListAutoPaging(ctx context.Context, query V1CouponList
 	return pagination.NewMyCursorIDPageAutoPager(r.List(ctx, query, opts...))
 }
 
+// Archives a coupon, preventing it from being applied to new subscriptions.
+func (r *V1CouponService) ArchiveCoupon(ctx context.Context, id string, opts ...option.RequestOption) (res *Coupon, err error) {
+	opts = slices.Concat(r.Options, opts)
+	if id == "" {
+		err = errors.New("missing required id parameter")
+		return
+	}
+	path := fmt.Sprintf("api/v1/coupons/%s/archive", id)
+	err = requestconfig.ExecuteNewRequest(ctx, http.MethodPost, path, nil, &res, opts...)
+	return
+}
+
+// Updates an existing coupon's properties such as name, description, and metadata.
+func (r *V1CouponService) UpdateCoupon(ctx context.Context, id string, body V1CouponUpdateCouponParams, opts ...option.RequestOption) (res *Coupon, err error) {
+	opts = slices.Concat(r.Options, opts)
+	if id == "" {
+		err = errors.New("missing required id parameter")
+		return
+	}
+	path := fmt.Sprintf("api/v1/coupons/%s", id)
+	err = requestconfig.ExecuteNewRequest(ctx, http.MethodPatch, path, body, &res, opts...)
+	return
+}
+
 // Response object
 type Coupon struct {
 	// Discount instrument with percentage or fixed amount
@@ -321,12 +345,12 @@ type V1CouponNewParams struct {
 	PercentOff param.Opt[float64] `json:"percentOff,omitzero,required"`
 	// Fixed amount discounts in different currencies
 	AmountsOff []V1CouponNewParamsAmountsOff `json:"amountsOff,omitzero,required"`
+	// Metadata associated with the entity
+	Metadata map[string]string `json:"metadata,omitzero,required"`
 	// The unique identifier for the entity
 	ID string `json:"id,required"`
 	// Name of the coupon
 	Name string `json:"name,required"`
-	// Metadata associated with the entity
-	AdditionalMetaData any `json:"additionalMetaData,omitzero"`
 	paramObj
 }
 
@@ -376,12 +400,22 @@ func init() {
 }
 
 type V1CouponListParams struct {
+	// Filter by entity ID
+	ID param.Opt[string] `query:"id,omitzero" json:"-"`
 	// Return items that come after this cursor
 	After param.Opt[string] `query:"after,omitzero" format:"uuid" json:"-"`
 	// Return items that come before this cursor
 	Before param.Opt[string] `query:"before,omitzero" format:"uuid" json:"-"`
 	// Maximum number of items to return
 	Limit param.Opt[int64] `query:"limit,omitzero" json:"-"`
+	// Filter by coupon status. Supports comma-separated values for multiple statuses
+	Status param.Opt[string] `query:"status,omitzero" json:"-"`
+	// Filter by creation date using range operators: gt, gte, lt, lte
+	CreatedAt V1CouponListParamsCreatedAt `query:"createdAt,omitzero" json:"-"`
+	// Filter by coupon type (FIXED or PERCENTAGE)
+	//
+	// Any of "FIXED", "PERCENTAGE".
+	Type V1CouponListParamsType `query:"type,omitzero" json:"-"`
 	paramObj
 }
 
@@ -391,4 +425,52 @@ func (r V1CouponListParams) URLQuery() (v url.Values, err error) {
 		ArrayFormat:  apiquery.ArrayQueryFormatComma,
 		NestedFormat: apiquery.NestedQueryFormatBrackets,
 	})
+}
+
+// Filter by creation date using range operators: gt, gte, lt, lte
+type V1CouponListParamsCreatedAt struct {
+	// Greater than the specified createdAt value
+	Gt param.Opt[time.Time] `query:"gt,omitzero" format:"date-time" json:"-"`
+	// Greater than or equal to the specified createdAt value
+	Gte param.Opt[time.Time] `query:"gte,omitzero" format:"date-time" json:"-"`
+	// Less than the specified createdAt value
+	Lt param.Opt[time.Time] `query:"lt,omitzero" format:"date-time" json:"-"`
+	// Less than or equal to the specified createdAt value
+	Lte param.Opt[time.Time] `query:"lte,omitzero" format:"date-time" json:"-"`
+	paramObj
+}
+
+// URLQuery serializes [V1CouponListParamsCreatedAt]'s query parameters as
+// `url.Values`.
+func (r V1CouponListParamsCreatedAt) URLQuery() (v url.Values, err error) {
+	return apiquery.MarshalWithSettings(r, apiquery.QuerySettings{
+		ArrayFormat:  apiquery.ArrayQueryFormatComma,
+		NestedFormat: apiquery.NestedQueryFormatBrackets,
+	})
+}
+
+// Filter by coupon type (FIXED or PERCENTAGE)
+type V1CouponListParamsType string
+
+const (
+	V1CouponListParamsTypeFixed      V1CouponListParamsType = "FIXED"
+	V1CouponListParamsTypePercentage V1CouponListParamsType = "PERCENTAGE"
+)
+
+type V1CouponUpdateCouponParams struct {
+	// Description of the coupon
+	Description param.Opt[string] `json:"description,omitzero"`
+	// Name of the coupon
+	Name param.Opt[string] `json:"name,omitzero"`
+	// Metadata associated with the entity
+	Metadata map[string]string `json:"metadata,omitzero"`
+	paramObj
+}
+
+func (r V1CouponUpdateCouponParams) MarshalJSON() (data []byte, err error) {
+	type shadow V1CouponUpdateCouponParams
+	return param.MarshalObject(r, (*shadow)(&r))
+}
+func (r *V1CouponUpdateCouponParams) UnmarshalJSON(data []byte) error {
+	return apijson.UnmarshalRoot(data, r)
 }

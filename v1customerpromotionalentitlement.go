@@ -8,12 +8,15 @@ import (
 	"errors"
 	"fmt"
 	"net/http"
+	"net/url"
 	"slices"
 	"time"
 
 	"github.com/stiggio/stigg-go/internal/apijson"
+	"github.com/stiggio/stigg-go/internal/apiquery"
 	"github.com/stiggio/stigg-go/internal/requestconfig"
 	"github.com/stiggio/stigg-go/option"
+	"github.com/stiggio/stigg-go/packages/pagination"
 	"github.com/stiggio/stigg-go/packages/param"
 	"github.com/stiggio/stigg-go/packages/respjson"
 )
@@ -39,37 +42,64 @@ func NewV1CustomerPromotionalEntitlementService(opts ...option.RequestOption) (r
 
 // Grants promotional entitlements to a customer, providing feature access outside
 // their subscription. Entitlements can be time-limited or permanent.
-func (r *V1CustomerPromotionalEntitlementService) Grant(ctx context.Context, customerID string, body V1CustomerPromotionalEntitlementGrantParams, opts ...option.RequestOption) (res *V1CustomerPromotionalEntitlementGrantResponse, err error) {
+func (r *V1CustomerPromotionalEntitlementService) New(ctx context.Context, id string, body V1CustomerPromotionalEntitlementNewParams, opts ...option.RequestOption) (res *V1CustomerPromotionalEntitlementNewResponse, err error) {
 	opts = slices.Concat(r.Options, opts)
-	if customerID == "" {
-		err = errors.New("missing required customerId parameter")
+	if id == "" {
+		err = errors.New("missing required id parameter")
 		return
 	}
-	path := fmt.Sprintf("api/v1/customers/%s/promotional", customerID)
+	path := fmt.Sprintf("api/v1/customers/%s/promotional-entitlements", id)
 	err = requestconfig.ExecuteNewRequest(ctx, http.MethodPost, path, body, &res, opts...)
 	return
+}
+
+// Retrieves a paginated list of a customer's promotional entitlements.
+func (r *V1CustomerPromotionalEntitlementService) List(ctx context.Context, id string, query V1CustomerPromotionalEntitlementListParams, opts ...option.RequestOption) (res *pagination.MyCursorIDPage[V1CustomerPromotionalEntitlementListResponse], err error) {
+	var raw *http.Response
+	opts = slices.Concat(r.Options, opts)
+	opts = append([]option.RequestOption{option.WithResponseInto(&raw)}, opts...)
+	if id == "" {
+		err = errors.New("missing required id parameter")
+		return
+	}
+	path := fmt.Sprintf("api/v1/customers/%s/promotional-entitlements", id)
+	cfg, err := requestconfig.NewRequestConfig(ctx, http.MethodGet, path, query, &res, opts...)
+	if err != nil {
+		return nil, err
+	}
+	err = cfg.Execute()
+	if err != nil {
+		return nil, err
+	}
+	res.SetPageConfig(cfg, raw)
+	return res, nil
+}
+
+// Retrieves a paginated list of a customer's promotional entitlements.
+func (r *V1CustomerPromotionalEntitlementService) ListAutoPaging(ctx context.Context, id string, query V1CustomerPromotionalEntitlementListParams, opts ...option.RequestOption) *pagination.MyCursorIDPageAutoPager[V1CustomerPromotionalEntitlementListResponse] {
+	return pagination.NewMyCursorIDPageAutoPager(r.List(ctx, id, query, opts...))
 }
 
 // Revokes a previously granted promotional entitlement from a customer for a
 // specific feature.
 func (r *V1CustomerPromotionalEntitlementService) Revoke(ctx context.Context, featureID string, body V1CustomerPromotionalEntitlementRevokeParams, opts ...option.RequestOption) (res *V1CustomerPromotionalEntitlementRevokeResponse, err error) {
 	opts = slices.Concat(r.Options, opts)
-	if body.CustomerID == "" {
-		err = errors.New("missing required customerId parameter")
+	if body.ID == "" {
+		err = errors.New("missing required id parameter")
 		return
 	}
 	if featureID == "" {
 		err = errors.New("missing required featureId parameter")
 		return
 	}
-	path := fmt.Sprintf("api/v1/customers/%s/promotional/%s", body.CustomerID, featureID)
+	path := fmt.Sprintf("api/v1/customers/%s/promotional-entitlements/%s", body.ID, featureID)
 	err = requestconfig.ExecuteNewRequest(ctx, http.MethodDelete, path, nil, &res, opts...)
 	return
 }
 
 // Response object
-type V1CustomerPromotionalEntitlementGrantResponse struct {
-	Data []V1CustomerPromotionalEntitlementGrantResponseData `json:"data,required"`
+type V1CustomerPromotionalEntitlementNewResponse struct {
+	Data []V1CustomerPromotionalEntitlementNewResponseData `json:"data,required"`
 	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
 	JSON struct {
 		Data        respjson.Field
@@ -79,13 +109,13 @@ type V1CustomerPromotionalEntitlementGrantResponse struct {
 }
 
 // Returns the unmodified JSON received from the API
-func (r V1CustomerPromotionalEntitlementGrantResponse) RawJSON() string { return r.JSON.raw }
-func (r *V1CustomerPromotionalEntitlementGrantResponse) UnmarshalJSON(data []byte) error {
+func (r V1CustomerPromotionalEntitlementNewResponse) RawJSON() string { return r.JSON.raw }
+func (r *V1CustomerPromotionalEntitlementNewResponse) UnmarshalJSON(data []byte) error {
 	return apijson.UnmarshalRoot(data, r)
 }
 
 // Granted feature entitlement
-type V1CustomerPromotionalEntitlementGrantResponseData struct {
+type V1CustomerPromotionalEntitlementNewResponseData struct {
 	// Unique identifier for the entity
 	ID string `json:"id,required" format:"uuid"`
 	// Timestamp of when the record was created
@@ -117,7 +147,7 @@ type V1CustomerPromotionalEntitlementGrantResponseData struct {
 	// Any of "YEAR", "MONTH", "WEEK", "DAY", "HOUR".
 	ResetPeriod string `json:"resetPeriod,required"`
 	// The reset period configuration of the entitlement
-	ResetPeriodConfiguration V1CustomerPromotionalEntitlementGrantResponseDataResetPeriodConfigurationUnion `json:"resetPeriodConfiguration,required"`
+	ResetPeriodConfiguration V1CustomerPromotionalEntitlementNewResponseDataResetPeriodConfigurationUnion `json:"resetPeriodConfiguration,required"`
 	// The start date of the entitlement
 	StartDate time.Time `json:"startDate,required" format:"date-time"`
 	// The status of the entitlement
@@ -154,19 +184,19 @@ type V1CustomerPromotionalEntitlementGrantResponseData struct {
 }
 
 // Returns the unmodified JSON received from the API
-func (r V1CustomerPromotionalEntitlementGrantResponseData) RawJSON() string { return r.JSON.raw }
-func (r *V1CustomerPromotionalEntitlementGrantResponseData) UnmarshalJSON(data []byte) error {
+func (r V1CustomerPromotionalEntitlementNewResponseData) RawJSON() string { return r.JSON.raw }
+func (r *V1CustomerPromotionalEntitlementNewResponseData) UnmarshalJSON(data []byte) error {
 	return apijson.UnmarshalRoot(data, r)
 }
 
-// V1CustomerPromotionalEntitlementGrantResponseDataResetPeriodConfigurationUnion
+// V1CustomerPromotionalEntitlementNewResponseDataResetPeriodConfigurationUnion
 // contains all possible properties and values from
-// [V1CustomerPromotionalEntitlementGrantResponseDataResetPeriodConfigurationYearlyResetPeriodConfig],
-// [V1CustomerPromotionalEntitlementGrantResponseDataResetPeriodConfigurationMonthlyResetPeriodConfig],
-// [V1CustomerPromotionalEntitlementGrantResponseDataResetPeriodConfigurationWeeklyResetPeriodConfig].
+// [V1CustomerPromotionalEntitlementNewResponseDataResetPeriodConfigurationYearlyResetPeriodConfig],
+// [V1CustomerPromotionalEntitlementNewResponseDataResetPeriodConfigurationMonthlyResetPeriodConfig],
+// [V1CustomerPromotionalEntitlementNewResponseDataResetPeriodConfigurationWeeklyResetPeriodConfig].
 //
 // Use the methods beginning with 'As' to cast the union to one of its variants.
-type V1CustomerPromotionalEntitlementGrantResponseDataResetPeriodConfigurationUnion struct {
+type V1CustomerPromotionalEntitlementNewResponseDataResetPeriodConfigurationUnion struct {
 	AccordingTo string `json:"accordingTo"`
 	JSON        struct {
 		AccordingTo respjson.Field
@@ -174,32 +204,32 @@ type V1CustomerPromotionalEntitlementGrantResponseDataResetPeriodConfigurationUn
 	} `json:"-"`
 }
 
-func (u V1CustomerPromotionalEntitlementGrantResponseDataResetPeriodConfigurationUnion) AsYearlyResetPeriodConfig() (v V1CustomerPromotionalEntitlementGrantResponseDataResetPeriodConfigurationYearlyResetPeriodConfig) {
+func (u V1CustomerPromotionalEntitlementNewResponseDataResetPeriodConfigurationUnion) AsYearlyResetPeriodConfig() (v V1CustomerPromotionalEntitlementNewResponseDataResetPeriodConfigurationYearlyResetPeriodConfig) {
 	apijson.UnmarshalRoot(json.RawMessage(u.JSON.raw), &v)
 	return
 }
 
-func (u V1CustomerPromotionalEntitlementGrantResponseDataResetPeriodConfigurationUnion) AsMonthlyResetPeriodConfig() (v V1CustomerPromotionalEntitlementGrantResponseDataResetPeriodConfigurationMonthlyResetPeriodConfig) {
+func (u V1CustomerPromotionalEntitlementNewResponseDataResetPeriodConfigurationUnion) AsMonthlyResetPeriodConfig() (v V1CustomerPromotionalEntitlementNewResponseDataResetPeriodConfigurationMonthlyResetPeriodConfig) {
 	apijson.UnmarshalRoot(json.RawMessage(u.JSON.raw), &v)
 	return
 }
 
-func (u V1CustomerPromotionalEntitlementGrantResponseDataResetPeriodConfigurationUnion) AsWeeklyResetPeriodConfig() (v V1CustomerPromotionalEntitlementGrantResponseDataResetPeriodConfigurationWeeklyResetPeriodConfig) {
+func (u V1CustomerPromotionalEntitlementNewResponseDataResetPeriodConfigurationUnion) AsWeeklyResetPeriodConfig() (v V1CustomerPromotionalEntitlementNewResponseDataResetPeriodConfigurationWeeklyResetPeriodConfig) {
 	apijson.UnmarshalRoot(json.RawMessage(u.JSON.raw), &v)
 	return
 }
 
 // Returns the unmodified JSON received from the API
-func (u V1CustomerPromotionalEntitlementGrantResponseDataResetPeriodConfigurationUnion) RawJSON() string {
+func (u V1CustomerPromotionalEntitlementNewResponseDataResetPeriodConfigurationUnion) RawJSON() string {
 	return u.JSON.raw
 }
 
-func (r *V1CustomerPromotionalEntitlementGrantResponseDataResetPeriodConfigurationUnion) UnmarshalJSON(data []byte) error {
+func (r *V1CustomerPromotionalEntitlementNewResponseDataResetPeriodConfigurationUnion) UnmarshalJSON(data []byte) error {
 	return apijson.UnmarshalRoot(data, r)
 }
 
 // Yearly reset configuration
-type V1CustomerPromotionalEntitlementGrantResponseDataResetPeriodConfigurationYearlyResetPeriodConfig struct {
+type V1CustomerPromotionalEntitlementNewResponseDataResetPeriodConfigurationYearlyResetPeriodConfig struct {
 	// Reset anchor (SubscriptionStart)
 	//
 	// Any of "SubscriptionStart".
@@ -213,15 +243,15 @@ type V1CustomerPromotionalEntitlementGrantResponseDataResetPeriodConfigurationYe
 }
 
 // Returns the unmodified JSON received from the API
-func (r V1CustomerPromotionalEntitlementGrantResponseDataResetPeriodConfigurationYearlyResetPeriodConfig) RawJSON() string {
+func (r V1CustomerPromotionalEntitlementNewResponseDataResetPeriodConfigurationYearlyResetPeriodConfig) RawJSON() string {
 	return r.JSON.raw
 }
-func (r *V1CustomerPromotionalEntitlementGrantResponseDataResetPeriodConfigurationYearlyResetPeriodConfig) UnmarshalJSON(data []byte) error {
+func (r *V1CustomerPromotionalEntitlementNewResponseDataResetPeriodConfigurationYearlyResetPeriodConfig) UnmarshalJSON(data []byte) error {
 	return apijson.UnmarshalRoot(data, r)
 }
 
 // Monthly reset configuration
-type V1CustomerPromotionalEntitlementGrantResponseDataResetPeriodConfigurationMonthlyResetPeriodConfig struct {
+type V1CustomerPromotionalEntitlementNewResponseDataResetPeriodConfigurationMonthlyResetPeriodConfig struct {
 	// Reset anchor (SubscriptionStart or StartOfTheMonth)
 	//
 	// Any of "SubscriptionStart", "StartOfTheMonth".
@@ -235,15 +265,15 @@ type V1CustomerPromotionalEntitlementGrantResponseDataResetPeriodConfigurationMo
 }
 
 // Returns the unmodified JSON received from the API
-func (r V1CustomerPromotionalEntitlementGrantResponseDataResetPeriodConfigurationMonthlyResetPeriodConfig) RawJSON() string {
+func (r V1CustomerPromotionalEntitlementNewResponseDataResetPeriodConfigurationMonthlyResetPeriodConfig) RawJSON() string {
 	return r.JSON.raw
 }
-func (r *V1CustomerPromotionalEntitlementGrantResponseDataResetPeriodConfigurationMonthlyResetPeriodConfig) UnmarshalJSON(data []byte) error {
+func (r *V1CustomerPromotionalEntitlementNewResponseDataResetPeriodConfigurationMonthlyResetPeriodConfig) UnmarshalJSON(data []byte) error {
 	return apijson.UnmarshalRoot(data, r)
 }
 
 // Weekly reset configuration
-type V1CustomerPromotionalEntitlementGrantResponseDataResetPeriodConfigurationWeeklyResetPeriodConfig struct {
+type V1CustomerPromotionalEntitlementNewResponseDataResetPeriodConfigurationWeeklyResetPeriodConfig struct {
 	// Reset anchor (SubscriptionStart or specific day)
 	//
 	// Any of "SubscriptionStart", "EverySunday", "EveryMonday", "EveryTuesday",
@@ -258,12 +288,225 @@ type V1CustomerPromotionalEntitlementGrantResponseDataResetPeriodConfigurationWe
 }
 
 // Returns the unmodified JSON received from the API
-func (r V1CustomerPromotionalEntitlementGrantResponseDataResetPeriodConfigurationWeeklyResetPeriodConfig) RawJSON() string {
+func (r V1CustomerPromotionalEntitlementNewResponseDataResetPeriodConfigurationWeeklyResetPeriodConfig) RawJSON() string {
 	return r.JSON.raw
 }
-func (r *V1CustomerPromotionalEntitlementGrantResponseDataResetPeriodConfigurationWeeklyResetPeriodConfig) UnmarshalJSON(data []byte) error {
+func (r *V1CustomerPromotionalEntitlementNewResponseDataResetPeriodConfigurationWeeklyResetPeriodConfig) UnmarshalJSON(data []byte) error {
 	return apijson.UnmarshalRoot(data, r)
 }
+
+// Granted feature entitlement
+type V1CustomerPromotionalEntitlementListResponse struct {
+	// Unique identifier for the entity
+	ID string `json:"id,required" format:"uuid"`
+	// Timestamp of when the record was created
+	CreatedAt time.Time `json:"createdAt,required" format:"date-time"`
+	// The description of the entitlement
+	Description string `json:"description,required"`
+	// The end date of the promotional entitlement
+	EndDate time.Time `json:"endDate,required" format:"date-time"`
+	// The enum values of the entitlement
+	EnumValues []string `json:"enumValues,required"`
+	// The unique identifier for the environment
+	EnvironmentID string `json:"environmentId,required" format:"uuid"`
+	// Feature group IDs associated with this entitlement
+	FeatureGroupIDs []string `json:"featureGroupIds,required"`
+	// The unique identifier of the entitlement feature
+	FeatureID string `json:"featureId,required" format:"uuid"`
+	// Whether the entitlement has a soft limit
+	HasSoftLimit bool `json:"hasSoftLimit,required"`
+	// Whether the entitlement has an unlimited usage
+	HasUnlimitedUsage bool `json:"hasUnlimitedUsage,required"`
+	// Whether the entitlement is visible
+	IsVisible bool `json:"isVisible,required"`
+	// The grant period of the promotional entitlement
+	//
+	// Any of "1 week", "1 month", "6 month", "1 year", "lifetime", "custom".
+	Period V1CustomerPromotionalEntitlementListResponsePeriod `json:"period,required"`
+	// The reset period of the entitlement
+	//
+	// Any of "YEAR", "MONTH", "WEEK", "DAY", "HOUR".
+	ResetPeriod V1CustomerPromotionalEntitlementListResponseResetPeriod `json:"resetPeriod,required"`
+	// The reset period configuration of the entitlement
+	ResetPeriodConfiguration V1CustomerPromotionalEntitlementListResponseResetPeriodConfigurationUnion `json:"resetPeriodConfiguration,required"`
+	// The start date of the entitlement
+	StartDate time.Time `json:"startDate,required" format:"date-time"`
+	// The status of the entitlement
+	//
+	// Any of "Active", "Expired", "Paused".
+	Status V1CustomerPromotionalEntitlementListResponseStatus `json:"status,required"`
+	// Timestamp of when the record was last updated
+	UpdatedAt time.Time `json:"updatedAt,required" format:"date-time"`
+	// The usage limit of the entitlement
+	UsageLimit float64 `json:"usageLimit,required"`
+	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
+	JSON struct {
+		ID                       respjson.Field
+		CreatedAt                respjson.Field
+		Description              respjson.Field
+		EndDate                  respjson.Field
+		EnumValues               respjson.Field
+		EnvironmentID            respjson.Field
+		FeatureGroupIDs          respjson.Field
+		FeatureID                respjson.Field
+		HasSoftLimit             respjson.Field
+		HasUnlimitedUsage        respjson.Field
+		IsVisible                respjson.Field
+		Period                   respjson.Field
+		ResetPeriod              respjson.Field
+		ResetPeriodConfiguration respjson.Field
+		StartDate                respjson.Field
+		Status                   respjson.Field
+		UpdatedAt                respjson.Field
+		UsageLimit               respjson.Field
+		ExtraFields              map[string]respjson.Field
+		raw                      string
+	} `json:"-"`
+}
+
+// Returns the unmodified JSON received from the API
+func (r V1CustomerPromotionalEntitlementListResponse) RawJSON() string { return r.JSON.raw }
+func (r *V1CustomerPromotionalEntitlementListResponse) UnmarshalJSON(data []byte) error {
+	return apijson.UnmarshalRoot(data, r)
+}
+
+// The grant period of the promotional entitlement
+type V1CustomerPromotionalEntitlementListResponsePeriod string
+
+const (
+	V1CustomerPromotionalEntitlementListResponsePeriod1Week    V1CustomerPromotionalEntitlementListResponsePeriod = "1 week"
+	V1CustomerPromotionalEntitlementListResponsePeriod1Month   V1CustomerPromotionalEntitlementListResponsePeriod = "1 month"
+	V1CustomerPromotionalEntitlementListResponsePeriod6Month   V1CustomerPromotionalEntitlementListResponsePeriod = "6 month"
+	V1CustomerPromotionalEntitlementListResponsePeriod1Year    V1CustomerPromotionalEntitlementListResponsePeriod = "1 year"
+	V1CustomerPromotionalEntitlementListResponsePeriodLifetime V1CustomerPromotionalEntitlementListResponsePeriod = "lifetime"
+	V1CustomerPromotionalEntitlementListResponsePeriodCustom   V1CustomerPromotionalEntitlementListResponsePeriod = "custom"
+)
+
+// The reset period of the entitlement
+type V1CustomerPromotionalEntitlementListResponseResetPeriod string
+
+const (
+	V1CustomerPromotionalEntitlementListResponseResetPeriodYear  V1CustomerPromotionalEntitlementListResponseResetPeriod = "YEAR"
+	V1CustomerPromotionalEntitlementListResponseResetPeriodMonth V1CustomerPromotionalEntitlementListResponseResetPeriod = "MONTH"
+	V1CustomerPromotionalEntitlementListResponseResetPeriodWeek  V1CustomerPromotionalEntitlementListResponseResetPeriod = "WEEK"
+	V1CustomerPromotionalEntitlementListResponseResetPeriodDay   V1CustomerPromotionalEntitlementListResponseResetPeriod = "DAY"
+	V1CustomerPromotionalEntitlementListResponseResetPeriodHour  V1CustomerPromotionalEntitlementListResponseResetPeriod = "HOUR"
+)
+
+// V1CustomerPromotionalEntitlementListResponseResetPeriodConfigurationUnion
+// contains all possible properties and values from
+// [V1CustomerPromotionalEntitlementListResponseResetPeriodConfigurationYearlyResetPeriodConfig],
+// [V1CustomerPromotionalEntitlementListResponseResetPeriodConfigurationMonthlyResetPeriodConfig],
+// [V1CustomerPromotionalEntitlementListResponseResetPeriodConfigurationWeeklyResetPeriodConfig].
+//
+// Use the methods beginning with 'As' to cast the union to one of its variants.
+type V1CustomerPromotionalEntitlementListResponseResetPeriodConfigurationUnion struct {
+	AccordingTo string `json:"accordingTo"`
+	JSON        struct {
+		AccordingTo respjson.Field
+		raw         string
+	} `json:"-"`
+}
+
+func (u V1CustomerPromotionalEntitlementListResponseResetPeriodConfigurationUnion) AsYearlyResetPeriodConfig() (v V1CustomerPromotionalEntitlementListResponseResetPeriodConfigurationYearlyResetPeriodConfig) {
+	apijson.UnmarshalRoot(json.RawMessage(u.JSON.raw), &v)
+	return
+}
+
+func (u V1CustomerPromotionalEntitlementListResponseResetPeriodConfigurationUnion) AsMonthlyResetPeriodConfig() (v V1CustomerPromotionalEntitlementListResponseResetPeriodConfigurationMonthlyResetPeriodConfig) {
+	apijson.UnmarshalRoot(json.RawMessage(u.JSON.raw), &v)
+	return
+}
+
+func (u V1CustomerPromotionalEntitlementListResponseResetPeriodConfigurationUnion) AsWeeklyResetPeriodConfig() (v V1CustomerPromotionalEntitlementListResponseResetPeriodConfigurationWeeklyResetPeriodConfig) {
+	apijson.UnmarshalRoot(json.RawMessage(u.JSON.raw), &v)
+	return
+}
+
+// Returns the unmodified JSON received from the API
+func (u V1CustomerPromotionalEntitlementListResponseResetPeriodConfigurationUnion) RawJSON() string {
+	return u.JSON.raw
+}
+
+func (r *V1CustomerPromotionalEntitlementListResponseResetPeriodConfigurationUnion) UnmarshalJSON(data []byte) error {
+	return apijson.UnmarshalRoot(data, r)
+}
+
+// Yearly reset configuration
+type V1CustomerPromotionalEntitlementListResponseResetPeriodConfigurationYearlyResetPeriodConfig struct {
+	// Reset anchor (SubscriptionStart)
+	//
+	// Any of "SubscriptionStart".
+	AccordingTo string `json:"accordingTo,required"`
+	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
+	JSON struct {
+		AccordingTo respjson.Field
+		ExtraFields map[string]respjson.Field
+		raw         string
+	} `json:"-"`
+}
+
+// Returns the unmodified JSON received from the API
+func (r V1CustomerPromotionalEntitlementListResponseResetPeriodConfigurationYearlyResetPeriodConfig) RawJSON() string {
+	return r.JSON.raw
+}
+func (r *V1CustomerPromotionalEntitlementListResponseResetPeriodConfigurationYearlyResetPeriodConfig) UnmarshalJSON(data []byte) error {
+	return apijson.UnmarshalRoot(data, r)
+}
+
+// Monthly reset configuration
+type V1CustomerPromotionalEntitlementListResponseResetPeriodConfigurationMonthlyResetPeriodConfig struct {
+	// Reset anchor (SubscriptionStart or StartOfTheMonth)
+	//
+	// Any of "SubscriptionStart", "StartOfTheMonth".
+	AccordingTo string `json:"accordingTo,required"`
+	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
+	JSON struct {
+		AccordingTo respjson.Field
+		ExtraFields map[string]respjson.Field
+		raw         string
+	} `json:"-"`
+}
+
+// Returns the unmodified JSON received from the API
+func (r V1CustomerPromotionalEntitlementListResponseResetPeriodConfigurationMonthlyResetPeriodConfig) RawJSON() string {
+	return r.JSON.raw
+}
+func (r *V1CustomerPromotionalEntitlementListResponseResetPeriodConfigurationMonthlyResetPeriodConfig) UnmarshalJSON(data []byte) error {
+	return apijson.UnmarshalRoot(data, r)
+}
+
+// Weekly reset configuration
+type V1CustomerPromotionalEntitlementListResponseResetPeriodConfigurationWeeklyResetPeriodConfig struct {
+	// Reset anchor (SubscriptionStart or specific day)
+	//
+	// Any of "SubscriptionStart", "EverySunday", "EveryMonday", "EveryTuesday",
+	// "EveryWednesday", "EveryThursday", "EveryFriday", "EverySaturday".
+	AccordingTo string `json:"accordingTo,required"`
+	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
+	JSON struct {
+		AccordingTo respjson.Field
+		ExtraFields map[string]respjson.Field
+		raw         string
+	} `json:"-"`
+}
+
+// Returns the unmodified JSON received from the API
+func (r V1CustomerPromotionalEntitlementListResponseResetPeriodConfigurationWeeklyResetPeriodConfig) RawJSON() string {
+	return r.JSON.raw
+}
+func (r *V1CustomerPromotionalEntitlementListResponseResetPeriodConfigurationWeeklyResetPeriodConfig) UnmarshalJSON(data []byte) error {
+	return apijson.UnmarshalRoot(data, r)
+}
+
+// The status of the entitlement
+type V1CustomerPromotionalEntitlementListResponseStatus string
+
+const (
+	V1CustomerPromotionalEntitlementListResponseStatusActive  V1CustomerPromotionalEntitlementListResponseStatus = "Active"
+	V1CustomerPromotionalEntitlementListResponseStatusExpired V1CustomerPromotionalEntitlementListResponseStatus = "Expired"
+	V1CustomerPromotionalEntitlementListResponseStatusPaused  V1CustomerPromotionalEntitlementListResponseStatus = "Paused"
+)
 
 // Response object
 type V1CustomerPromotionalEntitlementRevokeResponse struct {
@@ -464,17 +707,17 @@ func (r *V1CustomerPromotionalEntitlementRevokeResponseDataResetPeriodConfigurat
 	return apijson.UnmarshalRoot(data, r)
 }
 
-type V1CustomerPromotionalEntitlementGrantParams struct {
+type V1CustomerPromotionalEntitlementNewParams struct {
 	// Promotional entitlements to grant
-	PromotionalEntitlements []V1CustomerPromotionalEntitlementGrantParamsPromotionalEntitlement `json:"promotionalEntitlements,omitzero,required"`
+	PromotionalEntitlements []V1CustomerPromotionalEntitlementNewParamsPromotionalEntitlement `json:"promotionalEntitlements,omitzero,required"`
 	paramObj
 }
 
-func (r V1CustomerPromotionalEntitlementGrantParams) MarshalJSON() (data []byte, err error) {
-	type shadow V1CustomerPromotionalEntitlementGrantParams
+func (r V1CustomerPromotionalEntitlementNewParams) MarshalJSON() (data []byte, err error) {
+	type shadow V1CustomerPromotionalEntitlementNewParams
 	return param.MarshalObject(r, (*shadow)(&r))
 }
-func (r *V1CustomerPromotionalEntitlementGrantParams) UnmarshalJSON(data []byte) error {
+func (r *V1CustomerPromotionalEntitlementNewParams) UnmarshalJSON(data []byte) error {
 	return apijson.UnmarshalRoot(data, r)
 }
 
@@ -484,7 +727,7 @@ func (r *V1CustomerPromotionalEntitlementGrantParams) UnmarshalJSON(data []byte)
 // HasUnlimitedUsage, IsVisible, MonthlyResetPeriodConfiguration, Period,
 // ResetPeriod, UsageLimit, WeeklyResetPeriodConfiguration,
 // YearlyResetPeriodConfiguration are required.
-type V1CustomerPromotionalEntitlementGrantParamsPromotionalEntitlement struct {
+type V1CustomerPromotionalEntitlementNewParamsPromotionalEntitlement struct {
 	// The custom end date of the promotional entitlement
 	CustomEndDate param.Opt[time.Time] `json:"customEndDate,omitzero,required" format:"date-time"`
 	// Whether the entitlement has a soft limit
@@ -499,17 +742,17 @@ type V1CustomerPromotionalEntitlementGrantParamsPromotionalEntitlement struct {
 	EnumValues []string `json:"enumValues,omitzero,required"`
 	// The monthly reset period configuration of the entitlement, defined when reset
 	// period is monthly
-	MonthlyResetPeriodConfiguration V1CustomerPromotionalEntitlementGrantParamsPromotionalEntitlementMonthlyResetPeriodConfiguration `json:"monthlyResetPeriodConfiguration,omitzero,required"`
+	MonthlyResetPeriodConfiguration V1CustomerPromotionalEntitlementNewParamsPromotionalEntitlementMonthlyResetPeriodConfiguration `json:"monthlyResetPeriodConfiguration,omitzero,required"`
 	// The reset period of the entitlement
 	//
 	// Any of "YEAR", "MONTH", "WEEK", "DAY", "HOUR".
 	ResetPeriod string `json:"resetPeriod,omitzero,required"`
 	// The weekly reset period configuration of the entitlement, defined when reset
 	// period is weekly
-	WeeklyResetPeriodConfiguration V1CustomerPromotionalEntitlementGrantParamsPromotionalEntitlementWeeklyResetPeriodConfiguration `json:"weeklyResetPeriodConfiguration,omitzero,required"`
+	WeeklyResetPeriodConfiguration V1CustomerPromotionalEntitlementNewParamsPromotionalEntitlementWeeklyResetPeriodConfiguration `json:"weeklyResetPeriodConfiguration,omitzero,required"`
 	// The yearly reset period configuration of the entitlement, defined when reset
 	// period is yearly
-	YearlyResetPeriodConfiguration V1CustomerPromotionalEntitlementGrantParamsPromotionalEntitlementYearlyResetPeriodConfiguration `json:"yearlyResetPeriodConfiguration,omitzero,required"`
+	YearlyResetPeriodConfiguration V1CustomerPromotionalEntitlementNewParamsPromotionalEntitlementYearlyResetPeriodConfiguration `json:"yearlyResetPeriodConfiguration,omitzero,required"`
 	// The unique identifier of the entitlement feature
 	FeatureID string `json:"featureId,required"`
 	// The grant period of the promotional entitlement
@@ -519,19 +762,19 @@ type V1CustomerPromotionalEntitlementGrantParamsPromotionalEntitlement struct {
 	paramObj
 }
 
-func (r V1CustomerPromotionalEntitlementGrantParamsPromotionalEntitlement) MarshalJSON() (data []byte, err error) {
-	type shadow V1CustomerPromotionalEntitlementGrantParamsPromotionalEntitlement
+func (r V1CustomerPromotionalEntitlementNewParamsPromotionalEntitlement) MarshalJSON() (data []byte, err error) {
+	type shadow V1CustomerPromotionalEntitlementNewParamsPromotionalEntitlement
 	return param.MarshalObject(r, (*shadow)(&r))
 }
-func (r *V1CustomerPromotionalEntitlementGrantParamsPromotionalEntitlement) UnmarshalJSON(data []byte) error {
+func (r *V1CustomerPromotionalEntitlementNewParamsPromotionalEntitlement) UnmarshalJSON(data []byte) error {
 	return apijson.UnmarshalRoot(data, r)
 }
 
 func init() {
-	apijson.RegisterFieldValidator[V1CustomerPromotionalEntitlementGrantParamsPromotionalEntitlement](
+	apijson.RegisterFieldValidator[V1CustomerPromotionalEntitlementNewParamsPromotionalEntitlement](
 		"period", "1 week", "1 month", "6 month", "1 year", "lifetime", "custom",
 	)
-	apijson.RegisterFieldValidator[V1CustomerPromotionalEntitlementGrantParamsPromotionalEntitlement](
+	apijson.RegisterFieldValidator[V1CustomerPromotionalEntitlementNewParamsPromotionalEntitlement](
 		"resetPeriod", "YEAR", "MONTH", "WEEK", "DAY", "HOUR",
 	)
 }
@@ -540,7 +783,7 @@ func init() {
 // period is monthly
 //
 // The property AccordingTo is required.
-type V1CustomerPromotionalEntitlementGrantParamsPromotionalEntitlementMonthlyResetPeriodConfiguration struct {
+type V1CustomerPromotionalEntitlementNewParamsPromotionalEntitlementMonthlyResetPeriodConfiguration struct {
 	// Reset anchor (SubscriptionStart or StartOfTheMonth)
 	//
 	// Any of "SubscriptionStart", "StartOfTheMonth".
@@ -548,16 +791,16 @@ type V1CustomerPromotionalEntitlementGrantParamsPromotionalEntitlementMonthlyRes
 	paramObj
 }
 
-func (r V1CustomerPromotionalEntitlementGrantParamsPromotionalEntitlementMonthlyResetPeriodConfiguration) MarshalJSON() (data []byte, err error) {
-	type shadow V1CustomerPromotionalEntitlementGrantParamsPromotionalEntitlementMonthlyResetPeriodConfiguration
+func (r V1CustomerPromotionalEntitlementNewParamsPromotionalEntitlementMonthlyResetPeriodConfiguration) MarshalJSON() (data []byte, err error) {
+	type shadow V1CustomerPromotionalEntitlementNewParamsPromotionalEntitlementMonthlyResetPeriodConfiguration
 	return param.MarshalObject(r, (*shadow)(&r))
 }
-func (r *V1CustomerPromotionalEntitlementGrantParamsPromotionalEntitlementMonthlyResetPeriodConfiguration) UnmarshalJSON(data []byte) error {
+func (r *V1CustomerPromotionalEntitlementNewParamsPromotionalEntitlementMonthlyResetPeriodConfiguration) UnmarshalJSON(data []byte) error {
 	return apijson.UnmarshalRoot(data, r)
 }
 
 func init() {
-	apijson.RegisterFieldValidator[V1CustomerPromotionalEntitlementGrantParamsPromotionalEntitlementMonthlyResetPeriodConfiguration](
+	apijson.RegisterFieldValidator[V1CustomerPromotionalEntitlementNewParamsPromotionalEntitlementMonthlyResetPeriodConfiguration](
 		"accordingTo", "SubscriptionStart", "StartOfTheMonth",
 	)
 }
@@ -566,7 +809,7 @@ func init() {
 // period is weekly
 //
 // The property AccordingTo is required.
-type V1CustomerPromotionalEntitlementGrantParamsPromotionalEntitlementWeeklyResetPeriodConfiguration struct {
+type V1CustomerPromotionalEntitlementNewParamsPromotionalEntitlementWeeklyResetPeriodConfiguration struct {
 	// Reset anchor (SubscriptionStart or specific day)
 	//
 	// Any of "SubscriptionStart", "EverySunday", "EveryMonday", "EveryTuesday",
@@ -575,16 +818,16 @@ type V1CustomerPromotionalEntitlementGrantParamsPromotionalEntitlementWeeklyRese
 	paramObj
 }
 
-func (r V1CustomerPromotionalEntitlementGrantParamsPromotionalEntitlementWeeklyResetPeriodConfiguration) MarshalJSON() (data []byte, err error) {
-	type shadow V1CustomerPromotionalEntitlementGrantParamsPromotionalEntitlementWeeklyResetPeriodConfiguration
+func (r V1CustomerPromotionalEntitlementNewParamsPromotionalEntitlementWeeklyResetPeriodConfiguration) MarshalJSON() (data []byte, err error) {
+	type shadow V1CustomerPromotionalEntitlementNewParamsPromotionalEntitlementWeeklyResetPeriodConfiguration
 	return param.MarshalObject(r, (*shadow)(&r))
 }
-func (r *V1CustomerPromotionalEntitlementGrantParamsPromotionalEntitlementWeeklyResetPeriodConfiguration) UnmarshalJSON(data []byte) error {
+func (r *V1CustomerPromotionalEntitlementNewParamsPromotionalEntitlementWeeklyResetPeriodConfiguration) UnmarshalJSON(data []byte) error {
 	return apijson.UnmarshalRoot(data, r)
 }
 
 func init() {
-	apijson.RegisterFieldValidator[V1CustomerPromotionalEntitlementGrantParamsPromotionalEntitlementWeeklyResetPeriodConfiguration](
+	apijson.RegisterFieldValidator[V1CustomerPromotionalEntitlementNewParamsPromotionalEntitlementWeeklyResetPeriodConfiguration](
 		"accordingTo", "SubscriptionStart", "EverySunday", "EveryMonday", "EveryTuesday", "EveryWednesday", "EveryThursday", "EveryFriday", "EverySaturday",
 	)
 }
@@ -593,7 +836,7 @@ func init() {
 // period is yearly
 //
 // The property AccordingTo is required.
-type V1CustomerPromotionalEntitlementGrantParamsPromotionalEntitlementYearlyResetPeriodConfiguration struct {
+type V1CustomerPromotionalEntitlementNewParamsPromotionalEntitlementYearlyResetPeriodConfiguration struct {
 	// Reset anchor (SubscriptionStart)
 	//
 	// Any of "SubscriptionStart".
@@ -601,21 +844,67 @@ type V1CustomerPromotionalEntitlementGrantParamsPromotionalEntitlementYearlyRese
 	paramObj
 }
 
-func (r V1CustomerPromotionalEntitlementGrantParamsPromotionalEntitlementYearlyResetPeriodConfiguration) MarshalJSON() (data []byte, err error) {
-	type shadow V1CustomerPromotionalEntitlementGrantParamsPromotionalEntitlementYearlyResetPeriodConfiguration
+func (r V1CustomerPromotionalEntitlementNewParamsPromotionalEntitlementYearlyResetPeriodConfiguration) MarshalJSON() (data []byte, err error) {
+	type shadow V1CustomerPromotionalEntitlementNewParamsPromotionalEntitlementYearlyResetPeriodConfiguration
 	return param.MarshalObject(r, (*shadow)(&r))
 }
-func (r *V1CustomerPromotionalEntitlementGrantParamsPromotionalEntitlementYearlyResetPeriodConfiguration) UnmarshalJSON(data []byte) error {
+func (r *V1CustomerPromotionalEntitlementNewParamsPromotionalEntitlementYearlyResetPeriodConfiguration) UnmarshalJSON(data []byte) error {
 	return apijson.UnmarshalRoot(data, r)
 }
 
 func init() {
-	apijson.RegisterFieldValidator[V1CustomerPromotionalEntitlementGrantParamsPromotionalEntitlementYearlyResetPeriodConfiguration](
+	apijson.RegisterFieldValidator[V1CustomerPromotionalEntitlementNewParamsPromotionalEntitlementYearlyResetPeriodConfiguration](
 		"accordingTo", "SubscriptionStart",
 	)
 }
 
+type V1CustomerPromotionalEntitlementListParams struct {
+	// Return items that come after this cursor
+	After param.Opt[string] `query:"after,omitzero" format:"uuid" json:"-"`
+	// Return items that come before this cursor
+	Before param.Opt[string] `query:"before,omitzero" format:"uuid" json:"-"`
+	// Maximum number of items to return
+	Limit param.Opt[int64] `query:"limit,omitzero" json:"-"`
+	// Filter by promotional entitlement status. Supports comma-separated values for
+	// multiple statuses
+	Status param.Opt[string] `query:"status,omitzero" json:"-"`
+	// Filter by creation date using range operators: gt, gte, lt, lte
+	CreatedAt V1CustomerPromotionalEntitlementListParamsCreatedAt `query:"createdAt,omitzero" json:"-"`
+	paramObj
+}
+
+// URLQuery serializes [V1CustomerPromotionalEntitlementListParams]'s query
+// parameters as `url.Values`.
+func (r V1CustomerPromotionalEntitlementListParams) URLQuery() (v url.Values, err error) {
+	return apiquery.MarshalWithSettings(r, apiquery.QuerySettings{
+		ArrayFormat:  apiquery.ArrayQueryFormatComma,
+		NestedFormat: apiquery.NestedQueryFormatBrackets,
+	})
+}
+
+// Filter by creation date using range operators: gt, gte, lt, lte
+type V1CustomerPromotionalEntitlementListParamsCreatedAt struct {
+	// Greater than the specified createdAt value
+	Gt param.Opt[time.Time] `query:"gt,omitzero" format:"date-time" json:"-"`
+	// Greater than or equal to the specified createdAt value
+	Gte param.Opt[time.Time] `query:"gte,omitzero" format:"date-time" json:"-"`
+	// Less than the specified createdAt value
+	Lt param.Opt[time.Time] `query:"lt,omitzero" format:"date-time" json:"-"`
+	// Less than or equal to the specified createdAt value
+	Lte param.Opt[time.Time] `query:"lte,omitzero" format:"date-time" json:"-"`
+	paramObj
+}
+
+// URLQuery serializes [V1CustomerPromotionalEntitlementListParamsCreatedAt]'s
+// query parameters as `url.Values`.
+func (r V1CustomerPromotionalEntitlementListParamsCreatedAt) URLQuery() (v url.Values, err error) {
+	return apiquery.MarshalWithSettings(r, apiquery.QuerySettings{
+		ArrayFormat:  apiquery.ArrayQueryFormatComma,
+		NestedFormat: apiquery.NestedQueryFormatBrackets,
+	})
+}
+
 type V1CustomerPromotionalEntitlementRevokeParams struct {
-	CustomerID string `path:"customerId,required" json:"-"`
+	ID string `path:"id,required" json:"-"`
 	paramObj
 }

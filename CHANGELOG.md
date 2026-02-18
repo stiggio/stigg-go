@@ -1,5 +1,43 @@
 # Changelog
 
+## 0.1.0-alpha.7 (2026-02-18)
+
+Full Changelog: [v0.1.0-alpha.6...v0.1.0-alpha.7](https://github.com/stiggio/stigg-go/compare/v0.1.0-alpha.6...v0.1.0-alpha.7)
+
+### Features
+
+* **api:** add additional endpoints ([c52ee55](https://github.com/stiggio/stigg-go/commit/c52ee5563ad37eab8d0b9b01ffb0e822d76fb8e3))
+* **api:** add features/addons/plans resources, subscription usage/invoice, products/coupons methods ([18b6a61](https://github.com/stiggio/stigg-go/commit/18b6a6116882a7327f7888372769b653032ef19e))
+* **api:** Add missing endpoints ([353159c](https://github.com/stiggio/stigg-go/commit/353159c31e95542b913d16e5670a7d9f1adbee39))
+* **api:** api update ([db8b99a](https://github.com/stiggio/stigg-go/commit/db8b99ab7036ea8ba07ac0ba11bbfd548606ce4a))
+* **api:** api update ([5957eb2](https://github.com/stiggio/stigg-go/commit/5957eb2201978aa3aec72190e54000ef048367e9))
+* **api:** api update ([b203a1c](https://github.com/stiggio/stigg-go/commit/b203a1c5be3a8f35dee993f4c586e695191ee9b2))
+* **api:** api update ([21a0d84](https://github.com/stiggio/stigg-go/commit/21a0d84e48f99072260b9b6cdf4615a187b22692))
+* **api:** api update ([9cd9c4d](https://github.com/stiggio/stigg-go/commit/9cd9c4d31ecd38b8c7983ec61a31ddb85a239380))
+* **api:** api update ([0a69fa7](https://github.com/stiggio/stigg-go/commit/0a69fa7517866edcd1a3202ee3d3223193b11743))
+* **api:** api update ([848f506](https://github.com/stiggio/stigg-go/commit/848f5069110890d3832cb5f65993c6faf20b67fa))
+* **api:** api update ([7ca40ec](https://github.com/stiggio/stigg-go/commit/7ca40ecdbb3af15330b42c4d59e539ef615a405b))
+* **api:** api update ([d3b9008](https://github.com/stiggio/stigg-go/commit/d3b9008e12c45a4fec58e06525e19bb4cfb567fe))
+* **api:** api update ([6177c47](https://github.com/stiggio/stigg-go/commit/6177c478a4f88a26f28008a46bf02e715fdf8125))
+* **api:** manual updates ([a13d3d0](https://github.com/stiggio/stigg-go/commit/a13d3d0fc07c1a2a2488b69c9946d1ec661f5a38))
+* **api:** manual updates ([a13d3d0](https://github.com/stiggio/stigg-go/commit/a13d3d0fc07c1a2a2488b69c9946d1ec661f5a38))
+* **api:** manual updates ([b4fdfc4](https://github.com/stiggio/stigg-go/commit/b4fdfc47422a1ce6f6d14fef525c095df4d48248))
+* **api:** manual updates ([0808829](https://github.com/stiggio/stigg-go/commit/08088297d51ec287be96bb252244aa8720f66c09))
+* **api:** manual updates ([a44cc9c](https://github.com/stiggio/stigg-go/commit/a44cc9c9fa5b99f21ed87965c476fe9a0d9e1903))
+* **api:** trigger release ([cfa32cc](https://github.com/stiggio/stigg-go/commit/cfa32cc63a71f284ae9064dbf6a6fdef69099d21))
+* **api:** trigger release ([cfa32cc](https://github.com/stiggio/stigg-go/commit/cfa32cc63a71f284ae9064dbf6a6fdef69099d21))
+* **api:** updated the production environment ([06e6e51](https://github.com/stiggio/stigg-go/commit/06e6e51ee7546d2a998f0df5707a120ed0773010))
+
+
+### Bug Fixes
+
+* **encoder:** correctly serialize NullStruct ([815ebf3](https://github.com/stiggio/stigg-go/commit/815ebf31b26fa904cf3071d3358890a9b9bfa2fd))
+
+
+### Chores
+
+* configure new SDK language ([91f2a31](https://github.com/stiggio/stigg-go/commit/91f2a310c07bd02c05c30783f3b6ea7c2b903dc6))
+
 ## 0.1.0-alpha.6 (2026-02-08)
 
 Full Changelog: [v0.1.0-alpha.5...v0.1.0-alpha.6](https://github.com/stiggio/stigg-go/compare/v0.1.0-alpha.5...v0.1.0-alpha.6)
