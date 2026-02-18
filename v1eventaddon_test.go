@@ -56,7 +56,7 @@ func TestV1EventAddonNewAddonWithOptionalParams(t *testing.T) {
 		ProductID:   "productId",
 		BillingID:   stigg.String("billingId"),
 		Description: stigg.String("description"),
-		MaxQuantity: stigg.Int(1),
+		MaxQuantity: stigg.Int(0),
 		Metadata: map[string]string{
 			"foo": "string",
 		},

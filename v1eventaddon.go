@@ -154,7 +154,7 @@ type V1EventAddonArchiveAddonResponseData struct {
 	Description string `json:"description,required"`
 	// The display name of the package
 	DisplayName string `json:"displayName,required"`
-	// List of entitlements for the addon
+	// List of entitlements of the package
 	Entitlements []V1EventAddonArchiveAddonResponseDataEntitlement `json:"entitlements,required"`
 	// Indicates if the package is the latest version
 	IsLatest bool `json:"isLatest,required"`
@@ -166,6 +166,8 @@ type V1EventAddonArchiveAddonResponseData struct {
 	//
 	// Any of "FREE", "PAID", "CUSTOM".
 	PricingType string `json:"pricingType,required"`
+	// The product id of the package
+	ProductID string `json:"productId,required"`
 	// The status of the package
 	//
 	// Any of "DRAFT", "PUBLISHED", "ARCHIVED".
@@ -187,6 +189,7 @@ type V1EventAddonArchiveAddonResponseData struct {
 		MaxQuantity   respjson.Field
 		Metadata      respjson.Field
 		PricingType   respjson.Field
+		ProductID     respjson.Field
 		Status        respjson.Field
 		UpdatedAt     respjson.Field
 		VersionNumber respjson.Field
@@ -254,7 +257,7 @@ type V1EventAddonNewAddonResponseData struct {
 	Description string `json:"description,required"`
 	// The display name of the package
 	DisplayName string `json:"displayName,required"`
-	// List of entitlements for the addon
+	// List of entitlements of the package
 	Entitlements []V1EventAddonNewAddonResponseDataEntitlement `json:"entitlements,required"`
 	// Indicates if the package is the latest version
 	IsLatest bool `json:"isLatest,required"`
@@ -266,6 +269,8 @@ type V1EventAddonNewAddonResponseData struct {
 	//
 	// Any of "FREE", "PAID", "CUSTOM".
 	PricingType string `json:"pricingType,required"`
+	// The product id of the package
+	ProductID string `json:"productId,required"`
 	// The status of the package
 	//
 	// Any of "DRAFT", "PUBLISHED", "ARCHIVED".
@@ -287,6 +292,7 @@ type V1EventAddonNewAddonResponseData struct {
 		MaxQuantity   respjson.Field
 		Metadata      respjson.Field
 		PricingType   respjson.Field
+		ProductID     respjson.Field
 		Status        respjson.Field
 		UpdatedAt     respjson.Field
 		VersionNumber respjson.Field
@@ -336,7 +342,7 @@ type V1EventAddonListAddonsResponse struct {
 	Description string `json:"description,required"`
 	// The display name of the package
 	DisplayName string `json:"displayName,required"`
-	// List of entitlements for the addon
+	// List of entitlements of the package
 	Entitlements []V1EventAddonListAddonsResponseEntitlement `json:"entitlements,required"`
 	// Indicates if the package is the latest version
 	IsLatest bool `json:"isLatest,required"`
@@ -348,6 +354,8 @@ type V1EventAddonListAddonsResponse struct {
 	//
 	// Any of "FREE", "PAID", "CUSTOM".
 	PricingType V1EventAddonListAddonsResponsePricingType `json:"pricingType,required"`
+	// The product id of the package
+	ProductID string `json:"productId,required"`
 	// The status of the package
 	//
 	// Any of "DRAFT", "PUBLISHED", "ARCHIVED".
@@ -369,6 +377,7 @@ type V1EventAddonListAddonsResponse struct {
 		MaxQuantity   respjson.Field
 		Metadata      respjson.Field
 		PricingType   respjson.Field
+		ProductID     respjson.Field
 		Status        respjson.Field
 		UpdatedAt     respjson.Field
 		VersionNumber respjson.Field
@@ -488,7 +497,7 @@ type V1EventAddonGetAddonResponseData struct {
 	Description string `json:"description,required"`
 	// The display name of the package
 	DisplayName string `json:"displayName,required"`
-	// List of entitlements for the addon
+	// List of entitlements of the package
 	Entitlements []V1EventAddonGetAddonResponseDataEntitlement `json:"entitlements,required"`
 	// Indicates if the package is the latest version
 	IsLatest bool `json:"isLatest,required"`
@@ -500,6 +509,8 @@ type V1EventAddonGetAddonResponseData struct {
 	//
 	// Any of "FREE", "PAID", "CUSTOM".
 	PricingType string `json:"pricingType,required"`
+	// The product id of the package
+	ProductID string `json:"productId,required"`
 	// The status of the package
 	//
 	// Any of "DRAFT", "PUBLISHED", "ARCHIVED".
@@ -521,6 +532,7 @@ type V1EventAddonGetAddonResponseData struct {
 		MaxQuantity   respjson.Field
 		Metadata      respjson.Field
 		PricingType   respjson.Field
+		ProductID     respjson.Field
 		Status        respjson.Field
 		UpdatedAt     respjson.Field
 		VersionNumber respjson.Field
@@ -588,7 +600,7 @@ type V1EventAddonUpdateAddonResponseData struct {
 	Description string `json:"description,required"`
 	// The display name of the package
 	DisplayName string `json:"displayName,required"`
-	// List of entitlements for the addon
+	// List of entitlements of the package
 	Entitlements []V1EventAddonUpdateAddonResponseDataEntitlement `json:"entitlements,required"`
 	// Indicates if the package is the latest version
 	IsLatest bool `json:"isLatest,required"`
@@ -600,6 +612,8 @@ type V1EventAddonUpdateAddonResponseData struct {
 	//
 	// Any of "FREE", "PAID", "CUSTOM".
 	PricingType string `json:"pricingType,required"`
+	// The product id of the package
+	ProductID string `json:"productId,required"`
 	// The status of the package
 	//
 	// Any of "DRAFT", "PUBLISHED", "ARCHIVED".
@@ -621,6 +635,7 @@ type V1EventAddonUpdateAddonResponseData struct {
 		MaxQuantity   respjson.Field
 		Metadata      respjson.Field
 		PricingType   respjson.Field
+		ProductID     respjson.Field
 		Status        respjson.Field
 		UpdatedAt     respjson.Field
 		VersionNumber respjson.Field
@@ -661,7 +676,7 @@ type V1EventAddonNewAddonParams struct {
 	ID string `json:"id,required"`
 	// The display name of the package
 	DisplayName string `json:"displayName,required"`
-	// The product ID to associate the addon with
+	// The product id of the package
 	ProductID string `json:"productId,required"`
 	// The unique identifier for the entity in the billing provider
 	BillingID param.Opt[string] `json:"billingId,omitzero"`
@@ -669,12 +684,12 @@ type V1EventAddonNewAddonParams struct {
 	Description param.Opt[string] `json:"description,omitzero"`
 	// The maximum quantity of this addon that can be added to a subscription
 	MaxQuantity param.Opt[int64] `json:"maxQuantity,omitzero"`
-	// Metadata associated with the entity
-	Metadata map[string]string `json:"metadata,omitzero"`
 	// The pricing type of the package
 	//
 	// Any of "FREE", "PAID", "CUSTOM".
 	PricingType V1EventAddonNewAddonParamsPricingType `json:"pricingType,omitzero"`
+	// Metadata associated with the entity
+	Metadata map[string]string `json:"metadata,omitzero"`
 	// The status of the package
 	//
 	// Any of "DRAFT", "PUBLISHED", "ARCHIVED".
@@ -717,7 +732,7 @@ type V1EventAddonListAddonsParams struct {
 	Limit param.Opt[int64] `query:"limit,omitzero" json:"-"`
 	// Filter by product ID
 	ProductID param.Opt[string] `query:"productId,omitzero" json:"-"`
-	// Filter by addon status. Supports comma-separated values for multiple statuses
+	// Filter by status. Supports comma-separated values for multiple statuses
 	Status param.Opt[string] `query:"status,omitzero" json:"-"`
 	// Filter by creation date using range operators: gt, gte, lt, lte
 	CreatedAt V1EventAddonListAddonsParamsCreatedAt `query:"createdAt,omitzero" json:"-"`

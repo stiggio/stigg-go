@@ -91,7 +91,7 @@ type V1EventAddonDraftNewAddonDraftResponseData struct {
 	Description string `json:"description,required"`
 	// The display name of the package
 	DisplayName string `json:"displayName,required"`
-	// List of entitlements for the addon
+	// List of entitlements of the package
 	Entitlements []V1EventAddonDraftNewAddonDraftResponseDataEntitlement `json:"entitlements,required"`
 	// Indicates if the package is the latest version
 	IsLatest bool `json:"isLatest,required"`
@@ -103,6 +103,8 @@ type V1EventAddonDraftNewAddonDraftResponseData struct {
 	//
 	// Any of "FREE", "PAID", "CUSTOM".
 	PricingType string `json:"pricingType,required"`
+	// The product id of the package
+	ProductID string `json:"productId,required"`
 	// The status of the package
 	//
 	// Any of "DRAFT", "PUBLISHED", "ARCHIVED".
@@ -124,6 +126,7 @@ type V1EventAddonDraftNewAddonDraftResponseData struct {
 		MaxQuantity   respjson.Field
 		Metadata      respjson.Field
 		PricingType   respjson.Field
+		ProductID     respjson.Field
 		Status        respjson.Field
 		UpdatedAt     respjson.Field
 		VersionNumber respjson.Field
