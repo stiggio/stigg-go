@@ -25,6 +25,7 @@ type V1EventService struct {
 	Options  []option.RequestOption
 	Features V1EventFeatureService
 	Addons   V1EventAddonService
+	Plans    V1EventPlanService
 }
 
 // NewV1EventService generates a new service that applies the given options to each
@@ -35,6 +36,7 @@ func NewV1EventService(opts ...option.RequestOption) (r V1EventService) {
 	r.Options = opts
 	r.Features = NewV1EventFeatureService(opts...)
 	r.Addons = NewV1EventAddonService(opts...)
+	r.Plans = NewV1EventPlanService(opts...)
 	return
 }
 
