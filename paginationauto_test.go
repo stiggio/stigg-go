@@ -27,7 +27,7 @@ func TestAutoPagination(t *testing.T) {
 	iter := client.V1.Customers.ListAutoPaging(context.TODO(), stigg.V1CustomerListParams{
 		Limit: stigg.Int(30),
 	})
-	// Prism mock isn't going to give us real pagination
+	// The mock server isn't going to give us real pagination
 	for i := 0; i < 3 && iter.Next(); i++ {
 		customer := iter.Current()
 		t.Logf("%+v\n", customer.ID)
