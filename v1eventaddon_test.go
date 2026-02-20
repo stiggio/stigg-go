@@ -15,7 +15,7 @@ import (
 )
 
 func TestV1EventAddonArchiveAddon(t *testing.T) {
-	t.Skip("Prism tests are disabled")
+	t.Skip("Mock server tests are disabled")
 	baseURL := "http://localhost:4010"
 	if envURL, ok := os.LookupEnv("TEST_API_BASE_URL"); ok {
 		baseURL = envURL
@@ -38,7 +38,7 @@ func TestV1EventAddonArchiveAddon(t *testing.T) {
 }
 
 func TestV1EventAddonNewAddonWithOptionalParams(t *testing.T) {
-	t.Skip("Prism tests are disabled")
+	t.Skip("Mock server tests are disabled")
 	baseURL := "http://localhost:4010"
 	if envURL, ok := os.LookupEnv("TEST_API_BASE_URL"); ok {
 		baseURL = envURL
@@ -73,7 +73,7 @@ func TestV1EventAddonNewAddonWithOptionalParams(t *testing.T) {
 }
 
 func TestV1EventAddonListAddonsWithOptionalParams(t *testing.T) {
-	t.Skip("Prism tests are disabled")
+	t.Skip("Mock server tests are disabled")
 	baseURL := "http://localhost:4010"
 	if envURL, ok := os.LookupEnv("TEST_API_BASE_URL"); ok {
 		baseURL = envURL
@@ -108,7 +108,7 @@ func TestV1EventAddonListAddonsWithOptionalParams(t *testing.T) {
 }
 
 func TestV1EventAddonPublishAddon(t *testing.T) {
-	t.Skip("Prism tests are disabled")
+	t.Skip("Mock server tests are disabled")
 	baseURL := "http://localhost:4010"
 	if envURL, ok := os.LookupEnv("TEST_API_BASE_URL"); ok {
 		baseURL = envURL
@@ -137,7 +137,7 @@ func TestV1EventAddonPublishAddon(t *testing.T) {
 }
 
 func TestV1EventAddonGetAddon(t *testing.T) {
-	t.Skip("Prism tests are disabled")
+	t.Skip("Mock server tests are disabled")
 	baseURL := "http://localhost:4010"
 	if envURL, ok := os.LookupEnv("TEST_API_BASE_URL"); ok {
 		baseURL = envURL
@@ -160,7 +160,7 @@ func TestV1EventAddonGetAddon(t *testing.T) {
 }
 
 func TestV1EventAddonUpdateAddonWithOptionalParams(t *testing.T) {
-	t.Skip("Prism tests are disabled")
+	t.Skip("Mock server tests are disabled")
 	baseURL := "http://localhost:4010"
 	if envURL, ok := os.LookupEnv("TEST_API_BASE_URL"); ok {
 		baseURL = envURL
