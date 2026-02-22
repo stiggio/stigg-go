@@ -114,7 +114,7 @@ func (r *V1CustomerService) Import(ctx context.Context, body V1CustomerImportPar
 	return
 }
 
-// Get a list of customerresources
+// Retrieves a paginated list of resources within the same customer.
 func (r *V1CustomerService) ListResources(ctx context.Context, id string, query V1CustomerListResourcesParams, opts ...option.RequestOption) (res *pagination.MyCursorIDPage[V1CustomerListResourcesResponse], err error) {
 	var raw *http.Response
 	opts = slices.Concat(r.Options, opts)
@@ -136,7 +136,7 @@ func (r *V1CustomerService) ListResources(ctx context.Context, id string, query 
 	return res, nil
 }
 
-// Get a list of customerresources
+// Retrieves a paginated list of resources within the same customer.
 func (r *V1CustomerService) ListResourcesAutoPaging(ctx context.Context, id string, query V1CustomerListResourcesParams, opts ...option.RequestOption) *pagination.MyCursorIDPageAutoPager[V1CustomerListResourcesResponse] {
 	return pagination.NewMyCursorIDPageAutoPager(r.ListResources(ctx, id, query, opts...))
 }
