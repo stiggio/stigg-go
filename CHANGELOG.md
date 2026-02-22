@@ -1,5 +1,13 @@
 # Changelog
 
+## 0.1.0-alpha.9 (2026-02-22)
+
+Full Changelog: [v0.1.0-alpha.8...v0.1.0-alpha.9](https://github.com/stiggio/stigg-go/compare/v0.1.0-alpha.8...v0.1.0-alpha.9)
+
+### Features
+
+* **api:** api update ([b9f5caa](https://github.com/stiggio/stigg-go/commit/b9f5caaecdf0712b3d428d310a2e2769e6158738))
+
 ## 0.1.0-alpha.8 (2026-02-22)
 
 Full Changelog: [v0.1.0-alpha.7...v0.1.0-alpha.8](https://github.com/stiggio/stigg-go/compare/v0.1.0-alpha.7...v0.1.0-alpha.8)
