@@ -1,5 +1,20 @@
 # Changelog
 
+## 0.1.0-alpha.8 (2026-02-22)
+
+Full Changelog: [v0.1.0-alpha.7...v0.1.0-alpha.8](https://github.com/stiggio/stigg-go/compare/v0.1.0-alpha.7...v0.1.0-alpha.8)
+
+### Bug Fixes
+
+* allow canceling a request while it is waiting to retry ([0fe754d](https://github.com/stiggio/stigg-go/commit/0fe754d84b188c647fdbd51412bc524a084e5311))
+* **internal:** skip tests that depend on mock server ([ca0e8c3](https://github.com/stiggio/stigg-go/commit/ca0e8c39ab3c4dad50603b29d019bb778c7abf9e))
+
+
+### Chores
+
+* **internal:** remove mock server code ([5cdeae5](https://github.com/stiggio/stigg-go/commit/5cdeae5cfe1ee7807cae9d947bae2c7bf9e2c614))
+* update mock server docs ([87e1809](https://github.com/stiggio/stigg-go/commit/87e18090b0217a9c94801608d9be1dc2bf3ef48e))
+
 ## 0.1.0-alpha.7 (2026-02-18)
 
 Full Changelog: [v0.1.0-alpha.6...v0.1.0-alpha.7](https://github.com/stiggio/stigg-go/compare/v0.1.0-alpha.6...v0.1.0-alpha.7)
