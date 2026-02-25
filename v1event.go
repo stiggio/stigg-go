@@ -53,7 +53,7 @@ func (r *V1EventService) Report(ctx context.Context, body V1EventReportParams, o
 type V1EventReportResponse struct {
 	// Empty success response confirming that events were successfully ingested and
 	// queued for processing by Stigg's metering system.
-	Data any `json:"data,required"`
+	Data any `json:"data" api:"required"`
 	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
 	JSON struct {
 		Data        respjson.Field
@@ -70,7 +70,7 @@ func (r *V1EventReportResponse) UnmarshalJSON(data []byte) error {
 
 type V1EventReportParams struct {
 	// A list of usage events to report
-	Events []V1EventReportParamsEvent `json:"events,omitzero,required"`
+	Events []V1EventReportParamsEvent `json:"events,omitzero" api:"required"`
 	paramObj
 }
 
@@ -87,11 +87,11 @@ func (r *V1EventReportParams) UnmarshalJSON(data []byte) error {
 // The properties CustomerID, EventName, IdempotencyKey are required.
 type V1EventReportParamsEvent struct {
 	// Customer id
-	CustomerID string `json:"customerId,required"`
+	CustomerID string `json:"customerId" api:"required"`
 	// The name of the usage event
-	EventName string `json:"eventName,required"`
+	EventName string `json:"eventName" api:"required"`
 	// Idempotency key
-	IdempotencyKey string `json:"idempotencyKey,required"`
+	IdempotencyKey string `json:"idempotencyKey" api:"required"`
 	// Resource id
 	ResourceID param.Opt[string] `json:"resourceId,omitzero"`
 	// Timestamp

@@ -62,7 +62,7 @@ func (r *V1EventAddonDraftService) RemoveAddonDraft(ctx context.Context, id stri
 // Response object
 type V1EventAddonDraftNewAddonDraftResponse struct {
 	// Addon configuration object
-	Data V1EventAddonDraftNewAddonDraftResponseData `json:"data,required"`
+	Data V1EventAddonDraftNewAddonDraftResponseData `json:"data" api:"required"`
 	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
 	JSON struct {
 		Data        respjson.Field
@@ -80,39 +80,39 @@ func (r *V1EventAddonDraftNewAddonDraftResponse) UnmarshalJSON(data []byte) erro
 // Addon configuration object
 type V1EventAddonDraftNewAddonDraftResponseData struct {
 	// The unique identifier for the entity
-	ID string `json:"id,required"`
+	ID string `json:"id" api:"required"`
 	// The unique identifier for the entity in the billing provider
-	BillingID string `json:"billingId,required"`
+	BillingID string `json:"billingId" api:"required"`
 	// Timestamp of when the record was created
-	CreatedAt time.Time `json:"createdAt,required" format:"date-time"`
+	CreatedAt time.Time `json:"createdAt" api:"required" format:"date-time"`
 	// List of addons the addon is dependant on
-	Dependencies []string `json:"dependencies,required"`
+	Dependencies []string `json:"dependencies" api:"required"`
 	// The description of the package
-	Description string `json:"description,required"`
+	Description string `json:"description" api:"required"`
 	// The display name of the package
-	DisplayName string `json:"displayName,required"`
+	DisplayName string `json:"displayName" api:"required"`
 	// List of entitlements of the package
-	Entitlements []V1EventAddonDraftNewAddonDraftResponseDataEntitlement `json:"entitlements,required"`
+	Entitlements []V1EventAddonDraftNewAddonDraftResponseDataEntitlement `json:"entitlements" api:"required"`
 	// Indicates if the package is the latest version
-	IsLatest bool `json:"isLatest,required"`
+	IsLatest bool `json:"isLatest" api:"required"`
 	// The maximum quantity of this addon that can be added to a subscription
-	MaxQuantity int64 `json:"maxQuantity,required"`
+	MaxQuantity int64 `json:"maxQuantity" api:"required"`
 	// Metadata associated with the entity
-	Metadata map[string]string `json:"metadata,required"`
+	Metadata map[string]string `json:"metadata" api:"required"`
 	// The pricing type of the package
 	//
 	// Any of "FREE", "PAID", "CUSTOM".
-	PricingType string `json:"pricingType,required"`
+	PricingType string `json:"pricingType" api:"required"`
 	// The product id of the package
-	ProductID string `json:"productId,required"`
+	ProductID string `json:"productId" api:"required"`
 	// The status of the package
 	//
 	// Any of "DRAFT", "PUBLISHED", "ARCHIVED".
-	Status string `json:"status,required"`
+	Status string `json:"status" api:"required"`
 	// Timestamp of when the record was last updated
-	UpdatedAt time.Time `json:"updatedAt,required" format:"date-time"`
+	UpdatedAt time.Time `json:"updatedAt" api:"required" format:"date-time"`
 	// The version number of the package
-	VersionNumber int64 `json:"versionNumber,required"`
+	VersionNumber int64 `json:"versionNumber" api:"required"`
 	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
 	JSON struct {
 		ID            respjson.Field
@@ -144,9 +144,9 @@ func (r *V1EventAddonDraftNewAddonDraftResponseData) UnmarshalJSON(data []byte) 
 // Entitlement reference with type and identifier
 type V1EventAddonDraftNewAddonDraftResponseDataEntitlement struct {
 	// The unique identifier for the entity
-	ID string `json:"id,required"`
+	ID string `json:"id" api:"required"`
 	// Any of "FEATURE", "CREDIT".
-	Type string `json:"type,required"`
+	Type string `json:"type" api:"required"`
 	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
 	JSON struct {
 		ID          respjson.Field
@@ -164,7 +164,7 @@ func (r *V1EventAddonDraftNewAddonDraftResponseDataEntitlement) UnmarshalJSON(da
 
 // Response confirming the addon draft was removed.
 type V1EventAddonDraftRemoveAddonDraftResponse struct {
-	Data V1EventAddonDraftRemoveAddonDraftResponseData `json:"data,required"`
+	Data V1EventAddonDraftRemoveAddonDraftResponseData `json:"data" api:"required"`
 	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
 	JSON struct {
 		Data        respjson.Field
@@ -181,7 +181,7 @@ func (r *V1EventAddonDraftRemoveAddonDraftResponse) UnmarshalJSON(data []byte) e
 
 type V1EventAddonDraftRemoveAddonDraftResponseData struct {
 	// The unique identifier for the entity
-	ID string `json:"id,required"`
+	ID string `json:"id" api:"required"`
 	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
 	JSON struct {
 		ID          respjson.Field

@@ -86,7 +86,7 @@ func (r *V1EventPlanService) ListAutoPaging(ctx context.Context, query V1EventPl
 // Response object
 type V1EventPlanNewResponse struct {
 	// Plan configuration object
-	Data V1EventPlanNewResponseData `json:"data,required"`
+	Data V1EventPlanNewResponseData `json:"data" api:"required"`
 	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
 	JSON struct {
 		Data        respjson.Field
@@ -104,37 +104,37 @@ func (r *V1EventPlanNewResponse) UnmarshalJSON(data []byte) error {
 // Plan configuration object
 type V1EventPlanNewResponseData struct {
 	// The unique identifier for the entity
-	ID string `json:"id,required"`
+	ID string `json:"id" api:"required"`
 	// The unique identifier for the entity in the billing provider
-	BillingID string `json:"billingId,required"`
+	BillingID string `json:"billingId" api:"required"`
 	// Timestamp of when the record was created
-	CreatedAt time.Time `json:"createdAt,required" format:"date-time"`
+	CreatedAt time.Time `json:"createdAt" api:"required" format:"date-time"`
 	// The description of the package
-	Description string `json:"description,required"`
+	Description string `json:"description" api:"required"`
 	// The display name of the package
-	DisplayName string `json:"displayName,required"`
+	DisplayName string `json:"displayName" api:"required"`
 	// List of entitlements of the package
-	Entitlements []V1EventPlanNewResponseDataEntitlement `json:"entitlements,required"`
+	Entitlements []V1EventPlanNewResponseDataEntitlement `json:"entitlements" api:"required"`
 	// Indicates if the package is the latest version
-	IsLatest bool `json:"isLatest,required"`
+	IsLatest bool `json:"isLatest" api:"required"`
 	// Metadata associated with the entity
-	Metadata map[string]string `json:"metadata,required"`
+	Metadata map[string]string `json:"metadata" api:"required"`
 	// The ID of the parent plan, if applicable
-	ParentPlanID string `json:"parentPlanId,required"`
+	ParentPlanID string `json:"parentPlanId" api:"required"`
 	// The pricing type of the package
 	//
 	// Any of "FREE", "PAID", "CUSTOM".
-	PricingType string `json:"pricingType,required"`
+	PricingType string `json:"pricingType" api:"required"`
 	// The product id of the package
-	ProductID string `json:"productId,required"`
+	ProductID string `json:"productId" api:"required"`
 	// The status of the package
 	//
 	// Any of "DRAFT", "PUBLISHED", "ARCHIVED".
-	Status string `json:"status,required"`
+	Status string `json:"status" api:"required"`
 	// Timestamp of when the record was last updated
-	UpdatedAt time.Time `json:"updatedAt,required" format:"date-time"`
+	UpdatedAt time.Time `json:"updatedAt" api:"required" format:"date-time"`
 	// The version number of the package
-	VersionNumber int64 `json:"versionNumber,required"`
+	VersionNumber int64 `json:"versionNumber" api:"required"`
 	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
 	JSON struct {
 		ID            respjson.Field
@@ -165,9 +165,9 @@ func (r *V1EventPlanNewResponseData) UnmarshalJSON(data []byte) error {
 // Entitlement reference with type and identifier
 type V1EventPlanNewResponseDataEntitlement struct {
 	// The unique identifier for the entity
-	ID string `json:"id,required"`
+	ID string `json:"id" api:"required"`
 	// Any of "FEATURE", "CREDIT".
-	Type string `json:"type,required"`
+	Type string `json:"type" api:"required"`
 	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
 	JSON struct {
 		ID          respjson.Field
@@ -186,7 +186,7 @@ func (r *V1EventPlanNewResponseDataEntitlement) UnmarshalJSON(data []byte) error
 // Response object
 type V1EventPlanGetResponse struct {
 	// Plan configuration object
-	Data V1EventPlanGetResponseData `json:"data,required"`
+	Data V1EventPlanGetResponseData `json:"data" api:"required"`
 	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
 	JSON struct {
 		Data        respjson.Field
@@ -204,37 +204,37 @@ func (r *V1EventPlanGetResponse) UnmarshalJSON(data []byte) error {
 // Plan configuration object
 type V1EventPlanGetResponseData struct {
 	// The unique identifier for the entity
-	ID string `json:"id,required"`
+	ID string `json:"id" api:"required"`
 	// The unique identifier for the entity in the billing provider
-	BillingID string `json:"billingId,required"`
+	BillingID string `json:"billingId" api:"required"`
 	// Timestamp of when the record was created
-	CreatedAt time.Time `json:"createdAt,required" format:"date-time"`
+	CreatedAt time.Time `json:"createdAt" api:"required" format:"date-time"`
 	// The description of the package
-	Description string `json:"description,required"`
+	Description string `json:"description" api:"required"`
 	// The display name of the package
-	DisplayName string `json:"displayName,required"`
+	DisplayName string `json:"displayName" api:"required"`
 	// List of entitlements of the package
-	Entitlements []V1EventPlanGetResponseDataEntitlement `json:"entitlements,required"`
+	Entitlements []V1EventPlanGetResponseDataEntitlement `json:"entitlements" api:"required"`
 	// Indicates if the package is the latest version
-	IsLatest bool `json:"isLatest,required"`
+	IsLatest bool `json:"isLatest" api:"required"`
 	// Metadata associated with the entity
-	Metadata map[string]string `json:"metadata,required"`
+	Metadata map[string]string `json:"metadata" api:"required"`
 	// The ID of the parent plan, if applicable
-	ParentPlanID string `json:"parentPlanId,required"`
+	ParentPlanID string `json:"parentPlanId" api:"required"`
 	// The pricing type of the package
 	//
 	// Any of "FREE", "PAID", "CUSTOM".
-	PricingType string `json:"pricingType,required"`
+	PricingType string `json:"pricingType" api:"required"`
 	// The product id of the package
-	ProductID string `json:"productId,required"`
+	ProductID string `json:"productId" api:"required"`
 	// The status of the package
 	//
 	// Any of "DRAFT", "PUBLISHED", "ARCHIVED".
-	Status string `json:"status,required"`
+	Status string `json:"status" api:"required"`
 	// Timestamp of when the record was last updated
-	UpdatedAt time.Time `json:"updatedAt,required" format:"date-time"`
+	UpdatedAt time.Time `json:"updatedAt" api:"required" format:"date-time"`
 	// The version number of the package
-	VersionNumber int64 `json:"versionNumber,required"`
+	VersionNumber int64 `json:"versionNumber" api:"required"`
 	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
 	JSON struct {
 		ID            respjson.Field
@@ -265,9 +265,9 @@ func (r *V1EventPlanGetResponseData) UnmarshalJSON(data []byte) error {
 // Entitlement reference with type and identifier
 type V1EventPlanGetResponseDataEntitlement struct {
 	// The unique identifier for the entity
-	ID string `json:"id,required"`
+	ID string `json:"id" api:"required"`
 	// Any of "FEATURE", "CREDIT".
-	Type string `json:"type,required"`
+	Type string `json:"type" api:"required"`
 	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
 	JSON struct {
 		ID          respjson.Field
@@ -286,37 +286,37 @@ func (r *V1EventPlanGetResponseDataEntitlement) UnmarshalJSON(data []byte) error
 // Plan configuration object
 type V1EventPlanListResponse struct {
 	// The unique identifier for the entity
-	ID string `json:"id,required"`
+	ID string `json:"id" api:"required"`
 	// The unique identifier for the entity in the billing provider
-	BillingID string `json:"billingId,required"`
+	BillingID string `json:"billingId" api:"required"`
 	// Timestamp of when the record was created
-	CreatedAt time.Time `json:"createdAt,required" format:"date-time"`
+	CreatedAt time.Time `json:"createdAt" api:"required" format:"date-time"`
 	// The description of the package
-	Description string `json:"description,required"`
+	Description string `json:"description" api:"required"`
 	// The display name of the package
-	DisplayName string `json:"displayName,required"`
+	DisplayName string `json:"displayName" api:"required"`
 	// List of entitlements of the package
-	Entitlements []V1EventPlanListResponseEntitlement `json:"entitlements,required"`
+	Entitlements []V1EventPlanListResponseEntitlement `json:"entitlements" api:"required"`
 	// Indicates if the package is the latest version
-	IsLatest bool `json:"isLatest,required"`
+	IsLatest bool `json:"isLatest" api:"required"`
 	// Metadata associated with the entity
-	Metadata map[string]string `json:"metadata,required"`
+	Metadata map[string]string `json:"metadata" api:"required"`
 	// The ID of the parent plan, if applicable
-	ParentPlanID string `json:"parentPlanId,required"`
+	ParentPlanID string `json:"parentPlanId" api:"required"`
 	// The pricing type of the package
 	//
 	// Any of "FREE", "PAID", "CUSTOM".
-	PricingType V1EventPlanListResponsePricingType `json:"pricingType,required"`
+	PricingType V1EventPlanListResponsePricingType `json:"pricingType" api:"required"`
 	// The product id of the package
-	ProductID string `json:"productId,required"`
+	ProductID string `json:"productId" api:"required"`
 	// The status of the package
 	//
 	// Any of "DRAFT", "PUBLISHED", "ARCHIVED".
-	Status V1EventPlanListResponseStatus `json:"status,required"`
+	Status V1EventPlanListResponseStatus `json:"status" api:"required"`
 	// Timestamp of when the record was last updated
-	UpdatedAt time.Time `json:"updatedAt,required" format:"date-time"`
+	UpdatedAt time.Time `json:"updatedAt" api:"required" format:"date-time"`
 	// The version number of the package
-	VersionNumber int64 `json:"versionNumber,required"`
+	VersionNumber int64 `json:"versionNumber" api:"required"`
 	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
 	JSON struct {
 		ID            respjson.Field
@@ -347,9 +347,9 @@ func (r *V1EventPlanListResponse) UnmarshalJSON(data []byte) error {
 // Entitlement reference with type and identifier
 type V1EventPlanListResponseEntitlement struct {
 	// The unique identifier for the entity
-	ID string `json:"id,required"`
+	ID string `json:"id" api:"required"`
 	// Any of "FEATURE", "CREDIT".
-	Type string `json:"type,required"`
+	Type string `json:"type" api:"required"`
 	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
 	JSON struct {
 		ID          respjson.Field
@@ -385,11 +385,11 @@ const (
 
 type V1EventPlanNewParams struct {
 	// The unique identifier for the entity
-	ID string `json:"id,required"`
+	ID string `json:"id" api:"required"`
 	// The display name of the package
-	DisplayName string `json:"displayName,required"`
+	DisplayName string `json:"displayName" api:"required"`
 	// The product ID to associate the plan with
-	ProductID string `json:"productId,required"`
+	ProductID string `json:"productId" api:"required"`
 	// The unique identifier for the entity in the billing provider
 	BillingID param.Opt[string] `json:"billingId,omitzero"`
 	// The description of the package

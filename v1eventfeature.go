@@ -122,7 +122,7 @@ func (r *V1EventFeatureService) UpdateFeature(ctx context.Context, id string, bo
 // Response object
 type V1EventFeatureArchiveFeatureResponse struct {
 	// Feature configuration object
-	Data V1EventFeatureArchiveFeatureResponseData `json:"data,required"`
+	Data V1EventFeatureArchiveFeatureResponseData `json:"data" api:"required"`
 	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
 	JSON struct {
 		Data        respjson.Field
@@ -140,37 +140,37 @@ func (r *V1EventFeatureArchiveFeatureResponse) UnmarshalJSON(data []byte) error 
 // Feature configuration object
 type V1EventFeatureArchiveFeatureResponseData struct {
 	// The unique identifier for the feature
-	ID string `json:"id,required"`
+	ID string `json:"id" api:"required"`
 	// Timestamp of when the record was created
-	CreatedAt time.Time `json:"createdAt,required" format:"date-time"`
+	CreatedAt time.Time `json:"createdAt" api:"required" format:"date-time"`
 	// The description for the feature
-	Description string `json:"description,required"`
+	Description string `json:"description" api:"required"`
 	// The display name for the feature
-	DisplayName string `json:"displayName,required"`
+	DisplayName string `json:"displayName" api:"required"`
 	// The configuration data for the feature
-	EnumConfiguration []V1EventFeatureArchiveFeatureResponseDataEnumConfiguration `json:"enumConfiguration,required"`
+	EnumConfiguration []V1EventFeatureArchiveFeatureResponseDataEnumConfiguration `json:"enumConfiguration" api:"required"`
 	// The status of the feature
 	//
 	// Any of "NEW", "SUSPENDED", "ACTIVE".
-	FeatureStatus string `json:"featureStatus,required"`
+	FeatureStatus string `json:"featureStatus" api:"required"`
 	// The type of the feature
 	//
 	// Any of "BOOLEAN", "NUMBER", "ENUM".
-	FeatureType string `json:"featureType,required"`
+	FeatureType string `json:"featureType" api:"required"`
 	// The units for the feature
-	FeatureUnits string `json:"featureUnits,required"`
+	FeatureUnits string `json:"featureUnits" api:"required"`
 	// The plural units for the feature
-	FeatureUnitsPlural string `json:"featureUnitsPlural,required"`
+	FeatureUnitsPlural string `json:"featureUnitsPlural" api:"required"`
 	// The additional metadata for the feature
-	Metadata map[string]string `json:"metadata,required"`
+	Metadata map[string]string `json:"metadata" api:"required"`
 	// The meter type for the feature
 	//
 	// Any of "None", "FLUCTUATING", "INCREMENTAL".
-	MeterType string `json:"meterType,required"`
+	MeterType string `json:"meterType" api:"required"`
 	// Unit transformation to be applied to the reported usage
-	UnitTransformation V1EventFeatureArchiveFeatureResponseDataUnitTransformation `json:"unitTransformation,required"`
+	UnitTransformation V1EventFeatureArchiveFeatureResponseDataUnitTransformation `json:"unitTransformation" api:"required"`
 	// Timestamp of when the record was last updated
-	UpdatedAt time.Time `json:"updatedAt,required" format:"date-time"`
+	UpdatedAt time.Time `json:"updatedAt" api:"required" format:"date-time"`
 	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
 	JSON struct {
 		ID                 respjson.Field
@@ -199,9 +199,9 @@ func (r *V1EventFeatureArchiveFeatureResponseData) UnmarshalJSON(data []byte) er
 
 type V1EventFeatureArchiveFeatureResponseDataEnumConfiguration struct {
 	// The display name for the enum configuration entity
-	DisplayName string `json:"displayName,required"`
+	DisplayName string `json:"displayName" api:"required"`
 	// The unique value identifier for the enum configuration entity
-	Value string `json:"value,required"`
+	Value string `json:"value" api:"required"`
 	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
 	JSON struct {
 		DisplayName respjson.Field
@@ -222,15 +222,15 @@ func (r *V1EventFeatureArchiveFeatureResponseDataEnumConfiguration) UnmarshalJSO
 // Unit transformation to be applied to the reported usage
 type V1EventFeatureArchiveFeatureResponseDataUnitTransformation struct {
 	// Divide usage by this number
-	Divide float64 `json:"divide,required"`
+	Divide float64 `json:"divide" api:"required"`
 	// Singular feature units after the transformation
-	FeatureUnits string `json:"featureUnits,required"`
+	FeatureUnits string `json:"featureUnits" api:"required"`
 	// Plural feature units after the transformation
-	FeatureUnitsPlural string `json:"featureUnitsPlural,required"`
+	FeatureUnitsPlural string `json:"featureUnitsPlural" api:"required"`
 	// After division, either round the result up or down
 	//
 	// Any of "UP", "DOWN".
-	Round string `json:"round,required"`
+	Round string `json:"round" api:"required"`
 	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
 	JSON struct {
 		Divide             respjson.Field
@@ -253,7 +253,7 @@ func (r *V1EventFeatureArchiveFeatureResponseDataUnitTransformation) UnmarshalJS
 // Response object
 type V1EventFeatureNewFeatureResponse struct {
 	// Feature configuration object
-	Data V1EventFeatureNewFeatureResponseData `json:"data,required"`
+	Data V1EventFeatureNewFeatureResponseData `json:"data" api:"required"`
 	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
 	JSON struct {
 		Data        respjson.Field
@@ -271,37 +271,37 @@ func (r *V1EventFeatureNewFeatureResponse) UnmarshalJSON(data []byte) error {
 // Feature configuration object
 type V1EventFeatureNewFeatureResponseData struct {
 	// The unique identifier for the feature
-	ID string `json:"id,required"`
+	ID string `json:"id" api:"required"`
 	// Timestamp of when the record was created
-	CreatedAt time.Time `json:"createdAt,required" format:"date-time"`
+	CreatedAt time.Time `json:"createdAt" api:"required" format:"date-time"`
 	// The description for the feature
-	Description string `json:"description,required"`
+	Description string `json:"description" api:"required"`
 	// The display name for the feature
-	DisplayName string `json:"displayName,required"`
+	DisplayName string `json:"displayName" api:"required"`
 	// The configuration data for the feature
-	EnumConfiguration []V1EventFeatureNewFeatureResponseDataEnumConfiguration `json:"enumConfiguration,required"`
+	EnumConfiguration []V1EventFeatureNewFeatureResponseDataEnumConfiguration `json:"enumConfiguration" api:"required"`
 	// The status of the feature
 	//
 	// Any of "NEW", "SUSPENDED", "ACTIVE".
-	FeatureStatus string `json:"featureStatus,required"`
+	FeatureStatus string `json:"featureStatus" api:"required"`
 	// The type of the feature
 	//
 	// Any of "BOOLEAN", "NUMBER", "ENUM".
-	FeatureType string `json:"featureType,required"`
+	FeatureType string `json:"featureType" api:"required"`
 	// The units for the feature
-	FeatureUnits string `json:"featureUnits,required"`
+	FeatureUnits string `json:"featureUnits" api:"required"`
 	// The plural units for the feature
-	FeatureUnitsPlural string `json:"featureUnitsPlural,required"`
+	FeatureUnitsPlural string `json:"featureUnitsPlural" api:"required"`
 	// The additional metadata for the feature
-	Metadata map[string]string `json:"metadata,required"`
+	Metadata map[string]string `json:"metadata" api:"required"`
 	// The meter type for the feature
 	//
 	// Any of "None", "FLUCTUATING", "INCREMENTAL".
-	MeterType string `json:"meterType,required"`
+	MeterType string `json:"meterType" api:"required"`
 	// Unit transformation to be applied to the reported usage
-	UnitTransformation V1EventFeatureNewFeatureResponseDataUnitTransformation `json:"unitTransformation,required"`
+	UnitTransformation V1EventFeatureNewFeatureResponseDataUnitTransformation `json:"unitTransformation" api:"required"`
 	// Timestamp of when the record was last updated
-	UpdatedAt time.Time `json:"updatedAt,required" format:"date-time"`
+	UpdatedAt time.Time `json:"updatedAt" api:"required" format:"date-time"`
 	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
 	JSON struct {
 		ID                 respjson.Field
@@ -330,9 +330,9 @@ func (r *V1EventFeatureNewFeatureResponseData) UnmarshalJSON(data []byte) error 
 
 type V1EventFeatureNewFeatureResponseDataEnumConfiguration struct {
 	// The display name for the enum configuration entity
-	DisplayName string `json:"displayName,required"`
+	DisplayName string `json:"displayName" api:"required"`
 	// The unique value identifier for the enum configuration entity
-	Value string `json:"value,required"`
+	Value string `json:"value" api:"required"`
 	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
 	JSON struct {
 		DisplayName respjson.Field
@@ -351,15 +351,15 @@ func (r *V1EventFeatureNewFeatureResponseDataEnumConfiguration) UnmarshalJSON(da
 // Unit transformation to be applied to the reported usage
 type V1EventFeatureNewFeatureResponseDataUnitTransformation struct {
 	// Divide usage by this number
-	Divide float64 `json:"divide,required"`
+	Divide float64 `json:"divide" api:"required"`
 	// Singular feature units after the transformation
-	FeatureUnits string `json:"featureUnits,required"`
+	FeatureUnits string `json:"featureUnits" api:"required"`
 	// Plural feature units after the transformation
-	FeatureUnitsPlural string `json:"featureUnitsPlural,required"`
+	FeatureUnitsPlural string `json:"featureUnitsPlural" api:"required"`
 	// After division, either round the result up or down
 	//
 	// Any of "UP", "DOWN".
-	Round string `json:"round,required"`
+	Round string `json:"round" api:"required"`
 	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
 	JSON struct {
 		Divide             respjson.Field
@@ -380,37 +380,37 @@ func (r *V1EventFeatureNewFeatureResponseDataUnitTransformation) UnmarshalJSON(d
 // Feature configuration object
 type V1EventFeatureListFeaturesResponse struct {
 	// The unique identifier for the feature
-	ID string `json:"id,required"`
+	ID string `json:"id" api:"required"`
 	// Timestamp of when the record was created
-	CreatedAt time.Time `json:"createdAt,required" format:"date-time"`
+	CreatedAt time.Time `json:"createdAt" api:"required" format:"date-time"`
 	// The description for the feature
-	Description string `json:"description,required"`
+	Description string `json:"description" api:"required"`
 	// The display name for the feature
-	DisplayName string `json:"displayName,required"`
+	DisplayName string `json:"displayName" api:"required"`
 	// The configuration data for the feature
-	EnumConfiguration []V1EventFeatureListFeaturesResponseEnumConfiguration `json:"enumConfiguration,required"`
+	EnumConfiguration []V1EventFeatureListFeaturesResponseEnumConfiguration `json:"enumConfiguration" api:"required"`
 	// The status of the feature
 	//
 	// Any of "NEW", "SUSPENDED", "ACTIVE".
-	FeatureStatus V1EventFeatureListFeaturesResponseFeatureStatus `json:"featureStatus,required"`
+	FeatureStatus V1EventFeatureListFeaturesResponseFeatureStatus `json:"featureStatus" api:"required"`
 	// The type of the feature
 	//
 	// Any of "BOOLEAN", "NUMBER", "ENUM".
-	FeatureType V1EventFeatureListFeaturesResponseFeatureType `json:"featureType,required"`
+	FeatureType V1EventFeatureListFeaturesResponseFeatureType `json:"featureType" api:"required"`
 	// The units for the feature
-	FeatureUnits string `json:"featureUnits,required"`
+	FeatureUnits string `json:"featureUnits" api:"required"`
 	// The plural units for the feature
-	FeatureUnitsPlural string `json:"featureUnitsPlural,required"`
+	FeatureUnitsPlural string `json:"featureUnitsPlural" api:"required"`
 	// The additional metadata for the feature
-	Metadata map[string]string `json:"metadata,required"`
+	Metadata map[string]string `json:"metadata" api:"required"`
 	// The meter type for the feature
 	//
 	// Any of "None", "FLUCTUATING", "INCREMENTAL".
-	MeterType V1EventFeatureListFeaturesResponseMeterType `json:"meterType,required"`
+	MeterType V1EventFeatureListFeaturesResponseMeterType `json:"meterType" api:"required"`
 	// Unit transformation to be applied to the reported usage
-	UnitTransformation V1EventFeatureListFeaturesResponseUnitTransformation `json:"unitTransformation,required"`
+	UnitTransformation V1EventFeatureListFeaturesResponseUnitTransformation `json:"unitTransformation" api:"required"`
 	// Timestamp of when the record was last updated
-	UpdatedAt time.Time `json:"updatedAt,required" format:"date-time"`
+	UpdatedAt time.Time `json:"updatedAt" api:"required" format:"date-time"`
 	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
 	JSON struct {
 		ID                 respjson.Field
@@ -439,9 +439,9 @@ func (r *V1EventFeatureListFeaturesResponse) UnmarshalJSON(data []byte) error {
 
 type V1EventFeatureListFeaturesResponseEnumConfiguration struct {
 	// The display name for the enum configuration entity
-	DisplayName string `json:"displayName,required"`
+	DisplayName string `json:"displayName" api:"required"`
 	// The unique value identifier for the enum configuration entity
-	Value string `json:"value,required"`
+	Value string `json:"value" api:"required"`
 	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
 	JSON struct {
 		DisplayName respjson.Field
@@ -487,15 +487,15 @@ const (
 // Unit transformation to be applied to the reported usage
 type V1EventFeatureListFeaturesResponseUnitTransformation struct {
 	// Divide usage by this number
-	Divide float64 `json:"divide,required"`
+	Divide float64 `json:"divide" api:"required"`
 	// Singular feature units after the transformation
-	FeatureUnits string `json:"featureUnits,required"`
+	FeatureUnits string `json:"featureUnits" api:"required"`
 	// Plural feature units after the transformation
-	FeatureUnitsPlural string `json:"featureUnitsPlural,required"`
+	FeatureUnitsPlural string `json:"featureUnitsPlural" api:"required"`
 	// After division, either round the result up or down
 	//
 	// Any of "UP", "DOWN".
-	Round string `json:"round,required"`
+	Round string `json:"round" api:"required"`
 	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
 	JSON struct {
 		Divide             respjson.Field
@@ -516,7 +516,7 @@ func (r *V1EventFeatureListFeaturesResponseUnitTransformation) UnmarshalJSON(dat
 // Response object
 type V1EventFeatureGetFeatureResponse struct {
 	// Feature configuration object
-	Data V1EventFeatureGetFeatureResponseData `json:"data,required"`
+	Data V1EventFeatureGetFeatureResponseData `json:"data" api:"required"`
 	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
 	JSON struct {
 		Data        respjson.Field
@@ -534,37 +534,37 @@ func (r *V1EventFeatureGetFeatureResponse) UnmarshalJSON(data []byte) error {
 // Feature configuration object
 type V1EventFeatureGetFeatureResponseData struct {
 	// The unique identifier for the feature
-	ID string `json:"id,required"`
+	ID string `json:"id" api:"required"`
 	// Timestamp of when the record was created
-	CreatedAt time.Time `json:"createdAt,required" format:"date-time"`
+	CreatedAt time.Time `json:"createdAt" api:"required" format:"date-time"`
 	// The description for the feature
-	Description string `json:"description,required"`
+	Description string `json:"description" api:"required"`
 	// The display name for the feature
-	DisplayName string `json:"displayName,required"`
+	DisplayName string `json:"displayName" api:"required"`
 	// The configuration data for the feature
-	EnumConfiguration []V1EventFeatureGetFeatureResponseDataEnumConfiguration `json:"enumConfiguration,required"`
+	EnumConfiguration []V1EventFeatureGetFeatureResponseDataEnumConfiguration `json:"enumConfiguration" api:"required"`
 	// The status of the feature
 	//
 	// Any of "NEW", "SUSPENDED", "ACTIVE".
-	FeatureStatus string `json:"featureStatus,required"`
+	FeatureStatus string `json:"featureStatus" api:"required"`
 	// The type of the feature
 	//
 	// Any of "BOOLEAN", "NUMBER", "ENUM".
-	FeatureType string `json:"featureType,required"`
+	FeatureType string `json:"featureType" api:"required"`
 	// The units for the feature
-	FeatureUnits string `json:"featureUnits,required"`
+	FeatureUnits string `json:"featureUnits" api:"required"`
 	// The plural units for the feature
-	FeatureUnitsPlural string `json:"featureUnitsPlural,required"`
+	FeatureUnitsPlural string `json:"featureUnitsPlural" api:"required"`
 	// The additional metadata for the feature
-	Metadata map[string]string `json:"metadata,required"`
+	Metadata map[string]string `json:"metadata" api:"required"`
 	// The meter type for the feature
 	//
 	// Any of "None", "FLUCTUATING", "INCREMENTAL".
-	MeterType string `json:"meterType,required"`
+	MeterType string `json:"meterType" api:"required"`
 	// Unit transformation to be applied to the reported usage
-	UnitTransformation V1EventFeatureGetFeatureResponseDataUnitTransformation `json:"unitTransformation,required"`
+	UnitTransformation V1EventFeatureGetFeatureResponseDataUnitTransformation `json:"unitTransformation" api:"required"`
 	// Timestamp of when the record was last updated
-	UpdatedAt time.Time `json:"updatedAt,required" format:"date-time"`
+	UpdatedAt time.Time `json:"updatedAt" api:"required" format:"date-time"`
 	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
 	JSON struct {
 		ID                 respjson.Field
@@ -593,9 +593,9 @@ func (r *V1EventFeatureGetFeatureResponseData) UnmarshalJSON(data []byte) error 
 
 type V1EventFeatureGetFeatureResponseDataEnumConfiguration struct {
 	// The display name for the enum configuration entity
-	DisplayName string `json:"displayName,required"`
+	DisplayName string `json:"displayName" api:"required"`
 	// The unique value identifier for the enum configuration entity
-	Value string `json:"value,required"`
+	Value string `json:"value" api:"required"`
 	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
 	JSON struct {
 		DisplayName respjson.Field
@@ -614,15 +614,15 @@ func (r *V1EventFeatureGetFeatureResponseDataEnumConfiguration) UnmarshalJSON(da
 // Unit transformation to be applied to the reported usage
 type V1EventFeatureGetFeatureResponseDataUnitTransformation struct {
 	// Divide usage by this number
-	Divide float64 `json:"divide,required"`
+	Divide float64 `json:"divide" api:"required"`
 	// Singular feature units after the transformation
-	FeatureUnits string `json:"featureUnits,required"`
+	FeatureUnits string `json:"featureUnits" api:"required"`
 	// Plural feature units after the transformation
-	FeatureUnitsPlural string `json:"featureUnitsPlural,required"`
+	FeatureUnitsPlural string `json:"featureUnitsPlural" api:"required"`
 	// After division, either round the result up or down
 	//
 	// Any of "UP", "DOWN".
-	Round string `json:"round,required"`
+	Round string `json:"round" api:"required"`
 	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
 	JSON struct {
 		Divide             respjson.Field
@@ -643,7 +643,7 @@ func (r *V1EventFeatureGetFeatureResponseDataUnitTransformation) UnmarshalJSON(d
 // Response object
 type V1EventFeatureUnarchiveFeatureResponse struct {
 	// Feature configuration object
-	Data V1EventFeatureUnarchiveFeatureResponseData `json:"data,required"`
+	Data V1EventFeatureUnarchiveFeatureResponseData `json:"data" api:"required"`
 	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
 	JSON struct {
 		Data        respjson.Field
@@ -661,37 +661,37 @@ func (r *V1EventFeatureUnarchiveFeatureResponse) UnmarshalJSON(data []byte) erro
 // Feature configuration object
 type V1EventFeatureUnarchiveFeatureResponseData struct {
 	// The unique identifier for the feature
-	ID string `json:"id,required"`
+	ID string `json:"id" api:"required"`
 	// Timestamp of when the record was created
-	CreatedAt time.Time `json:"createdAt,required" format:"date-time"`
+	CreatedAt time.Time `json:"createdAt" api:"required" format:"date-time"`
 	// The description for the feature
-	Description string `json:"description,required"`
+	Description string `json:"description" api:"required"`
 	// The display name for the feature
-	DisplayName string `json:"displayName,required"`
+	DisplayName string `json:"displayName" api:"required"`
 	// The configuration data for the feature
-	EnumConfiguration []V1EventFeatureUnarchiveFeatureResponseDataEnumConfiguration `json:"enumConfiguration,required"`
+	EnumConfiguration []V1EventFeatureUnarchiveFeatureResponseDataEnumConfiguration `json:"enumConfiguration" api:"required"`
 	// The status of the feature
 	//
 	// Any of "NEW", "SUSPENDED", "ACTIVE".
-	FeatureStatus string `json:"featureStatus,required"`
+	FeatureStatus string `json:"featureStatus" api:"required"`
 	// The type of the feature
 	//
 	// Any of "BOOLEAN", "NUMBER", "ENUM".
-	FeatureType string `json:"featureType,required"`
+	FeatureType string `json:"featureType" api:"required"`
 	// The units for the feature
-	FeatureUnits string `json:"featureUnits,required"`
+	FeatureUnits string `json:"featureUnits" api:"required"`
 	// The plural units for the feature
-	FeatureUnitsPlural string `json:"featureUnitsPlural,required"`
+	FeatureUnitsPlural string `json:"featureUnitsPlural" api:"required"`
 	// The additional metadata for the feature
-	Metadata map[string]string `json:"metadata,required"`
+	Metadata map[string]string `json:"metadata" api:"required"`
 	// The meter type for the feature
 	//
 	// Any of "None", "FLUCTUATING", "INCREMENTAL".
-	MeterType string `json:"meterType,required"`
+	MeterType string `json:"meterType" api:"required"`
 	// Unit transformation to be applied to the reported usage
-	UnitTransformation V1EventFeatureUnarchiveFeatureResponseDataUnitTransformation `json:"unitTransformation,required"`
+	UnitTransformation V1EventFeatureUnarchiveFeatureResponseDataUnitTransformation `json:"unitTransformation" api:"required"`
 	// Timestamp of when the record was last updated
-	UpdatedAt time.Time `json:"updatedAt,required" format:"date-time"`
+	UpdatedAt time.Time `json:"updatedAt" api:"required" format:"date-time"`
 	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
 	JSON struct {
 		ID                 respjson.Field
@@ -720,9 +720,9 @@ func (r *V1EventFeatureUnarchiveFeatureResponseData) UnmarshalJSON(data []byte) 
 
 type V1EventFeatureUnarchiveFeatureResponseDataEnumConfiguration struct {
 	// The display name for the enum configuration entity
-	DisplayName string `json:"displayName,required"`
+	DisplayName string `json:"displayName" api:"required"`
 	// The unique value identifier for the enum configuration entity
-	Value string `json:"value,required"`
+	Value string `json:"value" api:"required"`
 	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
 	JSON struct {
 		DisplayName respjson.Field
@@ -743,15 +743,15 @@ func (r *V1EventFeatureUnarchiveFeatureResponseDataEnumConfiguration) UnmarshalJ
 // Unit transformation to be applied to the reported usage
 type V1EventFeatureUnarchiveFeatureResponseDataUnitTransformation struct {
 	// Divide usage by this number
-	Divide float64 `json:"divide,required"`
+	Divide float64 `json:"divide" api:"required"`
 	// Singular feature units after the transformation
-	FeatureUnits string `json:"featureUnits,required"`
+	FeatureUnits string `json:"featureUnits" api:"required"`
 	// Plural feature units after the transformation
-	FeatureUnitsPlural string `json:"featureUnitsPlural,required"`
+	FeatureUnitsPlural string `json:"featureUnitsPlural" api:"required"`
 	// After division, either round the result up or down
 	//
 	// Any of "UP", "DOWN".
-	Round string `json:"round,required"`
+	Round string `json:"round" api:"required"`
 	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
 	JSON struct {
 		Divide             respjson.Field
@@ -774,7 +774,7 @@ func (r *V1EventFeatureUnarchiveFeatureResponseDataUnitTransformation) Unmarshal
 // Response object
 type V1EventFeatureUpdateFeatureResponse struct {
 	// Feature configuration object
-	Data V1EventFeatureUpdateFeatureResponseData `json:"data,required"`
+	Data V1EventFeatureUpdateFeatureResponseData `json:"data" api:"required"`
 	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
 	JSON struct {
 		Data        respjson.Field
@@ -792,37 +792,37 @@ func (r *V1EventFeatureUpdateFeatureResponse) UnmarshalJSON(data []byte) error {
 // Feature configuration object
 type V1EventFeatureUpdateFeatureResponseData struct {
 	// The unique identifier for the feature
-	ID string `json:"id,required"`
+	ID string `json:"id" api:"required"`
 	// Timestamp of when the record was created
-	CreatedAt time.Time `json:"createdAt,required" format:"date-time"`
+	CreatedAt time.Time `json:"createdAt" api:"required" format:"date-time"`
 	// The description for the feature
-	Description string `json:"description,required"`
+	Description string `json:"description" api:"required"`
 	// The display name for the feature
-	DisplayName string `json:"displayName,required"`
+	DisplayName string `json:"displayName" api:"required"`
 	// The configuration data for the feature
-	EnumConfiguration []V1EventFeatureUpdateFeatureResponseDataEnumConfiguration `json:"enumConfiguration,required"`
+	EnumConfiguration []V1EventFeatureUpdateFeatureResponseDataEnumConfiguration `json:"enumConfiguration" api:"required"`
 	// The status of the feature
 	//
 	// Any of "NEW", "SUSPENDED", "ACTIVE".
-	FeatureStatus string `json:"featureStatus,required"`
+	FeatureStatus string `json:"featureStatus" api:"required"`
 	// The type of the feature
 	//
 	// Any of "BOOLEAN", "NUMBER", "ENUM".
-	FeatureType string `json:"featureType,required"`
+	FeatureType string `json:"featureType" api:"required"`
 	// The units for the feature
-	FeatureUnits string `json:"featureUnits,required"`
+	FeatureUnits string `json:"featureUnits" api:"required"`
 	// The plural units for the feature
-	FeatureUnitsPlural string `json:"featureUnitsPlural,required"`
+	FeatureUnitsPlural string `json:"featureUnitsPlural" api:"required"`
 	// The additional metadata for the feature
-	Metadata map[string]string `json:"metadata,required"`
+	Metadata map[string]string `json:"metadata" api:"required"`
 	// The meter type for the feature
 	//
 	// Any of "None", "FLUCTUATING", "INCREMENTAL".
-	MeterType string `json:"meterType,required"`
+	MeterType string `json:"meterType" api:"required"`
 	// Unit transformation to be applied to the reported usage
-	UnitTransformation V1EventFeatureUpdateFeatureResponseDataUnitTransformation `json:"unitTransformation,required"`
+	UnitTransformation V1EventFeatureUpdateFeatureResponseDataUnitTransformation `json:"unitTransformation" api:"required"`
 	// Timestamp of when the record was last updated
-	UpdatedAt time.Time `json:"updatedAt,required" format:"date-time"`
+	UpdatedAt time.Time `json:"updatedAt" api:"required" format:"date-time"`
 	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
 	JSON struct {
 		ID                 respjson.Field
@@ -851,9 +851,9 @@ func (r *V1EventFeatureUpdateFeatureResponseData) UnmarshalJSON(data []byte) err
 
 type V1EventFeatureUpdateFeatureResponseDataEnumConfiguration struct {
 	// The display name for the enum configuration entity
-	DisplayName string `json:"displayName,required"`
+	DisplayName string `json:"displayName" api:"required"`
 	// The unique value identifier for the enum configuration entity
-	Value string `json:"value,required"`
+	Value string `json:"value" api:"required"`
 	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
 	JSON struct {
 		DisplayName respjson.Field
@@ -872,15 +872,15 @@ func (r *V1EventFeatureUpdateFeatureResponseDataEnumConfiguration) UnmarshalJSON
 // Unit transformation to be applied to the reported usage
 type V1EventFeatureUpdateFeatureResponseDataUnitTransformation struct {
 	// Divide usage by this number
-	Divide float64 `json:"divide,required"`
+	Divide float64 `json:"divide" api:"required"`
 	// Singular feature units after the transformation
-	FeatureUnits string `json:"featureUnits,required"`
+	FeatureUnits string `json:"featureUnits" api:"required"`
 	// Plural feature units after the transformation
-	FeatureUnitsPlural string `json:"featureUnitsPlural,required"`
+	FeatureUnitsPlural string `json:"featureUnitsPlural" api:"required"`
 	// After division, either round the result up or down
 	//
 	// Any of "UP", "DOWN".
-	Round string `json:"round,required"`
+	Round string `json:"round" api:"required"`
 	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
 	JSON struct {
 		Divide             respjson.Field
@@ -902,13 +902,13 @@ func (r *V1EventFeatureUpdateFeatureResponseDataUnitTransformation) UnmarshalJSO
 
 type V1EventFeatureNewFeatureParams struct {
 	// The unique identifier for the feature
-	ID string `json:"id,required"`
+	ID string `json:"id" api:"required"`
 	// The display name for the feature
-	DisplayName string `json:"displayName,required"`
+	DisplayName string `json:"displayName" api:"required"`
 	// The type of the feature
 	//
 	// Any of "BOOLEAN", "NUMBER", "ENUM".
-	FeatureType V1EventFeatureNewFeatureParamsFeatureType `json:"featureType,omitzero,required"`
+	FeatureType V1EventFeatureNewFeatureParamsFeatureType `json:"featureType,omitzero" api:"required"`
 	// The description for the feature
 	Description param.Opt[string] `json:"description,omitzero"`
 	// The units for the feature
@@ -952,9 +952,9 @@ const (
 // The properties DisplayName, Value are required.
 type V1EventFeatureNewFeatureParamsEnumConfiguration struct {
 	// The display name for the enum configuration entity
-	DisplayName string `json:"displayName,required"`
+	DisplayName string `json:"displayName" api:"required"`
 	// The unique value identifier for the enum configuration entity
-	Value string `json:"value,required"`
+	Value string `json:"value" api:"required"`
 	paramObj
 }
 
@@ -989,7 +989,7 @@ const (
 // The property Divide is required.
 type V1EventFeatureNewFeatureParamsUnitTransformation struct {
 	// Divide usage by this number
-	Divide int64 `json:"divide,required"`
+	Divide int64 `json:"divide" api:"required"`
 	// Singular feature units after the transformation
 	FeatureUnits param.Opt[string] `json:"featureUnits,omitzero"`
 	// Plural feature units after the transformation
@@ -1096,9 +1096,9 @@ func (r *V1EventFeatureUpdateFeatureParams) UnmarshalJSON(data []byte) error {
 // The properties DisplayName, Value are required.
 type V1EventFeatureUpdateFeatureParamsEnumConfiguration struct {
 	// The display name for the enum configuration entity
-	DisplayName string `json:"displayName,required"`
+	DisplayName string `json:"displayName" api:"required"`
 	// The unique value identifier for the enum configuration entity
-	Value string `json:"value,required"`
+	Value string `json:"value" api:"required"`
 	paramObj
 }
 
@@ -1112,8 +1112,8 @@ func (r *V1EventFeatureUpdateFeatureParamsEnumConfiguration) UnmarshalJSON(data 
 
 // The properties Aggregation, Filters are required.
 type V1EventFeatureUpdateFeatureParamsMeter struct {
-	Aggregation V1EventFeatureUpdateFeatureParamsMeterAggregation `json:"aggregation,omitzero,required"`
-	Filters     []V1EventFeatureUpdateFeatureParamsMeterFilter    `json:"filters,omitzero,required"`
+	Aggregation V1EventFeatureUpdateFeatureParamsMeterAggregation `json:"aggregation,omitzero" api:"required"`
+	Filters     []V1EventFeatureUpdateFeatureParamsMeterFilter    `json:"filters,omitzero" api:"required"`
 	paramObj
 }
 
@@ -1128,7 +1128,7 @@ func (r *V1EventFeatureUpdateFeatureParamsMeter) UnmarshalJSON(data []byte) erro
 // The property Function is required.
 type V1EventFeatureUpdateFeatureParamsMeterAggregation struct {
 	// Any of "SUM", "MAX", "MIN", "AVG", "COUNT", "UNIQUE".
-	Function string            `json:"function,omitzero,required"`
+	Function string            `json:"function,omitzero" api:"required"`
 	Field    param.Opt[string] `json:"field,omitzero"`
 	paramObj
 }
@@ -1149,7 +1149,7 @@ func init() {
 
 // The property Conditions is required.
 type V1EventFeatureUpdateFeatureParamsMeterFilter struct {
-	Conditions []V1EventFeatureUpdateFeatureParamsMeterFilterCondition `json:"conditions,omitzero,required"`
+	Conditions []V1EventFeatureUpdateFeatureParamsMeterFilterCondition `json:"conditions,omitzero" api:"required"`
 	paramObj
 }
 
@@ -1163,11 +1163,11 @@ func (r *V1EventFeatureUpdateFeatureParamsMeterFilter) UnmarshalJSON(data []byte
 
 // The properties Field, Operation are required.
 type V1EventFeatureUpdateFeatureParamsMeterFilterCondition struct {
-	Field string `json:"field,required"`
+	Field string `json:"field" api:"required"`
 	// Any of "EQUALS", "NOT_EQUALS", "GREATER_THAN", "GREATER_THAN_OR_EQUAL",
 	// "LESS_THAN", "LESS_THAN_OR_EQUAL", "IS_NULL", "IS_NOT_NULL", "CONTAINS",
 	// "STARTS_WITH", "ENDS_WITH", "IN".
-	Operation string            `json:"operation,omitzero,required"`
+	Operation string            `json:"operation,omitzero" api:"required"`
 	Value     param.Opt[string] `json:"value,omitzero"`
 	Values    []string          `json:"values,omitzero"`
 	paramObj
@@ -1192,7 +1192,7 @@ func init() {
 // The property Divide is required.
 type V1EventFeatureUpdateFeatureParamsUnitTransformation struct {
 	// Divide usage by this number
-	Divide int64 `json:"divide,required"`
+	Divide int64 `json:"divide" api:"required"`
 	// Singular feature units after the transformation
 	FeatureUnits param.Opt[string] `json:"featureUnits,omitzero"`
 	// Plural feature units after the transformation

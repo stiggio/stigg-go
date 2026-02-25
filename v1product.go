@@ -123,7 +123,7 @@ func (r *V1ProductService) UpdateProduct(ctx context.Context, id string, body V1
 // Response object
 type V1ProductArchiveProductResponse struct {
 	// Product configuration object
-	Data V1ProductArchiveProductResponseData `json:"data,required"`
+	Data V1ProductArchiveProductResponseData `json:"data" api:"required"`
 	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
 	JSON struct {
 		Data        respjson.Field
@@ -141,23 +141,23 @@ func (r *V1ProductArchiveProductResponse) UnmarshalJSON(data []byte) error {
 // Product configuration object
 type V1ProductArchiveProductResponseData struct {
 	// The unique identifier for the entity
-	ID string `json:"id,required"`
+	ID string `json:"id" api:"required"`
 	// Timestamp of when the record was created
-	CreatedAt time.Time `json:"createdAt,required" format:"date-time"`
+	CreatedAt time.Time `json:"createdAt" api:"required" format:"date-time"`
 	// Description of the product
-	Description string `json:"description,required"`
+	Description string `json:"description" api:"required"`
 	// Display name of the product
-	DisplayName string `json:"displayName,required"`
+	DisplayName string `json:"displayName" api:"required"`
 	// Metadata associated with the entity
-	Metadata map[string]string `json:"metadata,required"`
+	Metadata map[string]string `json:"metadata" api:"required"`
 	// Indicates if multiple subscriptions to this product are allowed
-	MultipleSubscriptions bool `json:"multipleSubscriptions,required"`
+	MultipleSubscriptions bool `json:"multipleSubscriptions" api:"required"`
 	// The status of the product
 	//
 	// Any of "PUBLISHED", "ARCHIVED".
-	Status string `json:"status,required"`
+	Status string `json:"status" api:"required"`
 	// Timestamp of when the record was last updated
-	UpdatedAt time.Time `json:"updatedAt,required" format:"date-time"`
+	UpdatedAt time.Time `json:"updatedAt" api:"required" format:"date-time"`
 	// Product behavior settings for subscription lifecycle management.
 	ProductSettings V1ProductArchiveProductResponseDataProductSettings `json:"productSettings"`
 	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
@@ -187,22 +187,22 @@ type V1ProductArchiveProductResponseDataProductSettings struct {
 	// Time when the subscription will be cancelled
 	//
 	// Any of "END_OF_BILLING_PERIOD", "IMMEDIATE", "SPECIFIC_DATE".
-	SubscriptionCancellationTime string `json:"subscriptionCancellationTime,required"`
+	SubscriptionCancellationTime string `json:"subscriptionCancellationTime" api:"required"`
 	// Setup for the end of the subscription
 	//
 	// Any of "DOWNGRADE_TO_FREE", "CANCEL_SUBSCRIPTION".
-	SubscriptionEndSetup string `json:"subscriptionEndSetup,required"`
+	SubscriptionEndSetup string `json:"subscriptionEndSetup" api:"required"`
 	// Setup for the start of the subscription
 	//
 	// Any of "PLAN_SELECTION", "TRIAL_PERIOD", "FREE_PLAN".
-	SubscriptionStartSetup string `json:"subscriptionStartSetup,required"`
+	SubscriptionStartSetup string `json:"subscriptionStartSetup" api:"required"`
 	// ID of the plan to downgrade to at the end of the billing period
-	DowngradePlanID string `json:"downgradePlanId,nullable"`
+	DowngradePlanID string `json:"downgradePlanId" api:"nullable"`
 	// Indicates if the subscription should be prorated at the end of the billing
 	// period
-	ProrateAtEndOfBillingPeriod bool `json:"prorateAtEndOfBillingPeriod,nullable"`
+	ProrateAtEndOfBillingPeriod bool `json:"prorateAtEndOfBillingPeriod" api:"nullable"`
 	// ID of the plan to start the subscription with
-	SubscriptionStartPlanID string `json:"subscriptionStartPlanId,nullable"`
+	SubscriptionStartPlanID string `json:"subscriptionStartPlanId" api:"nullable"`
 	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
 	JSON struct {
 		SubscriptionCancellationTime respjson.Field
@@ -225,7 +225,7 @@ func (r *V1ProductArchiveProductResponseDataProductSettings) UnmarshalJSON(data 
 // Response object
 type V1ProductNewProductResponse struct {
 	// Product configuration object
-	Data V1ProductNewProductResponseData `json:"data,required"`
+	Data V1ProductNewProductResponseData `json:"data" api:"required"`
 	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
 	JSON struct {
 		Data        respjson.Field
@@ -243,23 +243,23 @@ func (r *V1ProductNewProductResponse) UnmarshalJSON(data []byte) error {
 // Product configuration object
 type V1ProductNewProductResponseData struct {
 	// The unique identifier for the entity
-	ID string `json:"id,required"`
+	ID string `json:"id" api:"required"`
 	// Timestamp of when the record was created
-	CreatedAt time.Time `json:"createdAt,required" format:"date-time"`
+	CreatedAt time.Time `json:"createdAt" api:"required" format:"date-time"`
 	// Description of the product
-	Description string `json:"description,required"`
+	Description string `json:"description" api:"required"`
 	// Display name of the product
-	DisplayName string `json:"displayName,required"`
+	DisplayName string `json:"displayName" api:"required"`
 	// Metadata associated with the entity
-	Metadata map[string]string `json:"metadata,required"`
+	Metadata map[string]string `json:"metadata" api:"required"`
 	// Indicates if multiple subscriptions to this product are allowed
-	MultipleSubscriptions bool `json:"multipleSubscriptions,required"`
+	MultipleSubscriptions bool `json:"multipleSubscriptions" api:"required"`
 	// The status of the product
 	//
 	// Any of "PUBLISHED", "ARCHIVED".
-	Status string `json:"status,required"`
+	Status string `json:"status" api:"required"`
 	// Timestamp of when the record was last updated
-	UpdatedAt time.Time `json:"updatedAt,required" format:"date-time"`
+	UpdatedAt time.Time `json:"updatedAt" api:"required" format:"date-time"`
 	// Product behavior settings for subscription lifecycle management.
 	ProductSettings V1ProductNewProductResponseDataProductSettings `json:"productSettings"`
 	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
@@ -289,22 +289,22 @@ type V1ProductNewProductResponseDataProductSettings struct {
 	// Time when the subscription will be cancelled
 	//
 	// Any of "END_OF_BILLING_PERIOD", "IMMEDIATE", "SPECIFIC_DATE".
-	SubscriptionCancellationTime string `json:"subscriptionCancellationTime,required"`
+	SubscriptionCancellationTime string `json:"subscriptionCancellationTime" api:"required"`
 	// Setup for the end of the subscription
 	//
 	// Any of "DOWNGRADE_TO_FREE", "CANCEL_SUBSCRIPTION".
-	SubscriptionEndSetup string `json:"subscriptionEndSetup,required"`
+	SubscriptionEndSetup string `json:"subscriptionEndSetup" api:"required"`
 	// Setup for the start of the subscription
 	//
 	// Any of "PLAN_SELECTION", "TRIAL_PERIOD", "FREE_PLAN".
-	SubscriptionStartSetup string `json:"subscriptionStartSetup,required"`
+	SubscriptionStartSetup string `json:"subscriptionStartSetup" api:"required"`
 	// ID of the plan to downgrade to at the end of the billing period
-	DowngradePlanID string `json:"downgradePlanId,nullable"`
+	DowngradePlanID string `json:"downgradePlanId" api:"nullable"`
 	// Indicates if the subscription should be prorated at the end of the billing
 	// period
-	ProrateAtEndOfBillingPeriod bool `json:"prorateAtEndOfBillingPeriod,nullable"`
+	ProrateAtEndOfBillingPeriod bool `json:"prorateAtEndOfBillingPeriod" api:"nullable"`
 	// ID of the plan to start the subscription with
-	SubscriptionStartPlanID string `json:"subscriptionStartPlanId,nullable"`
+	SubscriptionStartPlanID string `json:"subscriptionStartPlanId" api:"nullable"`
 	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
 	JSON struct {
 		SubscriptionCancellationTime respjson.Field
@@ -327,7 +327,7 @@ func (r *V1ProductNewProductResponseDataProductSettings) UnmarshalJSON(data []by
 // Response object
 type V1ProductDuplicateProductResponse struct {
 	// Product configuration object
-	Data V1ProductDuplicateProductResponseData `json:"data,required"`
+	Data V1ProductDuplicateProductResponseData `json:"data" api:"required"`
 	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
 	JSON struct {
 		Data        respjson.Field
@@ -345,23 +345,23 @@ func (r *V1ProductDuplicateProductResponse) UnmarshalJSON(data []byte) error {
 // Product configuration object
 type V1ProductDuplicateProductResponseData struct {
 	// The unique identifier for the entity
-	ID string `json:"id,required"`
+	ID string `json:"id" api:"required"`
 	// Timestamp of when the record was created
-	CreatedAt time.Time `json:"createdAt,required" format:"date-time"`
+	CreatedAt time.Time `json:"createdAt" api:"required" format:"date-time"`
 	// Description of the product
-	Description string `json:"description,required"`
+	Description string `json:"description" api:"required"`
 	// Display name of the product
-	DisplayName string `json:"displayName,required"`
+	DisplayName string `json:"displayName" api:"required"`
 	// Metadata associated with the entity
-	Metadata map[string]string `json:"metadata,required"`
+	Metadata map[string]string `json:"metadata" api:"required"`
 	// Indicates if multiple subscriptions to this product are allowed
-	MultipleSubscriptions bool `json:"multipleSubscriptions,required"`
+	MultipleSubscriptions bool `json:"multipleSubscriptions" api:"required"`
 	// The status of the product
 	//
 	// Any of "PUBLISHED", "ARCHIVED".
-	Status string `json:"status,required"`
+	Status string `json:"status" api:"required"`
 	// Timestamp of when the record was last updated
-	UpdatedAt time.Time `json:"updatedAt,required" format:"date-time"`
+	UpdatedAt time.Time `json:"updatedAt" api:"required" format:"date-time"`
 	// Product behavior settings for subscription lifecycle management.
 	ProductSettings V1ProductDuplicateProductResponseDataProductSettings `json:"productSettings"`
 	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
@@ -391,22 +391,22 @@ type V1ProductDuplicateProductResponseDataProductSettings struct {
 	// Time when the subscription will be cancelled
 	//
 	// Any of "END_OF_BILLING_PERIOD", "IMMEDIATE", "SPECIFIC_DATE".
-	SubscriptionCancellationTime string `json:"subscriptionCancellationTime,required"`
+	SubscriptionCancellationTime string `json:"subscriptionCancellationTime" api:"required"`
 	// Setup for the end of the subscription
 	//
 	// Any of "DOWNGRADE_TO_FREE", "CANCEL_SUBSCRIPTION".
-	SubscriptionEndSetup string `json:"subscriptionEndSetup,required"`
+	SubscriptionEndSetup string `json:"subscriptionEndSetup" api:"required"`
 	// Setup for the start of the subscription
 	//
 	// Any of "PLAN_SELECTION", "TRIAL_PERIOD", "FREE_PLAN".
-	SubscriptionStartSetup string `json:"subscriptionStartSetup,required"`
+	SubscriptionStartSetup string `json:"subscriptionStartSetup" api:"required"`
 	// ID of the plan to downgrade to at the end of the billing period
-	DowngradePlanID string `json:"downgradePlanId,nullable"`
+	DowngradePlanID string `json:"downgradePlanId" api:"nullable"`
 	// Indicates if the subscription should be prorated at the end of the billing
 	// period
-	ProrateAtEndOfBillingPeriod bool `json:"prorateAtEndOfBillingPeriod,nullable"`
+	ProrateAtEndOfBillingPeriod bool `json:"prorateAtEndOfBillingPeriod" api:"nullable"`
 	// ID of the plan to start the subscription with
-	SubscriptionStartPlanID string `json:"subscriptionStartPlanId,nullable"`
+	SubscriptionStartPlanID string `json:"subscriptionStartPlanId" api:"nullable"`
 	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
 	JSON struct {
 		SubscriptionCancellationTime respjson.Field
@@ -429,23 +429,23 @@ func (r *V1ProductDuplicateProductResponseDataProductSettings) UnmarshalJSON(dat
 // Product configuration object
 type V1ProductListProductsResponse struct {
 	// The unique identifier for the entity
-	ID string `json:"id,required"`
+	ID string `json:"id" api:"required"`
 	// Timestamp of when the record was created
-	CreatedAt time.Time `json:"createdAt,required" format:"date-time"`
+	CreatedAt time.Time `json:"createdAt" api:"required" format:"date-time"`
 	// Description of the product
-	Description string `json:"description,required"`
+	Description string `json:"description" api:"required"`
 	// Display name of the product
-	DisplayName string `json:"displayName,required"`
+	DisplayName string `json:"displayName" api:"required"`
 	// Metadata associated with the entity
-	Metadata map[string]string `json:"metadata,required"`
+	Metadata map[string]string `json:"metadata" api:"required"`
 	// Indicates if multiple subscriptions to this product are allowed
-	MultipleSubscriptions bool `json:"multipleSubscriptions,required"`
+	MultipleSubscriptions bool `json:"multipleSubscriptions" api:"required"`
 	// The status of the product
 	//
 	// Any of "PUBLISHED", "ARCHIVED".
-	Status V1ProductListProductsResponseStatus `json:"status,required"`
+	Status V1ProductListProductsResponseStatus `json:"status" api:"required"`
 	// Timestamp of when the record was last updated
-	UpdatedAt time.Time `json:"updatedAt,required" format:"date-time"`
+	UpdatedAt time.Time `json:"updatedAt" api:"required" format:"date-time"`
 	// Product behavior settings for subscription lifecycle management.
 	ProductSettings V1ProductListProductsResponseProductSettings `json:"productSettings"`
 	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
@@ -483,22 +483,22 @@ type V1ProductListProductsResponseProductSettings struct {
 	// Time when the subscription will be cancelled
 	//
 	// Any of "END_OF_BILLING_PERIOD", "IMMEDIATE", "SPECIFIC_DATE".
-	SubscriptionCancellationTime string `json:"subscriptionCancellationTime,required"`
+	SubscriptionCancellationTime string `json:"subscriptionCancellationTime" api:"required"`
 	// Setup for the end of the subscription
 	//
 	// Any of "DOWNGRADE_TO_FREE", "CANCEL_SUBSCRIPTION".
-	SubscriptionEndSetup string `json:"subscriptionEndSetup,required"`
+	SubscriptionEndSetup string `json:"subscriptionEndSetup" api:"required"`
 	// Setup for the start of the subscription
 	//
 	// Any of "PLAN_SELECTION", "TRIAL_PERIOD", "FREE_PLAN".
-	SubscriptionStartSetup string `json:"subscriptionStartSetup,required"`
+	SubscriptionStartSetup string `json:"subscriptionStartSetup" api:"required"`
 	// ID of the plan to downgrade to at the end of the billing period
-	DowngradePlanID string `json:"downgradePlanId,nullable"`
+	DowngradePlanID string `json:"downgradePlanId" api:"nullable"`
 	// Indicates if the subscription should be prorated at the end of the billing
 	// period
-	ProrateAtEndOfBillingPeriod bool `json:"prorateAtEndOfBillingPeriod,nullable"`
+	ProrateAtEndOfBillingPeriod bool `json:"prorateAtEndOfBillingPeriod" api:"nullable"`
 	// ID of the plan to start the subscription with
-	SubscriptionStartPlanID string `json:"subscriptionStartPlanId,nullable"`
+	SubscriptionStartPlanID string `json:"subscriptionStartPlanId" api:"nullable"`
 	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
 	JSON struct {
 		SubscriptionCancellationTime respjson.Field
@@ -521,7 +521,7 @@ func (r *V1ProductListProductsResponseProductSettings) UnmarshalJSON(data []byte
 // Response object
 type V1ProductUnarchiveProductResponse struct {
 	// Product configuration object
-	Data V1ProductUnarchiveProductResponseData `json:"data,required"`
+	Data V1ProductUnarchiveProductResponseData `json:"data" api:"required"`
 	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
 	JSON struct {
 		Data        respjson.Field
@@ -539,23 +539,23 @@ func (r *V1ProductUnarchiveProductResponse) UnmarshalJSON(data []byte) error {
 // Product configuration object
 type V1ProductUnarchiveProductResponseData struct {
 	// The unique identifier for the entity
-	ID string `json:"id,required"`
+	ID string `json:"id" api:"required"`
 	// Timestamp of when the record was created
-	CreatedAt time.Time `json:"createdAt,required" format:"date-time"`
+	CreatedAt time.Time `json:"createdAt" api:"required" format:"date-time"`
 	// Description of the product
-	Description string `json:"description,required"`
+	Description string `json:"description" api:"required"`
 	// Display name of the product
-	DisplayName string `json:"displayName,required"`
+	DisplayName string `json:"displayName" api:"required"`
 	// Metadata associated with the entity
-	Metadata map[string]string `json:"metadata,required"`
+	Metadata map[string]string `json:"metadata" api:"required"`
 	// Indicates if multiple subscriptions to this product are allowed
-	MultipleSubscriptions bool `json:"multipleSubscriptions,required"`
+	MultipleSubscriptions bool `json:"multipleSubscriptions" api:"required"`
 	// The status of the product
 	//
 	// Any of "PUBLISHED", "ARCHIVED".
-	Status string `json:"status,required"`
+	Status string `json:"status" api:"required"`
 	// Timestamp of when the record was last updated
-	UpdatedAt time.Time `json:"updatedAt,required" format:"date-time"`
+	UpdatedAt time.Time `json:"updatedAt" api:"required" format:"date-time"`
 	// Product behavior settings for subscription lifecycle management.
 	ProductSettings V1ProductUnarchiveProductResponseDataProductSettings `json:"productSettings"`
 	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
@@ -585,22 +585,22 @@ type V1ProductUnarchiveProductResponseDataProductSettings struct {
 	// Time when the subscription will be cancelled
 	//
 	// Any of "END_OF_BILLING_PERIOD", "IMMEDIATE", "SPECIFIC_DATE".
-	SubscriptionCancellationTime string `json:"subscriptionCancellationTime,required"`
+	SubscriptionCancellationTime string `json:"subscriptionCancellationTime" api:"required"`
 	// Setup for the end of the subscription
 	//
 	// Any of "DOWNGRADE_TO_FREE", "CANCEL_SUBSCRIPTION".
-	SubscriptionEndSetup string `json:"subscriptionEndSetup,required"`
+	SubscriptionEndSetup string `json:"subscriptionEndSetup" api:"required"`
 	// Setup for the start of the subscription
 	//
 	// Any of "PLAN_SELECTION", "TRIAL_PERIOD", "FREE_PLAN".
-	SubscriptionStartSetup string `json:"subscriptionStartSetup,required"`
+	SubscriptionStartSetup string `json:"subscriptionStartSetup" api:"required"`
 	// ID of the plan to downgrade to at the end of the billing period
-	DowngradePlanID string `json:"downgradePlanId,nullable"`
+	DowngradePlanID string `json:"downgradePlanId" api:"nullable"`
 	// Indicates if the subscription should be prorated at the end of the billing
 	// period
-	ProrateAtEndOfBillingPeriod bool `json:"prorateAtEndOfBillingPeriod,nullable"`
+	ProrateAtEndOfBillingPeriod bool `json:"prorateAtEndOfBillingPeriod" api:"nullable"`
 	// ID of the plan to start the subscription with
-	SubscriptionStartPlanID string `json:"subscriptionStartPlanId,nullable"`
+	SubscriptionStartPlanID string `json:"subscriptionStartPlanId" api:"nullable"`
 	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
 	JSON struct {
 		SubscriptionCancellationTime respjson.Field
@@ -623,7 +623,7 @@ func (r *V1ProductUnarchiveProductResponseDataProductSettings) UnmarshalJSON(dat
 // Response object
 type V1ProductUpdateProductResponse struct {
 	// Product configuration object
-	Data V1ProductUpdateProductResponseData `json:"data,required"`
+	Data V1ProductUpdateProductResponseData `json:"data" api:"required"`
 	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
 	JSON struct {
 		Data        respjson.Field
@@ -641,23 +641,23 @@ func (r *V1ProductUpdateProductResponse) UnmarshalJSON(data []byte) error {
 // Product configuration object
 type V1ProductUpdateProductResponseData struct {
 	// The unique identifier for the entity
-	ID string `json:"id,required"`
+	ID string `json:"id" api:"required"`
 	// Timestamp of when the record was created
-	CreatedAt time.Time `json:"createdAt,required" format:"date-time"`
+	CreatedAt time.Time `json:"createdAt" api:"required" format:"date-time"`
 	// Description of the product
-	Description string `json:"description,required"`
+	Description string `json:"description" api:"required"`
 	// Display name of the product
-	DisplayName string `json:"displayName,required"`
+	DisplayName string `json:"displayName" api:"required"`
 	// Metadata associated with the entity
-	Metadata map[string]string `json:"metadata,required"`
+	Metadata map[string]string `json:"metadata" api:"required"`
 	// Indicates if multiple subscriptions to this product are allowed
-	MultipleSubscriptions bool `json:"multipleSubscriptions,required"`
+	MultipleSubscriptions bool `json:"multipleSubscriptions" api:"required"`
 	// The status of the product
 	//
 	// Any of "PUBLISHED", "ARCHIVED".
-	Status string `json:"status,required"`
+	Status string `json:"status" api:"required"`
 	// Timestamp of when the record was last updated
-	UpdatedAt time.Time `json:"updatedAt,required" format:"date-time"`
+	UpdatedAt time.Time `json:"updatedAt" api:"required" format:"date-time"`
 	// Product behavior settings for subscription lifecycle management.
 	ProductSettings V1ProductUpdateProductResponseDataProductSettings `json:"productSettings"`
 	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
@@ -687,22 +687,22 @@ type V1ProductUpdateProductResponseDataProductSettings struct {
 	// Time when the subscription will be cancelled
 	//
 	// Any of "END_OF_BILLING_PERIOD", "IMMEDIATE", "SPECIFIC_DATE".
-	SubscriptionCancellationTime string `json:"subscriptionCancellationTime,required"`
+	SubscriptionCancellationTime string `json:"subscriptionCancellationTime" api:"required"`
 	// Setup for the end of the subscription
 	//
 	// Any of "DOWNGRADE_TO_FREE", "CANCEL_SUBSCRIPTION".
-	SubscriptionEndSetup string `json:"subscriptionEndSetup,required"`
+	SubscriptionEndSetup string `json:"subscriptionEndSetup" api:"required"`
 	// Setup for the start of the subscription
 	//
 	// Any of "PLAN_SELECTION", "TRIAL_PERIOD", "FREE_PLAN".
-	SubscriptionStartSetup string `json:"subscriptionStartSetup,required"`
+	SubscriptionStartSetup string `json:"subscriptionStartSetup" api:"required"`
 	// ID of the plan to downgrade to at the end of the billing period
-	DowngradePlanID string `json:"downgradePlanId,nullable"`
+	DowngradePlanID string `json:"downgradePlanId" api:"nullable"`
 	// Indicates if the subscription should be prorated at the end of the billing
 	// period
-	ProrateAtEndOfBillingPeriod bool `json:"prorateAtEndOfBillingPeriod,nullable"`
+	ProrateAtEndOfBillingPeriod bool `json:"prorateAtEndOfBillingPeriod" api:"nullable"`
 	// ID of the plan to start the subscription with
-	SubscriptionStartPlanID string `json:"subscriptionStartPlanId,nullable"`
+	SubscriptionStartPlanID string `json:"subscriptionStartPlanId" api:"nullable"`
 	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
 	JSON struct {
 		SubscriptionCancellationTime respjson.Field
@@ -724,7 +724,7 @@ func (r *V1ProductUpdateProductResponseDataProductSettings) UnmarshalJSON(data [
 
 type V1ProductNewProductParams struct {
 	// The unique identifier for the entity
-	ID string `json:"id,required"`
+	ID string `json:"id" api:"required"`
 	// Description of the product
 	Description param.Opt[string] `json:"description,omitzero"`
 	// Display name of the product
@@ -746,7 +746,7 @@ func (r *V1ProductNewProductParams) UnmarshalJSON(data []byte) error {
 
 type V1ProductDuplicateProductParams struct {
 	// The unique identifier for the entity
-	ID string `json:"id,required"`
+	ID string `json:"id" api:"required"`
 	// Description of the product
 	Description param.Opt[string] `json:"description,omitzero"`
 	// Display name of the product
@@ -838,15 +838,15 @@ type V1ProductUpdateProductParamsProductSettings struct {
 	// Time when the subscription will be cancelled
 	//
 	// Any of "END_OF_BILLING_PERIOD", "IMMEDIATE", "SPECIFIC_DATE".
-	SubscriptionCancellationTime string `json:"subscriptionCancellationTime,omitzero,required"`
+	SubscriptionCancellationTime string `json:"subscriptionCancellationTime,omitzero" api:"required"`
 	// Setup for the end of the subscription
 	//
 	// Any of "DOWNGRADE_TO_FREE", "CANCEL_SUBSCRIPTION".
-	SubscriptionEndSetup string `json:"subscriptionEndSetup,omitzero,required"`
+	SubscriptionEndSetup string `json:"subscriptionEndSetup,omitzero" api:"required"`
 	// Setup for the start of the subscription
 	//
 	// Any of "PLAN_SELECTION", "TRIAL_PERIOD", "FREE_PLAN".
-	SubscriptionStartSetup string `json:"subscriptionStartSetup,omitzero,required"`
+	SubscriptionStartSetup string `json:"subscriptionStartSetup,omitzero" api:"required"`
 	// ID of the plan to downgrade to at the end of the billing period
 	DowngradePlanID             param.Opt[string] `json:"downgradePlanId,omitzero"`
 	ProrateAtEndOfBillingPeriod param.Opt[bool]   `json:"prorateAtEndOfBillingPeriod,omitzero"`
@@ -882,7 +882,7 @@ type V1ProductUpdateProductParamsUsageResetCutoffRule struct {
 	// Behavior of the usage reset cutoff rule
 	//
 	// Any of "NEVER_RESET", "ALWAYS_RESET", "BILLING_PERIOD_CHANGE".
-	Behavior string `json:"behavior,omitzero,required"`
+	Behavior string `json:"behavior,omitzero" api:"required"`
 	paramObj
 }
 
