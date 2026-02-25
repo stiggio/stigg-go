@@ -61,7 +61,7 @@ func (r *V1SubscriptionFutureUpdateService) CancelSchedule(ctx context.Context, 
 
 // Response object
 type CancelSubscription struct {
-	Data CancelSubscriptionData `json:"data,required"`
+	Data CancelSubscriptionData `json:"data" api:"required"`
 	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
 	JSON struct {
 		Data        respjson.Field
@@ -78,7 +78,7 @@ func (r *CancelSubscription) UnmarshalJSON(data []byte) error {
 
 type CancelSubscriptionData struct {
 	// Subscription ID
-	ID string `json:"id,required"`
+	ID string `json:"id" api:"required"`
 	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
 	JSON struct {
 		ID          respjson.Field

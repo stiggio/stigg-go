@@ -50,7 +50,7 @@ func (r *V1SubscriptionInvoiceService) MarkAsPaid(ctx context.Context, id string
 // Response object
 type V1SubscriptionInvoiceMarkAsPaidResponse struct {
 	// Result of marking a subscription invoice as paid.
-	Data V1SubscriptionInvoiceMarkAsPaidResponseData `json:"data,required"`
+	Data V1SubscriptionInvoiceMarkAsPaidResponseData `json:"data" api:"required"`
 	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
 	JSON struct {
 		Data        respjson.Field
@@ -68,7 +68,7 @@ func (r *V1SubscriptionInvoiceMarkAsPaidResponse) UnmarshalJSON(data []byte) err
 // Result of marking a subscription invoice as paid.
 type V1SubscriptionInvoiceMarkAsPaidResponseData struct {
 	// The subscription ID whose invoice was marked as paid
-	ID string `json:"id,required"`
+	ID string `json:"id" api:"required"`
 	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
 	JSON struct {
 		ID          respjson.Field

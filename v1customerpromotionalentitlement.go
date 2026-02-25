@@ -99,7 +99,7 @@ func (r *V1CustomerPromotionalEntitlementService) Revoke(ctx context.Context, fe
 
 // Response object
 type V1CustomerPromotionalEntitlementNewResponse struct {
-	Data []V1CustomerPromotionalEntitlementNewResponseData `json:"data,required"`
+	Data []V1CustomerPromotionalEntitlementNewResponseData `json:"data" api:"required"`
 	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
 	JSON struct {
 		Data        respjson.Field
@@ -117,47 +117,47 @@ func (r *V1CustomerPromotionalEntitlementNewResponse) UnmarshalJSON(data []byte)
 // Granted feature entitlement
 type V1CustomerPromotionalEntitlementNewResponseData struct {
 	// Unique identifier for the entity
-	ID string `json:"id,required" format:"uuid"`
+	ID string `json:"id" api:"required" format:"uuid"`
 	// Timestamp of when the record was created
-	CreatedAt time.Time `json:"createdAt,required" format:"date-time"`
+	CreatedAt time.Time `json:"createdAt" api:"required" format:"date-time"`
 	// The description of the entitlement
-	Description string `json:"description,required"`
+	Description string `json:"description" api:"required"`
 	// The end date of the promotional entitlement
-	EndDate time.Time `json:"endDate,required" format:"date-time"`
+	EndDate time.Time `json:"endDate" api:"required" format:"date-time"`
 	// The enum values of the entitlement
-	EnumValues []string `json:"enumValues,required"`
+	EnumValues []string `json:"enumValues" api:"required"`
 	// The unique identifier for the environment
-	EnvironmentID string `json:"environmentId,required" format:"uuid"`
+	EnvironmentID string `json:"environmentId" api:"required" format:"uuid"`
 	// Feature group IDs associated with this entitlement
-	FeatureGroupIDs []string `json:"featureGroupIds,required"`
+	FeatureGroupIDs []string `json:"featureGroupIds" api:"required"`
 	// The unique identifier of the entitlement feature
-	FeatureID string `json:"featureId,required" format:"uuid"`
+	FeatureID string `json:"featureId" api:"required" format:"uuid"`
 	// Whether the entitlement has a soft limit
-	HasSoftLimit bool `json:"hasSoftLimit,required"`
+	HasSoftLimit bool `json:"hasSoftLimit" api:"required"`
 	// Whether the entitlement has an unlimited usage
-	HasUnlimitedUsage bool `json:"hasUnlimitedUsage,required"`
+	HasUnlimitedUsage bool `json:"hasUnlimitedUsage" api:"required"`
 	// Whether the entitlement is visible
-	IsVisible bool `json:"isVisible,required"`
+	IsVisible bool `json:"isVisible" api:"required"`
 	// The grant period of the promotional entitlement
 	//
 	// Any of "1 week", "1 month", "6 month", "1 year", "lifetime", "custom".
-	Period string `json:"period,required"`
+	Period string `json:"period" api:"required"`
 	// The reset period of the entitlement
 	//
 	// Any of "YEAR", "MONTH", "WEEK", "DAY", "HOUR".
-	ResetPeriod string `json:"resetPeriod,required"`
+	ResetPeriod string `json:"resetPeriod" api:"required"`
 	// The reset period configuration of the entitlement
-	ResetPeriodConfiguration V1CustomerPromotionalEntitlementNewResponseDataResetPeriodConfigurationUnion `json:"resetPeriodConfiguration,required"`
+	ResetPeriodConfiguration V1CustomerPromotionalEntitlementNewResponseDataResetPeriodConfigurationUnion `json:"resetPeriodConfiguration" api:"required"`
 	// The start date of the entitlement
-	StartDate time.Time `json:"startDate,required" format:"date-time"`
+	StartDate time.Time `json:"startDate" api:"required" format:"date-time"`
 	// The status of the entitlement
 	//
 	// Any of "Active", "Expired", "Paused".
-	Status string `json:"status,required"`
+	Status string `json:"status" api:"required"`
 	// Timestamp of when the record was last updated
-	UpdatedAt time.Time `json:"updatedAt,required" format:"date-time"`
+	UpdatedAt time.Time `json:"updatedAt" api:"required" format:"date-time"`
 	// The usage limit of the entitlement
-	UsageLimit float64 `json:"usageLimit,required"`
+	UsageLimit float64 `json:"usageLimit" api:"required"`
 	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
 	JSON struct {
 		ID                       respjson.Field
@@ -233,7 +233,7 @@ type V1CustomerPromotionalEntitlementNewResponseDataResetPeriodConfigurationYear
 	// Reset anchor (SubscriptionStart)
 	//
 	// Any of "SubscriptionStart".
-	AccordingTo string `json:"accordingTo,required"`
+	AccordingTo string `json:"accordingTo" api:"required"`
 	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
 	JSON struct {
 		AccordingTo respjson.Field
@@ -255,7 +255,7 @@ type V1CustomerPromotionalEntitlementNewResponseDataResetPeriodConfigurationMont
 	// Reset anchor (SubscriptionStart or StartOfTheMonth)
 	//
 	// Any of "SubscriptionStart", "StartOfTheMonth".
-	AccordingTo string `json:"accordingTo,required"`
+	AccordingTo string `json:"accordingTo" api:"required"`
 	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
 	JSON struct {
 		AccordingTo respjson.Field
@@ -278,7 +278,7 @@ type V1CustomerPromotionalEntitlementNewResponseDataResetPeriodConfigurationWeek
 	//
 	// Any of "SubscriptionStart", "EverySunday", "EveryMonday", "EveryTuesday",
 	// "EveryWednesday", "EveryThursday", "EveryFriday", "EverySaturday".
-	AccordingTo string `json:"accordingTo,required"`
+	AccordingTo string `json:"accordingTo" api:"required"`
 	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
 	JSON struct {
 		AccordingTo respjson.Field
@@ -298,47 +298,47 @@ func (r *V1CustomerPromotionalEntitlementNewResponseDataResetPeriodConfiguration
 // Granted feature entitlement
 type V1CustomerPromotionalEntitlementListResponse struct {
 	// Unique identifier for the entity
-	ID string `json:"id,required" format:"uuid"`
+	ID string `json:"id" api:"required" format:"uuid"`
 	// Timestamp of when the record was created
-	CreatedAt time.Time `json:"createdAt,required" format:"date-time"`
+	CreatedAt time.Time `json:"createdAt" api:"required" format:"date-time"`
 	// The description of the entitlement
-	Description string `json:"description,required"`
+	Description string `json:"description" api:"required"`
 	// The end date of the promotional entitlement
-	EndDate time.Time `json:"endDate,required" format:"date-time"`
+	EndDate time.Time `json:"endDate" api:"required" format:"date-time"`
 	// The enum values of the entitlement
-	EnumValues []string `json:"enumValues,required"`
+	EnumValues []string `json:"enumValues" api:"required"`
 	// The unique identifier for the environment
-	EnvironmentID string `json:"environmentId,required" format:"uuid"`
+	EnvironmentID string `json:"environmentId" api:"required" format:"uuid"`
 	// Feature group IDs associated with this entitlement
-	FeatureGroupIDs []string `json:"featureGroupIds,required"`
+	FeatureGroupIDs []string `json:"featureGroupIds" api:"required"`
 	// The unique identifier of the entitlement feature
-	FeatureID string `json:"featureId,required" format:"uuid"`
+	FeatureID string `json:"featureId" api:"required" format:"uuid"`
 	// Whether the entitlement has a soft limit
-	HasSoftLimit bool `json:"hasSoftLimit,required"`
+	HasSoftLimit bool `json:"hasSoftLimit" api:"required"`
 	// Whether the entitlement has an unlimited usage
-	HasUnlimitedUsage bool `json:"hasUnlimitedUsage,required"`
+	HasUnlimitedUsage bool `json:"hasUnlimitedUsage" api:"required"`
 	// Whether the entitlement is visible
-	IsVisible bool `json:"isVisible,required"`
+	IsVisible bool `json:"isVisible" api:"required"`
 	// The grant period of the promotional entitlement
 	//
 	// Any of "1 week", "1 month", "6 month", "1 year", "lifetime", "custom".
-	Period V1CustomerPromotionalEntitlementListResponsePeriod `json:"period,required"`
+	Period V1CustomerPromotionalEntitlementListResponsePeriod `json:"period" api:"required"`
 	// The reset period of the entitlement
 	//
 	// Any of "YEAR", "MONTH", "WEEK", "DAY", "HOUR".
-	ResetPeriod V1CustomerPromotionalEntitlementListResponseResetPeriod `json:"resetPeriod,required"`
+	ResetPeriod V1CustomerPromotionalEntitlementListResponseResetPeriod `json:"resetPeriod" api:"required"`
 	// The reset period configuration of the entitlement
-	ResetPeriodConfiguration V1CustomerPromotionalEntitlementListResponseResetPeriodConfigurationUnion `json:"resetPeriodConfiguration,required"`
+	ResetPeriodConfiguration V1CustomerPromotionalEntitlementListResponseResetPeriodConfigurationUnion `json:"resetPeriodConfiguration" api:"required"`
 	// The start date of the entitlement
-	StartDate time.Time `json:"startDate,required" format:"date-time"`
+	StartDate time.Time `json:"startDate" api:"required" format:"date-time"`
 	// The status of the entitlement
 	//
 	// Any of "Active", "Expired", "Paused".
-	Status V1CustomerPromotionalEntitlementListResponseStatus `json:"status,required"`
+	Status V1CustomerPromotionalEntitlementListResponseStatus `json:"status" api:"required"`
 	// Timestamp of when the record was last updated
-	UpdatedAt time.Time `json:"updatedAt,required" format:"date-time"`
+	UpdatedAt time.Time `json:"updatedAt" api:"required" format:"date-time"`
 	// The usage limit of the entitlement
-	UsageLimit float64 `json:"usageLimit,required"`
+	UsageLimit float64 `json:"usageLimit" api:"required"`
 	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
 	JSON struct {
 		ID                       respjson.Field
@@ -437,7 +437,7 @@ type V1CustomerPromotionalEntitlementListResponseResetPeriodConfigurationYearlyR
 	// Reset anchor (SubscriptionStart)
 	//
 	// Any of "SubscriptionStart".
-	AccordingTo string `json:"accordingTo,required"`
+	AccordingTo string `json:"accordingTo" api:"required"`
 	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
 	JSON struct {
 		AccordingTo respjson.Field
@@ -459,7 +459,7 @@ type V1CustomerPromotionalEntitlementListResponseResetPeriodConfigurationMonthly
 	// Reset anchor (SubscriptionStart or StartOfTheMonth)
 	//
 	// Any of "SubscriptionStart", "StartOfTheMonth".
-	AccordingTo string `json:"accordingTo,required"`
+	AccordingTo string `json:"accordingTo" api:"required"`
 	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
 	JSON struct {
 		AccordingTo respjson.Field
@@ -482,7 +482,7 @@ type V1CustomerPromotionalEntitlementListResponseResetPeriodConfigurationWeeklyR
 	//
 	// Any of "SubscriptionStart", "EverySunday", "EveryMonday", "EveryTuesday",
 	// "EveryWednesday", "EveryThursday", "EveryFriday", "EverySaturday".
-	AccordingTo string `json:"accordingTo,required"`
+	AccordingTo string `json:"accordingTo" api:"required"`
 	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
 	JSON struct {
 		AccordingTo respjson.Field
@@ -511,7 +511,7 @@ const (
 // Response object
 type V1CustomerPromotionalEntitlementRevokeResponse struct {
 	// Granted feature entitlement
-	Data V1CustomerPromotionalEntitlementRevokeResponseData `json:"data,required"`
+	Data V1CustomerPromotionalEntitlementRevokeResponseData `json:"data" api:"required"`
 	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
 	JSON struct {
 		Data        respjson.Field
@@ -529,47 +529,47 @@ func (r *V1CustomerPromotionalEntitlementRevokeResponse) UnmarshalJSON(data []by
 // Granted feature entitlement
 type V1CustomerPromotionalEntitlementRevokeResponseData struct {
 	// Unique identifier for the entity
-	ID string `json:"id,required" format:"uuid"`
+	ID string `json:"id" api:"required" format:"uuid"`
 	// Timestamp of when the record was created
-	CreatedAt time.Time `json:"createdAt,required" format:"date-time"`
+	CreatedAt time.Time `json:"createdAt" api:"required" format:"date-time"`
 	// The description of the entitlement
-	Description string `json:"description,required"`
+	Description string `json:"description" api:"required"`
 	// The end date of the promotional entitlement
-	EndDate time.Time `json:"endDate,required" format:"date-time"`
+	EndDate time.Time `json:"endDate" api:"required" format:"date-time"`
 	// The enum values of the entitlement
-	EnumValues []string `json:"enumValues,required"`
+	EnumValues []string `json:"enumValues" api:"required"`
 	// The unique identifier for the environment
-	EnvironmentID string `json:"environmentId,required" format:"uuid"`
+	EnvironmentID string `json:"environmentId" api:"required" format:"uuid"`
 	// Feature group IDs associated with this entitlement
-	FeatureGroupIDs []string `json:"featureGroupIds,required"`
+	FeatureGroupIDs []string `json:"featureGroupIds" api:"required"`
 	// The unique identifier of the entitlement feature
-	FeatureID string `json:"featureId,required" format:"uuid"`
+	FeatureID string `json:"featureId" api:"required" format:"uuid"`
 	// Whether the entitlement has a soft limit
-	HasSoftLimit bool `json:"hasSoftLimit,required"`
+	HasSoftLimit bool `json:"hasSoftLimit" api:"required"`
 	// Whether the entitlement has an unlimited usage
-	HasUnlimitedUsage bool `json:"hasUnlimitedUsage,required"`
+	HasUnlimitedUsage bool `json:"hasUnlimitedUsage" api:"required"`
 	// Whether the entitlement is visible
-	IsVisible bool `json:"isVisible,required"`
+	IsVisible bool `json:"isVisible" api:"required"`
 	// The grant period of the promotional entitlement
 	//
 	// Any of "1 week", "1 month", "6 month", "1 year", "lifetime", "custom".
-	Period string `json:"period,required"`
+	Period string `json:"period" api:"required"`
 	// The reset period of the entitlement
 	//
 	// Any of "YEAR", "MONTH", "WEEK", "DAY", "HOUR".
-	ResetPeriod string `json:"resetPeriod,required"`
+	ResetPeriod string `json:"resetPeriod" api:"required"`
 	// The reset period configuration of the entitlement
-	ResetPeriodConfiguration V1CustomerPromotionalEntitlementRevokeResponseDataResetPeriodConfigurationUnion `json:"resetPeriodConfiguration,required"`
+	ResetPeriodConfiguration V1CustomerPromotionalEntitlementRevokeResponseDataResetPeriodConfigurationUnion `json:"resetPeriodConfiguration" api:"required"`
 	// The start date of the entitlement
-	StartDate time.Time `json:"startDate,required" format:"date-time"`
+	StartDate time.Time `json:"startDate" api:"required" format:"date-time"`
 	// The status of the entitlement
 	//
 	// Any of "Active", "Expired", "Paused".
-	Status string `json:"status,required"`
+	Status string `json:"status" api:"required"`
 	// Timestamp of when the record was last updated
-	UpdatedAt time.Time `json:"updatedAt,required" format:"date-time"`
+	UpdatedAt time.Time `json:"updatedAt" api:"required" format:"date-time"`
 	// The usage limit of the entitlement
-	UsageLimit float64 `json:"usageLimit,required"`
+	UsageLimit float64 `json:"usageLimit" api:"required"`
 	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
 	JSON struct {
 		ID                       respjson.Field
@@ -645,7 +645,7 @@ type V1CustomerPromotionalEntitlementRevokeResponseDataResetPeriodConfigurationY
 	// Reset anchor (SubscriptionStart)
 	//
 	// Any of "SubscriptionStart".
-	AccordingTo string `json:"accordingTo,required"`
+	AccordingTo string `json:"accordingTo" api:"required"`
 	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
 	JSON struct {
 		AccordingTo respjson.Field
@@ -667,7 +667,7 @@ type V1CustomerPromotionalEntitlementRevokeResponseDataResetPeriodConfigurationM
 	// Reset anchor (SubscriptionStart or StartOfTheMonth)
 	//
 	// Any of "SubscriptionStart", "StartOfTheMonth".
-	AccordingTo string `json:"accordingTo,required"`
+	AccordingTo string `json:"accordingTo" api:"required"`
 	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
 	JSON struct {
 		AccordingTo respjson.Field
@@ -690,7 +690,7 @@ type V1CustomerPromotionalEntitlementRevokeResponseDataResetPeriodConfigurationW
 	//
 	// Any of "SubscriptionStart", "EverySunday", "EveryMonday", "EveryTuesday",
 	// "EveryWednesday", "EveryThursday", "EveryFriday", "EverySaturday".
-	AccordingTo string `json:"accordingTo,required"`
+	AccordingTo string `json:"accordingTo" api:"required"`
 	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
 	JSON struct {
 		AccordingTo respjson.Field
@@ -709,7 +709,7 @@ func (r *V1CustomerPromotionalEntitlementRevokeResponseDataResetPeriodConfigurat
 
 type V1CustomerPromotionalEntitlementNewParams struct {
 	// Promotional entitlements to grant
-	PromotionalEntitlements []V1CustomerPromotionalEntitlementNewParamsPromotionalEntitlement `json:"promotionalEntitlements,omitzero,required"`
+	PromotionalEntitlements []V1CustomerPromotionalEntitlementNewParamsPromotionalEntitlement `json:"promotionalEntitlements,omitzero" api:"required"`
 	paramObj
 }
 
@@ -729,36 +729,36 @@ func (r *V1CustomerPromotionalEntitlementNewParams) UnmarshalJSON(data []byte) e
 // YearlyResetPeriodConfiguration are required.
 type V1CustomerPromotionalEntitlementNewParamsPromotionalEntitlement struct {
 	// The custom end date of the promotional entitlement
-	CustomEndDate param.Opt[time.Time] `json:"customEndDate,omitzero,required" format:"date-time"`
+	CustomEndDate param.Opt[time.Time] `json:"customEndDate,omitzero" api:"required" format:"date-time"`
 	// Whether the entitlement has a soft limit
-	HasSoftLimit param.Opt[bool] `json:"hasSoftLimit,omitzero,required"`
+	HasSoftLimit param.Opt[bool] `json:"hasSoftLimit,omitzero" api:"required"`
 	// Whether the entitlement has an unlimited usage
-	HasUnlimitedUsage param.Opt[bool] `json:"hasUnlimitedUsage,omitzero,required"`
+	HasUnlimitedUsage param.Opt[bool] `json:"hasUnlimitedUsage,omitzero" api:"required"`
 	// Whether the entitlement is visible
-	IsVisible param.Opt[bool] `json:"isVisible,omitzero,required"`
+	IsVisible param.Opt[bool] `json:"isVisible,omitzero" api:"required"`
 	// The usage limit of the entitlement
-	UsageLimit param.Opt[int64] `json:"usageLimit,omitzero,required"`
+	UsageLimit param.Opt[int64] `json:"usageLimit,omitzero" api:"required"`
 	// The enum values of the entitlement
-	EnumValues []string `json:"enumValues,omitzero,required"`
+	EnumValues []string `json:"enumValues,omitzero" api:"required"`
 	// The monthly reset period configuration of the entitlement, defined when reset
 	// period is monthly
-	MonthlyResetPeriodConfiguration V1CustomerPromotionalEntitlementNewParamsPromotionalEntitlementMonthlyResetPeriodConfiguration `json:"monthlyResetPeriodConfiguration,omitzero,required"`
+	MonthlyResetPeriodConfiguration V1CustomerPromotionalEntitlementNewParamsPromotionalEntitlementMonthlyResetPeriodConfiguration `json:"monthlyResetPeriodConfiguration,omitzero" api:"required"`
 	// The reset period of the entitlement
 	//
 	// Any of "YEAR", "MONTH", "WEEK", "DAY", "HOUR".
-	ResetPeriod string `json:"resetPeriod,omitzero,required"`
+	ResetPeriod string `json:"resetPeriod,omitzero" api:"required"`
 	// The weekly reset period configuration of the entitlement, defined when reset
 	// period is weekly
-	WeeklyResetPeriodConfiguration V1CustomerPromotionalEntitlementNewParamsPromotionalEntitlementWeeklyResetPeriodConfiguration `json:"weeklyResetPeriodConfiguration,omitzero,required"`
+	WeeklyResetPeriodConfiguration V1CustomerPromotionalEntitlementNewParamsPromotionalEntitlementWeeklyResetPeriodConfiguration `json:"weeklyResetPeriodConfiguration,omitzero" api:"required"`
 	// The yearly reset period configuration of the entitlement, defined when reset
 	// period is yearly
-	YearlyResetPeriodConfiguration V1CustomerPromotionalEntitlementNewParamsPromotionalEntitlementYearlyResetPeriodConfiguration `json:"yearlyResetPeriodConfiguration,omitzero,required"`
+	YearlyResetPeriodConfiguration V1CustomerPromotionalEntitlementNewParamsPromotionalEntitlementYearlyResetPeriodConfiguration `json:"yearlyResetPeriodConfiguration,omitzero" api:"required"`
 	// The unique identifier of the entitlement feature
-	FeatureID string `json:"featureId,required"`
+	FeatureID string `json:"featureId" api:"required"`
 	// The grant period of the promotional entitlement
 	//
 	// Any of "1 week", "1 month", "6 month", "1 year", "lifetime", "custom".
-	Period string `json:"period,omitzero,required"`
+	Period string `json:"period,omitzero" api:"required"`
 	paramObj
 }
 
@@ -787,7 +787,7 @@ type V1CustomerPromotionalEntitlementNewParamsPromotionalEntitlementMonthlyReset
 	// Reset anchor (SubscriptionStart or StartOfTheMonth)
 	//
 	// Any of "SubscriptionStart", "StartOfTheMonth".
-	AccordingTo string `json:"accordingTo,omitzero,required"`
+	AccordingTo string `json:"accordingTo,omitzero" api:"required"`
 	paramObj
 }
 
@@ -814,7 +814,7 @@ type V1CustomerPromotionalEntitlementNewParamsPromotionalEntitlementWeeklyResetP
 	//
 	// Any of "SubscriptionStart", "EverySunday", "EveryMonday", "EveryTuesday",
 	// "EveryWednesday", "EveryThursday", "EveryFriday", "EverySaturday".
-	AccordingTo string `json:"accordingTo,omitzero,required"`
+	AccordingTo string `json:"accordingTo,omitzero" api:"required"`
 	paramObj
 }
 
@@ -840,7 +840,7 @@ type V1CustomerPromotionalEntitlementNewParamsPromotionalEntitlementYearlyResetP
 	// Reset anchor (SubscriptionStart)
 	//
 	// Any of "SubscriptionStart".
-	AccordingTo string `json:"accordingTo,omitzero,required"`
+	AccordingTo string `json:"accordingTo,omitzero" api:"required"`
 	paramObj
 }
 
@@ -905,6 +905,6 @@ func (r V1CustomerPromotionalEntitlementListParamsCreatedAt) URLQuery() (v url.V
 }
 
 type V1CustomerPromotionalEntitlementRevokeParams struct {
-	ID string `path:"id,required" json:"-"`
+	ID string `path:"id" api:"required" json:"-"`
 	paramObj
 }

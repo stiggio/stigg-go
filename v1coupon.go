@@ -110,7 +110,7 @@ func (r *V1CouponService) UpdateCoupon(ctx context.Context, id string, body V1Co
 // Response object
 type Coupon struct {
 	// Discount instrument with percentage or fixed amount
-	Data CouponData `json:"data,required"`
+	Data CouponData `json:"data" api:"required"`
 	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
 	JSON struct {
 		Data        respjson.Field
@@ -128,37 +128,37 @@ func (r *Coupon) UnmarshalJSON(data []byte) error {
 // Discount instrument with percentage or fixed amount
 type CouponData struct {
 	// The unique identifier for the entity
-	ID string `json:"id,required"`
+	ID string `json:"id" api:"required"`
 	// Fixed amount discounts in different currencies
-	AmountsOff []CouponDataAmountsOff `json:"amountsOff,required"`
+	AmountsOff []CouponDataAmountsOff `json:"amountsOff" api:"required"`
 	// The unique identifier for the entity in the billing provider
-	BillingID string `json:"billingId,required"`
+	BillingID string `json:"billingId" api:"required"`
 	// The URL to the entity in the billing provider
-	BillingLinkURL string `json:"billingLinkUrl,required"`
+	BillingLinkURL string `json:"billingLinkUrl" api:"required"`
 	// Timestamp of when the record was created
-	CreatedAt time.Time `json:"createdAt,required" format:"date-time"`
+	CreatedAt time.Time `json:"createdAt" api:"required" format:"date-time"`
 	// Description of the coupon
-	Description string `json:"description,required"`
+	Description string `json:"description" api:"required"`
 	// Duration of the coupon validity in months
-	DurationInMonths float64 `json:"durationInMonths,required"`
+	DurationInMonths float64 `json:"durationInMonths" api:"required"`
 	// Name of the coupon
-	Name string `json:"name,required"`
+	Name string `json:"name" api:"required"`
 	// Percentage discount off the original price
-	PercentOff float64 `json:"percentOff,required"`
+	PercentOff float64 `json:"percentOff" api:"required"`
 	// The source of the coupon
 	//
 	// Any of "STIGG", "STIGG_ADHOC", "STRIPE".
-	Source string `json:"source,required"`
+	Source string `json:"source" api:"required"`
 	// Current status of the coupon
 	//
 	// Any of "ACTIVE", "ARCHIVED".
-	Status string `json:"status,required"`
+	Status string `json:"status" api:"required"`
 	// Type of the coupon (percentage or fixed amount)
 	//
 	// Any of "FIXED", "PERCENTAGE".
-	Type string `json:"type,required"`
+	Type string `json:"type" api:"required"`
 	// Timestamp of when the record was last updated
-	UpdatedAt time.Time `json:"updatedAt,required" format:"date-time"`
+	UpdatedAt time.Time `json:"updatedAt" api:"required" format:"date-time"`
 	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
 	JSON struct {
 		ID               respjson.Field
@@ -188,7 +188,7 @@ func (r *CouponData) UnmarshalJSON(data []byte) error {
 // Monetary amount with currency
 type CouponDataAmountsOff struct {
 	// The price amount
-	Amount float64 `json:"amount,required"`
+	Amount float64 `json:"amount" api:"required"`
 	// The price currency
 	//
 	// Any of "usd", "aed", "all", "amd", "ang", "aud", "awg", "azn", "bam", "bbd",
@@ -202,7 +202,7 @@ type CouponDataAmountsOff struct {
 	// "sek", "sgd", "sle", "sll", "sos", "szl", "thb", "tjs", "top", "try", "ttd",
 	// "tzs", "uah", "uzs", "vnd", "vuv", "wst", "xaf", "xcd", "yer", "zar", "zmw",
 	// "clp", "djf", "gnf", "ugx", "pyg", "xof", "xpf".
-	Currency string `json:"currency,required"`
+	Currency string `json:"currency" api:"required"`
 	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
 	JSON struct {
 		Amount      respjson.Field
@@ -221,37 +221,37 @@ func (r *CouponDataAmountsOff) UnmarshalJSON(data []byte) error {
 // Discount instrument with percentage or fixed amount
 type V1CouponListResponse struct {
 	// The unique identifier for the entity
-	ID string `json:"id,required"`
+	ID string `json:"id" api:"required"`
 	// Fixed amount discounts in different currencies
-	AmountsOff []V1CouponListResponseAmountsOff `json:"amountsOff,required"`
+	AmountsOff []V1CouponListResponseAmountsOff `json:"amountsOff" api:"required"`
 	// The unique identifier for the entity in the billing provider
-	BillingID string `json:"billingId,required"`
+	BillingID string `json:"billingId" api:"required"`
 	// The URL to the entity in the billing provider
-	BillingLinkURL string `json:"billingLinkUrl,required"`
+	BillingLinkURL string `json:"billingLinkUrl" api:"required"`
 	// Timestamp of when the record was created
-	CreatedAt time.Time `json:"createdAt,required" format:"date-time"`
+	CreatedAt time.Time `json:"createdAt" api:"required" format:"date-time"`
 	// Description of the coupon
-	Description string `json:"description,required"`
+	Description string `json:"description" api:"required"`
 	// Duration of the coupon validity in months
-	DurationInMonths float64 `json:"durationInMonths,required"`
+	DurationInMonths float64 `json:"durationInMonths" api:"required"`
 	// Name of the coupon
-	Name string `json:"name,required"`
+	Name string `json:"name" api:"required"`
 	// Percentage discount off the original price
-	PercentOff float64 `json:"percentOff,required"`
+	PercentOff float64 `json:"percentOff" api:"required"`
 	// The source of the coupon
 	//
 	// Any of "STIGG", "STIGG_ADHOC", "STRIPE".
-	Source V1CouponListResponseSource `json:"source,required"`
+	Source V1CouponListResponseSource `json:"source" api:"required"`
 	// Current status of the coupon
 	//
 	// Any of "ACTIVE", "ARCHIVED".
-	Status V1CouponListResponseStatus `json:"status,required"`
+	Status V1CouponListResponseStatus `json:"status" api:"required"`
 	// Type of the coupon (percentage or fixed amount)
 	//
 	// Any of "FIXED", "PERCENTAGE".
-	Type V1CouponListResponseType `json:"type,required"`
+	Type V1CouponListResponseType `json:"type" api:"required"`
 	// Timestamp of when the record was last updated
-	UpdatedAt time.Time `json:"updatedAt,required" format:"date-time"`
+	UpdatedAt time.Time `json:"updatedAt" api:"required" format:"date-time"`
 	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
 	JSON struct {
 		ID               respjson.Field
@@ -281,7 +281,7 @@ func (r *V1CouponListResponse) UnmarshalJSON(data []byte) error {
 // Monetary amount with currency
 type V1CouponListResponseAmountsOff struct {
 	// The price amount
-	Amount float64 `json:"amount,required"`
+	Amount float64 `json:"amount" api:"required"`
 	// The price currency
 	//
 	// Any of "usd", "aed", "all", "amd", "ang", "aud", "awg", "azn", "bam", "bbd",
@@ -295,7 +295,7 @@ type V1CouponListResponseAmountsOff struct {
 	// "sek", "sgd", "sle", "sll", "sos", "szl", "thb", "tjs", "top", "try", "ttd",
 	// "tzs", "uah", "uzs", "vnd", "vuv", "wst", "xaf", "xcd", "yer", "zar", "zmw",
 	// "clp", "djf", "gnf", "ugx", "pyg", "xof", "xpf".
-	Currency string `json:"currency,required"`
+	Currency string `json:"currency" api:"required"`
 	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
 	JSON struct {
 		Amount      respjson.Field
@@ -338,19 +338,19 @@ const (
 
 type V1CouponNewParams struct {
 	// Description of the coupon
-	Description param.Opt[string] `json:"description,omitzero,required"`
+	Description param.Opt[string] `json:"description,omitzero" api:"required"`
 	// Duration of the coupon validity in months
-	DurationInMonths param.Opt[int64] `json:"durationInMonths,omitzero,required"`
+	DurationInMonths param.Opt[int64] `json:"durationInMonths,omitzero" api:"required"`
 	// Percentage discount off the original price
-	PercentOff param.Opt[float64] `json:"percentOff,omitzero,required"`
+	PercentOff param.Opt[float64] `json:"percentOff,omitzero" api:"required"`
 	// Fixed amount discounts in different currencies
-	AmountsOff []V1CouponNewParamsAmountsOff `json:"amountsOff,omitzero,required"`
+	AmountsOff []V1CouponNewParamsAmountsOff `json:"amountsOff,omitzero" api:"required"`
 	// Metadata associated with the entity
-	Metadata map[string]string `json:"metadata,omitzero,required"`
+	Metadata map[string]string `json:"metadata,omitzero" api:"required"`
 	// The unique identifier for the entity
-	ID string `json:"id,required"`
+	ID string `json:"id" api:"required"`
 	// Name of the coupon
-	Name string `json:"name,required"`
+	Name string `json:"name" api:"required"`
 	paramObj
 }
 
@@ -367,7 +367,7 @@ func (r *V1CouponNewParams) UnmarshalJSON(data []byte) error {
 // The properties Amount, Currency are required.
 type V1CouponNewParamsAmountsOff struct {
 	// The price amount
-	Amount float64 `json:"amount,required"`
+	Amount float64 `json:"amount" api:"required"`
 	// The price currency
 	//
 	// Any of "usd", "aed", "all", "amd", "ang", "aud", "awg", "azn", "bam", "bbd",
@@ -381,7 +381,7 @@ type V1CouponNewParamsAmountsOff struct {
 	// "sek", "sgd", "sle", "sll", "sos", "szl", "thb", "tjs", "top", "try", "ttd",
 	// "tzs", "uah", "uzs", "vnd", "vuv", "wst", "xaf", "xcd", "yer", "zar", "zmw",
 	// "clp", "djf", "gnf", "ugx", "pyg", "xof", "xpf".
-	Currency string `json:"currency,omitzero,required"`
+	Currency string `json:"currency,omitzero" api:"required"`
 	paramObj
 }
 

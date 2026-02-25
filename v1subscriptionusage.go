@@ -66,7 +66,7 @@ func (r *V1SubscriptionUsageService) Sync(ctx context.Context, id string, opts .
 type V1SubscriptionUsageChargeUsageResponse struct {
 	// Result of charging subscription usage including the billing period and charged
 	// items.
-	Data V1SubscriptionUsageChargeUsageResponseData `json:"data,required"`
+	Data V1SubscriptionUsageChargeUsageResponseData `json:"data" api:"required"`
 	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
 	JSON struct {
 		Data        respjson.Field
@@ -85,15 +85,15 @@ func (r *V1SubscriptionUsageChargeUsageResponse) UnmarshalJSON(data []byte) erro
 // items.
 type V1SubscriptionUsageChargeUsageResponseData struct {
 	// The invoice ID in the billing integration
-	InvoiceBillingID string `json:"invoiceBillingId,required"`
+	InvoiceBillingID string `json:"invoiceBillingId" api:"required"`
 	// End of the usage billing period
-	PeriodEnd time.Time `json:"periodEnd,required" format:"date-time"`
+	PeriodEnd time.Time `json:"periodEnd" api:"required" format:"date-time"`
 	// Start of the usage billing period
-	PeriodStart time.Time `json:"periodStart,required" format:"date-time"`
+	PeriodStart time.Time `json:"periodStart" api:"required" format:"date-time"`
 	// The subscription ID for which usage was charged
-	SubscriptionID string `json:"subscriptionId,required"`
+	SubscriptionID string `json:"subscriptionId" api:"required"`
 	// Usage items that were charged
-	UsageCharged []V1SubscriptionUsageChargeUsageResponseDataUsageCharged `json:"usageCharged,required"`
+	UsageCharged []V1SubscriptionUsageChargeUsageResponseDataUsageCharged `json:"usageCharged" api:"required"`
 	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
 	JSON struct {
 		InvoiceBillingID respjson.Field
@@ -115,9 +115,9 @@ func (r *V1SubscriptionUsageChargeUsageResponseData) UnmarshalJSON(data []byte) 
 // A single usage item that was charged.
 type V1SubscriptionUsageChargeUsageResponseDataUsageCharged struct {
 	// The feature ID for which usage was charged
-	FeatureID string `json:"featureId,required"`
+	FeatureID string `json:"featureId" api:"required"`
 	// The number of units charged
-	UsageAmount float64 `json:"usageAmount,required"`
+	UsageAmount float64 `json:"usageAmount" api:"required"`
 	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
 	JSON struct {
 		FeatureID   respjson.Field
@@ -136,7 +136,7 @@ func (r *V1SubscriptionUsageChargeUsageResponseDataUsageCharged) UnmarshalJSON(d
 // Response object
 type V1SubscriptionUsageSyncResponse struct {
 	// Result of triggering a subscription usage sync.
-	Data V1SubscriptionUsageSyncResponseData `json:"data,required"`
+	Data V1SubscriptionUsageSyncResponseData `json:"data" api:"required"`
 	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
 	JSON struct {
 		Data        respjson.Field
@@ -154,7 +154,7 @@ func (r *V1SubscriptionUsageSyncResponse) UnmarshalJSON(data []byte) error {
 // Result of triggering a subscription usage sync.
 type V1SubscriptionUsageSyncResponseData struct {
 	// Whether usage was synced to the billing provider
-	Triggered bool `json:"triggered,required"`
+	Triggered bool `json:"triggered" api:"required"`
 	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
 	JSON struct {
 		Triggered   respjson.Field
