@@ -62,14 +62,14 @@ func (r *V1CustomerPaymentMethodService) Detach(ctx context.Context, id string, 
 
 type V1CustomerPaymentMethodAttachParams struct {
 	// Integration details
-	IntegrationID string `json:"integrationId,required"`
+	IntegrationID string `json:"integrationId" api:"required"`
 	// Billing provider payment method id
-	PaymentMethodID string `json:"paymentMethodId,required"`
+	PaymentMethodID string `json:"paymentMethodId" api:"required"`
 	// The vendor identifier of integration
 	//
 	// Any of "AUTH0", "ZUORA", "STRIPE", "HUBSPOT", "AWS_MARKETPLACE", "SNOWFLAKE",
 	// "SALESFORCE", "BIG_QUERY", "OPEN_FGA", "APP_STORE".
-	VendorIdentifier V1CustomerPaymentMethodAttachParamsVendorIdentifier `json:"vendorIdentifier,omitzero,required"`
+	VendorIdentifier V1CustomerPaymentMethodAttachParamsVendorIdentifier `json:"vendorIdentifier,omitzero" api:"required"`
 	// Customers selected currency
 	//
 	// Any of "usd", "aed", "all", "amd", "ang", "aud", "awg", "azn", "bam", "bbd",

@@ -66,7 +66,7 @@ func (r *V1UsageService) Report(ctx context.Context, body V1UsageReportParams, o
 // Response object
 type V1UsageHistoryResponse struct {
 	// Historical usage time series
-	Data V1UsageHistoryResponseData `json:"data,required"`
+	Data V1UsageHistoryResponseData `json:"data" api:"required"`
 	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
 	JSON struct {
 		Data        respjson.Field
@@ -84,9 +84,9 @@ func (r *V1UsageHistoryResponse) UnmarshalJSON(data []byte) error {
 // Historical usage time series
 type V1UsageHistoryResponseData struct {
 	// Markers for events that affecting feature usage
-	Markers []V1UsageHistoryResponseDataMarker `json:"markers,required"`
+	Markers []V1UsageHistoryResponseDataMarker `json:"markers" api:"required"`
 	// Series of usage history
-	Series []V1UsageHistoryResponseDataSeries `json:"series,required"`
+	Series []V1UsageHistoryResponseDataSeries `json:"series" api:"required"`
 	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
 	JSON struct {
 		Markers     respjson.Field
@@ -105,11 +105,11 @@ func (r *V1UsageHistoryResponseData) UnmarshalJSON(data []byte) error {
 // Usage reset or change marker
 type V1UsageHistoryResponseDataMarker struct {
 	// Timestamp of the marker
-	Timestamp time.Time `json:"timestamp,required" format:"date-time"`
+	Timestamp time.Time `json:"timestamp" api:"required" format:"date-time"`
 	// Type of marker for a usage history point
 	//
 	// Any of "PERIODIC_RESET", "SUBSCRIPTION_CHANGE_RESET".
-	Type string `json:"type,required"`
+	Type string `json:"type" api:"required"`
 	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
 	JSON struct {
 		Timestamp   respjson.Field
@@ -128,9 +128,9 @@ func (r *V1UsageHistoryResponseDataMarker) UnmarshalJSON(data []byte) error {
 // Usage data points with tags
 type V1UsageHistoryResponseDataSeries struct {
 	// Points in the usage history series
-	Points []V1UsageHistoryResponseDataSeriesPoint `json:"points,required"`
+	Points []V1UsageHistoryResponseDataSeriesPoint `json:"points" api:"required"`
 	// Tags for the usage history series
-	Tags []V1UsageHistoryResponseDataSeriesTag `json:"tags,required"`
+	Tags []V1UsageHistoryResponseDataSeriesTag `json:"tags" api:"required"`
 	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
 	JSON struct {
 		Points      respjson.Field
@@ -149,11 +149,11 @@ func (r *V1UsageHistoryResponseDataSeries) UnmarshalJSON(data []byte) error {
 // Single usage data point
 type V1UsageHistoryResponseDataSeriesPoint struct {
 	// Indicates whether there was usage reset in this point, see `markers` for details
-	IsResetPoint bool `json:"isResetPoint,required"`
+	IsResetPoint bool `json:"isResetPoint" api:"required"`
 	// Timestamp of the usage history point
-	Timestamp time.Time `json:"timestamp,required" format:"date-time"`
+	Timestamp time.Time `json:"timestamp" api:"required" format:"date-time"`
 	// Value of the usage history point
-	Value float64 `json:"value,required"`
+	Value float64 `json:"value" api:"required"`
 	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
 	JSON struct {
 		IsResetPoint respjson.Field
@@ -173,9 +173,9 @@ func (r *V1UsageHistoryResponseDataSeriesPoint) UnmarshalJSON(data []byte) error
 // Grouping tag key-value
 type V1UsageHistoryResponseDataSeriesTag struct {
 	// Key of the tag
-	Key string `json:"key,required"`
+	Key string `json:"key" api:"required"`
 	// Value of the tag
-	Value string `json:"value,required"`
+	Value string `json:"value" api:"required"`
 	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
 	JSON struct {
 		Key         respjson.Field
@@ -195,7 +195,7 @@ func (r *V1UsageHistoryResponseDataSeriesTag) UnmarshalJSON(data []byte) error {
 // period information, and reset dates for each measurement.
 type V1UsageReportResponse struct {
 	// Array of usage measurements with current values and period info
-	Data []V1UsageReportResponseData `json:"data,required"`
+	Data []V1UsageReportResponseData `json:"data" api:"required"`
 	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
 	JSON struct {
 		Data        respjson.Field
@@ -213,29 +213,29 @@ func (r *V1UsageReportResponse) UnmarshalJSON(data []byte) error {
 // Recorded usage with period info
 type V1UsageReportResponseData struct {
 	// Unique identifier for the entity
-	ID string `json:"id,required"`
+	ID string `json:"id" api:"required"`
 	// Timestamp of when the record was created
-	CreatedAt time.Time `json:"createdAt,required" format:"date-time"`
+	CreatedAt time.Time `json:"createdAt" api:"required" format:"date-time"`
 	// Customer id
-	CustomerID string `json:"customerId,required"`
+	CustomerID string `json:"customerId" api:"required"`
 	// Feature id
-	FeatureID string `json:"featureId,required"`
+	FeatureID string `json:"featureId" api:"required"`
 	// Timestamp
-	Timestamp time.Time `json:"timestamp,required" format:"date-time"`
+	Timestamp time.Time `json:"timestamp" api:"required" format:"date-time"`
 	// The usage measurement record
-	Value float64 `json:"value,required"`
+	Value float64 `json:"value" api:"required"`
 	// The current measured usage value
-	CurrentUsage float64 `json:"currentUsage,nullable"`
+	CurrentUsage float64 `json:"currentUsage" api:"nullable"`
 	// The date when the next usage reset will occur
-	NextResetDate time.Time `json:"nextResetDate,nullable" format:"date-time"`
+	NextResetDate time.Time `json:"nextResetDate" api:"nullable" format:"date-time"`
 	// Resource id
-	ResourceID string `json:"resourceId,nullable"`
+	ResourceID string `json:"resourceId" api:"nullable"`
 	// The end date of the usage period in which this measurement resides (for
 	// entitlements with a reset period)
-	UsagePeriodEnd time.Time `json:"usagePeriodEnd,nullable" format:"date-time"`
+	UsagePeriodEnd time.Time `json:"usagePeriodEnd" api:"nullable" format:"date-time"`
 	// The start date of the usage period in which this measurement resides (for
 	// entitlements with a reset period)
-	UsagePeriodStart time.Time `json:"usagePeriodStart,nullable" format:"date-time"`
+	UsagePeriodStart time.Time `json:"usagePeriodStart" api:"nullable" format:"date-time"`
 	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
 	JSON struct {
 		ID               respjson.Field
@@ -261,9 +261,9 @@ func (r *V1UsageReportResponseData) UnmarshalJSON(data []byte) error {
 }
 
 type V1UsageHistoryParams struct {
-	CustomerID string `path:"customerId,required" json:"-"`
+	CustomerID string `path:"customerId" api:"required" json:"-"`
 	// The start date of the range
-	StartDate time.Time `query:"startDate,required" format:"date-time" json:"-"`
+	StartDate time.Time `query:"startDate" api:"required" format:"date-time" json:"-"`
 	// Resource id
 	ResourceID param.Opt[string] `query:"resourceId,omitzero" json:"-"`
 	// The end date of the range
@@ -282,7 +282,7 @@ func (r V1UsageHistoryParams) URLQuery() (v url.Values, err error) {
 
 type V1UsageReportParams struct {
 	// A list of usage reports to be submitted in bulk
-	Usages []V1UsageReportParamsUsage `json:"usages,omitzero,required"`
+	Usages []V1UsageReportParamsUsage `json:"usages,omitzero" api:"required"`
 	paramObj
 }
 
@@ -299,11 +299,11 @@ func (r *V1UsageReportParams) UnmarshalJSON(data []byte) error {
 // The properties CustomerID, FeatureID, Value are required.
 type V1UsageReportParamsUsage struct {
 	// Customer id
-	CustomerID string `json:"customerId,required"`
+	CustomerID string `json:"customerId" api:"required"`
 	// Feature id
-	FeatureID string `json:"featureId,required"`
+	FeatureID string `json:"featureId" api:"required"`
 	// The value to report for usage
-	Value int64 `json:"value,required"`
+	Value int64 `json:"value" api:"required"`
 	// Resource id
 	ResourceID param.Opt[string] `json:"resourceId,omitzero"`
 	// Timestamp of when the record was created

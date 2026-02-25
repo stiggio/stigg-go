@@ -165,7 +165,7 @@ func (r *V1CustomerService) Unarchive(ctx context.Context, id string, opts ...op
 // Response object
 type CustomerResponse struct {
 	// A customer can be either an organization or an individual
-	Data CustomerResponseData `json:"data,required"`
+	Data CustomerResponseData `json:"data" api:"required"`
 	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
 	JSON struct {
 		Data        respjson.Field
@@ -183,25 +183,25 @@ func (r *CustomerResponse) UnmarshalJSON(data []byte) error {
 // A customer can be either an organization or an individual
 type CustomerResponseData struct {
 	// Customer slug
-	ID string `json:"id,required"`
+	ID string `json:"id" api:"required"`
 	// Timestamp of when the record was deleted
-	ArchivedAt time.Time `json:"archivedAt,required" format:"date-time"`
+	ArchivedAt time.Time `json:"archivedAt" api:"required" format:"date-time"`
 	// Timestamp of when the record was created
-	CreatedAt time.Time `json:"createdAt,required" format:"date-time"`
+	CreatedAt time.Time `json:"createdAt" api:"required" format:"date-time"`
 	// Timestamp of when the record was last updated
-	UpdatedAt time.Time `json:"updatedAt,required" format:"date-time"`
+	UpdatedAt time.Time `json:"updatedAt" api:"required" format:"date-time"`
 	// Customer level coupon
-	CouponID string `json:"couponId,nullable"`
+	CouponID string `json:"couponId" api:"nullable"`
 	// The default payment method details
-	DefaultPaymentMethod CustomerResponseDataDefaultPaymentMethod `json:"defaultPaymentMethod,nullable"`
+	DefaultPaymentMethod CustomerResponseDataDefaultPaymentMethod `json:"defaultPaymentMethod" api:"nullable"`
 	// The email of the customer
-	Email string `json:"email,nullable" format:"email"`
+	Email string `json:"email" api:"nullable" format:"email"`
 	// List of integrations
 	Integrations []CustomerResponseDataIntegration `json:"integrations"`
 	// Additional metadata
 	Metadata map[string]string `json:"metadata"`
 	// The name of the customer
-	Name string `json:"name,nullable"`
+	Name string `json:"name" api:"nullable"`
 	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
 	JSON struct {
 		ID                   respjson.Field
@@ -228,17 +228,17 @@ func (r *CustomerResponseData) UnmarshalJSON(data []byte) error {
 // The default payment method details
 type CustomerResponseDataDefaultPaymentMethod struct {
 	// The default payment method id
-	BillingID string `json:"billingId,required"`
+	BillingID string `json:"billingId" api:"required"`
 	// The expiration month of the default payment method
-	CardExpiryMonth float64 `json:"cardExpiryMonth,required"`
+	CardExpiryMonth float64 `json:"cardExpiryMonth" api:"required"`
 	// The expiration year of the default payment method
-	CardExpiryYear float64 `json:"cardExpiryYear,required"`
+	CardExpiryYear float64 `json:"cardExpiryYear" api:"required"`
 	// The last 4 digits of the default payment method
-	CardLast4Digits string `json:"cardLast4Digits,required"`
+	CardLast4Digits string `json:"cardLast4Digits" api:"required"`
 	// The default payment method type
 	//
 	// Any of "CARD", "BANK", "CASH_APP".
-	Type string `json:"type,required"`
+	Type string `json:"type" api:"required"`
 	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
 	JSON struct {
 		BillingID       respjson.Field
@@ -260,14 +260,14 @@ func (r *CustomerResponseDataDefaultPaymentMethod) UnmarshalJSON(data []byte) er
 // External billing or CRM integration link
 type CustomerResponseDataIntegration struct {
 	// Integration details
-	ID string `json:"id,required"`
+	ID string `json:"id" api:"required"`
 	// Synced entity id
-	SyncedEntityID string `json:"syncedEntityId,required"`
+	SyncedEntityID string `json:"syncedEntityId" api:"required"`
 	// The vendor identifier of integration
 	//
 	// Any of "AUTH0", "ZUORA", "STRIPE", "HUBSPOT", "AWS_MARKETPLACE", "SNOWFLAKE",
 	// "SALESFORCE", "BIG_QUERY", "OPEN_FGA", "APP_STORE".
-	VendorIdentifier string `json:"vendorIdentifier,required"`
+	VendorIdentifier string `json:"vendorIdentifier" api:"required"`
 	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
 	JSON struct {
 		ID               respjson.Field
@@ -287,25 +287,25 @@ func (r *CustomerResponseDataIntegration) UnmarshalJSON(data []byte) error {
 // A customer can be either an organization or an individual
 type V1CustomerListResponse struct {
 	// Customer slug
-	ID string `json:"id,required"`
+	ID string `json:"id" api:"required"`
 	// Timestamp of when the record was deleted
-	ArchivedAt time.Time `json:"archivedAt,required" format:"date-time"`
+	ArchivedAt time.Time `json:"archivedAt" api:"required" format:"date-time"`
 	// Timestamp of when the record was created
-	CreatedAt time.Time `json:"createdAt,required" format:"date-time"`
+	CreatedAt time.Time `json:"createdAt" api:"required" format:"date-time"`
 	// Timestamp of when the record was last updated
-	UpdatedAt time.Time `json:"updatedAt,required" format:"date-time"`
+	UpdatedAt time.Time `json:"updatedAt" api:"required" format:"date-time"`
 	// Customer level coupon
-	CouponID string `json:"couponId,nullable"`
+	CouponID string `json:"couponId" api:"nullable"`
 	// The default payment method details
-	DefaultPaymentMethod V1CustomerListResponseDefaultPaymentMethod `json:"defaultPaymentMethod,nullable"`
+	DefaultPaymentMethod V1CustomerListResponseDefaultPaymentMethod `json:"defaultPaymentMethod" api:"nullable"`
 	// The email of the customer
-	Email string `json:"email,nullable" format:"email"`
+	Email string `json:"email" api:"nullable" format:"email"`
 	// List of integrations
 	Integrations []V1CustomerListResponseIntegration `json:"integrations"`
 	// Additional metadata
 	Metadata map[string]string `json:"metadata"`
 	// The name of the customer
-	Name string `json:"name,nullable"`
+	Name string `json:"name" api:"nullable"`
 	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
 	JSON struct {
 		ID                   respjson.Field
@@ -332,17 +332,17 @@ func (r *V1CustomerListResponse) UnmarshalJSON(data []byte) error {
 // The default payment method details
 type V1CustomerListResponseDefaultPaymentMethod struct {
 	// The default payment method id
-	BillingID string `json:"billingId,required"`
+	BillingID string `json:"billingId" api:"required"`
 	// The expiration month of the default payment method
-	CardExpiryMonth float64 `json:"cardExpiryMonth,required"`
+	CardExpiryMonth float64 `json:"cardExpiryMonth" api:"required"`
 	// The expiration year of the default payment method
-	CardExpiryYear float64 `json:"cardExpiryYear,required"`
+	CardExpiryYear float64 `json:"cardExpiryYear" api:"required"`
 	// The last 4 digits of the default payment method
-	CardLast4Digits string `json:"cardLast4Digits,required"`
+	CardLast4Digits string `json:"cardLast4Digits" api:"required"`
 	// The default payment method type
 	//
 	// Any of "CARD", "BANK", "CASH_APP".
-	Type string `json:"type,required"`
+	Type string `json:"type" api:"required"`
 	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
 	JSON struct {
 		BillingID       respjson.Field
@@ -364,14 +364,14 @@ func (r *V1CustomerListResponseDefaultPaymentMethod) UnmarshalJSON(data []byte) 
 // External billing or CRM integration link
 type V1CustomerListResponseIntegration struct {
 	// Integration details
-	ID string `json:"id,required"`
+	ID string `json:"id" api:"required"`
 	// Synced entity id
-	SyncedEntityID string `json:"syncedEntityId,required"`
+	SyncedEntityID string `json:"syncedEntityId" api:"required"`
 	// The vendor identifier of integration
 	//
 	// Any of "AUTH0", "ZUORA", "STRIPE", "HUBSPOT", "AWS_MARKETPLACE", "SNOWFLAKE",
 	// "SALESFORCE", "BIG_QUERY", "OPEN_FGA", "APP_STORE".
-	VendorIdentifier string `json:"vendorIdentifier,required"`
+	VendorIdentifier string `json:"vendorIdentifier" api:"required"`
 	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
 	JSON struct {
 		ID               respjson.Field
@@ -391,7 +391,7 @@ func (r *V1CustomerListResponseIntegration) UnmarshalJSON(data []byte) error {
 // Response object
 type V1CustomerImportResponse struct {
 	// List of newly created customer IDs from the import operation.
-	Data V1CustomerImportResponseData `json:"data,required"`
+	Data V1CustomerImportResponseData `json:"data" api:"required"`
 	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
 	JSON struct {
 		Data        respjson.Field
@@ -409,7 +409,7 @@ func (r *V1CustomerImportResponse) UnmarshalJSON(data []byte) error {
 // List of newly created customer IDs from the import operation.
 type V1CustomerImportResponseData struct {
 	// Customer IDs created during import
-	NewCustomers []string `json:"newCustomers,required"`
+	NewCustomers []string `json:"newCustomers" api:"required"`
 	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
 	JSON struct {
 		NewCustomers respjson.Field
@@ -427,11 +427,11 @@ func (r *V1CustomerImportResponseData) UnmarshalJSON(data []byte) error {
 // Resource object that belongs to a customer
 type V1CustomerListResourcesResponse struct {
 	// Resource slug
-	ID string `json:"id,required"`
+	ID string `json:"id" api:"required"`
 	// Timestamp of when the record was created
-	CreatedAt time.Time `json:"createdAt,required" format:"date-time"`
+	CreatedAt time.Time `json:"createdAt" api:"required" format:"date-time"`
 	// Timestamp of when the record was last updated
-	UpdatedAt time.Time `json:"updatedAt,required" format:"date-time"`
+	UpdatedAt time.Time `json:"updatedAt" api:"required" format:"date-time"`
 	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
 	JSON struct {
 		ID          respjson.Field
@@ -475,14 +475,14 @@ func (r *V1CustomerUpdateParams) UnmarshalJSON(data []byte) error {
 // The properties ID, SyncedEntityID, VendorIdentifier are required.
 type V1CustomerUpdateParamsIntegration struct {
 	// Synced entity id
-	SyncedEntityID param.Opt[string] `json:"syncedEntityId,omitzero,required"`
+	SyncedEntityID param.Opt[string] `json:"syncedEntityId,omitzero" api:"required"`
 	// Integration details
-	ID string `json:"id,required"`
+	ID string `json:"id" api:"required"`
 	// The vendor identifier of integration
 	//
 	// Any of "AUTH0", "ZUORA", "STRIPE", "HUBSPOT", "AWS_MARKETPLACE", "SNOWFLAKE",
 	// "SALESFORCE", "BIG_QUERY", "OPEN_FGA", "APP_STORE".
-	VendorIdentifier string `json:"vendorIdentifier,omitzero,required"`
+	VendorIdentifier string `json:"vendorIdentifier,omitzero" api:"required"`
 	paramObj
 }
 
@@ -548,7 +548,7 @@ func (r V1CustomerListParamsCreatedAt) URLQuery() (v url.Values, err error) {
 
 type V1CustomerImportParams struct {
 	// List of customer objects to import
-	Customers []V1CustomerImportParamsCustomer `json:"customers,omitzero,required"`
+	Customers []V1CustomerImportParamsCustomer `json:"customers,omitzero" api:"required"`
 	paramObj
 }
 
@@ -563,11 +563,11 @@ func (r *V1CustomerImportParams) UnmarshalJSON(data []byte) error {
 // The properties ID, Email, Name are required.
 type V1CustomerImportParamsCustomer struct {
 	// The email of the customer
-	Email param.Opt[string] `json:"email,omitzero,required" format:"email"`
+	Email param.Opt[string] `json:"email,omitzero" api:"required" format:"email"`
 	// The name of the customer
-	Name param.Opt[string] `json:"name,omitzero,required"`
+	Name param.Opt[string] `json:"name,omitzero" api:"required"`
 	// Customer slug
-	ID string `json:"id,required"`
+	ID string `json:"id" api:"required"`
 	// Billing provider payment method id
 	PaymentMethodID param.Opt[string] `json:"paymentMethodId,omitzero"`
 	// Timestamp of when the record was last updated
@@ -606,7 +606,7 @@ func (r V1CustomerListResourcesParams) URLQuery() (v url.Values, err error) {
 
 type V1CustomerProvisionParams struct {
 	// Customer slug
-	ID string `json:"id,required"`
+	ID string `json:"id" api:"required"`
 	// Customer level coupon
 	CouponID param.Opt[string] `json:"couponId,omitzero"`
 	// The email of the customer
@@ -636,17 +636,17 @@ func (r *V1CustomerProvisionParams) UnmarshalJSON(data []byte) error {
 // are required.
 type V1CustomerProvisionParamsDefaultPaymentMethod struct {
 	// The default payment method id
-	BillingID param.Opt[string] `json:"billingId,omitzero,required"`
+	BillingID param.Opt[string] `json:"billingId,omitzero" api:"required"`
 	// The expiration month of the default payment method
-	CardExpiryMonth param.Opt[float64] `json:"cardExpiryMonth,omitzero,required"`
+	CardExpiryMonth param.Opt[float64] `json:"cardExpiryMonth,omitzero" api:"required"`
 	// The expiration year of the default payment method
-	CardExpiryYear param.Opt[float64] `json:"cardExpiryYear,omitzero,required"`
+	CardExpiryYear param.Opt[float64] `json:"cardExpiryYear,omitzero" api:"required"`
 	// The last 4 digits of the default payment method
-	CardLast4Digits param.Opt[string] `json:"cardLast4Digits,omitzero,required"`
+	CardLast4Digits param.Opt[string] `json:"cardLast4Digits,omitzero" api:"required"`
 	// The default payment method type
 	//
 	// Any of "CARD", "BANK", "CASH_APP".
-	Type string `json:"type,omitzero,required"`
+	Type string `json:"type,omitzero" api:"required"`
 	paramObj
 }
 
@@ -669,14 +669,14 @@ func init() {
 // The properties ID, SyncedEntityID, VendorIdentifier are required.
 type V1CustomerProvisionParamsIntegration struct {
 	// Synced entity id
-	SyncedEntityID param.Opt[string] `json:"syncedEntityId,omitzero,required"`
+	SyncedEntityID param.Opt[string] `json:"syncedEntityId,omitzero" api:"required"`
 	// Integration details
-	ID string `json:"id,required"`
+	ID string `json:"id" api:"required"`
 	// The vendor identifier of integration
 	//
 	// Any of "AUTH0", "ZUORA", "STRIPE", "HUBSPOT", "AWS_MARKETPLACE", "SNOWFLAKE",
 	// "SALESFORCE", "BIG_QUERY", "OPEN_FGA", "APP_STORE".
-	VendorIdentifier string `json:"vendorIdentifier,omitzero,required"`
+	VendorIdentifier string `json:"vendorIdentifier,omitzero" api:"required"`
 	paramObj
 }
 
