@@ -106,9 +106,12 @@ type V1EventPlanNewResponseData struct {
 	// The unique identifier for the entity
 	ID string `json:"id" api:"required"`
 	// The unique identifier for the entity in the billing provider
-	BillingID string `json:"billingId" api:"required"`
+	BillingID          string   `json:"billingId" api:"required"`
+	CompatibleAddonIDs []string `json:"compatibleAddonIds" api:"required"`
 	// Timestamp of when the record was created
 	CreatedAt time.Time `json:"createdAt" api:"required" format:"date-time"`
+	// Default trial configuration for the plan
+	DefaultTrialConfig V1EventPlanNewResponseDataDefaultTrialConfig `json:"defaultTrialConfig" api:"required"`
 	// The description of the package
 	Description string `json:"description" api:"required"`
 	// The display name of the package
@@ -137,28 +140,82 @@ type V1EventPlanNewResponseData struct {
 	VersionNumber int64 `json:"versionNumber" api:"required"`
 	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
 	JSON struct {
-		ID            respjson.Field
-		BillingID     respjson.Field
-		CreatedAt     respjson.Field
-		Description   respjson.Field
-		DisplayName   respjson.Field
-		Entitlements  respjson.Field
-		IsLatest      respjson.Field
-		Metadata      respjson.Field
-		ParentPlanID  respjson.Field
-		PricingType   respjson.Field
-		ProductID     respjson.Field
-		Status        respjson.Field
-		UpdatedAt     respjson.Field
-		VersionNumber respjson.Field
-		ExtraFields   map[string]respjson.Field
-		raw           string
+		ID                 respjson.Field
+		BillingID          respjson.Field
+		CompatibleAddonIDs respjson.Field
+		CreatedAt          respjson.Field
+		DefaultTrialConfig respjson.Field
+		Description        respjson.Field
+		DisplayName        respjson.Field
+		Entitlements       respjson.Field
+		IsLatest           respjson.Field
+		Metadata           respjson.Field
+		ParentPlanID       respjson.Field
+		PricingType        respjson.Field
+		ProductID          respjson.Field
+		Status             respjson.Field
+		UpdatedAt          respjson.Field
+		VersionNumber      respjson.Field
+		ExtraFields        map[string]respjson.Field
+		raw                string
 	} `json:"-"`
 }
 
 // Returns the unmodified JSON received from the API
 func (r V1EventPlanNewResponseData) RawJSON() string { return r.JSON.raw }
 func (r *V1EventPlanNewResponseData) UnmarshalJSON(data []byte) error {
+	return apijson.UnmarshalRoot(data, r)
+}
+
+// Default trial configuration for the plan
+type V1EventPlanNewResponseDataDefaultTrialConfig struct {
+	// The duration of the trial in the specified units
+	Duration float64 `json:"duration" api:"required"`
+	// The time unit for the trial duration (DAY or MONTH)
+	//
+	// Any of "DAY", "MONTH".
+	Units string `json:"units" api:"required"`
+	// Budget configuration for the trial
+	Budget V1EventPlanNewResponseDataDefaultTrialConfigBudget `json:"budget" api:"nullable"`
+	// Behavior when the trial ends (CONVERT_TO_PAID or CANCEL_SUBSCRIPTION)
+	//
+	// Any of "CONVERT_TO_PAID", "CANCEL_SUBSCRIPTION".
+	TrialEndBehavior string `json:"trialEndBehavior" api:"nullable"`
+	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
+	JSON struct {
+		Duration         respjson.Field
+		Units            respjson.Field
+		Budget           respjson.Field
+		TrialEndBehavior respjson.Field
+		ExtraFields      map[string]respjson.Field
+		raw              string
+	} `json:"-"`
+}
+
+// Returns the unmodified JSON received from the API
+func (r V1EventPlanNewResponseDataDefaultTrialConfig) RawJSON() string { return r.JSON.raw }
+func (r *V1EventPlanNewResponseDataDefaultTrialConfig) UnmarshalJSON(data []byte) error {
+	return apijson.UnmarshalRoot(data, r)
+}
+
+// Budget configuration for the trial
+type V1EventPlanNewResponseDataDefaultTrialConfigBudget struct {
+	// Whether the budget limit is a soft limit (allows overage) or hard limit
+	HasSoftLimit bool `json:"hasSoftLimit" api:"required"`
+	// The budget limit amount
+	Limit float64 `json:"limit" api:"required"`
+	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
+	JSON struct {
+		HasSoftLimit respjson.Field
+		Limit        respjson.Field
+		ExtraFields  map[string]respjson.Field
+		raw          string
+	} `json:"-"`
+}
+
+// Returns the unmodified JSON received from the API
+func (r V1EventPlanNewResponseDataDefaultTrialConfigBudget) RawJSON() string { return r.JSON.raw }
+func (r *V1EventPlanNewResponseDataDefaultTrialConfigBudget) UnmarshalJSON(data []byte) error {
 	return apijson.UnmarshalRoot(data, r)
 }
 
@@ -206,9 +263,12 @@ type V1EventPlanGetResponseData struct {
 	// The unique identifier for the entity
 	ID string `json:"id" api:"required"`
 	// The unique identifier for the entity in the billing provider
-	BillingID string `json:"billingId" api:"required"`
+	BillingID          string   `json:"billingId" api:"required"`
+	CompatibleAddonIDs []string `json:"compatibleAddonIds" api:"required"`
 	// Timestamp of when the record was created
 	CreatedAt time.Time `json:"createdAt" api:"required" format:"date-time"`
+	// Default trial configuration for the plan
+	DefaultTrialConfig V1EventPlanGetResponseDataDefaultTrialConfig `json:"defaultTrialConfig" api:"required"`
 	// The description of the package
 	Description string `json:"description" api:"required"`
 	// The display name of the package
@@ -237,28 +297,82 @@ type V1EventPlanGetResponseData struct {
 	VersionNumber int64 `json:"versionNumber" api:"required"`
 	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
 	JSON struct {
-		ID            respjson.Field
-		BillingID     respjson.Field
-		CreatedAt     respjson.Field
-		Description   respjson.Field
-		DisplayName   respjson.Field
-		Entitlements  respjson.Field
-		IsLatest      respjson.Field
-		Metadata      respjson.Field
-		ParentPlanID  respjson.Field
-		PricingType   respjson.Field
-		ProductID     respjson.Field
-		Status        respjson.Field
-		UpdatedAt     respjson.Field
-		VersionNumber respjson.Field
-		ExtraFields   map[string]respjson.Field
-		raw           string
+		ID                 respjson.Field
+		BillingID          respjson.Field
+		CompatibleAddonIDs respjson.Field
+		CreatedAt          respjson.Field
+		DefaultTrialConfig respjson.Field
+		Description        respjson.Field
+		DisplayName        respjson.Field
+		Entitlements       respjson.Field
+		IsLatest           respjson.Field
+		Metadata           respjson.Field
+		ParentPlanID       respjson.Field
+		PricingType        respjson.Field
+		ProductID          respjson.Field
+		Status             respjson.Field
+		UpdatedAt          respjson.Field
+		VersionNumber      respjson.Field
+		ExtraFields        map[string]respjson.Field
+		raw                string
 	} `json:"-"`
 }
 
 // Returns the unmodified JSON received from the API
 func (r V1EventPlanGetResponseData) RawJSON() string { return r.JSON.raw }
 func (r *V1EventPlanGetResponseData) UnmarshalJSON(data []byte) error {
+	return apijson.UnmarshalRoot(data, r)
+}
+
+// Default trial configuration for the plan
+type V1EventPlanGetResponseDataDefaultTrialConfig struct {
+	// The duration of the trial in the specified units
+	Duration float64 `json:"duration" api:"required"`
+	// The time unit for the trial duration (DAY or MONTH)
+	//
+	// Any of "DAY", "MONTH".
+	Units string `json:"units" api:"required"`
+	// Budget configuration for the trial
+	Budget V1EventPlanGetResponseDataDefaultTrialConfigBudget `json:"budget" api:"nullable"`
+	// Behavior when the trial ends (CONVERT_TO_PAID or CANCEL_SUBSCRIPTION)
+	//
+	// Any of "CONVERT_TO_PAID", "CANCEL_SUBSCRIPTION".
+	TrialEndBehavior string `json:"trialEndBehavior" api:"nullable"`
+	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
+	JSON struct {
+		Duration         respjson.Field
+		Units            respjson.Field
+		Budget           respjson.Field
+		TrialEndBehavior respjson.Field
+		ExtraFields      map[string]respjson.Field
+		raw              string
+	} `json:"-"`
+}
+
+// Returns the unmodified JSON received from the API
+func (r V1EventPlanGetResponseDataDefaultTrialConfig) RawJSON() string { return r.JSON.raw }
+func (r *V1EventPlanGetResponseDataDefaultTrialConfig) UnmarshalJSON(data []byte) error {
+	return apijson.UnmarshalRoot(data, r)
+}
+
+// Budget configuration for the trial
+type V1EventPlanGetResponseDataDefaultTrialConfigBudget struct {
+	// Whether the budget limit is a soft limit (allows overage) or hard limit
+	HasSoftLimit bool `json:"hasSoftLimit" api:"required"`
+	// The budget limit amount
+	Limit float64 `json:"limit" api:"required"`
+	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
+	JSON struct {
+		HasSoftLimit respjson.Field
+		Limit        respjson.Field
+		ExtraFields  map[string]respjson.Field
+		raw          string
+	} `json:"-"`
+}
+
+// Returns the unmodified JSON received from the API
+func (r V1EventPlanGetResponseDataDefaultTrialConfigBudget) RawJSON() string { return r.JSON.raw }
+func (r *V1EventPlanGetResponseDataDefaultTrialConfigBudget) UnmarshalJSON(data []byte) error {
 	return apijson.UnmarshalRoot(data, r)
 }
 
@@ -288,9 +402,12 @@ type V1EventPlanListResponse struct {
 	// The unique identifier for the entity
 	ID string `json:"id" api:"required"`
 	// The unique identifier for the entity in the billing provider
-	BillingID string `json:"billingId" api:"required"`
+	BillingID          string   `json:"billingId" api:"required"`
+	CompatibleAddonIDs []string `json:"compatibleAddonIds" api:"required"`
 	// Timestamp of when the record was created
 	CreatedAt time.Time `json:"createdAt" api:"required" format:"date-time"`
+	// Default trial configuration for the plan
+	DefaultTrialConfig V1EventPlanListResponseDefaultTrialConfig `json:"defaultTrialConfig" api:"required"`
 	// The description of the package
 	Description string `json:"description" api:"required"`
 	// The display name of the package
@@ -319,28 +436,82 @@ type V1EventPlanListResponse struct {
 	VersionNumber int64 `json:"versionNumber" api:"required"`
 	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
 	JSON struct {
-		ID            respjson.Field
-		BillingID     respjson.Field
-		CreatedAt     respjson.Field
-		Description   respjson.Field
-		DisplayName   respjson.Field
-		Entitlements  respjson.Field
-		IsLatest      respjson.Field
-		Metadata      respjson.Field
-		ParentPlanID  respjson.Field
-		PricingType   respjson.Field
-		ProductID     respjson.Field
-		Status        respjson.Field
-		UpdatedAt     respjson.Field
-		VersionNumber respjson.Field
-		ExtraFields   map[string]respjson.Field
-		raw           string
+		ID                 respjson.Field
+		BillingID          respjson.Field
+		CompatibleAddonIDs respjson.Field
+		CreatedAt          respjson.Field
+		DefaultTrialConfig respjson.Field
+		Description        respjson.Field
+		DisplayName        respjson.Field
+		Entitlements       respjson.Field
+		IsLatest           respjson.Field
+		Metadata           respjson.Field
+		ParentPlanID       respjson.Field
+		PricingType        respjson.Field
+		ProductID          respjson.Field
+		Status             respjson.Field
+		UpdatedAt          respjson.Field
+		VersionNumber      respjson.Field
+		ExtraFields        map[string]respjson.Field
+		raw                string
 	} `json:"-"`
 }
 
 // Returns the unmodified JSON received from the API
 func (r V1EventPlanListResponse) RawJSON() string { return r.JSON.raw }
 func (r *V1EventPlanListResponse) UnmarshalJSON(data []byte) error {
+	return apijson.UnmarshalRoot(data, r)
+}
+
+// Default trial configuration for the plan
+type V1EventPlanListResponseDefaultTrialConfig struct {
+	// The duration of the trial in the specified units
+	Duration float64 `json:"duration" api:"required"`
+	// The time unit for the trial duration (DAY or MONTH)
+	//
+	// Any of "DAY", "MONTH".
+	Units string `json:"units" api:"required"`
+	// Budget configuration for the trial
+	Budget V1EventPlanListResponseDefaultTrialConfigBudget `json:"budget" api:"nullable"`
+	// Behavior when the trial ends (CONVERT_TO_PAID or CANCEL_SUBSCRIPTION)
+	//
+	// Any of "CONVERT_TO_PAID", "CANCEL_SUBSCRIPTION".
+	TrialEndBehavior string `json:"trialEndBehavior" api:"nullable"`
+	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
+	JSON struct {
+		Duration         respjson.Field
+		Units            respjson.Field
+		Budget           respjson.Field
+		TrialEndBehavior respjson.Field
+		ExtraFields      map[string]respjson.Field
+		raw              string
+	} `json:"-"`
+}
+
+// Returns the unmodified JSON received from the API
+func (r V1EventPlanListResponseDefaultTrialConfig) RawJSON() string { return r.JSON.raw }
+func (r *V1EventPlanListResponseDefaultTrialConfig) UnmarshalJSON(data []byte) error {
+	return apijson.UnmarshalRoot(data, r)
+}
+
+// Budget configuration for the trial
+type V1EventPlanListResponseDefaultTrialConfigBudget struct {
+	// Whether the budget limit is a soft limit (allows overage) or hard limit
+	HasSoftLimit bool `json:"hasSoftLimit" api:"required"`
+	// The budget limit amount
+	Limit float64 `json:"limit" api:"required"`
+	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
+	JSON struct {
+		HasSoftLimit respjson.Field
+		Limit        respjson.Field
+		ExtraFields  map[string]respjson.Field
+		raw          string
+	} `json:"-"`
+}
+
+// Returns the unmodified JSON received from the API
+func (r V1EventPlanListResponseDefaultTrialConfigBudget) RawJSON() string { return r.JSON.raw }
+func (r *V1EventPlanListResponseDefaultTrialConfigBudget) UnmarshalJSON(data []byte) error {
 	return apijson.UnmarshalRoot(data, r)
 }
 
@@ -396,6 +567,8 @@ type V1EventPlanNewParams struct {
 	Description param.Opt[string] `json:"description,omitzero"`
 	// The ID of the parent plan, if applicable
 	ParentPlanID param.Opt[string] `json:"parentPlanId,omitzero"`
+	// Default trial configuration for the plan
+	DefaultTrialConfig V1EventPlanNewParamsDefaultTrialConfig `json:"defaultTrialConfig,omitzero"`
 	// The pricing type of the package
 	//
 	// Any of "FREE", "PAID", "CUSTOM".
@@ -414,6 +587,61 @@ func (r V1EventPlanNewParams) MarshalJSON() (data []byte, err error) {
 	return param.MarshalObject(r, (*shadow)(&r))
 }
 func (r *V1EventPlanNewParams) UnmarshalJSON(data []byte) error {
+	return apijson.UnmarshalRoot(data, r)
+}
+
+// Default trial configuration for the plan
+//
+// The properties Duration, Units are required.
+type V1EventPlanNewParamsDefaultTrialConfig struct {
+	// The duration of the trial in the specified units
+	Duration float64 `json:"duration" api:"required"`
+	// The time unit for the trial duration (DAY or MONTH)
+	//
+	// Any of "DAY", "MONTH".
+	Units string `json:"units,omitzero" api:"required"`
+	// Budget configuration for the trial
+	Budget V1EventPlanNewParamsDefaultTrialConfigBudget `json:"budget,omitzero"`
+	// Behavior when the trial ends (CONVERT_TO_PAID or CANCEL_SUBSCRIPTION)
+	//
+	// Any of "CONVERT_TO_PAID", "CANCEL_SUBSCRIPTION".
+	TrialEndBehavior string `json:"trialEndBehavior,omitzero"`
+	paramObj
+}
+
+func (r V1EventPlanNewParamsDefaultTrialConfig) MarshalJSON() (data []byte, err error) {
+	type shadow V1EventPlanNewParamsDefaultTrialConfig
+	return param.MarshalObject(r, (*shadow)(&r))
+}
+func (r *V1EventPlanNewParamsDefaultTrialConfig) UnmarshalJSON(data []byte) error {
+	return apijson.UnmarshalRoot(data, r)
+}
+
+func init() {
+	apijson.RegisterFieldValidator[V1EventPlanNewParamsDefaultTrialConfig](
+		"units", "DAY", "MONTH",
+	)
+	apijson.RegisterFieldValidator[V1EventPlanNewParamsDefaultTrialConfig](
+		"trialEndBehavior", "CONVERT_TO_PAID", "CANCEL_SUBSCRIPTION",
+	)
+}
+
+// Budget configuration for the trial
+//
+// The properties HasSoftLimit, Limit are required.
+type V1EventPlanNewParamsDefaultTrialConfigBudget struct {
+	// Whether the budget limit is a soft limit (allows overage) or hard limit
+	HasSoftLimit bool `json:"hasSoftLimit" api:"required"`
+	// The budget limit amount
+	Limit float64 `json:"limit" api:"required"`
+	paramObj
+}
+
+func (r V1EventPlanNewParamsDefaultTrialConfigBudget) MarshalJSON() (data []byte, err error) {
+	type shadow V1EventPlanNewParamsDefaultTrialConfigBudget
+	return param.MarshalObject(r, (*shadow)(&r))
+}
+func (r *V1EventPlanNewParamsDefaultTrialConfigBudget) UnmarshalJSON(data []byte) error {
 	return apijson.UnmarshalRoot(data, r)
 }
 
