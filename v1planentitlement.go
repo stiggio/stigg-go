@@ -18,27 +18,27 @@ import (
 	"github.com/stiggio/stigg-go/packages/respjson"
 )
 
-// V1EventPlanEntitlementService contains methods and other services that help with
+// V1PlanEntitlementService contains methods and other services that help with
 // interacting with the stigg API.
 //
 // Note, unlike clients, this service does not read variables from the environment
 // automatically. You should not instantiate this service directly, and instead use
-// the [NewV1EventPlanEntitlementService] method instead.
-type V1EventPlanEntitlementService struct {
+// the [NewV1PlanEntitlementService] method instead.
+type V1PlanEntitlementService struct {
 	Options []option.RequestOption
 }
 
-// NewV1EventPlanEntitlementService generates a new service that applies the given
+// NewV1PlanEntitlementService generates a new service that applies the given
 // options to each request. These options are applied after the parent client's
 // options (if there is one), and before any request-specific options.
-func NewV1EventPlanEntitlementService(opts ...option.RequestOption) (r V1EventPlanEntitlementService) {
-	r = V1EventPlanEntitlementService{}
+func NewV1PlanEntitlementService(opts ...option.RequestOption) (r V1PlanEntitlementService) {
+	r = V1PlanEntitlementService{}
 	r.Options = opts
 	return
 }
 
 // Creates one or more entitlements (feature or credit) on a draft plan.
-func (r *V1EventPlanEntitlementService) New(ctx context.Context, planID string, body V1EventPlanEntitlementNewParams, opts ...option.RequestOption) (res *V1EventPlanEntitlementNewResponse, err error) {
+func (r *V1PlanEntitlementService) New(ctx context.Context, planID string, body V1PlanEntitlementNewParams, opts ...option.RequestOption) (res *V1PlanEntitlementNewResponse, err error) {
 	opts = slices.Concat(r.Options, opts)
 	if planID == "" {
 		err = errors.New("missing required planId parameter")
@@ -50,7 +50,7 @@ func (r *V1EventPlanEntitlementService) New(ctx context.Context, planID string, 
 }
 
 // Updates an existing entitlement on a draft plan.
-func (r *V1EventPlanEntitlementService) Update(ctx context.Context, id string, params V1EventPlanEntitlementUpdateParams, opts ...option.RequestOption) (res *PlanEntitlement, err error) {
+func (r *V1PlanEntitlementService) Update(ctx context.Context, id string, params V1PlanEntitlementUpdateParams, opts ...option.RequestOption) (res *PlanEntitlement, err error) {
 	opts = slices.Concat(r.Options, opts)
 	if params.PlanID == "" {
 		err = errors.New("missing required planId parameter")
@@ -66,7 +66,7 @@ func (r *V1EventPlanEntitlementService) Update(ctx context.Context, id string, p
 }
 
 // Retrieves a list of entitlements for a plan.
-func (r *V1EventPlanEntitlementService) List(ctx context.Context, planID string, opts ...option.RequestOption) (res *V1EventPlanEntitlementListResponse, err error) {
+func (r *V1PlanEntitlementService) List(ctx context.Context, planID string, opts ...option.RequestOption) (res *V1PlanEntitlementListResponse, err error) {
 	opts = slices.Concat(r.Options, opts)
 	if planID == "" {
 		err = errors.New("missing required planId parameter")
@@ -78,7 +78,7 @@ func (r *V1EventPlanEntitlementService) List(ctx context.Context, planID string,
 }
 
 // Deletes an entitlement from a draft plan.
-func (r *V1EventPlanEntitlementService) Delete(ctx context.Context, id string, body V1EventPlanEntitlementDeleteParams, opts ...option.RequestOption) (res *PlanEntitlement, err error) {
+func (r *V1PlanEntitlementService) Delete(ctx context.Context, id string, body V1PlanEntitlementDeleteParams, opts ...option.RequestOption) (res *PlanEntitlement, err error) {
 	opts = slices.Concat(r.Options, opts)
 	if body.PlanID == "" {
 		err = errors.New("missing required planId parameter")
@@ -304,8 +304,8 @@ func (r *PlanEntitlementDataResetPeriodConfigurationWeeklyResetPeriodConfig) Unm
 }
 
 // Response object
-type V1EventPlanEntitlementNewResponse struct {
-	Data []V1EventPlanEntitlementNewResponseData `json:"data" api:"required"`
+type V1PlanEntitlementNewResponse struct {
+	Data []V1PlanEntitlementNewResponseData `json:"data" api:"required"`
 	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
 	JSON struct {
 		Data        respjson.Field
@@ -315,13 +315,13 @@ type V1EventPlanEntitlementNewResponse struct {
 }
 
 // Returns the unmodified JSON received from the API
-func (r V1EventPlanEntitlementNewResponse) RawJSON() string { return r.JSON.raw }
-func (r *V1EventPlanEntitlementNewResponse) UnmarshalJSON(data []byte) error {
+func (r V1PlanEntitlementNewResponse) RawJSON() string { return r.JSON.raw }
+func (r *V1PlanEntitlementNewResponse) UnmarshalJSON(data []byte) error {
 	return apijson.UnmarshalRoot(data, r)
 }
 
 // Feature or credit entitlement on a plan
-type V1EventPlanEntitlementNewResponseData struct {
+type V1PlanEntitlementNewResponseData struct {
 	// Unique identifier of the entitlement
 	ID string `json:"id" api:"required"`
 	// Credit amount (for credit entitlements)
@@ -365,7 +365,7 @@ type V1EventPlanEntitlementNewResponseData struct {
 	// Any of "YEAR", "MONTH", "WEEK", "DAY", "HOUR".
 	ResetPeriod string `json:"resetPeriod" api:"required"`
 	// Reset period configuration (for feature entitlements)
-	ResetPeriodConfiguration V1EventPlanEntitlementNewResponseDataResetPeriodConfigurationUnion `json:"resetPeriodConfiguration" api:"required"`
+	ResetPeriodConfiguration V1PlanEntitlementNewResponseDataResetPeriodConfigurationUnion `json:"resetPeriodConfiguration" api:"required"`
 	// Entitlement type (FEATURE or CREDIT)
 	//
 	// Any of "FEATURE", "CREDIT".
@@ -403,19 +403,19 @@ type V1EventPlanEntitlementNewResponseData struct {
 }
 
 // Returns the unmodified JSON received from the API
-func (r V1EventPlanEntitlementNewResponseData) RawJSON() string { return r.JSON.raw }
-func (r *V1EventPlanEntitlementNewResponseData) UnmarshalJSON(data []byte) error {
+func (r V1PlanEntitlementNewResponseData) RawJSON() string { return r.JSON.raw }
+func (r *V1PlanEntitlementNewResponseData) UnmarshalJSON(data []byte) error {
 	return apijson.UnmarshalRoot(data, r)
 }
 
-// V1EventPlanEntitlementNewResponseDataResetPeriodConfigurationUnion contains all
+// V1PlanEntitlementNewResponseDataResetPeriodConfigurationUnion contains all
 // possible properties and values from
-// [V1EventPlanEntitlementNewResponseDataResetPeriodConfigurationYearlyResetPeriodConfig],
-// [V1EventPlanEntitlementNewResponseDataResetPeriodConfigurationMonthlyResetPeriodConfig],
-// [V1EventPlanEntitlementNewResponseDataResetPeriodConfigurationWeeklyResetPeriodConfig].
+// [V1PlanEntitlementNewResponseDataResetPeriodConfigurationYearlyResetPeriodConfig],
+// [V1PlanEntitlementNewResponseDataResetPeriodConfigurationMonthlyResetPeriodConfig],
+// [V1PlanEntitlementNewResponseDataResetPeriodConfigurationWeeklyResetPeriodConfig].
 //
 // Use the methods beginning with 'As' to cast the union to one of its variants.
-type V1EventPlanEntitlementNewResponseDataResetPeriodConfigurationUnion struct {
+type V1PlanEntitlementNewResponseDataResetPeriodConfigurationUnion struct {
 	AccordingTo string `json:"accordingTo"`
 	JSON        struct {
 		AccordingTo respjson.Field
@@ -423,32 +423,32 @@ type V1EventPlanEntitlementNewResponseDataResetPeriodConfigurationUnion struct {
 	} `json:"-"`
 }
 
-func (u V1EventPlanEntitlementNewResponseDataResetPeriodConfigurationUnion) AsYearlyResetPeriodConfig() (v V1EventPlanEntitlementNewResponseDataResetPeriodConfigurationYearlyResetPeriodConfig) {
+func (u V1PlanEntitlementNewResponseDataResetPeriodConfigurationUnion) AsYearlyResetPeriodConfig() (v V1PlanEntitlementNewResponseDataResetPeriodConfigurationYearlyResetPeriodConfig) {
 	apijson.UnmarshalRoot(json.RawMessage(u.JSON.raw), &v)
 	return
 }
 
-func (u V1EventPlanEntitlementNewResponseDataResetPeriodConfigurationUnion) AsMonthlyResetPeriodConfig() (v V1EventPlanEntitlementNewResponseDataResetPeriodConfigurationMonthlyResetPeriodConfig) {
+func (u V1PlanEntitlementNewResponseDataResetPeriodConfigurationUnion) AsMonthlyResetPeriodConfig() (v V1PlanEntitlementNewResponseDataResetPeriodConfigurationMonthlyResetPeriodConfig) {
 	apijson.UnmarshalRoot(json.RawMessage(u.JSON.raw), &v)
 	return
 }
 
-func (u V1EventPlanEntitlementNewResponseDataResetPeriodConfigurationUnion) AsWeeklyResetPeriodConfig() (v V1EventPlanEntitlementNewResponseDataResetPeriodConfigurationWeeklyResetPeriodConfig) {
+func (u V1PlanEntitlementNewResponseDataResetPeriodConfigurationUnion) AsWeeklyResetPeriodConfig() (v V1PlanEntitlementNewResponseDataResetPeriodConfigurationWeeklyResetPeriodConfig) {
 	apijson.UnmarshalRoot(json.RawMessage(u.JSON.raw), &v)
 	return
 }
 
 // Returns the unmodified JSON received from the API
-func (u V1EventPlanEntitlementNewResponseDataResetPeriodConfigurationUnion) RawJSON() string {
+func (u V1PlanEntitlementNewResponseDataResetPeriodConfigurationUnion) RawJSON() string {
 	return u.JSON.raw
 }
 
-func (r *V1EventPlanEntitlementNewResponseDataResetPeriodConfigurationUnion) UnmarshalJSON(data []byte) error {
+func (r *V1PlanEntitlementNewResponseDataResetPeriodConfigurationUnion) UnmarshalJSON(data []byte) error {
 	return apijson.UnmarshalRoot(data, r)
 }
 
 // Yearly reset configuration
-type V1EventPlanEntitlementNewResponseDataResetPeriodConfigurationYearlyResetPeriodConfig struct {
+type V1PlanEntitlementNewResponseDataResetPeriodConfigurationYearlyResetPeriodConfig struct {
 	// Reset anchor (SubscriptionStart)
 	//
 	// Any of "SubscriptionStart".
@@ -462,15 +462,15 @@ type V1EventPlanEntitlementNewResponseDataResetPeriodConfigurationYearlyResetPer
 }
 
 // Returns the unmodified JSON received from the API
-func (r V1EventPlanEntitlementNewResponseDataResetPeriodConfigurationYearlyResetPeriodConfig) RawJSON() string {
+func (r V1PlanEntitlementNewResponseDataResetPeriodConfigurationYearlyResetPeriodConfig) RawJSON() string {
 	return r.JSON.raw
 }
-func (r *V1EventPlanEntitlementNewResponseDataResetPeriodConfigurationYearlyResetPeriodConfig) UnmarshalJSON(data []byte) error {
+func (r *V1PlanEntitlementNewResponseDataResetPeriodConfigurationYearlyResetPeriodConfig) UnmarshalJSON(data []byte) error {
 	return apijson.UnmarshalRoot(data, r)
 }
 
 // Monthly reset configuration
-type V1EventPlanEntitlementNewResponseDataResetPeriodConfigurationMonthlyResetPeriodConfig struct {
+type V1PlanEntitlementNewResponseDataResetPeriodConfigurationMonthlyResetPeriodConfig struct {
 	// Reset anchor (SubscriptionStart or StartOfTheMonth)
 	//
 	// Any of "SubscriptionStart", "StartOfTheMonth".
@@ -484,15 +484,15 @@ type V1EventPlanEntitlementNewResponseDataResetPeriodConfigurationMonthlyResetPe
 }
 
 // Returns the unmodified JSON received from the API
-func (r V1EventPlanEntitlementNewResponseDataResetPeriodConfigurationMonthlyResetPeriodConfig) RawJSON() string {
+func (r V1PlanEntitlementNewResponseDataResetPeriodConfigurationMonthlyResetPeriodConfig) RawJSON() string {
 	return r.JSON.raw
 }
-func (r *V1EventPlanEntitlementNewResponseDataResetPeriodConfigurationMonthlyResetPeriodConfig) UnmarshalJSON(data []byte) error {
+func (r *V1PlanEntitlementNewResponseDataResetPeriodConfigurationMonthlyResetPeriodConfig) UnmarshalJSON(data []byte) error {
 	return apijson.UnmarshalRoot(data, r)
 }
 
 // Weekly reset configuration
-type V1EventPlanEntitlementNewResponseDataResetPeriodConfigurationWeeklyResetPeriodConfig struct {
+type V1PlanEntitlementNewResponseDataResetPeriodConfigurationWeeklyResetPeriodConfig struct {
 	// Reset anchor (SubscriptionStart or specific day)
 	//
 	// Any of "SubscriptionStart", "EverySunday", "EveryMonday", "EveryTuesday",
@@ -507,18 +507,18 @@ type V1EventPlanEntitlementNewResponseDataResetPeriodConfigurationWeeklyResetPer
 }
 
 // Returns the unmodified JSON received from the API
-func (r V1EventPlanEntitlementNewResponseDataResetPeriodConfigurationWeeklyResetPeriodConfig) RawJSON() string {
+func (r V1PlanEntitlementNewResponseDataResetPeriodConfigurationWeeklyResetPeriodConfig) RawJSON() string {
 	return r.JSON.raw
 }
-func (r *V1EventPlanEntitlementNewResponseDataResetPeriodConfigurationWeeklyResetPeriodConfig) UnmarshalJSON(data []byte) error {
+func (r *V1PlanEntitlementNewResponseDataResetPeriodConfigurationWeeklyResetPeriodConfig) UnmarshalJSON(data []byte) error {
 	return apijson.UnmarshalRoot(data, r)
 }
 
 // Response list object
-type V1EventPlanEntitlementListResponse struct {
-	Data []V1EventPlanEntitlementListResponseData `json:"data" api:"required"`
+type V1PlanEntitlementListResponse struct {
+	Data []V1PlanEntitlementListResponseData `json:"data" api:"required"`
 	// Pagination metadata including cursors for navigating through results
-	Pagination V1EventPlanEntitlementListResponsePagination `json:"pagination" api:"required"`
+	Pagination V1PlanEntitlementListResponsePagination `json:"pagination" api:"required"`
 	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
 	JSON struct {
 		Data        respjson.Field
@@ -529,13 +529,13 @@ type V1EventPlanEntitlementListResponse struct {
 }
 
 // Returns the unmodified JSON received from the API
-func (r V1EventPlanEntitlementListResponse) RawJSON() string { return r.JSON.raw }
-func (r *V1EventPlanEntitlementListResponse) UnmarshalJSON(data []byte) error {
+func (r V1PlanEntitlementListResponse) RawJSON() string { return r.JSON.raw }
+func (r *V1PlanEntitlementListResponse) UnmarshalJSON(data []byte) error {
 	return apijson.UnmarshalRoot(data, r)
 }
 
 // Feature or credit entitlement on a plan
-type V1EventPlanEntitlementListResponseData struct {
+type V1PlanEntitlementListResponseData struct {
 	// Unique identifier of the entitlement
 	ID string `json:"id" api:"required"`
 	// Credit amount (for credit entitlements)
@@ -579,7 +579,7 @@ type V1EventPlanEntitlementListResponseData struct {
 	// Any of "YEAR", "MONTH", "WEEK", "DAY", "HOUR".
 	ResetPeriod string `json:"resetPeriod" api:"required"`
 	// Reset period configuration (for feature entitlements)
-	ResetPeriodConfiguration V1EventPlanEntitlementListResponseDataResetPeriodConfigurationUnion `json:"resetPeriodConfiguration" api:"required"`
+	ResetPeriodConfiguration V1PlanEntitlementListResponseDataResetPeriodConfigurationUnion `json:"resetPeriodConfiguration" api:"required"`
 	// Entitlement type (FEATURE or CREDIT)
 	//
 	// Any of "FEATURE", "CREDIT".
@@ -617,19 +617,19 @@ type V1EventPlanEntitlementListResponseData struct {
 }
 
 // Returns the unmodified JSON received from the API
-func (r V1EventPlanEntitlementListResponseData) RawJSON() string { return r.JSON.raw }
-func (r *V1EventPlanEntitlementListResponseData) UnmarshalJSON(data []byte) error {
+func (r V1PlanEntitlementListResponseData) RawJSON() string { return r.JSON.raw }
+func (r *V1PlanEntitlementListResponseData) UnmarshalJSON(data []byte) error {
 	return apijson.UnmarshalRoot(data, r)
 }
 
-// V1EventPlanEntitlementListResponseDataResetPeriodConfigurationUnion contains all
+// V1PlanEntitlementListResponseDataResetPeriodConfigurationUnion contains all
 // possible properties and values from
-// [V1EventPlanEntitlementListResponseDataResetPeriodConfigurationYearlyResetPeriodConfig],
-// [V1EventPlanEntitlementListResponseDataResetPeriodConfigurationMonthlyResetPeriodConfig],
-// [V1EventPlanEntitlementListResponseDataResetPeriodConfigurationWeeklyResetPeriodConfig].
+// [V1PlanEntitlementListResponseDataResetPeriodConfigurationYearlyResetPeriodConfig],
+// [V1PlanEntitlementListResponseDataResetPeriodConfigurationMonthlyResetPeriodConfig],
+// [V1PlanEntitlementListResponseDataResetPeriodConfigurationWeeklyResetPeriodConfig].
 //
 // Use the methods beginning with 'As' to cast the union to one of its variants.
-type V1EventPlanEntitlementListResponseDataResetPeriodConfigurationUnion struct {
+type V1PlanEntitlementListResponseDataResetPeriodConfigurationUnion struct {
 	AccordingTo string `json:"accordingTo"`
 	JSON        struct {
 		AccordingTo respjson.Field
@@ -637,32 +637,32 @@ type V1EventPlanEntitlementListResponseDataResetPeriodConfigurationUnion struct 
 	} `json:"-"`
 }
 
-func (u V1EventPlanEntitlementListResponseDataResetPeriodConfigurationUnion) AsYearlyResetPeriodConfig() (v V1EventPlanEntitlementListResponseDataResetPeriodConfigurationYearlyResetPeriodConfig) {
+func (u V1PlanEntitlementListResponseDataResetPeriodConfigurationUnion) AsYearlyResetPeriodConfig() (v V1PlanEntitlementListResponseDataResetPeriodConfigurationYearlyResetPeriodConfig) {
 	apijson.UnmarshalRoot(json.RawMessage(u.JSON.raw), &v)
 	return
 }
 
-func (u V1EventPlanEntitlementListResponseDataResetPeriodConfigurationUnion) AsMonthlyResetPeriodConfig() (v V1EventPlanEntitlementListResponseDataResetPeriodConfigurationMonthlyResetPeriodConfig) {
+func (u V1PlanEntitlementListResponseDataResetPeriodConfigurationUnion) AsMonthlyResetPeriodConfig() (v V1PlanEntitlementListResponseDataResetPeriodConfigurationMonthlyResetPeriodConfig) {
 	apijson.UnmarshalRoot(json.RawMessage(u.JSON.raw), &v)
 	return
 }
 
-func (u V1EventPlanEntitlementListResponseDataResetPeriodConfigurationUnion) AsWeeklyResetPeriodConfig() (v V1EventPlanEntitlementListResponseDataResetPeriodConfigurationWeeklyResetPeriodConfig) {
+func (u V1PlanEntitlementListResponseDataResetPeriodConfigurationUnion) AsWeeklyResetPeriodConfig() (v V1PlanEntitlementListResponseDataResetPeriodConfigurationWeeklyResetPeriodConfig) {
 	apijson.UnmarshalRoot(json.RawMessage(u.JSON.raw), &v)
 	return
 }
 
 // Returns the unmodified JSON received from the API
-func (u V1EventPlanEntitlementListResponseDataResetPeriodConfigurationUnion) RawJSON() string {
+func (u V1PlanEntitlementListResponseDataResetPeriodConfigurationUnion) RawJSON() string {
 	return u.JSON.raw
 }
 
-func (r *V1EventPlanEntitlementListResponseDataResetPeriodConfigurationUnion) UnmarshalJSON(data []byte) error {
+func (r *V1PlanEntitlementListResponseDataResetPeriodConfigurationUnion) UnmarshalJSON(data []byte) error {
 	return apijson.UnmarshalRoot(data, r)
 }
 
 // Yearly reset configuration
-type V1EventPlanEntitlementListResponseDataResetPeriodConfigurationYearlyResetPeriodConfig struct {
+type V1PlanEntitlementListResponseDataResetPeriodConfigurationYearlyResetPeriodConfig struct {
 	// Reset anchor (SubscriptionStart)
 	//
 	// Any of "SubscriptionStart".
@@ -676,15 +676,15 @@ type V1EventPlanEntitlementListResponseDataResetPeriodConfigurationYearlyResetPe
 }
 
 // Returns the unmodified JSON received from the API
-func (r V1EventPlanEntitlementListResponseDataResetPeriodConfigurationYearlyResetPeriodConfig) RawJSON() string {
+func (r V1PlanEntitlementListResponseDataResetPeriodConfigurationYearlyResetPeriodConfig) RawJSON() string {
 	return r.JSON.raw
 }
-func (r *V1EventPlanEntitlementListResponseDataResetPeriodConfigurationYearlyResetPeriodConfig) UnmarshalJSON(data []byte) error {
+func (r *V1PlanEntitlementListResponseDataResetPeriodConfigurationYearlyResetPeriodConfig) UnmarshalJSON(data []byte) error {
 	return apijson.UnmarshalRoot(data, r)
 }
 
 // Monthly reset configuration
-type V1EventPlanEntitlementListResponseDataResetPeriodConfigurationMonthlyResetPeriodConfig struct {
+type V1PlanEntitlementListResponseDataResetPeriodConfigurationMonthlyResetPeriodConfig struct {
 	// Reset anchor (SubscriptionStart or StartOfTheMonth)
 	//
 	// Any of "SubscriptionStart", "StartOfTheMonth".
@@ -698,15 +698,15 @@ type V1EventPlanEntitlementListResponseDataResetPeriodConfigurationMonthlyResetP
 }
 
 // Returns the unmodified JSON received from the API
-func (r V1EventPlanEntitlementListResponseDataResetPeriodConfigurationMonthlyResetPeriodConfig) RawJSON() string {
+func (r V1PlanEntitlementListResponseDataResetPeriodConfigurationMonthlyResetPeriodConfig) RawJSON() string {
 	return r.JSON.raw
 }
-func (r *V1EventPlanEntitlementListResponseDataResetPeriodConfigurationMonthlyResetPeriodConfig) UnmarshalJSON(data []byte) error {
+func (r *V1PlanEntitlementListResponseDataResetPeriodConfigurationMonthlyResetPeriodConfig) UnmarshalJSON(data []byte) error {
 	return apijson.UnmarshalRoot(data, r)
 }
 
 // Weekly reset configuration
-type V1EventPlanEntitlementListResponseDataResetPeriodConfigurationWeeklyResetPeriodConfig struct {
+type V1PlanEntitlementListResponseDataResetPeriodConfigurationWeeklyResetPeriodConfig struct {
 	// Reset anchor (SubscriptionStart or specific day)
 	//
 	// Any of "SubscriptionStart", "EverySunday", "EveryMonday", "EveryTuesday",
@@ -721,15 +721,15 @@ type V1EventPlanEntitlementListResponseDataResetPeriodConfigurationWeeklyResetPe
 }
 
 // Returns the unmodified JSON received from the API
-func (r V1EventPlanEntitlementListResponseDataResetPeriodConfigurationWeeklyResetPeriodConfig) RawJSON() string {
+func (r V1PlanEntitlementListResponseDataResetPeriodConfigurationWeeklyResetPeriodConfig) RawJSON() string {
 	return r.JSON.raw
 }
-func (r *V1EventPlanEntitlementListResponseDataResetPeriodConfigurationWeeklyResetPeriodConfig) UnmarshalJSON(data []byte) error {
+func (r *V1PlanEntitlementListResponseDataResetPeriodConfigurationWeeklyResetPeriodConfig) UnmarshalJSON(data []byte) error {
 	return apijson.UnmarshalRoot(data, r)
 }
 
 // Pagination metadata including cursors for navigating through results
-type V1EventPlanEntitlementListResponsePagination struct {
+type V1PlanEntitlementListResponsePagination struct {
 	// Cursor for fetching the next page of results, or null if no additional pages
 	// exist
 	Next string `json:"next" api:"required" format:"uuid"`
@@ -745,46 +745,46 @@ type V1EventPlanEntitlementListResponsePagination struct {
 }
 
 // Returns the unmodified JSON received from the API
-func (r V1EventPlanEntitlementListResponsePagination) RawJSON() string { return r.JSON.raw }
-func (r *V1EventPlanEntitlementListResponsePagination) UnmarshalJSON(data []byte) error {
+func (r V1PlanEntitlementListResponsePagination) RawJSON() string { return r.JSON.raw }
+func (r *V1PlanEntitlementListResponsePagination) UnmarshalJSON(data []byte) error {
 	return apijson.UnmarshalRoot(data, r)
 }
 
-type V1EventPlanEntitlementNewParams struct {
+type V1PlanEntitlementNewParams struct {
 	// Entitlements to create
-	Entitlements []V1EventPlanEntitlementNewParamsEntitlement `json:"entitlements,omitzero" api:"required"`
+	Entitlements []V1PlanEntitlementNewParamsEntitlement `json:"entitlements,omitzero" api:"required"`
 	paramObj
 }
 
-func (r V1EventPlanEntitlementNewParams) MarshalJSON() (data []byte, err error) {
-	type shadow V1EventPlanEntitlementNewParams
+func (r V1PlanEntitlementNewParams) MarshalJSON() (data []byte, err error) {
+	type shadow V1PlanEntitlementNewParams
 	return param.MarshalObject(r, (*shadow)(&r))
 }
-func (r *V1EventPlanEntitlementNewParams) UnmarshalJSON(data []byte) error {
+func (r *V1PlanEntitlementNewParams) UnmarshalJSON(data []byte) error {
 	return apijson.UnmarshalRoot(data, r)
 }
 
 // A single entitlement to create. Provide exactly one of feature or credit.
-type V1EventPlanEntitlementNewParamsEntitlement struct {
+type V1PlanEntitlementNewParamsEntitlement struct {
 	// Credit entitlement to create
-	Credit V1EventPlanEntitlementNewParamsEntitlementCredit `json:"credit,omitzero"`
+	Credit V1PlanEntitlementNewParamsEntitlementCredit `json:"credit,omitzero"`
 	// Feature entitlement to create
-	Feature V1EventPlanEntitlementNewParamsEntitlementFeature `json:"feature,omitzero"`
+	Feature V1PlanEntitlementNewParamsEntitlementFeature `json:"feature,omitzero"`
 	paramObj
 }
 
-func (r V1EventPlanEntitlementNewParamsEntitlement) MarshalJSON() (data []byte, err error) {
-	type shadow V1EventPlanEntitlementNewParamsEntitlement
+func (r V1PlanEntitlementNewParamsEntitlement) MarshalJSON() (data []byte, err error) {
+	type shadow V1PlanEntitlementNewParamsEntitlement
 	return param.MarshalObject(r, (*shadow)(&r))
 }
-func (r *V1EventPlanEntitlementNewParamsEntitlement) UnmarshalJSON(data []byte) error {
+func (r *V1PlanEntitlementNewParamsEntitlement) UnmarshalJSON(data []byte) error {
 	return apijson.UnmarshalRoot(data, r)
 }
 
 // Credit entitlement to create
 //
 // The properties Amount, Cadence, CustomCurrencyID are required.
-type V1EventPlanEntitlementNewParamsEntitlementCredit struct {
+type V1PlanEntitlementNewParamsEntitlementCredit struct {
 	// Credit grant amount
 	Amount param.Opt[float64] `json:"amount,omitzero" api:"required"`
 	// Credit grant cadence (MONTH or YEAR)
@@ -814,19 +814,19 @@ type V1EventPlanEntitlementNewParamsEntitlementCredit struct {
 	paramObj
 }
 
-func (r V1EventPlanEntitlementNewParamsEntitlementCredit) MarshalJSON() (data []byte, err error) {
-	type shadow V1EventPlanEntitlementNewParamsEntitlementCredit
+func (r V1PlanEntitlementNewParamsEntitlementCredit) MarshalJSON() (data []byte, err error) {
+	type shadow V1PlanEntitlementNewParamsEntitlementCredit
 	return param.MarshalObject(r, (*shadow)(&r))
 }
-func (r *V1EventPlanEntitlementNewParamsEntitlementCredit) UnmarshalJSON(data []byte) error {
+func (r *V1PlanEntitlementNewParamsEntitlementCredit) UnmarshalJSON(data []byte) error {
 	return apijson.UnmarshalRoot(data, r)
 }
 
 func init() {
-	apijson.RegisterFieldValidator[V1EventPlanEntitlementNewParamsEntitlementCredit](
+	apijson.RegisterFieldValidator[V1PlanEntitlementNewParamsEntitlementCredit](
 		"cadence", "MONTH", "YEAR",
 	)
-	apijson.RegisterFieldValidator[V1EventPlanEntitlementNewParamsEntitlementCredit](
+	apijson.RegisterFieldValidator[V1PlanEntitlementNewParamsEntitlementCredit](
 		"behavior", "Increment", "Override",
 	)
 }
@@ -834,7 +834,7 @@ func init() {
 // Feature entitlement to create
 //
 // The property FeatureID is required.
-type V1EventPlanEntitlementNewParamsEntitlementFeature struct {
+type V1PlanEntitlementNewParamsEntitlementFeature struct {
 	// The feature ID to attach the entitlement to
 	FeatureID string `json:"featureId" api:"required"`
 	// Maximum allowed usage for the feature
@@ -854,11 +854,11 @@ type V1EventPlanEntitlementNewParamsEntitlementFeature struct {
 	// Display order of the entitlement
 	Order param.Opt[float64] `json:"order,omitzero"`
 	// Configuration for monthly reset period
-	MonthlyResetPeriodConfiguration V1EventPlanEntitlementNewParamsEntitlementFeatureMonthlyResetPeriodConfiguration `json:"monthlyResetPeriodConfiguration,omitzero"`
+	MonthlyResetPeriodConfiguration V1PlanEntitlementNewParamsEntitlementFeatureMonthlyResetPeriodConfiguration `json:"monthlyResetPeriodConfiguration,omitzero"`
 	// Configuration for weekly reset period
-	WeeklyResetPeriodConfiguration V1EventPlanEntitlementNewParamsEntitlementFeatureWeeklyResetPeriodConfiguration `json:"weeklyResetPeriodConfiguration,omitzero"`
+	WeeklyResetPeriodConfiguration V1PlanEntitlementNewParamsEntitlementFeatureWeeklyResetPeriodConfiguration `json:"weeklyResetPeriodConfiguration,omitzero"`
 	// Configuration for yearly reset period
-	YearlyResetPeriodConfiguration V1EventPlanEntitlementNewParamsEntitlementFeatureYearlyResetPeriodConfiguration `json:"yearlyResetPeriodConfiguration,omitzero"`
+	YearlyResetPeriodConfiguration V1PlanEntitlementNewParamsEntitlementFeatureYearlyResetPeriodConfiguration `json:"yearlyResetPeriodConfiguration,omitzero"`
 	// Entitlement behavior (Increment or Override)
 	//
 	// Any of "Increment", "Override".
@@ -876,19 +876,19 @@ type V1EventPlanEntitlementNewParamsEntitlementFeature struct {
 	paramObj
 }
 
-func (r V1EventPlanEntitlementNewParamsEntitlementFeature) MarshalJSON() (data []byte, err error) {
-	type shadow V1EventPlanEntitlementNewParamsEntitlementFeature
+func (r V1PlanEntitlementNewParamsEntitlementFeature) MarshalJSON() (data []byte, err error) {
+	type shadow V1PlanEntitlementNewParamsEntitlementFeature
 	return param.MarshalObject(r, (*shadow)(&r))
 }
-func (r *V1EventPlanEntitlementNewParamsEntitlementFeature) UnmarshalJSON(data []byte) error {
+func (r *V1PlanEntitlementNewParamsEntitlementFeature) UnmarshalJSON(data []byte) error {
 	return apijson.UnmarshalRoot(data, r)
 }
 
 func init() {
-	apijson.RegisterFieldValidator[V1EventPlanEntitlementNewParamsEntitlementFeature](
+	apijson.RegisterFieldValidator[V1PlanEntitlementNewParamsEntitlementFeature](
 		"behavior", "Increment", "Override",
 	)
-	apijson.RegisterFieldValidator[V1EventPlanEntitlementNewParamsEntitlementFeature](
+	apijson.RegisterFieldValidator[V1PlanEntitlementNewParamsEntitlementFeature](
 		"resetPeriod", "YEAR", "MONTH", "WEEK", "DAY", "HOUR",
 	)
 }
@@ -896,7 +896,7 @@ func init() {
 // Configuration for monthly reset period
 //
 // The property AccordingTo is required.
-type V1EventPlanEntitlementNewParamsEntitlementFeatureMonthlyResetPeriodConfiguration struct {
+type V1PlanEntitlementNewParamsEntitlementFeatureMonthlyResetPeriodConfiguration struct {
 	// Reset anchor (SubscriptionStart or StartOfTheMonth)
 	//
 	// Any of "SubscriptionStart", "StartOfTheMonth".
@@ -904,16 +904,16 @@ type V1EventPlanEntitlementNewParamsEntitlementFeatureMonthlyResetPeriodConfigur
 	paramObj
 }
 
-func (r V1EventPlanEntitlementNewParamsEntitlementFeatureMonthlyResetPeriodConfiguration) MarshalJSON() (data []byte, err error) {
-	type shadow V1EventPlanEntitlementNewParamsEntitlementFeatureMonthlyResetPeriodConfiguration
+func (r V1PlanEntitlementNewParamsEntitlementFeatureMonthlyResetPeriodConfiguration) MarshalJSON() (data []byte, err error) {
+	type shadow V1PlanEntitlementNewParamsEntitlementFeatureMonthlyResetPeriodConfiguration
 	return param.MarshalObject(r, (*shadow)(&r))
 }
-func (r *V1EventPlanEntitlementNewParamsEntitlementFeatureMonthlyResetPeriodConfiguration) UnmarshalJSON(data []byte) error {
+func (r *V1PlanEntitlementNewParamsEntitlementFeatureMonthlyResetPeriodConfiguration) UnmarshalJSON(data []byte) error {
 	return apijson.UnmarshalRoot(data, r)
 }
 
 func init() {
-	apijson.RegisterFieldValidator[V1EventPlanEntitlementNewParamsEntitlementFeatureMonthlyResetPeriodConfiguration](
+	apijson.RegisterFieldValidator[V1PlanEntitlementNewParamsEntitlementFeatureMonthlyResetPeriodConfiguration](
 		"accordingTo", "SubscriptionStart", "StartOfTheMonth",
 	)
 }
@@ -921,7 +921,7 @@ func init() {
 // Configuration for weekly reset period
 //
 // The property AccordingTo is required.
-type V1EventPlanEntitlementNewParamsEntitlementFeatureWeeklyResetPeriodConfiguration struct {
+type V1PlanEntitlementNewParamsEntitlementFeatureWeeklyResetPeriodConfiguration struct {
 	// Reset anchor (SubscriptionStart or specific day)
 	//
 	// Any of "SubscriptionStart", "EverySunday", "EveryMonday", "EveryTuesday",
@@ -930,16 +930,16 @@ type V1EventPlanEntitlementNewParamsEntitlementFeatureWeeklyResetPeriodConfigura
 	paramObj
 }
 
-func (r V1EventPlanEntitlementNewParamsEntitlementFeatureWeeklyResetPeriodConfiguration) MarshalJSON() (data []byte, err error) {
-	type shadow V1EventPlanEntitlementNewParamsEntitlementFeatureWeeklyResetPeriodConfiguration
+func (r V1PlanEntitlementNewParamsEntitlementFeatureWeeklyResetPeriodConfiguration) MarshalJSON() (data []byte, err error) {
+	type shadow V1PlanEntitlementNewParamsEntitlementFeatureWeeklyResetPeriodConfiguration
 	return param.MarshalObject(r, (*shadow)(&r))
 }
-func (r *V1EventPlanEntitlementNewParamsEntitlementFeatureWeeklyResetPeriodConfiguration) UnmarshalJSON(data []byte) error {
+func (r *V1PlanEntitlementNewParamsEntitlementFeatureWeeklyResetPeriodConfiguration) UnmarshalJSON(data []byte) error {
 	return apijson.UnmarshalRoot(data, r)
 }
 
 func init() {
-	apijson.RegisterFieldValidator[V1EventPlanEntitlementNewParamsEntitlementFeatureWeeklyResetPeriodConfiguration](
+	apijson.RegisterFieldValidator[V1PlanEntitlementNewParamsEntitlementFeatureWeeklyResetPeriodConfiguration](
 		"accordingTo", "SubscriptionStart", "EverySunday", "EveryMonday", "EveryTuesday", "EveryWednesday", "EveryThursday", "EveryFriday", "EverySaturday",
 	)
 }
@@ -947,7 +947,7 @@ func init() {
 // Configuration for yearly reset period
 //
 // The property AccordingTo is required.
-type V1EventPlanEntitlementNewParamsEntitlementFeatureYearlyResetPeriodConfiguration struct {
+type V1PlanEntitlementNewParamsEntitlementFeatureYearlyResetPeriodConfiguration struct {
 	// Reset anchor (SubscriptionStart)
 	//
 	// Any of "SubscriptionStart".
@@ -955,39 +955,39 @@ type V1EventPlanEntitlementNewParamsEntitlementFeatureYearlyResetPeriodConfigura
 	paramObj
 }
 
-func (r V1EventPlanEntitlementNewParamsEntitlementFeatureYearlyResetPeriodConfiguration) MarshalJSON() (data []byte, err error) {
-	type shadow V1EventPlanEntitlementNewParamsEntitlementFeatureYearlyResetPeriodConfiguration
+func (r V1PlanEntitlementNewParamsEntitlementFeatureYearlyResetPeriodConfiguration) MarshalJSON() (data []byte, err error) {
+	type shadow V1PlanEntitlementNewParamsEntitlementFeatureYearlyResetPeriodConfiguration
 	return param.MarshalObject(r, (*shadow)(&r))
 }
-func (r *V1EventPlanEntitlementNewParamsEntitlementFeatureYearlyResetPeriodConfiguration) UnmarshalJSON(data []byte) error {
+func (r *V1PlanEntitlementNewParamsEntitlementFeatureYearlyResetPeriodConfiguration) UnmarshalJSON(data []byte) error {
 	return apijson.UnmarshalRoot(data, r)
 }
 
 func init() {
-	apijson.RegisterFieldValidator[V1EventPlanEntitlementNewParamsEntitlementFeatureYearlyResetPeriodConfiguration](
+	apijson.RegisterFieldValidator[V1PlanEntitlementNewParamsEntitlementFeatureYearlyResetPeriodConfiguration](
 		"accordingTo", "SubscriptionStart",
 	)
 }
 
-type V1EventPlanEntitlementUpdateParams struct {
+type V1PlanEntitlementUpdateParams struct {
 	PlanID string `path:"planId" api:"required" json:"-"`
 	// Credit entitlement fields to update
-	Credit V1EventPlanEntitlementUpdateParamsCredit `json:"credit,omitzero"`
+	Credit V1PlanEntitlementUpdateParamsCredit `json:"credit,omitzero"`
 	// Feature entitlement fields to update
-	Feature V1EventPlanEntitlementUpdateParamsFeature `json:"feature,omitzero"`
+	Feature V1PlanEntitlementUpdateParamsFeature `json:"feature,omitzero"`
 	paramObj
 }
 
-func (r V1EventPlanEntitlementUpdateParams) MarshalJSON() (data []byte, err error) {
-	type shadow V1EventPlanEntitlementUpdateParams
+func (r V1PlanEntitlementUpdateParams) MarshalJSON() (data []byte, err error) {
+	type shadow V1PlanEntitlementUpdateParams
 	return param.MarshalObject(r, (*shadow)(&r))
 }
-func (r *V1EventPlanEntitlementUpdateParams) UnmarshalJSON(data []byte) error {
+func (r *V1PlanEntitlementUpdateParams) UnmarshalJSON(data []byte) error {
 	return apijson.UnmarshalRoot(data, r)
 }
 
 // Credit entitlement fields to update
-type V1EventPlanEntitlementUpdateParamsCredit struct {
+type V1PlanEntitlementUpdateParamsCredit struct {
 	// Credit grant amount
 	Amount param.Opt[float64] `json:"amount,omitzero"`
 	// Description of the entitlement
@@ -1015,25 +1015,25 @@ type V1EventPlanEntitlementUpdateParamsCredit struct {
 	paramObj
 }
 
-func (r V1EventPlanEntitlementUpdateParamsCredit) MarshalJSON() (data []byte, err error) {
-	type shadow V1EventPlanEntitlementUpdateParamsCredit
+func (r V1PlanEntitlementUpdateParamsCredit) MarshalJSON() (data []byte, err error) {
+	type shadow V1PlanEntitlementUpdateParamsCredit
 	return param.MarshalObject(r, (*shadow)(&r))
 }
-func (r *V1EventPlanEntitlementUpdateParamsCredit) UnmarshalJSON(data []byte) error {
+func (r *V1PlanEntitlementUpdateParamsCredit) UnmarshalJSON(data []byte) error {
 	return apijson.UnmarshalRoot(data, r)
 }
 
 func init() {
-	apijson.RegisterFieldValidator[V1EventPlanEntitlementUpdateParamsCredit](
+	apijson.RegisterFieldValidator[V1PlanEntitlementUpdateParamsCredit](
 		"behavior", "Increment", "Override",
 	)
-	apijson.RegisterFieldValidator[V1EventPlanEntitlementUpdateParamsCredit](
+	apijson.RegisterFieldValidator[V1PlanEntitlementUpdateParamsCredit](
 		"cadence", "MONTH", "YEAR",
 	)
 }
 
 // Feature entitlement fields to update
-type V1EventPlanEntitlementUpdateParamsFeature struct {
+type V1PlanEntitlementUpdateParamsFeature struct {
 	// Maximum allowed usage for the feature
 	UsageLimit param.Opt[int64] `json:"usageLimit,omitzero"`
 	// Description of the entitlement
@@ -1051,11 +1051,11 @@ type V1EventPlanEntitlementUpdateParamsFeature struct {
 	// Display order of the entitlement
 	Order param.Opt[float64] `json:"order,omitzero"`
 	// Configuration for monthly reset period
-	MonthlyResetPeriodConfiguration V1EventPlanEntitlementUpdateParamsFeatureMonthlyResetPeriodConfiguration `json:"monthlyResetPeriodConfiguration,omitzero"`
+	MonthlyResetPeriodConfiguration V1PlanEntitlementUpdateParamsFeatureMonthlyResetPeriodConfiguration `json:"monthlyResetPeriodConfiguration,omitzero"`
 	// Configuration for weekly reset period
-	WeeklyResetPeriodConfiguration V1EventPlanEntitlementUpdateParamsFeatureWeeklyResetPeriodConfiguration `json:"weeklyResetPeriodConfiguration,omitzero"`
+	WeeklyResetPeriodConfiguration V1PlanEntitlementUpdateParamsFeatureWeeklyResetPeriodConfiguration `json:"weeklyResetPeriodConfiguration,omitzero"`
 	// Configuration for yearly reset period
-	YearlyResetPeriodConfiguration V1EventPlanEntitlementUpdateParamsFeatureYearlyResetPeriodConfiguration `json:"yearlyResetPeriodConfiguration,omitzero"`
+	YearlyResetPeriodConfiguration V1PlanEntitlementUpdateParamsFeatureYearlyResetPeriodConfiguration `json:"yearlyResetPeriodConfiguration,omitzero"`
 	// Entitlement behavior (Increment or Override)
 	//
 	// Any of "Increment", "Override".
@@ -1073,19 +1073,19 @@ type V1EventPlanEntitlementUpdateParamsFeature struct {
 	paramObj
 }
 
-func (r V1EventPlanEntitlementUpdateParamsFeature) MarshalJSON() (data []byte, err error) {
-	type shadow V1EventPlanEntitlementUpdateParamsFeature
+func (r V1PlanEntitlementUpdateParamsFeature) MarshalJSON() (data []byte, err error) {
+	type shadow V1PlanEntitlementUpdateParamsFeature
 	return param.MarshalObject(r, (*shadow)(&r))
 }
-func (r *V1EventPlanEntitlementUpdateParamsFeature) UnmarshalJSON(data []byte) error {
+func (r *V1PlanEntitlementUpdateParamsFeature) UnmarshalJSON(data []byte) error {
 	return apijson.UnmarshalRoot(data, r)
 }
 
 func init() {
-	apijson.RegisterFieldValidator[V1EventPlanEntitlementUpdateParamsFeature](
+	apijson.RegisterFieldValidator[V1PlanEntitlementUpdateParamsFeature](
 		"behavior", "Increment", "Override",
 	)
-	apijson.RegisterFieldValidator[V1EventPlanEntitlementUpdateParamsFeature](
+	apijson.RegisterFieldValidator[V1PlanEntitlementUpdateParamsFeature](
 		"resetPeriod", "YEAR", "MONTH", "WEEK", "DAY", "HOUR",
 	)
 }
@@ -1093,7 +1093,7 @@ func init() {
 // Configuration for monthly reset period
 //
 // The property AccordingTo is required.
-type V1EventPlanEntitlementUpdateParamsFeatureMonthlyResetPeriodConfiguration struct {
+type V1PlanEntitlementUpdateParamsFeatureMonthlyResetPeriodConfiguration struct {
 	// Reset anchor (SubscriptionStart or StartOfTheMonth)
 	//
 	// Any of "SubscriptionStart", "StartOfTheMonth".
@@ -1101,16 +1101,16 @@ type V1EventPlanEntitlementUpdateParamsFeatureMonthlyResetPeriodConfiguration st
 	paramObj
 }
 
-func (r V1EventPlanEntitlementUpdateParamsFeatureMonthlyResetPeriodConfiguration) MarshalJSON() (data []byte, err error) {
-	type shadow V1EventPlanEntitlementUpdateParamsFeatureMonthlyResetPeriodConfiguration
+func (r V1PlanEntitlementUpdateParamsFeatureMonthlyResetPeriodConfiguration) MarshalJSON() (data []byte, err error) {
+	type shadow V1PlanEntitlementUpdateParamsFeatureMonthlyResetPeriodConfiguration
 	return param.MarshalObject(r, (*shadow)(&r))
 }
-func (r *V1EventPlanEntitlementUpdateParamsFeatureMonthlyResetPeriodConfiguration) UnmarshalJSON(data []byte) error {
+func (r *V1PlanEntitlementUpdateParamsFeatureMonthlyResetPeriodConfiguration) UnmarshalJSON(data []byte) error {
 	return apijson.UnmarshalRoot(data, r)
 }
 
 func init() {
-	apijson.RegisterFieldValidator[V1EventPlanEntitlementUpdateParamsFeatureMonthlyResetPeriodConfiguration](
+	apijson.RegisterFieldValidator[V1PlanEntitlementUpdateParamsFeatureMonthlyResetPeriodConfiguration](
 		"accordingTo", "SubscriptionStart", "StartOfTheMonth",
 	)
 }
@@ -1118,7 +1118,7 @@ func init() {
 // Configuration for weekly reset period
 //
 // The property AccordingTo is required.
-type V1EventPlanEntitlementUpdateParamsFeatureWeeklyResetPeriodConfiguration struct {
+type V1PlanEntitlementUpdateParamsFeatureWeeklyResetPeriodConfiguration struct {
 	// Reset anchor (SubscriptionStart or specific day)
 	//
 	// Any of "SubscriptionStart", "EverySunday", "EveryMonday", "EveryTuesday",
@@ -1127,16 +1127,16 @@ type V1EventPlanEntitlementUpdateParamsFeatureWeeklyResetPeriodConfiguration str
 	paramObj
 }
 
-func (r V1EventPlanEntitlementUpdateParamsFeatureWeeklyResetPeriodConfiguration) MarshalJSON() (data []byte, err error) {
-	type shadow V1EventPlanEntitlementUpdateParamsFeatureWeeklyResetPeriodConfiguration
+func (r V1PlanEntitlementUpdateParamsFeatureWeeklyResetPeriodConfiguration) MarshalJSON() (data []byte, err error) {
+	type shadow V1PlanEntitlementUpdateParamsFeatureWeeklyResetPeriodConfiguration
 	return param.MarshalObject(r, (*shadow)(&r))
 }
-func (r *V1EventPlanEntitlementUpdateParamsFeatureWeeklyResetPeriodConfiguration) UnmarshalJSON(data []byte) error {
+func (r *V1PlanEntitlementUpdateParamsFeatureWeeklyResetPeriodConfiguration) UnmarshalJSON(data []byte) error {
 	return apijson.UnmarshalRoot(data, r)
 }
 
 func init() {
-	apijson.RegisterFieldValidator[V1EventPlanEntitlementUpdateParamsFeatureWeeklyResetPeriodConfiguration](
+	apijson.RegisterFieldValidator[V1PlanEntitlementUpdateParamsFeatureWeeklyResetPeriodConfiguration](
 		"accordingTo", "SubscriptionStart", "EverySunday", "EveryMonday", "EveryTuesday", "EveryWednesday", "EveryThursday", "EveryFriday", "EverySaturday",
 	)
 }
@@ -1144,7 +1144,7 @@ func init() {
 // Configuration for yearly reset period
 //
 // The property AccordingTo is required.
-type V1EventPlanEntitlementUpdateParamsFeatureYearlyResetPeriodConfiguration struct {
+type V1PlanEntitlementUpdateParamsFeatureYearlyResetPeriodConfiguration struct {
 	// Reset anchor (SubscriptionStart)
 	//
 	// Any of "SubscriptionStart".
@@ -1152,21 +1152,21 @@ type V1EventPlanEntitlementUpdateParamsFeatureYearlyResetPeriodConfiguration str
 	paramObj
 }
 
-func (r V1EventPlanEntitlementUpdateParamsFeatureYearlyResetPeriodConfiguration) MarshalJSON() (data []byte, err error) {
-	type shadow V1EventPlanEntitlementUpdateParamsFeatureYearlyResetPeriodConfiguration
+func (r V1PlanEntitlementUpdateParamsFeatureYearlyResetPeriodConfiguration) MarshalJSON() (data []byte, err error) {
+	type shadow V1PlanEntitlementUpdateParamsFeatureYearlyResetPeriodConfiguration
 	return param.MarshalObject(r, (*shadow)(&r))
 }
-func (r *V1EventPlanEntitlementUpdateParamsFeatureYearlyResetPeriodConfiguration) UnmarshalJSON(data []byte) error {
+func (r *V1PlanEntitlementUpdateParamsFeatureYearlyResetPeriodConfiguration) UnmarshalJSON(data []byte) error {
 	return apijson.UnmarshalRoot(data, r)
 }
 
 func init() {
-	apijson.RegisterFieldValidator[V1EventPlanEntitlementUpdateParamsFeatureYearlyResetPeriodConfiguration](
+	apijson.RegisterFieldValidator[V1PlanEntitlementUpdateParamsFeatureYearlyResetPeriodConfiguration](
 		"accordingTo", "SubscriptionStart",
 	)
 }
 
-type V1EventPlanEntitlementDeleteParams struct {
+type V1PlanEntitlementDeleteParams struct {
 	PlanID string `path:"planId" api:"required" json:"-"`
 	paramObj
 }

@@ -22,51 +22,63 @@ import (
 	"github.com/stiggio/stigg-go/packages/respjson"
 )
 
-// V1EventAddonService contains methods and other services that help with
-// interacting with the stigg API.
+// V1AddonService contains methods and other services that help with interacting
+// with the stigg API.
 //
 // Note, unlike clients, this service does not read variables from the environment
 // automatically. You should not instantiate this service directly, and instead use
-// the [NewV1EventAddonService] method instead.
-type V1EventAddonService struct {
+// the [NewV1AddonService] method instead.
+type V1AddonService struct {
 	Options      []option.RequestOption
-	Draft        V1EventAddonDraftService
-	Entitlements V1EventAddonEntitlementService
+	Entitlements V1AddonEntitlementService
 }
 
-// NewV1EventAddonService generates a new service that applies the given options to
-// each request. These options are applied after the parent client's options (if
-// there is one), and before any request-specific options.
-func NewV1EventAddonService(opts ...option.RequestOption) (r V1EventAddonService) {
-	r = V1EventAddonService{}
+// NewV1AddonService generates a new service that applies the given options to each
+// request. These options are applied after the parent client's options (if there
+// is one), and before any request-specific options.
+func NewV1AddonService(opts ...option.RequestOption) (r V1AddonService) {
+	r = V1AddonService{}
 	r.Options = opts
-	r.Draft = NewV1EventAddonDraftService(opts...)
-	r.Entitlements = NewV1EventAddonEntitlementService(opts...)
-	return
-}
-
-// Archives an addon, preventing it from being used in new subscriptions.
-func (r *V1EventAddonService) ArchiveAddon(ctx context.Context, id string, opts ...option.RequestOption) (res *Addon, err error) {
-	opts = slices.Concat(r.Options, opts)
-	if id == "" {
-		err = errors.New("missing required id parameter")
-		return
-	}
-	path := fmt.Sprintf("api/v1/addons/%s/archive", id)
-	err = requestconfig.ExecuteNewRequest(ctx, http.MethodPost, path, nil, &res, opts...)
+	r.Entitlements = NewV1AddonEntitlementService(opts...)
 	return
 }
 
 // Creates a new addon in draft status, associated with a specific product.
-func (r *V1EventAddonService) NewAddon(ctx context.Context, body V1EventAddonNewAddonParams, opts ...option.RequestOption) (res *Addon, err error) {
+func (r *V1AddonService) New(ctx context.Context, body V1AddonNewParams, opts ...option.RequestOption) (res *Addon, err error) {
 	opts = slices.Concat(r.Options, opts)
 	path := "api/v1/addons"
 	err = requestconfig.ExecuteNewRequest(ctx, http.MethodPost, path, body, &res, opts...)
 	return
 }
 
+// Retrieves an addon by its unique identifier, including entitlements and pricing
+// details.
+func (r *V1AddonService) Get(ctx context.Context, id string, opts ...option.RequestOption) (res *Addon, err error) {
+	opts = slices.Concat(r.Options, opts)
+	if id == "" {
+		err = errors.New("missing required id parameter")
+		return
+	}
+	path := fmt.Sprintf("api/v1/addons/%s", id)
+	err = requestconfig.ExecuteNewRequest(ctx, http.MethodGet, path, nil, &res, opts...)
+	return
+}
+
+// Updates an existing addon's properties such as display name, description, and
+// metadata.
+func (r *V1AddonService) Update(ctx context.Context, id string, body V1AddonUpdateParams, opts ...option.RequestOption) (res *Addon, err error) {
+	opts = slices.Concat(r.Options, opts)
+	if id == "" {
+		err = errors.New("missing required id parameter")
+		return
+	}
+	path := fmt.Sprintf("api/v1/addons/%s", id)
+	err = requestconfig.ExecuteNewRequest(ctx, http.MethodPatch, path, body, &res, opts...)
+	return
+}
+
 // Retrieves a paginated list of addons in the environment.
-func (r *V1EventAddonService) ListAddons(ctx context.Context, query V1EventAddonListAddonsParams, opts ...option.RequestOption) (res *pagination.MyCursorIDPage[V1EventAddonListAddonsResponse], err error) {
+func (r *V1AddonService) List(ctx context.Context, query V1AddonListParams, opts ...option.RequestOption) (res *pagination.MyCursorIDPage[V1AddonListResponse], err error) {
 	var raw *http.Response
 	opts = slices.Concat(r.Options, opts)
 	opts = append([]option.RequestOption{option.WithResponseInto(&raw)}, opts...)
@@ -84,12 +96,36 @@ func (r *V1EventAddonService) ListAddons(ctx context.Context, query V1EventAddon
 }
 
 // Retrieves a paginated list of addons in the environment.
-func (r *V1EventAddonService) ListAddonsAutoPaging(ctx context.Context, query V1EventAddonListAddonsParams, opts ...option.RequestOption) *pagination.MyCursorIDPageAutoPager[V1EventAddonListAddonsResponse] {
-	return pagination.NewMyCursorIDPageAutoPager(r.ListAddons(ctx, query, opts...))
+func (r *V1AddonService) ListAutoPaging(ctx context.Context, query V1AddonListParams, opts ...option.RequestOption) *pagination.MyCursorIDPageAutoPager[V1AddonListResponse] {
+	return pagination.NewMyCursorIDPageAutoPager(r.List(ctx, query, opts...))
+}
+
+// Archives an addon, preventing it from being used in new subscriptions.
+func (r *V1AddonService) Archive(ctx context.Context, id string, opts ...option.RequestOption) (res *Addon, err error) {
+	opts = slices.Concat(r.Options, opts)
+	if id == "" {
+		err = errors.New("missing required id parameter")
+		return
+	}
+	path := fmt.Sprintf("api/v1/addons/%s/archive", id)
+	err = requestconfig.ExecuteNewRequest(ctx, http.MethodPost, path, nil, &res, opts...)
+	return
+}
+
+// Creates a draft version of an existing addon for modification before publishing.
+func (r *V1AddonService) NewDraft(ctx context.Context, id string, opts ...option.RequestOption) (res *Addon, err error) {
+	opts = slices.Concat(r.Options, opts)
+	if id == "" {
+		err = errors.New("missing required id parameter")
+		return
+	}
+	path := fmt.Sprintf("api/v1/addons/%s/draft", id)
+	err = requestconfig.ExecuteNewRequest(ctx, http.MethodPost, path, nil, &res, opts...)
+	return
 }
 
 // Publishes a draft addon, making it available for use in subscriptions.
-func (r *V1EventAddonService) PublishAddon(ctx context.Context, id string, body V1EventAddonPublishAddonParams, opts ...option.RequestOption) (res *V1EventAddonPublishAddonResponse, err error) {
+func (r *V1AddonService) Publish(ctx context.Context, id string, body V1AddonPublishParams, opts ...option.RequestOption) (res *V1AddonPublishResponse, err error) {
 	opts = slices.Concat(r.Options, opts)
 	if id == "" {
 		err = errors.New("missing required id parameter")
@@ -100,21 +136,20 @@ func (r *V1EventAddonService) PublishAddon(ctx context.Context, id string, body 
 	return
 }
 
-// Retrieves an addon by its unique identifier, including entitlements and pricing
-// details.
-func (r *V1EventAddonService) GetAddon(ctx context.Context, id string, opts ...option.RequestOption) (res *Addon, err error) {
+// Removes a draft version of an addon.
+func (r *V1AddonService) RemoveDraft(ctx context.Context, id string, opts ...option.RequestOption) (res *V1AddonRemoveDraftResponse, err error) {
 	opts = slices.Concat(r.Options, opts)
 	if id == "" {
 		err = errors.New("missing required id parameter")
 		return
 	}
-	path := fmt.Sprintf("api/v1/addons/%s", id)
-	err = requestconfig.ExecuteNewRequest(ctx, http.MethodGet, path, nil, &res, opts...)
+	path := fmt.Sprintf("api/v1/addons/%s/draft", id)
+	err = requestconfig.ExecuteNewRequest(ctx, http.MethodDelete, path, nil, &res, opts...)
 	return
 }
 
 // Sets the pricing configuration for an addon.
-func (r *V1EventAddonService) SetPricing(ctx context.Context, id string, body V1EventAddonSetPricingParams, opts ...option.RequestOption) (res *SetPackagePricingResponse, err error) {
+func (r *V1AddonService) SetPricing(ctx context.Context, id string, body V1AddonSetPricingParams, opts ...option.RequestOption) (res *SetPackagePricingResponse, err error) {
 	opts = slices.Concat(r.Options, opts)
 	if id == "" {
 		err = errors.New("missing required id parameter")
@@ -122,19 +157,6 @@ func (r *V1EventAddonService) SetPricing(ctx context.Context, id string, body V1
 	}
 	path := fmt.Sprintf("api/v1/addons/%s/charges", id)
 	err = requestconfig.ExecuteNewRequest(ctx, http.MethodPut, path, body, &res, opts...)
-	return
-}
-
-// Updates an existing addon's properties such as display name, description, and
-// metadata.
-func (r *V1EventAddonService) UpdateAddon(ctx context.Context, id string, body V1EventAddonUpdateAddonParams, opts ...option.RequestOption) (res *Addon, err error) {
-	opts = slices.Concat(r.Options, opts)
-	if id == "" {
-		err = errors.New("missing required id parameter")
-		return
-	}
-	path := fmt.Sprintf("api/v1/addons/%s", id)
-	err = requestconfig.ExecuteNewRequest(ctx, http.MethodPatch, path, body, &res, opts...)
 	return
 }
 
@@ -1074,7 +1096,7 @@ func (r *SetPackagePricingResponseData) UnmarshalJSON(data []byte) error {
 }
 
 // Addon configuration object
-type V1EventAddonListAddonsResponse struct {
+type V1AddonListResponse struct {
 	// The unique identifier for the entity
 	ID string `json:"id" api:"required"`
 	// The unique identifier for the entity in the billing provider
@@ -1088,7 +1110,7 @@ type V1EventAddonListAddonsResponse struct {
 	// The display name of the package
 	DisplayName string `json:"displayName" api:"required"`
 	// List of entitlements of the package
-	Entitlements []V1EventAddonListAddonsResponseEntitlement `json:"entitlements" api:"required"`
+	Entitlements []V1AddonListResponseEntitlement `json:"entitlements" api:"required"`
 	// Indicates if the package is the latest version
 	IsLatest bool `json:"isLatest" api:"required"`
 	// The maximum quantity of this addon that can be added to a subscription
@@ -1098,13 +1120,13 @@ type V1EventAddonListAddonsResponse struct {
 	// The pricing type of the package
 	//
 	// Any of "FREE", "PAID", "CUSTOM".
-	PricingType V1EventAddonListAddonsResponsePricingType `json:"pricingType" api:"required"`
+	PricingType V1AddonListResponsePricingType `json:"pricingType" api:"required"`
 	// The product id of the package
 	ProductID string `json:"productId" api:"required"`
 	// The status of the package
 	//
 	// Any of "DRAFT", "PUBLISHED", "ARCHIVED".
-	Status V1EventAddonListAddonsResponseStatus `json:"status" api:"required"`
+	Status V1AddonListResponseStatus `json:"status" api:"required"`
 	// Timestamp of when the record was last updated
 	UpdatedAt time.Time `json:"updatedAt" api:"required" format:"date-time"`
 	// The version number of the package
@@ -1132,13 +1154,13 @@ type V1EventAddonListAddonsResponse struct {
 }
 
 // Returns the unmodified JSON received from the API
-func (r V1EventAddonListAddonsResponse) RawJSON() string { return r.JSON.raw }
-func (r *V1EventAddonListAddonsResponse) UnmarshalJSON(data []byte) error {
+func (r V1AddonListResponse) RawJSON() string { return r.JSON.raw }
+func (r *V1AddonListResponse) UnmarshalJSON(data []byte) error {
 	return apijson.UnmarshalRoot(data, r)
 }
 
 // Entitlement reference with type and identifier
-type V1EventAddonListAddonsResponseEntitlement struct {
+type V1AddonListResponseEntitlement struct {
 	// The unique identifier for the entity
 	ID string `json:"id" api:"required"`
 	// Any of "FEATURE", "CREDIT".
@@ -1153,32 +1175,32 @@ type V1EventAddonListAddonsResponseEntitlement struct {
 }
 
 // Returns the unmodified JSON received from the API
-func (r V1EventAddonListAddonsResponseEntitlement) RawJSON() string { return r.JSON.raw }
-func (r *V1EventAddonListAddonsResponseEntitlement) UnmarshalJSON(data []byte) error {
+func (r V1AddonListResponseEntitlement) RawJSON() string { return r.JSON.raw }
+func (r *V1AddonListResponseEntitlement) UnmarshalJSON(data []byte) error {
 	return apijson.UnmarshalRoot(data, r)
 }
 
 // The pricing type of the package
-type V1EventAddonListAddonsResponsePricingType string
+type V1AddonListResponsePricingType string
 
 const (
-	V1EventAddonListAddonsResponsePricingTypeFree   V1EventAddonListAddonsResponsePricingType = "FREE"
-	V1EventAddonListAddonsResponsePricingTypePaid   V1EventAddonListAddonsResponsePricingType = "PAID"
-	V1EventAddonListAddonsResponsePricingTypeCustom V1EventAddonListAddonsResponsePricingType = "CUSTOM"
+	V1AddonListResponsePricingTypeFree   V1AddonListResponsePricingType = "FREE"
+	V1AddonListResponsePricingTypePaid   V1AddonListResponsePricingType = "PAID"
+	V1AddonListResponsePricingTypeCustom V1AddonListResponsePricingType = "CUSTOM"
 )
 
 // The status of the package
-type V1EventAddonListAddonsResponseStatus string
+type V1AddonListResponseStatus string
 
 const (
-	V1EventAddonListAddonsResponseStatusDraft     V1EventAddonListAddonsResponseStatus = "DRAFT"
-	V1EventAddonListAddonsResponseStatusPublished V1EventAddonListAddonsResponseStatus = "PUBLISHED"
-	V1EventAddonListAddonsResponseStatusArchived  V1EventAddonListAddonsResponseStatus = "ARCHIVED"
+	V1AddonListResponseStatusDraft     V1AddonListResponseStatus = "DRAFT"
+	V1AddonListResponseStatusPublished V1AddonListResponseStatus = "PUBLISHED"
+	V1AddonListResponseStatusArchived  V1AddonListResponseStatus = "ARCHIVED"
 )
 
 // Response containing task ID for publish operation
-type V1EventAddonPublishAddonResponse struct {
-	Data V1EventAddonPublishAddonResponseData `json:"data" api:"required"`
+type V1AddonPublishResponse struct {
+	Data V1AddonPublishResponseData `json:"data" api:"required"`
 	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
 	JSON struct {
 		Data        respjson.Field
@@ -1188,12 +1210,12 @@ type V1EventAddonPublishAddonResponse struct {
 }
 
 // Returns the unmodified JSON received from the API
-func (r V1EventAddonPublishAddonResponse) RawJSON() string { return r.JSON.raw }
-func (r *V1EventAddonPublishAddonResponse) UnmarshalJSON(data []byte) error {
+func (r V1AddonPublishResponse) RawJSON() string { return r.JSON.raw }
+func (r *V1AddonPublishResponse) UnmarshalJSON(data []byte) error {
 	return apijson.UnmarshalRoot(data, r)
 }
 
-type V1EventAddonPublishAddonResponseData struct {
+type V1AddonPublishResponseData struct {
 	// Task ID for tracking the async publish operation
 	TaskID string `json:"taskId" api:"required" format:"uuid"`
 	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
@@ -1205,12 +1227,46 @@ type V1EventAddonPublishAddonResponseData struct {
 }
 
 // Returns the unmodified JSON received from the API
-func (r V1EventAddonPublishAddonResponseData) RawJSON() string { return r.JSON.raw }
-func (r *V1EventAddonPublishAddonResponseData) UnmarshalJSON(data []byte) error {
+func (r V1AddonPublishResponseData) RawJSON() string { return r.JSON.raw }
+func (r *V1AddonPublishResponseData) UnmarshalJSON(data []byte) error {
 	return apijson.UnmarshalRoot(data, r)
 }
 
-type V1EventAddonNewAddonParams struct {
+// Response confirming the addon draft was removed.
+type V1AddonRemoveDraftResponse struct {
+	Data V1AddonRemoveDraftResponseData `json:"data" api:"required"`
+	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
+	JSON struct {
+		Data        respjson.Field
+		ExtraFields map[string]respjson.Field
+		raw         string
+	} `json:"-"`
+}
+
+// Returns the unmodified JSON received from the API
+func (r V1AddonRemoveDraftResponse) RawJSON() string { return r.JSON.raw }
+func (r *V1AddonRemoveDraftResponse) UnmarshalJSON(data []byte) error {
+	return apijson.UnmarshalRoot(data, r)
+}
+
+type V1AddonRemoveDraftResponseData struct {
+	// The unique identifier for the entity
+	ID string `json:"id" api:"required"`
+	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
+	JSON struct {
+		ID          respjson.Field
+		ExtraFields map[string]respjson.Field
+		raw         string
+	} `json:"-"`
+}
+
+// Returns the unmodified JSON received from the API
+func (r V1AddonRemoveDraftResponseData) RawJSON() string { return r.JSON.raw }
+func (r *V1AddonRemoveDraftResponseData) UnmarshalJSON(data []byte) error {
+	return apijson.UnmarshalRoot(data, r)
+}
+
+type V1AddonNewParams struct {
 	// The unique identifier for the entity
 	ID string `json:"id" api:"required"`
 	// The display name of the package
@@ -1226,127 +1282,43 @@ type V1EventAddonNewAddonParams struct {
 	// The pricing type of the package
 	//
 	// Any of "FREE", "PAID", "CUSTOM".
-	PricingType V1EventAddonNewAddonParamsPricingType `json:"pricingType,omitzero"`
+	PricingType V1AddonNewParamsPricingType `json:"pricingType,omitzero"`
 	// Metadata associated with the entity
 	Metadata map[string]string `json:"metadata,omitzero"`
 	// The status of the package
 	//
 	// Any of "DRAFT", "PUBLISHED", "ARCHIVED".
-	Status V1EventAddonNewAddonParamsStatus `json:"status,omitzero"`
+	Status V1AddonNewParamsStatus `json:"status,omitzero"`
 	paramObj
 }
 
-func (r V1EventAddonNewAddonParams) MarshalJSON() (data []byte, err error) {
-	type shadow V1EventAddonNewAddonParams
+func (r V1AddonNewParams) MarshalJSON() (data []byte, err error) {
+	type shadow V1AddonNewParams
 	return param.MarshalObject(r, (*shadow)(&r))
 }
-func (r *V1EventAddonNewAddonParams) UnmarshalJSON(data []byte) error {
+func (r *V1AddonNewParams) UnmarshalJSON(data []byte) error {
 	return apijson.UnmarshalRoot(data, r)
 }
 
 // The pricing type of the package
-type V1EventAddonNewAddonParamsPricingType string
+type V1AddonNewParamsPricingType string
 
 const (
-	V1EventAddonNewAddonParamsPricingTypeFree   V1EventAddonNewAddonParamsPricingType = "FREE"
-	V1EventAddonNewAddonParamsPricingTypePaid   V1EventAddonNewAddonParamsPricingType = "PAID"
-	V1EventAddonNewAddonParamsPricingTypeCustom V1EventAddonNewAddonParamsPricingType = "CUSTOM"
+	V1AddonNewParamsPricingTypeFree   V1AddonNewParamsPricingType = "FREE"
+	V1AddonNewParamsPricingTypePaid   V1AddonNewParamsPricingType = "PAID"
+	V1AddonNewParamsPricingTypeCustom V1AddonNewParamsPricingType = "CUSTOM"
 )
 
 // The status of the package
-type V1EventAddonNewAddonParamsStatus string
+type V1AddonNewParamsStatus string
 
 const (
-	V1EventAddonNewAddonParamsStatusDraft     V1EventAddonNewAddonParamsStatus = "DRAFT"
-	V1EventAddonNewAddonParamsStatusPublished V1EventAddonNewAddonParamsStatus = "PUBLISHED"
-	V1EventAddonNewAddonParamsStatusArchived  V1EventAddonNewAddonParamsStatus = "ARCHIVED"
+	V1AddonNewParamsStatusDraft     V1AddonNewParamsStatus = "DRAFT"
+	V1AddonNewParamsStatusPublished V1AddonNewParamsStatus = "PUBLISHED"
+	V1AddonNewParamsStatusArchived  V1AddonNewParamsStatus = "ARCHIVED"
 )
 
-type V1EventAddonListAddonsParams struct {
-	// Return items that come after this cursor
-	After param.Opt[string] `query:"after,omitzero" format:"uuid" json:"-"`
-	// Return items that come before this cursor
-	Before param.Opt[string] `query:"before,omitzero" format:"uuid" json:"-"`
-	// Maximum number of items to return
-	Limit param.Opt[int64] `query:"limit,omitzero" json:"-"`
-	// Filter by product ID
-	ProductID param.Opt[string] `query:"productId,omitzero" json:"-"`
-	// Filter by status. Supports comma-separated values for multiple statuses
-	Status param.Opt[string] `query:"status,omitzero" json:"-"`
-	// Filter by creation date using range operators: gt, gte, lt, lte
-	CreatedAt V1EventAddonListAddonsParamsCreatedAt `query:"createdAt,omitzero" json:"-"`
-	paramObj
-}
-
-// URLQuery serializes [V1EventAddonListAddonsParams]'s query parameters as
-// `url.Values`.
-func (r V1EventAddonListAddonsParams) URLQuery() (v url.Values, err error) {
-	return apiquery.MarshalWithSettings(r, apiquery.QuerySettings{
-		ArrayFormat:  apiquery.ArrayQueryFormatComma,
-		NestedFormat: apiquery.NestedQueryFormatBrackets,
-	})
-}
-
-// Filter by creation date using range operators: gt, gte, lt, lte
-type V1EventAddonListAddonsParamsCreatedAt struct {
-	// Greater than the specified createdAt value
-	Gt param.Opt[time.Time] `query:"gt,omitzero" format:"date-time" json:"-"`
-	// Greater than or equal to the specified createdAt value
-	Gte param.Opt[time.Time] `query:"gte,omitzero" format:"date-time" json:"-"`
-	// Less than the specified createdAt value
-	Lt param.Opt[time.Time] `query:"lt,omitzero" format:"date-time" json:"-"`
-	// Less than or equal to the specified createdAt value
-	Lte param.Opt[time.Time] `query:"lte,omitzero" format:"date-time" json:"-"`
-	paramObj
-}
-
-// URLQuery serializes [V1EventAddonListAddonsParamsCreatedAt]'s query parameters
-// as `url.Values`.
-func (r V1EventAddonListAddonsParamsCreatedAt) URLQuery() (v url.Values, err error) {
-	return apiquery.MarshalWithSettings(r, apiquery.QuerySettings{
-		ArrayFormat:  apiquery.ArrayQueryFormatComma,
-		NestedFormat: apiquery.NestedQueryFormatBrackets,
-	})
-}
-
-type V1EventAddonPublishAddonParams struct {
-	// The migration type of the package
-	//
-	// Any of "NEW_CUSTOMERS", "ALL_CUSTOMERS".
-	MigrationType V1EventAddonPublishAddonParamsMigrationType `json:"migrationType,omitzero" api:"required"`
-	paramObj
-}
-
-func (r V1EventAddonPublishAddonParams) MarshalJSON() (data []byte, err error) {
-	type shadow V1EventAddonPublishAddonParams
-	return param.MarshalObject(r, (*shadow)(&r))
-}
-func (r *V1EventAddonPublishAddonParams) UnmarshalJSON(data []byte) error {
-	return apijson.UnmarshalRoot(data, r)
-}
-
-// The migration type of the package
-type V1EventAddonPublishAddonParamsMigrationType string
-
-const (
-	V1EventAddonPublishAddonParamsMigrationTypeNewCustomers V1EventAddonPublishAddonParamsMigrationType = "NEW_CUSTOMERS"
-	V1EventAddonPublishAddonParamsMigrationTypeAllCustomers V1EventAddonPublishAddonParamsMigrationType = "ALL_CUSTOMERS"
-)
-
-type V1EventAddonSetPricingParams struct {
-	// Request to set the pricing configuration for a plan or addon.
-	SetPackagePricing SetPackagePricingParam
-	paramObj
-}
-
-func (r V1EventAddonSetPricingParams) MarshalJSON() (data []byte, err error) {
-	return shimjson.Marshal(r.SetPackagePricing)
-}
-func (r *V1EventAddonSetPricingParams) UnmarshalJSON(data []byte) error {
-	return json.Unmarshal(data, &r.SetPackagePricing)
-}
-
-type V1EventAddonUpdateAddonParams struct {
+type V1AddonUpdateParams struct {
 	// The unique identifier for the entity in the billing provider
 	BillingID param.Opt[string] `json:"billingId,omitzero"`
 	// The description of the package
@@ -1362,10 +1334,93 @@ type V1EventAddonUpdateAddonParams struct {
 	paramObj
 }
 
-func (r V1EventAddonUpdateAddonParams) MarshalJSON() (data []byte, err error) {
-	type shadow V1EventAddonUpdateAddonParams
+func (r V1AddonUpdateParams) MarshalJSON() (data []byte, err error) {
+	type shadow V1AddonUpdateParams
 	return param.MarshalObject(r, (*shadow)(&r))
 }
-func (r *V1EventAddonUpdateAddonParams) UnmarshalJSON(data []byte) error {
+func (r *V1AddonUpdateParams) UnmarshalJSON(data []byte) error {
 	return apijson.UnmarshalRoot(data, r)
+}
+
+type V1AddonListParams struct {
+	// Return items that come after this cursor
+	After param.Opt[string] `query:"after,omitzero" format:"uuid" json:"-"`
+	// Return items that come before this cursor
+	Before param.Opt[string] `query:"before,omitzero" format:"uuid" json:"-"`
+	// Maximum number of items to return
+	Limit param.Opt[int64] `query:"limit,omitzero" json:"-"`
+	// Filter by product ID
+	ProductID param.Opt[string] `query:"productId,omitzero" json:"-"`
+	// Filter by status. Supports comma-separated values for multiple statuses
+	Status param.Opt[string] `query:"status,omitzero" json:"-"`
+	// Filter by creation date using range operators: gt, gte, lt, lte
+	CreatedAt V1AddonListParamsCreatedAt `query:"createdAt,omitzero" json:"-"`
+	paramObj
+}
+
+// URLQuery serializes [V1AddonListParams]'s query parameters as `url.Values`.
+func (r V1AddonListParams) URLQuery() (v url.Values, err error) {
+	return apiquery.MarshalWithSettings(r, apiquery.QuerySettings{
+		ArrayFormat:  apiquery.ArrayQueryFormatComma,
+		NestedFormat: apiquery.NestedQueryFormatBrackets,
+	})
+}
+
+// Filter by creation date using range operators: gt, gte, lt, lte
+type V1AddonListParamsCreatedAt struct {
+	// Greater than the specified createdAt value
+	Gt param.Opt[time.Time] `query:"gt,omitzero" format:"date-time" json:"-"`
+	// Greater than or equal to the specified createdAt value
+	Gte param.Opt[time.Time] `query:"gte,omitzero" format:"date-time" json:"-"`
+	// Less than the specified createdAt value
+	Lt param.Opt[time.Time] `query:"lt,omitzero" format:"date-time" json:"-"`
+	// Less than or equal to the specified createdAt value
+	Lte param.Opt[time.Time] `query:"lte,omitzero" format:"date-time" json:"-"`
+	paramObj
+}
+
+// URLQuery serializes [V1AddonListParamsCreatedAt]'s query parameters as
+// `url.Values`.
+func (r V1AddonListParamsCreatedAt) URLQuery() (v url.Values, err error) {
+	return apiquery.MarshalWithSettings(r, apiquery.QuerySettings{
+		ArrayFormat:  apiquery.ArrayQueryFormatComma,
+		NestedFormat: apiquery.NestedQueryFormatBrackets,
+	})
+}
+
+type V1AddonPublishParams struct {
+	// The migration type of the package
+	//
+	// Any of "NEW_CUSTOMERS", "ALL_CUSTOMERS".
+	MigrationType V1AddonPublishParamsMigrationType `json:"migrationType,omitzero" api:"required"`
+	paramObj
+}
+
+func (r V1AddonPublishParams) MarshalJSON() (data []byte, err error) {
+	type shadow V1AddonPublishParams
+	return param.MarshalObject(r, (*shadow)(&r))
+}
+func (r *V1AddonPublishParams) UnmarshalJSON(data []byte) error {
+	return apijson.UnmarshalRoot(data, r)
+}
+
+// The migration type of the package
+type V1AddonPublishParamsMigrationType string
+
+const (
+	V1AddonPublishParamsMigrationTypeNewCustomers V1AddonPublishParamsMigrationType = "NEW_CUSTOMERS"
+	V1AddonPublishParamsMigrationTypeAllCustomers V1AddonPublishParamsMigrationType = "ALL_CUSTOMERS"
+)
+
+type V1AddonSetPricingParams struct {
+	// Request to set the pricing configuration for a plan or addon.
+	SetPackagePricing SetPackagePricingParam
+	paramObj
+}
+
+func (r V1AddonSetPricingParams) MarshalJSON() (data []byte, err error) {
+	return shimjson.Marshal(r.SetPackagePricing)
+}
+func (r *V1AddonSetPricingParams) UnmarshalJSON(data []byte) error {
+	return json.Unmarshal(data, &r.SetPackagePricing)
 }

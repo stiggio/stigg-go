@@ -18,6 +18,9 @@ type V1Service struct {
 	Subscriptions V1SubscriptionService
 	Coupons       V1CouponService
 	Events        V1EventService
+	Features      V1FeatureService
+	Addons        V1AddonService
+	Plans         V1PlanService
 	Usage         V1UsageService
 	Products      V1ProductService
 }
@@ -32,6 +35,9 @@ func NewV1Service(opts ...option.RequestOption) (r V1Service) {
 	r.Subscriptions = NewV1SubscriptionService(opts...)
 	r.Coupons = NewV1CouponService(opts...)
 	r.Events = NewV1EventService(opts...)
+	r.Features = NewV1FeatureService(opts...)
+	r.Addons = NewV1AddonService(opts...)
+	r.Plans = NewV1PlanService(opts...)
 	r.Usage = NewV1UsageService(opts...)
 	r.Products = NewV1ProductService(opts...)
 	return
