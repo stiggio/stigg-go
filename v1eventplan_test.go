@@ -32,6 +32,15 @@ func TestV1EventPlanNewWithOptionalParams(t *testing.T) {
 		DisplayName: "displayName",
 		ProductID:   "productId",
 		BillingID:   stigg.String("billingId"),
+		DefaultTrialConfig: stigg.V1EventPlanNewParamsDefaultTrialConfig{
+			Duration: 0,
+			Units:    "DAY",
+			Budget: stigg.V1EventPlanNewParamsDefaultTrialConfigBudget{
+				HasSoftLimit: true,
+				Limit:        0,
+			},
+			TrialEndBehavior: "CONVERT_TO_PAID",
+		},
 		Description: stigg.String("description"),
 		Metadata: map[string]string{
 			"foo": "string",
