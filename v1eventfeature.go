@@ -40,7 +40,7 @@ func NewV1EventFeatureService(opts ...option.RequestOption) (r V1EventFeatureSer
 }
 
 // Archives a feature, preventing it from being used in new entitlements.
-func (r *V1EventFeatureService) ArchiveFeature(ctx context.Context, id string, opts ...option.RequestOption) (res *V1EventFeatureArchiveFeatureResponse, err error) {
+func (r *V1EventFeatureService) ArchiveFeature(ctx context.Context, id string, opts ...option.RequestOption) (res *Feature, err error) {
 	opts = slices.Concat(r.Options, opts)
 	if id == "" {
 		err = errors.New("missing required id parameter")
@@ -52,7 +52,7 @@ func (r *V1EventFeatureService) ArchiveFeature(ctx context.Context, id string, o
 }
 
 // Creates a new feature with the specified type, metering, and configuration.
-func (r *V1EventFeatureService) NewFeature(ctx context.Context, body V1EventFeatureNewFeatureParams, opts ...option.RequestOption) (res *V1EventFeatureNewFeatureResponse, err error) {
+func (r *V1EventFeatureService) NewFeature(ctx context.Context, body V1EventFeatureNewFeatureParams, opts ...option.RequestOption) (res *Feature, err error) {
 	opts = slices.Concat(r.Options, opts)
 	path := "api/v1/features"
 	err = requestconfig.ExecuteNewRequest(ctx, http.MethodPost, path, body, &res, opts...)
@@ -83,7 +83,7 @@ func (r *V1EventFeatureService) ListFeaturesAutoPaging(ctx context.Context, quer
 }
 
 // Retrieves a feature by its unique identifier.
-func (r *V1EventFeatureService) GetFeature(ctx context.Context, id string, opts ...option.RequestOption) (res *V1EventFeatureGetFeatureResponse, err error) {
+func (r *V1EventFeatureService) GetFeature(ctx context.Context, id string, opts ...option.RequestOption) (res *Feature, err error) {
 	opts = slices.Concat(r.Options, opts)
 	if id == "" {
 		err = errors.New("missing required id parameter")
@@ -95,7 +95,7 @@ func (r *V1EventFeatureService) GetFeature(ctx context.Context, id string, opts 
 }
 
 // Restores an archived feature, allowing it to be used in entitlements again.
-func (r *V1EventFeatureService) UnarchiveFeature(ctx context.Context, id string, opts ...option.RequestOption) (res *V1EventFeatureUnarchiveFeatureResponse, err error) {
+func (r *V1EventFeatureService) UnarchiveFeature(ctx context.Context, id string, opts ...option.RequestOption) (res *Feature, err error) {
 	opts = slices.Concat(r.Options, opts)
 	if id == "" {
 		err = errors.New("missing required id parameter")
@@ -108,7 +108,7 @@ func (r *V1EventFeatureService) UnarchiveFeature(ctx context.Context, id string,
 
 // Updates an existing feature's properties such as display name, description, and
 // configuration.
-func (r *V1EventFeatureService) UpdateFeature(ctx context.Context, id string, body V1EventFeatureUpdateFeatureParams, opts ...option.RequestOption) (res *V1EventFeatureUpdateFeatureResponse, err error) {
+func (r *V1EventFeatureService) UpdateFeature(ctx context.Context, id string, body V1EventFeatureUpdateFeatureParams, opts ...option.RequestOption) (res *Feature, err error) {
 	opts = slices.Concat(r.Options, opts)
 	if id == "" {
 		err = errors.New("missing required id parameter")
@@ -120,9 +120,9 @@ func (r *V1EventFeatureService) UpdateFeature(ctx context.Context, id string, bo
 }
 
 // Response object
-type V1EventFeatureArchiveFeatureResponse struct {
+type Feature struct {
 	// Feature configuration object
-	Data V1EventFeatureArchiveFeatureResponseData `json:"data" api:"required"`
+	Data FeatureData `json:"data" api:"required"`
 	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
 	JSON struct {
 		Data        respjson.Field
@@ -132,13 +132,13 @@ type V1EventFeatureArchiveFeatureResponse struct {
 }
 
 // Returns the unmodified JSON received from the API
-func (r V1EventFeatureArchiveFeatureResponse) RawJSON() string { return r.JSON.raw }
-func (r *V1EventFeatureArchiveFeatureResponse) UnmarshalJSON(data []byte) error {
+func (r Feature) RawJSON() string { return r.JSON.raw }
+func (r *Feature) UnmarshalJSON(data []byte) error {
 	return apijson.UnmarshalRoot(data, r)
 }
 
 // Feature configuration object
-type V1EventFeatureArchiveFeatureResponseData struct {
+type FeatureData struct {
 	// The unique identifier for the feature
 	ID string `json:"id" api:"required"`
 	// Timestamp of when the record was created
@@ -148,7 +148,7 @@ type V1EventFeatureArchiveFeatureResponseData struct {
 	// The display name for the feature
 	DisplayName string `json:"displayName" api:"required"`
 	// The configuration data for the feature
-	EnumConfiguration []V1EventFeatureArchiveFeatureResponseDataEnumConfiguration `json:"enumConfiguration" api:"required"`
+	EnumConfiguration []FeatureDataEnumConfiguration `json:"enumConfiguration" api:"required"`
 	// The status of the feature
 	//
 	// Any of "NEW", "SUSPENDED", "ACTIVE".
@@ -168,7 +168,7 @@ type V1EventFeatureArchiveFeatureResponseData struct {
 	// Any of "None", "FLUCTUATING", "INCREMENTAL".
 	MeterType string `json:"meterType" api:"required"`
 	// Unit transformation to be applied to the reported usage
-	UnitTransformation V1EventFeatureArchiveFeatureResponseDataUnitTransformation `json:"unitTransformation" api:"required"`
+	UnitTransformation FeatureDataUnitTransformation `json:"unitTransformation" api:"required"`
 	// Timestamp of when the record was last updated
 	UpdatedAt time.Time `json:"updatedAt" api:"required" format:"date-time"`
 	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
@@ -192,12 +192,12 @@ type V1EventFeatureArchiveFeatureResponseData struct {
 }
 
 // Returns the unmodified JSON received from the API
-func (r V1EventFeatureArchiveFeatureResponseData) RawJSON() string { return r.JSON.raw }
-func (r *V1EventFeatureArchiveFeatureResponseData) UnmarshalJSON(data []byte) error {
+func (r FeatureData) RawJSON() string { return r.JSON.raw }
+func (r *FeatureData) UnmarshalJSON(data []byte) error {
 	return apijson.UnmarshalRoot(data, r)
 }
 
-type V1EventFeatureArchiveFeatureResponseDataEnumConfiguration struct {
+type FeatureDataEnumConfiguration struct {
 	// The display name for the enum configuration entity
 	DisplayName string `json:"displayName" api:"required"`
 	// The unique value identifier for the enum configuration entity
@@ -212,15 +212,13 @@ type V1EventFeatureArchiveFeatureResponseDataEnumConfiguration struct {
 }
 
 // Returns the unmodified JSON received from the API
-func (r V1EventFeatureArchiveFeatureResponseDataEnumConfiguration) RawJSON() string {
-	return r.JSON.raw
-}
-func (r *V1EventFeatureArchiveFeatureResponseDataEnumConfiguration) UnmarshalJSON(data []byte) error {
+func (r FeatureDataEnumConfiguration) RawJSON() string { return r.JSON.raw }
+func (r *FeatureDataEnumConfiguration) UnmarshalJSON(data []byte) error {
 	return apijson.UnmarshalRoot(data, r)
 }
 
 // Unit transformation to be applied to the reported usage
-type V1EventFeatureArchiveFeatureResponseDataUnitTransformation struct {
+type FeatureDataUnitTransformation struct {
 	// Divide usage by this number
 	Divide float64 `json:"divide" api:"required"`
 	// Singular feature units after the transformation
@@ -243,137 +241,8 @@ type V1EventFeatureArchiveFeatureResponseDataUnitTransformation struct {
 }
 
 // Returns the unmodified JSON received from the API
-func (r V1EventFeatureArchiveFeatureResponseDataUnitTransformation) RawJSON() string {
-	return r.JSON.raw
-}
-func (r *V1EventFeatureArchiveFeatureResponseDataUnitTransformation) UnmarshalJSON(data []byte) error {
-	return apijson.UnmarshalRoot(data, r)
-}
-
-// Response object
-type V1EventFeatureNewFeatureResponse struct {
-	// Feature configuration object
-	Data V1EventFeatureNewFeatureResponseData `json:"data" api:"required"`
-	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
-	JSON struct {
-		Data        respjson.Field
-		ExtraFields map[string]respjson.Field
-		raw         string
-	} `json:"-"`
-}
-
-// Returns the unmodified JSON received from the API
-func (r V1EventFeatureNewFeatureResponse) RawJSON() string { return r.JSON.raw }
-func (r *V1EventFeatureNewFeatureResponse) UnmarshalJSON(data []byte) error {
-	return apijson.UnmarshalRoot(data, r)
-}
-
-// Feature configuration object
-type V1EventFeatureNewFeatureResponseData struct {
-	// The unique identifier for the feature
-	ID string `json:"id" api:"required"`
-	// Timestamp of when the record was created
-	CreatedAt time.Time `json:"createdAt" api:"required" format:"date-time"`
-	// The description for the feature
-	Description string `json:"description" api:"required"`
-	// The display name for the feature
-	DisplayName string `json:"displayName" api:"required"`
-	// The configuration data for the feature
-	EnumConfiguration []V1EventFeatureNewFeatureResponseDataEnumConfiguration `json:"enumConfiguration" api:"required"`
-	// The status of the feature
-	//
-	// Any of "NEW", "SUSPENDED", "ACTIVE".
-	FeatureStatus string `json:"featureStatus" api:"required"`
-	// The type of the feature
-	//
-	// Any of "BOOLEAN", "NUMBER", "ENUM".
-	FeatureType string `json:"featureType" api:"required"`
-	// The units for the feature
-	FeatureUnits string `json:"featureUnits" api:"required"`
-	// The plural units for the feature
-	FeatureUnitsPlural string `json:"featureUnitsPlural" api:"required"`
-	// The additional metadata for the feature
-	Metadata map[string]string `json:"metadata" api:"required"`
-	// The meter type for the feature
-	//
-	// Any of "None", "FLUCTUATING", "INCREMENTAL".
-	MeterType string `json:"meterType" api:"required"`
-	// Unit transformation to be applied to the reported usage
-	UnitTransformation V1EventFeatureNewFeatureResponseDataUnitTransformation `json:"unitTransformation" api:"required"`
-	// Timestamp of when the record was last updated
-	UpdatedAt time.Time `json:"updatedAt" api:"required" format:"date-time"`
-	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
-	JSON struct {
-		ID                 respjson.Field
-		CreatedAt          respjson.Field
-		Description        respjson.Field
-		DisplayName        respjson.Field
-		EnumConfiguration  respjson.Field
-		FeatureStatus      respjson.Field
-		FeatureType        respjson.Field
-		FeatureUnits       respjson.Field
-		FeatureUnitsPlural respjson.Field
-		Metadata           respjson.Field
-		MeterType          respjson.Field
-		UnitTransformation respjson.Field
-		UpdatedAt          respjson.Field
-		ExtraFields        map[string]respjson.Field
-		raw                string
-	} `json:"-"`
-}
-
-// Returns the unmodified JSON received from the API
-func (r V1EventFeatureNewFeatureResponseData) RawJSON() string { return r.JSON.raw }
-func (r *V1EventFeatureNewFeatureResponseData) UnmarshalJSON(data []byte) error {
-	return apijson.UnmarshalRoot(data, r)
-}
-
-type V1EventFeatureNewFeatureResponseDataEnumConfiguration struct {
-	// The display name for the enum configuration entity
-	DisplayName string `json:"displayName" api:"required"`
-	// The unique value identifier for the enum configuration entity
-	Value string `json:"value" api:"required"`
-	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
-	JSON struct {
-		DisplayName respjson.Field
-		Value       respjson.Field
-		ExtraFields map[string]respjson.Field
-		raw         string
-	} `json:"-"`
-}
-
-// Returns the unmodified JSON received from the API
-func (r V1EventFeatureNewFeatureResponseDataEnumConfiguration) RawJSON() string { return r.JSON.raw }
-func (r *V1EventFeatureNewFeatureResponseDataEnumConfiguration) UnmarshalJSON(data []byte) error {
-	return apijson.UnmarshalRoot(data, r)
-}
-
-// Unit transformation to be applied to the reported usage
-type V1EventFeatureNewFeatureResponseDataUnitTransformation struct {
-	// Divide usage by this number
-	Divide float64 `json:"divide" api:"required"`
-	// Singular feature units after the transformation
-	FeatureUnits string `json:"featureUnits" api:"required"`
-	// Plural feature units after the transformation
-	FeatureUnitsPlural string `json:"featureUnitsPlural" api:"required"`
-	// After division, either round the result up or down
-	//
-	// Any of "UP", "DOWN".
-	Round string `json:"round" api:"required"`
-	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
-	JSON struct {
-		Divide             respjson.Field
-		FeatureUnits       respjson.Field
-		FeatureUnitsPlural respjson.Field
-		Round              respjson.Field
-		ExtraFields        map[string]respjson.Field
-		raw                string
-	} `json:"-"`
-}
-
-// Returns the unmodified JSON received from the API
-func (r V1EventFeatureNewFeatureResponseDataUnitTransformation) RawJSON() string { return r.JSON.raw }
-func (r *V1EventFeatureNewFeatureResponseDataUnitTransformation) UnmarshalJSON(data []byte) error {
+func (r FeatureDataUnitTransformation) RawJSON() string { return r.JSON.raw }
+func (r *FeatureDataUnitTransformation) UnmarshalJSON(data []byte) error {
 	return apijson.UnmarshalRoot(data, r)
 }
 
@@ -510,393 +379,6 @@ type V1EventFeatureListFeaturesResponseUnitTransformation struct {
 // Returns the unmodified JSON received from the API
 func (r V1EventFeatureListFeaturesResponseUnitTransformation) RawJSON() string { return r.JSON.raw }
 func (r *V1EventFeatureListFeaturesResponseUnitTransformation) UnmarshalJSON(data []byte) error {
-	return apijson.UnmarshalRoot(data, r)
-}
-
-// Response object
-type V1EventFeatureGetFeatureResponse struct {
-	// Feature configuration object
-	Data V1EventFeatureGetFeatureResponseData `json:"data" api:"required"`
-	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
-	JSON struct {
-		Data        respjson.Field
-		ExtraFields map[string]respjson.Field
-		raw         string
-	} `json:"-"`
-}
-
-// Returns the unmodified JSON received from the API
-func (r V1EventFeatureGetFeatureResponse) RawJSON() string { return r.JSON.raw }
-func (r *V1EventFeatureGetFeatureResponse) UnmarshalJSON(data []byte) error {
-	return apijson.UnmarshalRoot(data, r)
-}
-
-// Feature configuration object
-type V1EventFeatureGetFeatureResponseData struct {
-	// The unique identifier for the feature
-	ID string `json:"id" api:"required"`
-	// Timestamp of when the record was created
-	CreatedAt time.Time `json:"createdAt" api:"required" format:"date-time"`
-	// The description for the feature
-	Description string `json:"description" api:"required"`
-	// The display name for the feature
-	DisplayName string `json:"displayName" api:"required"`
-	// The configuration data for the feature
-	EnumConfiguration []V1EventFeatureGetFeatureResponseDataEnumConfiguration `json:"enumConfiguration" api:"required"`
-	// The status of the feature
-	//
-	// Any of "NEW", "SUSPENDED", "ACTIVE".
-	FeatureStatus string `json:"featureStatus" api:"required"`
-	// The type of the feature
-	//
-	// Any of "BOOLEAN", "NUMBER", "ENUM".
-	FeatureType string `json:"featureType" api:"required"`
-	// The units for the feature
-	FeatureUnits string `json:"featureUnits" api:"required"`
-	// The plural units for the feature
-	FeatureUnitsPlural string `json:"featureUnitsPlural" api:"required"`
-	// The additional metadata for the feature
-	Metadata map[string]string `json:"metadata" api:"required"`
-	// The meter type for the feature
-	//
-	// Any of "None", "FLUCTUATING", "INCREMENTAL".
-	MeterType string `json:"meterType" api:"required"`
-	// Unit transformation to be applied to the reported usage
-	UnitTransformation V1EventFeatureGetFeatureResponseDataUnitTransformation `json:"unitTransformation" api:"required"`
-	// Timestamp of when the record was last updated
-	UpdatedAt time.Time `json:"updatedAt" api:"required" format:"date-time"`
-	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
-	JSON struct {
-		ID                 respjson.Field
-		CreatedAt          respjson.Field
-		Description        respjson.Field
-		DisplayName        respjson.Field
-		EnumConfiguration  respjson.Field
-		FeatureStatus      respjson.Field
-		FeatureType        respjson.Field
-		FeatureUnits       respjson.Field
-		FeatureUnitsPlural respjson.Field
-		Metadata           respjson.Field
-		MeterType          respjson.Field
-		UnitTransformation respjson.Field
-		UpdatedAt          respjson.Field
-		ExtraFields        map[string]respjson.Field
-		raw                string
-	} `json:"-"`
-}
-
-// Returns the unmodified JSON received from the API
-func (r V1EventFeatureGetFeatureResponseData) RawJSON() string { return r.JSON.raw }
-func (r *V1EventFeatureGetFeatureResponseData) UnmarshalJSON(data []byte) error {
-	return apijson.UnmarshalRoot(data, r)
-}
-
-type V1EventFeatureGetFeatureResponseDataEnumConfiguration struct {
-	// The display name for the enum configuration entity
-	DisplayName string `json:"displayName" api:"required"`
-	// The unique value identifier for the enum configuration entity
-	Value string `json:"value" api:"required"`
-	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
-	JSON struct {
-		DisplayName respjson.Field
-		Value       respjson.Field
-		ExtraFields map[string]respjson.Field
-		raw         string
-	} `json:"-"`
-}
-
-// Returns the unmodified JSON received from the API
-func (r V1EventFeatureGetFeatureResponseDataEnumConfiguration) RawJSON() string { return r.JSON.raw }
-func (r *V1EventFeatureGetFeatureResponseDataEnumConfiguration) UnmarshalJSON(data []byte) error {
-	return apijson.UnmarshalRoot(data, r)
-}
-
-// Unit transformation to be applied to the reported usage
-type V1EventFeatureGetFeatureResponseDataUnitTransformation struct {
-	// Divide usage by this number
-	Divide float64 `json:"divide" api:"required"`
-	// Singular feature units after the transformation
-	FeatureUnits string `json:"featureUnits" api:"required"`
-	// Plural feature units after the transformation
-	FeatureUnitsPlural string `json:"featureUnitsPlural" api:"required"`
-	// After division, either round the result up or down
-	//
-	// Any of "UP", "DOWN".
-	Round string `json:"round" api:"required"`
-	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
-	JSON struct {
-		Divide             respjson.Field
-		FeatureUnits       respjson.Field
-		FeatureUnitsPlural respjson.Field
-		Round              respjson.Field
-		ExtraFields        map[string]respjson.Field
-		raw                string
-	} `json:"-"`
-}
-
-// Returns the unmodified JSON received from the API
-func (r V1EventFeatureGetFeatureResponseDataUnitTransformation) RawJSON() string { return r.JSON.raw }
-func (r *V1EventFeatureGetFeatureResponseDataUnitTransformation) UnmarshalJSON(data []byte) error {
-	return apijson.UnmarshalRoot(data, r)
-}
-
-// Response object
-type V1EventFeatureUnarchiveFeatureResponse struct {
-	// Feature configuration object
-	Data V1EventFeatureUnarchiveFeatureResponseData `json:"data" api:"required"`
-	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
-	JSON struct {
-		Data        respjson.Field
-		ExtraFields map[string]respjson.Field
-		raw         string
-	} `json:"-"`
-}
-
-// Returns the unmodified JSON received from the API
-func (r V1EventFeatureUnarchiveFeatureResponse) RawJSON() string { return r.JSON.raw }
-func (r *V1EventFeatureUnarchiveFeatureResponse) UnmarshalJSON(data []byte) error {
-	return apijson.UnmarshalRoot(data, r)
-}
-
-// Feature configuration object
-type V1EventFeatureUnarchiveFeatureResponseData struct {
-	// The unique identifier for the feature
-	ID string `json:"id" api:"required"`
-	// Timestamp of when the record was created
-	CreatedAt time.Time `json:"createdAt" api:"required" format:"date-time"`
-	// The description for the feature
-	Description string `json:"description" api:"required"`
-	// The display name for the feature
-	DisplayName string `json:"displayName" api:"required"`
-	// The configuration data for the feature
-	EnumConfiguration []V1EventFeatureUnarchiveFeatureResponseDataEnumConfiguration `json:"enumConfiguration" api:"required"`
-	// The status of the feature
-	//
-	// Any of "NEW", "SUSPENDED", "ACTIVE".
-	FeatureStatus string `json:"featureStatus" api:"required"`
-	// The type of the feature
-	//
-	// Any of "BOOLEAN", "NUMBER", "ENUM".
-	FeatureType string `json:"featureType" api:"required"`
-	// The units for the feature
-	FeatureUnits string `json:"featureUnits" api:"required"`
-	// The plural units for the feature
-	FeatureUnitsPlural string `json:"featureUnitsPlural" api:"required"`
-	// The additional metadata for the feature
-	Metadata map[string]string `json:"metadata" api:"required"`
-	// The meter type for the feature
-	//
-	// Any of "None", "FLUCTUATING", "INCREMENTAL".
-	MeterType string `json:"meterType" api:"required"`
-	// Unit transformation to be applied to the reported usage
-	UnitTransformation V1EventFeatureUnarchiveFeatureResponseDataUnitTransformation `json:"unitTransformation" api:"required"`
-	// Timestamp of when the record was last updated
-	UpdatedAt time.Time `json:"updatedAt" api:"required" format:"date-time"`
-	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
-	JSON struct {
-		ID                 respjson.Field
-		CreatedAt          respjson.Field
-		Description        respjson.Field
-		DisplayName        respjson.Field
-		EnumConfiguration  respjson.Field
-		FeatureStatus      respjson.Field
-		FeatureType        respjson.Field
-		FeatureUnits       respjson.Field
-		FeatureUnitsPlural respjson.Field
-		Metadata           respjson.Field
-		MeterType          respjson.Field
-		UnitTransformation respjson.Field
-		UpdatedAt          respjson.Field
-		ExtraFields        map[string]respjson.Field
-		raw                string
-	} `json:"-"`
-}
-
-// Returns the unmodified JSON received from the API
-func (r V1EventFeatureUnarchiveFeatureResponseData) RawJSON() string { return r.JSON.raw }
-func (r *V1EventFeatureUnarchiveFeatureResponseData) UnmarshalJSON(data []byte) error {
-	return apijson.UnmarshalRoot(data, r)
-}
-
-type V1EventFeatureUnarchiveFeatureResponseDataEnumConfiguration struct {
-	// The display name for the enum configuration entity
-	DisplayName string `json:"displayName" api:"required"`
-	// The unique value identifier for the enum configuration entity
-	Value string `json:"value" api:"required"`
-	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
-	JSON struct {
-		DisplayName respjson.Field
-		Value       respjson.Field
-		ExtraFields map[string]respjson.Field
-		raw         string
-	} `json:"-"`
-}
-
-// Returns the unmodified JSON received from the API
-func (r V1EventFeatureUnarchiveFeatureResponseDataEnumConfiguration) RawJSON() string {
-	return r.JSON.raw
-}
-func (r *V1EventFeatureUnarchiveFeatureResponseDataEnumConfiguration) UnmarshalJSON(data []byte) error {
-	return apijson.UnmarshalRoot(data, r)
-}
-
-// Unit transformation to be applied to the reported usage
-type V1EventFeatureUnarchiveFeatureResponseDataUnitTransformation struct {
-	// Divide usage by this number
-	Divide float64 `json:"divide" api:"required"`
-	// Singular feature units after the transformation
-	FeatureUnits string `json:"featureUnits" api:"required"`
-	// Plural feature units after the transformation
-	FeatureUnitsPlural string `json:"featureUnitsPlural" api:"required"`
-	// After division, either round the result up or down
-	//
-	// Any of "UP", "DOWN".
-	Round string `json:"round" api:"required"`
-	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
-	JSON struct {
-		Divide             respjson.Field
-		FeatureUnits       respjson.Field
-		FeatureUnitsPlural respjson.Field
-		Round              respjson.Field
-		ExtraFields        map[string]respjson.Field
-		raw                string
-	} `json:"-"`
-}
-
-// Returns the unmodified JSON received from the API
-func (r V1EventFeatureUnarchiveFeatureResponseDataUnitTransformation) RawJSON() string {
-	return r.JSON.raw
-}
-func (r *V1EventFeatureUnarchiveFeatureResponseDataUnitTransformation) UnmarshalJSON(data []byte) error {
-	return apijson.UnmarshalRoot(data, r)
-}
-
-// Response object
-type V1EventFeatureUpdateFeatureResponse struct {
-	// Feature configuration object
-	Data V1EventFeatureUpdateFeatureResponseData `json:"data" api:"required"`
-	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
-	JSON struct {
-		Data        respjson.Field
-		ExtraFields map[string]respjson.Field
-		raw         string
-	} `json:"-"`
-}
-
-// Returns the unmodified JSON received from the API
-func (r V1EventFeatureUpdateFeatureResponse) RawJSON() string { return r.JSON.raw }
-func (r *V1EventFeatureUpdateFeatureResponse) UnmarshalJSON(data []byte) error {
-	return apijson.UnmarshalRoot(data, r)
-}
-
-// Feature configuration object
-type V1EventFeatureUpdateFeatureResponseData struct {
-	// The unique identifier for the feature
-	ID string `json:"id" api:"required"`
-	// Timestamp of when the record was created
-	CreatedAt time.Time `json:"createdAt" api:"required" format:"date-time"`
-	// The description for the feature
-	Description string `json:"description" api:"required"`
-	// The display name for the feature
-	DisplayName string `json:"displayName" api:"required"`
-	// The configuration data for the feature
-	EnumConfiguration []V1EventFeatureUpdateFeatureResponseDataEnumConfiguration `json:"enumConfiguration" api:"required"`
-	// The status of the feature
-	//
-	// Any of "NEW", "SUSPENDED", "ACTIVE".
-	FeatureStatus string `json:"featureStatus" api:"required"`
-	// The type of the feature
-	//
-	// Any of "BOOLEAN", "NUMBER", "ENUM".
-	FeatureType string `json:"featureType" api:"required"`
-	// The units for the feature
-	FeatureUnits string `json:"featureUnits" api:"required"`
-	// The plural units for the feature
-	FeatureUnitsPlural string `json:"featureUnitsPlural" api:"required"`
-	// The additional metadata for the feature
-	Metadata map[string]string `json:"metadata" api:"required"`
-	// The meter type for the feature
-	//
-	// Any of "None", "FLUCTUATING", "INCREMENTAL".
-	MeterType string `json:"meterType" api:"required"`
-	// Unit transformation to be applied to the reported usage
-	UnitTransformation V1EventFeatureUpdateFeatureResponseDataUnitTransformation `json:"unitTransformation" api:"required"`
-	// Timestamp of when the record was last updated
-	UpdatedAt time.Time `json:"updatedAt" api:"required" format:"date-time"`
-	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
-	JSON struct {
-		ID                 respjson.Field
-		CreatedAt          respjson.Field
-		Description        respjson.Field
-		DisplayName        respjson.Field
-		EnumConfiguration  respjson.Field
-		FeatureStatus      respjson.Field
-		FeatureType        respjson.Field
-		FeatureUnits       respjson.Field
-		FeatureUnitsPlural respjson.Field
-		Metadata           respjson.Field
-		MeterType          respjson.Field
-		UnitTransformation respjson.Field
-		UpdatedAt          respjson.Field
-		ExtraFields        map[string]respjson.Field
-		raw                string
-	} `json:"-"`
-}
-
-// Returns the unmodified JSON received from the API
-func (r V1EventFeatureUpdateFeatureResponseData) RawJSON() string { return r.JSON.raw }
-func (r *V1EventFeatureUpdateFeatureResponseData) UnmarshalJSON(data []byte) error {
-	return apijson.UnmarshalRoot(data, r)
-}
-
-type V1EventFeatureUpdateFeatureResponseDataEnumConfiguration struct {
-	// The display name for the enum configuration entity
-	DisplayName string `json:"displayName" api:"required"`
-	// The unique value identifier for the enum configuration entity
-	Value string `json:"value" api:"required"`
-	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
-	JSON struct {
-		DisplayName respjson.Field
-		Value       respjson.Field
-		ExtraFields map[string]respjson.Field
-		raw         string
-	} `json:"-"`
-}
-
-// Returns the unmodified JSON received from the API
-func (r V1EventFeatureUpdateFeatureResponseDataEnumConfiguration) RawJSON() string { return r.JSON.raw }
-func (r *V1EventFeatureUpdateFeatureResponseDataEnumConfiguration) UnmarshalJSON(data []byte) error {
-	return apijson.UnmarshalRoot(data, r)
-}
-
-// Unit transformation to be applied to the reported usage
-type V1EventFeatureUpdateFeatureResponseDataUnitTransformation struct {
-	// Divide usage by this number
-	Divide float64 `json:"divide" api:"required"`
-	// Singular feature units after the transformation
-	FeatureUnits string `json:"featureUnits" api:"required"`
-	// Plural feature units after the transformation
-	FeatureUnitsPlural string `json:"featureUnitsPlural" api:"required"`
-	// After division, either round the result up or down
-	//
-	// Any of "UP", "DOWN".
-	Round string `json:"round" api:"required"`
-	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
-	JSON struct {
-		Divide             respjson.Field
-		FeatureUnits       respjson.Field
-		FeatureUnitsPlural respjson.Field
-		Round              respjson.Field
-		ExtraFields        map[string]respjson.Field
-		raw                string
-	} `json:"-"`
-}
-
-// Returns the unmodified JSON received from the API
-func (r V1EventFeatureUpdateFeatureResponseDataUnitTransformation) RawJSON() string {
-	return r.JSON.raw
-}
-func (r *V1EventFeatureUpdateFeatureResponseDataUnitTransformation) UnmarshalJSON(data []byte) error {
 	return apijson.UnmarshalRoot(data, r)
 }
 
