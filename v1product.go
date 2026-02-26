@@ -41,7 +41,7 @@ func NewV1ProductService(opts ...option.RequestOption) (r V1ProductService) {
 
 // Archives a product, preventing new subscriptions. All plans and addons are
 // archived.
-func (r *V1ProductService) ArchiveProduct(ctx context.Context, id string, opts ...option.RequestOption) (res *V1ProductArchiveProductResponse, err error) {
+func (r *V1ProductService) ArchiveProduct(ctx context.Context, id string, opts ...option.RequestOption) (res *Product, err error) {
 	opts = slices.Concat(r.Options, opts)
 	if id == "" {
 		err = errors.New("missing required id parameter")
@@ -53,7 +53,7 @@ func (r *V1ProductService) ArchiveProduct(ctx context.Context, id string, opts .
 }
 
 // Creates a new product.
-func (r *V1ProductService) NewProduct(ctx context.Context, body V1ProductNewProductParams, opts ...option.RequestOption) (res *V1ProductNewProductResponse, err error) {
+func (r *V1ProductService) NewProduct(ctx context.Context, body V1ProductNewProductParams, opts ...option.RequestOption) (res *Product, err error) {
 	opts = slices.Concat(r.Options, opts)
 	path := "api/v1/products"
 	err = requestconfig.ExecuteNewRequest(ctx, http.MethodPost, path, body, &res, opts...)
@@ -61,7 +61,7 @@ func (r *V1ProductService) NewProduct(ctx context.Context, body V1ProductNewProd
 }
 
 // Duplicates an existing product, including its plans, addons, and configuration.
-func (r *V1ProductService) DuplicateProduct(ctx context.Context, id string, body V1ProductDuplicateProductParams, opts ...option.RequestOption) (res *V1ProductDuplicateProductResponse, err error) {
+func (r *V1ProductService) DuplicateProduct(ctx context.Context, id string, body V1ProductDuplicateProductParams, opts ...option.RequestOption) (res *Product, err error) {
 	opts = slices.Concat(r.Options, opts)
 	if id == "" {
 		err = errors.New("missing required id parameter")
@@ -96,7 +96,7 @@ func (r *V1ProductService) ListProductsAutoPaging(ctx context.Context, query V1P
 }
 
 // Restores an archived product, allowing new subscriptions to be created.
-func (r *V1ProductService) UnarchiveProduct(ctx context.Context, id string, opts ...option.RequestOption) (res *V1ProductUnarchiveProductResponse, err error) {
+func (r *V1ProductService) UnarchiveProduct(ctx context.Context, id string, opts ...option.RequestOption) (res *Product, err error) {
 	opts = slices.Concat(r.Options, opts)
 	if id == "" {
 		err = errors.New("missing required id parameter")
@@ -109,7 +109,7 @@ func (r *V1ProductService) UnarchiveProduct(ctx context.Context, id string, opts
 
 // Updates an existing product's properties such as display name, description, and
 // metadata.
-func (r *V1ProductService) UpdateProduct(ctx context.Context, id string, body V1ProductUpdateProductParams, opts ...option.RequestOption) (res *V1ProductUpdateProductResponse, err error) {
+func (r *V1ProductService) UpdateProduct(ctx context.Context, id string, body V1ProductUpdateProductParams, opts ...option.RequestOption) (res *Product, err error) {
 	opts = slices.Concat(r.Options, opts)
 	if id == "" {
 		err = errors.New("missing required id parameter")
@@ -121,9 +121,9 @@ func (r *V1ProductService) UpdateProduct(ctx context.Context, id string, body V1
 }
 
 // Response object
-type V1ProductArchiveProductResponse struct {
+type Product struct {
 	// Product configuration object
-	Data V1ProductArchiveProductResponseData `json:"data" api:"required"`
+	Data ProductData `json:"data" api:"required"`
 	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
 	JSON struct {
 		Data        respjson.Field
@@ -133,13 +133,13 @@ type V1ProductArchiveProductResponse struct {
 }
 
 // Returns the unmodified JSON received from the API
-func (r V1ProductArchiveProductResponse) RawJSON() string { return r.JSON.raw }
-func (r *V1ProductArchiveProductResponse) UnmarshalJSON(data []byte) error {
+func (r Product) RawJSON() string { return r.JSON.raw }
+func (r *Product) UnmarshalJSON(data []byte) error {
 	return apijson.UnmarshalRoot(data, r)
 }
 
 // Product configuration object
-type V1ProductArchiveProductResponseData struct {
+type ProductData struct {
 	// The unique identifier for the entity
 	ID string `json:"id" api:"required"`
 	// Timestamp of when the record was created
@@ -159,7 +159,7 @@ type V1ProductArchiveProductResponseData struct {
 	// Timestamp of when the record was last updated
 	UpdatedAt time.Time `json:"updatedAt" api:"required" format:"date-time"`
 	// Product behavior settings for subscription lifecycle management.
-	ProductSettings V1ProductArchiveProductResponseDataProductSettings `json:"productSettings"`
+	ProductSettings ProductDataProductSettings `json:"productSettings"`
 	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
 	JSON struct {
 		ID                    respjson.Field
@@ -177,13 +177,13 @@ type V1ProductArchiveProductResponseData struct {
 }
 
 // Returns the unmodified JSON received from the API
-func (r V1ProductArchiveProductResponseData) RawJSON() string { return r.JSON.raw }
-func (r *V1ProductArchiveProductResponseData) UnmarshalJSON(data []byte) error {
+func (r ProductData) RawJSON() string { return r.JSON.raw }
+func (r *ProductData) UnmarshalJSON(data []byte) error {
 	return apijson.UnmarshalRoot(data, r)
 }
 
 // Product behavior settings for subscription lifecycle management.
-type V1ProductArchiveProductResponseDataProductSettings struct {
+type ProductDataProductSettings struct {
 	// Time when the subscription will be cancelled
 	//
 	// Any of "END_OF_BILLING_PERIOD", "IMMEDIATE", "SPECIFIC_DATE".
@@ -217,212 +217,8 @@ type V1ProductArchiveProductResponseDataProductSettings struct {
 }
 
 // Returns the unmodified JSON received from the API
-func (r V1ProductArchiveProductResponseDataProductSettings) RawJSON() string { return r.JSON.raw }
-func (r *V1ProductArchiveProductResponseDataProductSettings) UnmarshalJSON(data []byte) error {
-	return apijson.UnmarshalRoot(data, r)
-}
-
-// Response object
-type V1ProductNewProductResponse struct {
-	// Product configuration object
-	Data V1ProductNewProductResponseData `json:"data" api:"required"`
-	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
-	JSON struct {
-		Data        respjson.Field
-		ExtraFields map[string]respjson.Field
-		raw         string
-	} `json:"-"`
-}
-
-// Returns the unmodified JSON received from the API
-func (r V1ProductNewProductResponse) RawJSON() string { return r.JSON.raw }
-func (r *V1ProductNewProductResponse) UnmarshalJSON(data []byte) error {
-	return apijson.UnmarshalRoot(data, r)
-}
-
-// Product configuration object
-type V1ProductNewProductResponseData struct {
-	// The unique identifier for the entity
-	ID string `json:"id" api:"required"`
-	// Timestamp of when the record was created
-	CreatedAt time.Time `json:"createdAt" api:"required" format:"date-time"`
-	// Description of the product
-	Description string `json:"description" api:"required"`
-	// Display name of the product
-	DisplayName string `json:"displayName" api:"required"`
-	// Metadata associated with the entity
-	Metadata map[string]string `json:"metadata" api:"required"`
-	// Indicates if multiple subscriptions to this product are allowed
-	MultipleSubscriptions bool `json:"multipleSubscriptions" api:"required"`
-	// The status of the product
-	//
-	// Any of "PUBLISHED", "ARCHIVED".
-	Status string `json:"status" api:"required"`
-	// Timestamp of when the record was last updated
-	UpdatedAt time.Time `json:"updatedAt" api:"required" format:"date-time"`
-	// Product behavior settings for subscription lifecycle management.
-	ProductSettings V1ProductNewProductResponseDataProductSettings `json:"productSettings"`
-	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
-	JSON struct {
-		ID                    respjson.Field
-		CreatedAt             respjson.Field
-		Description           respjson.Field
-		DisplayName           respjson.Field
-		Metadata              respjson.Field
-		MultipleSubscriptions respjson.Field
-		Status                respjson.Field
-		UpdatedAt             respjson.Field
-		ProductSettings       respjson.Field
-		ExtraFields           map[string]respjson.Field
-		raw                   string
-	} `json:"-"`
-}
-
-// Returns the unmodified JSON received from the API
-func (r V1ProductNewProductResponseData) RawJSON() string { return r.JSON.raw }
-func (r *V1ProductNewProductResponseData) UnmarshalJSON(data []byte) error {
-	return apijson.UnmarshalRoot(data, r)
-}
-
-// Product behavior settings for subscription lifecycle management.
-type V1ProductNewProductResponseDataProductSettings struct {
-	// Time when the subscription will be cancelled
-	//
-	// Any of "END_OF_BILLING_PERIOD", "IMMEDIATE", "SPECIFIC_DATE".
-	SubscriptionCancellationTime string `json:"subscriptionCancellationTime" api:"required"`
-	// Setup for the end of the subscription
-	//
-	// Any of "DOWNGRADE_TO_FREE", "CANCEL_SUBSCRIPTION".
-	SubscriptionEndSetup string `json:"subscriptionEndSetup" api:"required"`
-	// Setup for the start of the subscription
-	//
-	// Any of "PLAN_SELECTION", "TRIAL_PERIOD", "FREE_PLAN".
-	SubscriptionStartSetup string `json:"subscriptionStartSetup" api:"required"`
-	// ID of the plan to downgrade to at the end of the billing period
-	DowngradePlanID string `json:"downgradePlanId" api:"nullable"`
-	// Indicates if the subscription should be prorated at the end of the billing
-	// period
-	ProrateAtEndOfBillingPeriod bool `json:"prorateAtEndOfBillingPeriod" api:"nullable"`
-	// ID of the plan to start the subscription with
-	SubscriptionStartPlanID string `json:"subscriptionStartPlanId" api:"nullable"`
-	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
-	JSON struct {
-		SubscriptionCancellationTime respjson.Field
-		SubscriptionEndSetup         respjson.Field
-		SubscriptionStartSetup       respjson.Field
-		DowngradePlanID              respjson.Field
-		ProrateAtEndOfBillingPeriod  respjson.Field
-		SubscriptionStartPlanID      respjson.Field
-		ExtraFields                  map[string]respjson.Field
-		raw                          string
-	} `json:"-"`
-}
-
-// Returns the unmodified JSON received from the API
-func (r V1ProductNewProductResponseDataProductSettings) RawJSON() string { return r.JSON.raw }
-func (r *V1ProductNewProductResponseDataProductSettings) UnmarshalJSON(data []byte) error {
-	return apijson.UnmarshalRoot(data, r)
-}
-
-// Response object
-type V1ProductDuplicateProductResponse struct {
-	// Product configuration object
-	Data V1ProductDuplicateProductResponseData `json:"data" api:"required"`
-	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
-	JSON struct {
-		Data        respjson.Field
-		ExtraFields map[string]respjson.Field
-		raw         string
-	} `json:"-"`
-}
-
-// Returns the unmodified JSON received from the API
-func (r V1ProductDuplicateProductResponse) RawJSON() string { return r.JSON.raw }
-func (r *V1ProductDuplicateProductResponse) UnmarshalJSON(data []byte) error {
-	return apijson.UnmarshalRoot(data, r)
-}
-
-// Product configuration object
-type V1ProductDuplicateProductResponseData struct {
-	// The unique identifier for the entity
-	ID string `json:"id" api:"required"`
-	// Timestamp of when the record was created
-	CreatedAt time.Time `json:"createdAt" api:"required" format:"date-time"`
-	// Description of the product
-	Description string `json:"description" api:"required"`
-	// Display name of the product
-	DisplayName string `json:"displayName" api:"required"`
-	// Metadata associated with the entity
-	Metadata map[string]string `json:"metadata" api:"required"`
-	// Indicates if multiple subscriptions to this product are allowed
-	MultipleSubscriptions bool `json:"multipleSubscriptions" api:"required"`
-	// The status of the product
-	//
-	// Any of "PUBLISHED", "ARCHIVED".
-	Status string `json:"status" api:"required"`
-	// Timestamp of when the record was last updated
-	UpdatedAt time.Time `json:"updatedAt" api:"required" format:"date-time"`
-	// Product behavior settings for subscription lifecycle management.
-	ProductSettings V1ProductDuplicateProductResponseDataProductSettings `json:"productSettings"`
-	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
-	JSON struct {
-		ID                    respjson.Field
-		CreatedAt             respjson.Field
-		Description           respjson.Field
-		DisplayName           respjson.Field
-		Metadata              respjson.Field
-		MultipleSubscriptions respjson.Field
-		Status                respjson.Field
-		UpdatedAt             respjson.Field
-		ProductSettings       respjson.Field
-		ExtraFields           map[string]respjson.Field
-		raw                   string
-	} `json:"-"`
-}
-
-// Returns the unmodified JSON received from the API
-func (r V1ProductDuplicateProductResponseData) RawJSON() string { return r.JSON.raw }
-func (r *V1ProductDuplicateProductResponseData) UnmarshalJSON(data []byte) error {
-	return apijson.UnmarshalRoot(data, r)
-}
-
-// Product behavior settings for subscription lifecycle management.
-type V1ProductDuplicateProductResponseDataProductSettings struct {
-	// Time when the subscription will be cancelled
-	//
-	// Any of "END_OF_BILLING_PERIOD", "IMMEDIATE", "SPECIFIC_DATE".
-	SubscriptionCancellationTime string `json:"subscriptionCancellationTime" api:"required"`
-	// Setup for the end of the subscription
-	//
-	// Any of "DOWNGRADE_TO_FREE", "CANCEL_SUBSCRIPTION".
-	SubscriptionEndSetup string `json:"subscriptionEndSetup" api:"required"`
-	// Setup for the start of the subscription
-	//
-	// Any of "PLAN_SELECTION", "TRIAL_PERIOD", "FREE_PLAN".
-	SubscriptionStartSetup string `json:"subscriptionStartSetup" api:"required"`
-	// ID of the plan to downgrade to at the end of the billing period
-	DowngradePlanID string `json:"downgradePlanId" api:"nullable"`
-	// Indicates if the subscription should be prorated at the end of the billing
-	// period
-	ProrateAtEndOfBillingPeriod bool `json:"prorateAtEndOfBillingPeriod" api:"nullable"`
-	// ID of the plan to start the subscription with
-	SubscriptionStartPlanID string `json:"subscriptionStartPlanId" api:"nullable"`
-	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
-	JSON struct {
-		SubscriptionCancellationTime respjson.Field
-		SubscriptionEndSetup         respjson.Field
-		SubscriptionStartSetup       respjson.Field
-		DowngradePlanID              respjson.Field
-		ProrateAtEndOfBillingPeriod  respjson.Field
-		SubscriptionStartPlanID      respjson.Field
-		ExtraFields                  map[string]respjson.Field
-		raw                          string
-	} `json:"-"`
-}
-
-// Returns the unmodified JSON received from the API
-func (r V1ProductDuplicateProductResponseDataProductSettings) RawJSON() string { return r.JSON.raw }
-func (r *V1ProductDuplicateProductResponseDataProductSettings) UnmarshalJSON(data []byte) error {
+func (r ProductDataProductSettings) RawJSON() string { return r.JSON.raw }
+func (r *ProductDataProductSettings) UnmarshalJSON(data []byte) error {
 	return apijson.UnmarshalRoot(data, r)
 }
 
@@ -515,210 +311,6 @@ type V1ProductListProductsResponseProductSettings struct {
 // Returns the unmodified JSON received from the API
 func (r V1ProductListProductsResponseProductSettings) RawJSON() string { return r.JSON.raw }
 func (r *V1ProductListProductsResponseProductSettings) UnmarshalJSON(data []byte) error {
-	return apijson.UnmarshalRoot(data, r)
-}
-
-// Response object
-type V1ProductUnarchiveProductResponse struct {
-	// Product configuration object
-	Data V1ProductUnarchiveProductResponseData `json:"data" api:"required"`
-	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
-	JSON struct {
-		Data        respjson.Field
-		ExtraFields map[string]respjson.Field
-		raw         string
-	} `json:"-"`
-}
-
-// Returns the unmodified JSON received from the API
-func (r V1ProductUnarchiveProductResponse) RawJSON() string { return r.JSON.raw }
-func (r *V1ProductUnarchiveProductResponse) UnmarshalJSON(data []byte) error {
-	return apijson.UnmarshalRoot(data, r)
-}
-
-// Product configuration object
-type V1ProductUnarchiveProductResponseData struct {
-	// The unique identifier for the entity
-	ID string `json:"id" api:"required"`
-	// Timestamp of when the record was created
-	CreatedAt time.Time `json:"createdAt" api:"required" format:"date-time"`
-	// Description of the product
-	Description string `json:"description" api:"required"`
-	// Display name of the product
-	DisplayName string `json:"displayName" api:"required"`
-	// Metadata associated with the entity
-	Metadata map[string]string `json:"metadata" api:"required"`
-	// Indicates if multiple subscriptions to this product are allowed
-	MultipleSubscriptions bool `json:"multipleSubscriptions" api:"required"`
-	// The status of the product
-	//
-	// Any of "PUBLISHED", "ARCHIVED".
-	Status string `json:"status" api:"required"`
-	// Timestamp of when the record was last updated
-	UpdatedAt time.Time `json:"updatedAt" api:"required" format:"date-time"`
-	// Product behavior settings for subscription lifecycle management.
-	ProductSettings V1ProductUnarchiveProductResponseDataProductSettings `json:"productSettings"`
-	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
-	JSON struct {
-		ID                    respjson.Field
-		CreatedAt             respjson.Field
-		Description           respjson.Field
-		DisplayName           respjson.Field
-		Metadata              respjson.Field
-		MultipleSubscriptions respjson.Field
-		Status                respjson.Field
-		UpdatedAt             respjson.Field
-		ProductSettings       respjson.Field
-		ExtraFields           map[string]respjson.Field
-		raw                   string
-	} `json:"-"`
-}
-
-// Returns the unmodified JSON received from the API
-func (r V1ProductUnarchiveProductResponseData) RawJSON() string { return r.JSON.raw }
-func (r *V1ProductUnarchiveProductResponseData) UnmarshalJSON(data []byte) error {
-	return apijson.UnmarshalRoot(data, r)
-}
-
-// Product behavior settings for subscription lifecycle management.
-type V1ProductUnarchiveProductResponseDataProductSettings struct {
-	// Time when the subscription will be cancelled
-	//
-	// Any of "END_OF_BILLING_PERIOD", "IMMEDIATE", "SPECIFIC_DATE".
-	SubscriptionCancellationTime string `json:"subscriptionCancellationTime" api:"required"`
-	// Setup for the end of the subscription
-	//
-	// Any of "DOWNGRADE_TO_FREE", "CANCEL_SUBSCRIPTION".
-	SubscriptionEndSetup string `json:"subscriptionEndSetup" api:"required"`
-	// Setup for the start of the subscription
-	//
-	// Any of "PLAN_SELECTION", "TRIAL_PERIOD", "FREE_PLAN".
-	SubscriptionStartSetup string `json:"subscriptionStartSetup" api:"required"`
-	// ID of the plan to downgrade to at the end of the billing period
-	DowngradePlanID string `json:"downgradePlanId" api:"nullable"`
-	// Indicates if the subscription should be prorated at the end of the billing
-	// period
-	ProrateAtEndOfBillingPeriod bool `json:"prorateAtEndOfBillingPeriod" api:"nullable"`
-	// ID of the plan to start the subscription with
-	SubscriptionStartPlanID string `json:"subscriptionStartPlanId" api:"nullable"`
-	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
-	JSON struct {
-		SubscriptionCancellationTime respjson.Field
-		SubscriptionEndSetup         respjson.Field
-		SubscriptionStartSetup       respjson.Field
-		DowngradePlanID              respjson.Field
-		ProrateAtEndOfBillingPeriod  respjson.Field
-		SubscriptionStartPlanID      respjson.Field
-		ExtraFields                  map[string]respjson.Field
-		raw                          string
-	} `json:"-"`
-}
-
-// Returns the unmodified JSON received from the API
-func (r V1ProductUnarchiveProductResponseDataProductSettings) RawJSON() string { return r.JSON.raw }
-func (r *V1ProductUnarchiveProductResponseDataProductSettings) UnmarshalJSON(data []byte) error {
-	return apijson.UnmarshalRoot(data, r)
-}
-
-// Response object
-type V1ProductUpdateProductResponse struct {
-	// Product configuration object
-	Data V1ProductUpdateProductResponseData `json:"data" api:"required"`
-	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
-	JSON struct {
-		Data        respjson.Field
-		ExtraFields map[string]respjson.Field
-		raw         string
-	} `json:"-"`
-}
-
-// Returns the unmodified JSON received from the API
-func (r V1ProductUpdateProductResponse) RawJSON() string { return r.JSON.raw }
-func (r *V1ProductUpdateProductResponse) UnmarshalJSON(data []byte) error {
-	return apijson.UnmarshalRoot(data, r)
-}
-
-// Product configuration object
-type V1ProductUpdateProductResponseData struct {
-	// The unique identifier for the entity
-	ID string `json:"id" api:"required"`
-	// Timestamp of when the record was created
-	CreatedAt time.Time `json:"createdAt" api:"required" format:"date-time"`
-	// Description of the product
-	Description string `json:"description" api:"required"`
-	// Display name of the product
-	DisplayName string `json:"displayName" api:"required"`
-	// Metadata associated with the entity
-	Metadata map[string]string `json:"metadata" api:"required"`
-	// Indicates if multiple subscriptions to this product are allowed
-	MultipleSubscriptions bool `json:"multipleSubscriptions" api:"required"`
-	// The status of the product
-	//
-	// Any of "PUBLISHED", "ARCHIVED".
-	Status string `json:"status" api:"required"`
-	// Timestamp of when the record was last updated
-	UpdatedAt time.Time `json:"updatedAt" api:"required" format:"date-time"`
-	// Product behavior settings for subscription lifecycle management.
-	ProductSettings V1ProductUpdateProductResponseDataProductSettings `json:"productSettings"`
-	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
-	JSON struct {
-		ID                    respjson.Field
-		CreatedAt             respjson.Field
-		Description           respjson.Field
-		DisplayName           respjson.Field
-		Metadata              respjson.Field
-		MultipleSubscriptions respjson.Field
-		Status                respjson.Field
-		UpdatedAt             respjson.Field
-		ProductSettings       respjson.Field
-		ExtraFields           map[string]respjson.Field
-		raw                   string
-	} `json:"-"`
-}
-
-// Returns the unmodified JSON received from the API
-func (r V1ProductUpdateProductResponseData) RawJSON() string { return r.JSON.raw }
-func (r *V1ProductUpdateProductResponseData) UnmarshalJSON(data []byte) error {
-	return apijson.UnmarshalRoot(data, r)
-}
-
-// Product behavior settings for subscription lifecycle management.
-type V1ProductUpdateProductResponseDataProductSettings struct {
-	// Time when the subscription will be cancelled
-	//
-	// Any of "END_OF_BILLING_PERIOD", "IMMEDIATE", "SPECIFIC_DATE".
-	SubscriptionCancellationTime string `json:"subscriptionCancellationTime" api:"required"`
-	// Setup for the end of the subscription
-	//
-	// Any of "DOWNGRADE_TO_FREE", "CANCEL_SUBSCRIPTION".
-	SubscriptionEndSetup string `json:"subscriptionEndSetup" api:"required"`
-	// Setup for the start of the subscription
-	//
-	// Any of "PLAN_SELECTION", "TRIAL_PERIOD", "FREE_PLAN".
-	SubscriptionStartSetup string `json:"subscriptionStartSetup" api:"required"`
-	// ID of the plan to downgrade to at the end of the billing period
-	DowngradePlanID string `json:"downgradePlanId" api:"nullable"`
-	// Indicates if the subscription should be prorated at the end of the billing
-	// period
-	ProrateAtEndOfBillingPeriod bool `json:"prorateAtEndOfBillingPeriod" api:"nullable"`
-	// ID of the plan to start the subscription with
-	SubscriptionStartPlanID string `json:"subscriptionStartPlanId" api:"nullable"`
-	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
-	JSON struct {
-		SubscriptionCancellationTime respjson.Field
-		SubscriptionEndSetup         respjson.Field
-		SubscriptionStartSetup       respjson.Field
-		DowngradePlanID              respjson.Field
-		ProrateAtEndOfBillingPeriod  respjson.Field
-		SubscriptionStartPlanID      respjson.Field
-		ExtraFields                  map[string]respjson.Field
-		raw                          string
-	} `json:"-"`
-}
-
-// Returns the unmodified JSON received from the API
-func (r V1ProductUpdateProductResponseDataProductSettings) RawJSON() string { return r.JSON.raw }
-func (r *V1ProductUpdateProductResponseDataProductSettings) UnmarshalJSON(data []byte) error {
 	return apijson.UnmarshalRoot(data, r)
 }
 

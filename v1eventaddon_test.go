@@ -159,6 +159,139 @@ func TestV1EventAddonGetAddon(t *testing.T) {
 	}
 }
 
+func TestV1EventAddonSetPricingWithOptionalParams(t *testing.T) {
+	t.Skip("Mock server tests are disabled")
+	baseURL := "http://localhost:4010"
+	if envURL, ok := os.LookupEnv("TEST_API_BASE_URL"); ok {
+		baseURL = envURL
+	}
+	if !testutil.CheckTestServer(t, baseURL) {
+		return
+	}
+	client := stigg.NewClient(
+		option.WithBaseURL(baseURL),
+		option.WithAPIKey("My API Key"),
+	)
+	_, err := client.V1.Events.Addons.SetPricing(
+		context.TODO(),
+		"x",
+		stigg.V1EventAddonSetPricingParams{
+			SetPackagePricing: stigg.SetPackagePricingParam{
+				PricingType: stigg.SetPackagePricingPricingTypeFree,
+				BillingID:   stigg.String("billingId"),
+				MinimumSpend: []stigg.SetPackagePricingMinimumSpendParam{{
+					BillingPeriod: "MONTHLY",
+					Minimum: stigg.SetPackagePricingMinimumSpendMinimumParam{
+						Amount:   0,
+						Currency: "usd",
+					},
+				}},
+				OverageBillingPeriod: stigg.SetPackagePricingOverageBillingPeriodOnSubscriptionRenewal,
+				OveragePricingModels: []stigg.SetPackagePricingOveragePricingModelParam{{
+					BillingModel: "FLAT_FEE",
+					PricePeriods: []stigg.SetPackagePricingOveragePricingModelPricePeriodParam{{
+						BillingPeriod:      "MONTHLY",
+						BillingCountryCode: stigg.String("billingCountryCode"),
+						BlockSize:          stigg.Float(0),
+						CreditGrantCadence: "BEGINNING_OF_BILLING_PERIOD",
+						CreditRate: stigg.SetPackagePricingOveragePricingModelPricePeriodCreditRateParam{
+							Amount:      1,
+							CurrencyID:  "currencyId",
+							CostFormula: stigg.String("costFormula"),
+						},
+						Price: stigg.SetPackagePricingOveragePricingModelPricePeriodPriceParam{
+							Amount:   0,
+							Currency: "usd",
+						},
+						Tiers: []stigg.SetPackagePricingOveragePricingModelPricePeriodTierParam{{
+							FlatPrice: stigg.SetPackagePricingOveragePricingModelPricePeriodTierFlatPriceParam{
+								Amount:   0,
+								Currency: "usd",
+							},
+							UnitPrice: stigg.SetPackagePricingOveragePricingModelPricePeriodTierUnitPriceParam{
+								Amount:   0,
+								Currency: "usd",
+							},
+							UpTo: stigg.Float(0),
+						}},
+					}},
+					BillingCadence: "RECURRING",
+					Entitlement: stigg.SetPackagePricingOveragePricingModelEntitlementParam{
+						FeatureID:         "featureId",
+						HasSoftLimit:      stigg.Bool(true),
+						HasUnlimitedUsage: stigg.Bool(true),
+						MonthlyResetPeriodConfiguration: stigg.SetPackagePricingOveragePricingModelEntitlementMonthlyResetPeriodConfigurationParam{
+							AccordingTo: "SubscriptionStart",
+						},
+						ResetPeriod: "YEAR",
+						UsageLimit:  stigg.Float(0),
+						WeeklyResetPeriodConfiguration: stigg.SetPackagePricingOveragePricingModelEntitlementWeeklyResetPeriodConfigurationParam{
+							AccordingTo: "SubscriptionStart",
+						},
+						YearlyResetPeriodConfiguration: stigg.SetPackagePricingOveragePricingModelEntitlementYearlyResetPeriodConfigurationParam{
+							AccordingTo: "SubscriptionStart",
+						},
+					},
+					FeatureID:             stigg.String("featureId"),
+					TopUpCustomCurrencyID: stigg.String("topUpCustomCurrencyId"),
+				}},
+				PricingModels: []stigg.SetPackagePricingPricingModelParam{{
+					BillingModel: "FLAT_FEE",
+					PricePeriods: []stigg.SetPackagePricingPricingModelPricePeriodParam{{
+						BillingPeriod:      "MONTHLY",
+						BillingCountryCode: stigg.String("billingCountryCode"),
+						BlockSize:          stigg.Float(0),
+						CreditGrantCadence: "BEGINNING_OF_BILLING_PERIOD",
+						CreditRate: stigg.SetPackagePricingPricingModelPricePeriodCreditRateParam{
+							Amount:      1,
+							CurrencyID:  "currencyId",
+							CostFormula: stigg.String("costFormula"),
+						},
+						Price: stigg.SetPackagePricingPricingModelPricePeriodPriceParam{
+							Amount:   0,
+							Currency: "usd",
+						},
+						Tiers: []stigg.SetPackagePricingPricingModelPricePeriodTierParam{{
+							FlatPrice: stigg.SetPackagePricingPricingModelPricePeriodTierFlatPriceParam{
+								Amount:   0,
+								Currency: "usd",
+							},
+							UnitPrice: stigg.SetPackagePricingPricingModelPricePeriodTierUnitPriceParam{
+								Amount:   0,
+								Currency: "usd",
+							},
+							UpTo: stigg.Float(0),
+						}},
+					}},
+					BillingCadence:  "RECURRING",
+					FeatureID:       stigg.String("featureId"),
+					MaxUnitQuantity: stigg.Int(1),
+					MinUnitQuantity: stigg.Int(1),
+					MonthlyResetPeriodConfiguration: stigg.SetPackagePricingPricingModelMonthlyResetPeriodConfigurationParam{
+						AccordingTo: "SubscriptionStart",
+					},
+					ResetPeriod:           "YEAR",
+					TiersMode:             "VOLUME",
+					TopUpCustomCurrencyID: stigg.String("topUpCustomCurrencyId"),
+					WeeklyResetPeriodConfiguration: stigg.SetPackagePricingPricingModelWeeklyResetPeriodConfigurationParam{
+						AccordingTo: "SubscriptionStart",
+					},
+					YearlyResetPeriodConfiguration: stigg.SetPackagePricingPricingModelYearlyResetPeriodConfigurationParam{
+						AccordingTo: "SubscriptionStart",
+					},
+				}},
+			},
+		},
+	)
+	if err != nil {
+		var apierr *stigg.Error
+		if errors.As(err, &apierr) {
+			t.Log(string(apierr.DumpRequest(true)))
+		}
+		t.Fatalf("err should be nil: %s", err.Error())
+	}
+}
+
 func TestV1EventAddonUpdateAddonWithOptionalParams(t *testing.T) {
 	t.Skip("Mock server tests are disabled")
 	baseURL := "http://localhost:4010"
