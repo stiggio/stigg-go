@@ -4,6 +4,7 @@ package stigg
 
 import (
 	"context"
+	"encoding/json"
 	"errors"
 	"fmt"
 	"net/http"
@@ -13,6 +14,7 @@ import (
 
 	"github.com/stiggio/stigg-go/internal/apijson"
 	"github.com/stiggio/stigg-go/internal/apiquery"
+	shimjson "github.com/stiggio/stigg-go/internal/encoding/json"
 	"github.com/stiggio/stigg-go/internal/requestconfig"
 	"github.com/stiggio/stigg-go/option"
 	"github.com/stiggio/stigg-go/packages/pagination"
@@ -27,7 +29,9 @@ import (
 // automatically. You should not instantiate this service directly, and instead use
 // the [NewV1EventPlanService] method instead.
 type V1EventPlanService struct {
-	Options []option.RequestOption
+	Options      []option.RequestOption
+	Draft        V1EventPlanDraftService
+	Entitlements V1EventPlanEntitlementService
 }
 
 // NewV1EventPlanService generates a new service that applies the given options to
@@ -36,11 +40,13 @@ type V1EventPlanService struct {
 func NewV1EventPlanService(opts ...option.RequestOption) (r V1EventPlanService) {
 	r = V1EventPlanService{}
 	r.Options = opts
+	r.Draft = NewV1EventPlanDraftService(opts...)
+	r.Entitlements = NewV1EventPlanEntitlementService(opts...)
 	return
 }
 
 // Creates a new plan in draft status.
-func (r *V1EventPlanService) New(ctx context.Context, body V1EventPlanNewParams, opts ...option.RequestOption) (res *V1EventPlanNewResponse, err error) {
+func (r *V1EventPlanService) New(ctx context.Context, body V1EventPlanNewParams, opts ...option.RequestOption) (res *Plan, err error) {
 	opts = slices.Concat(r.Options, opts)
 	path := "api/v1/plans"
 	err = requestconfig.ExecuteNewRequest(ctx, http.MethodPost, path, body, &res, opts...)
@@ -49,7 +55,7 @@ func (r *V1EventPlanService) New(ctx context.Context, body V1EventPlanNewParams,
 
 // Retrieves a plan by its unique identifier, including entitlements and pricing
 // details.
-func (r *V1EventPlanService) Get(ctx context.Context, id string, opts ...option.RequestOption) (res *V1EventPlanGetResponse, err error) {
+func (r *V1EventPlanService) Get(ctx context.Context, id string, opts ...option.RequestOption) (res *Plan, err error) {
 	opts = slices.Concat(r.Options, opts)
 	if id == "" {
 		err = errors.New("missing required id parameter")
@@ -57,6 +63,19 @@ func (r *V1EventPlanService) Get(ctx context.Context, id string, opts ...option.
 	}
 	path := fmt.Sprintf("api/v1/plans/%s", id)
 	err = requestconfig.ExecuteNewRequest(ctx, http.MethodGet, path, nil, &res, opts...)
+	return
+}
+
+// Updates an existing plan's properties such as display name, description, and
+// metadata.
+func (r *V1EventPlanService) Update(ctx context.Context, id string, body V1EventPlanUpdateParams, opts ...option.RequestOption) (res *Plan, err error) {
+	opts = slices.Concat(r.Options, opts)
+	if id == "" {
+		err = errors.New("missing required id parameter")
+		return
+	}
+	path := fmt.Sprintf("api/v1/plans/%s", id)
+	err = requestconfig.ExecuteNewRequest(ctx, http.MethodPatch, path, body, &res, opts...)
 	return
 }
 
@@ -83,10 +102,47 @@ func (r *V1EventPlanService) ListAutoPaging(ctx context.Context, query V1EventPl
 	return pagination.NewMyCursorIDPageAutoPager(r.List(ctx, query, opts...))
 }
 
+// Archives a plan, preventing it from being used in new subscriptions.
+func (r *V1EventPlanService) Archive(ctx context.Context, id string, opts ...option.RequestOption) (res *Plan, err error) {
+	opts = slices.Concat(r.Options, opts)
+	if id == "" {
+		err = errors.New("missing required id parameter")
+		return
+	}
+	path := fmt.Sprintf("api/v1/plans/%s/archive", id)
+	err = requestconfig.ExecuteNewRequest(ctx, http.MethodPost, path, nil, &res, opts...)
+	return
+}
+
+// Publishes a draft plan, making it available for use in subscriptions.
+func (r *V1EventPlanService) Publish(ctx context.Context, id string, body V1EventPlanPublishParams, opts ...option.RequestOption) (res *V1EventPlanPublishResponse, err error) {
+	opts = slices.Concat(r.Options, opts)
+	if id == "" {
+		err = errors.New("missing required id parameter")
+		return
+	}
+	path := fmt.Sprintf("api/v1/plans/%s/publish", id)
+	err = requestconfig.ExecuteNewRequest(ctx, http.MethodPost, path, body, &res, opts...)
+	return
+}
+
+// Sets the pricing configuration for a plan, including pricing models, overage
+// pricing, and minimum spend.
+func (r *V1EventPlanService) SetPricing(ctx context.Context, id string, body V1EventPlanSetPricingParams, opts ...option.RequestOption) (res *SetPackagePricingResponse, err error) {
+	opts = slices.Concat(r.Options, opts)
+	if id == "" {
+		err = errors.New("missing required id parameter")
+		return
+	}
+	path := fmt.Sprintf("api/v1/plans/%s/charges", id)
+	err = requestconfig.ExecuteNewRequest(ctx, http.MethodPut, path, body, &res, opts...)
+	return
+}
+
 // Response object
-type V1EventPlanNewResponse struct {
+type Plan struct {
 	// Plan configuration object
-	Data V1EventPlanNewResponseData `json:"data" api:"required"`
+	Data PlanData `json:"data" api:"required"`
 	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
 	JSON struct {
 		Data        respjson.Field
@@ -96,13 +152,13 @@ type V1EventPlanNewResponse struct {
 }
 
 // Returns the unmodified JSON received from the API
-func (r V1EventPlanNewResponse) RawJSON() string { return r.JSON.raw }
-func (r *V1EventPlanNewResponse) UnmarshalJSON(data []byte) error {
+func (r Plan) RawJSON() string { return r.JSON.raw }
+func (r *Plan) UnmarshalJSON(data []byte) error {
 	return apijson.UnmarshalRoot(data, r)
 }
 
 // Plan configuration object
-type V1EventPlanNewResponseData struct {
+type PlanData struct {
 	// The unique identifier for the entity
 	ID string `json:"id" api:"required"`
 	// The unique identifier for the entity in the billing provider
@@ -111,13 +167,13 @@ type V1EventPlanNewResponseData struct {
 	// Timestamp of when the record was created
 	CreatedAt time.Time `json:"createdAt" api:"required" format:"date-time"`
 	// Default trial configuration for the plan
-	DefaultTrialConfig V1EventPlanNewResponseDataDefaultTrialConfig `json:"defaultTrialConfig" api:"required"`
+	DefaultTrialConfig PlanDataDefaultTrialConfig `json:"defaultTrialConfig" api:"required"`
 	// The description of the package
 	Description string `json:"description" api:"required"`
 	// The display name of the package
 	DisplayName string `json:"displayName" api:"required"`
 	// List of entitlements of the package
-	Entitlements []V1EventPlanNewResponseDataEntitlement `json:"entitlements" api:"required"`
+	Entitlements []PlanDataEntitlement `json:"entitlements" api:"required"`
 	// Indicates if the package is the latest version
 	IsLatest bool `json:"isLatest" api:"required"`
 	// Metadata associated with the entity
@@ -162,13 +218,13 @@ type V1EventPlanNewResponseData struct {
 }
 
 // Returns the unmodified JSON received from the API
-func (r V1EventPlanNewResponseData) RawJSON() string { return r.JSON.raw }
-func (r *V1EventPlanNewResponseData) UnmarshalJSON(data []byte) error {
+func (r PlanData) RawJSON() string { return r.JSON.raw }
+func (r *PlanData) UnmarshalJSON(data []byte) error {
 	return apijson.UnmarshalRoot(data, r)
 }
 
 // Default trial configuration for the plan
-type V1EventPlanNewResponseDataDefaultTrialConfig struct {
+type PlanDataDefaultTrialConfig struct {
 	// The duration of the trial in the specified units
 	Duration float64 `json:"duration" api:"required"`
 	// The time unit for the trial duration (DAY or MONTH)
@@ -176,7 +232,7 @@ type V1EventPlanNewResponseDataDefaultTrialConfig struct {
 	// Any of "DAY", "MONTH".
 	Units string `json:"units" api:"required"`
 	// Budget configuration for the trial
-	Budget V1EventPlanNewResponseDataDefaultTrialConfigBudget `json:"budget" api:"nullable"`
+	Budget PlanDataDefaultTrialConfigBudget `json:"budget" api:"nullable"`
 	// Behavior when the trial ends (CONVERT_TO_PAID or CANCEL_SUBSCRIPTION)
 	//
 	// Any of "CONVERT_TO_PAID", "CANCEL_SUBSCRIPTION".
@@ -193,13 +249,13 @@ type V1EventPlanNewResponseDataDefaultTrialConfig struct {
 }
 
 // Returns the unmodified JSON received from the API
-func (r V1EventPlanNewResponseDataDefaultTrialConfig) RawJSON() string { return r.JSON.raw }
-func (r *V1EventPlanNewResponseDataDefaultTrialConfig) UnmarshalJSON(data []byte) error {
+func (r PlanDataDefaultTrialConfig) RawJSON() string { return r.JSON.raw }
+func (r *PlanDataDefaultTrialConfig) UnmarshalJSON(data []byte) error {
 	return apijson.UnmarshalRoot(data, r)
 }
 
 // Budget configuration for the trial
-type V1EventPlanNewResponseDataDefaultTrialConfigBudget struct {
+type PlanDataDefaultTrialConfigBudget struct {
 	// Whether the budget limit is a soft limit (allows overage) or hard limit
 	HasSoftLimit bool `json:"hasSoftLimit" api:"required"`
 	// The budget limit amount
@@ -214,13 +270,13 @@ type V1EventPlanNewResponseDataDefaultTrialConfigBudget struct {
 }
 
 // Returns the unmodified JSON received from the API
-func (r V1EventPlanNewResponseDataDefaultTrialConfigBudget) RawJSON() string { return r.JSON.raw }
-func (r *V1EventPlanNewResponseDataDefaultTrialConfigBudget) UnmarshalJSON(data []byte) error {
+func (r PlanDataDefaultTrialConfigBudget) RawJSON() string { return r.JSON.raw }
+func (r *PlanDataDefaultTrialConfigBudget) UnmarshalJSON(data []byte) error {
 	return apijson.UnmarshalRoot(data, r)
 }
 
 // Entitlement reference with type and identifier
-type V1EventPlanNewResponseDataEntitlement struct {
+type PlanDataEntitlement struct {
 	// The unique identifier for the entity
 	ID string `json:"id" api:"required"`
 	// Any of "FEATURE", "CREDIT".
@@ -235,165 +291,8 @@ type V1EventPlanNewResponseDataEntitlement struct {
 }
 
 // Returns the unmodified JSON received from the API
-func (r V1EventPlanNewResponseDataEntitlement) RawJSON() string { return r.JSON.raw }
-func (r *V1EventPlanNewResponseDataEntitlement) UnmarshalJSON(data []byte) error {
-	return apijson.UnmarshalRoot(data, r)
-}
-
-// Response object
-type V1EventPlanGetResponse struct {
-	// Plan configuration object
-	Data V1EventPlanGetResponseData `json:"data" api:"required"`
-	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
-	JSON struct {
-		Data        respjson.Field
-		ExtraFields map[string]respjson.Field
-		raw         string
-	} `json:"-"`
-}
-
-// Returns the unmodified JSON received from the API
-func (r V1EventPlanGetResponse) RawJSON() string { return r.JSON.raw }
-func (r *V1EventPlanGetResponse) UnmarshalJSON(data []byte) error {
-	return apijson.UnmarshalRoot(data, r)
-}
-
-// Plan configuration object
-type V1EventPlanGetResponseData struct {
-	// The unique identifier for the entity
-	ID string `json:"id" api:"required"`
-	// The unique identifier for the entity in the billing provider
-	BillingID          string   `json:"billingId" api:"required"`
-	CompatibleAddonIDs []string `json:"compatibleAddonIds" api:"required"`
-	// Timestamp of when the record was created
-	CreatedAt time.Time `json:"createdAt" api:"required" format:"date-time"`
-	// Default trial configuration for the plan
-	DefaultTrialConfig V1EventPlanGetResponseDataDefaultTrialConfig `json:"defaultTrialConfig" api:"required"`
-	// The description of the package
-	Description string `json:"description" api:"required"`
-	// The display name of the package
-	DisplayName string `json:"displayName" api:"required"`
-	// List of entitlements of the package
-	Entitlements []V1EventPlanGetResponseDataEntitlement `json:"entitlements" api:"required"`
-	// Indicates if the package is the latest version
-	IsLatest bool `json:"isLatest" api:"required"`
-	// Metadata associated with the entity
-	Metadata map[string]string `json:"metadata" api:"required"`
-	// The ID of the parent plan, if applicable
-	ParentPlanID string `json:"parentPlanId" api:"required"`
-	// The pricing type of the package
-	//
-	// Any of "FREE", "PAID", "CUSTOM".
-	PricingType string `json:"pricingType" api:"required"`
-	// The product id of the package
-	ProductID string `json:"productId" api:"required"`
-	// The status of the package
-	//
-	// Any of "DRAFT", "PUBLISHED", "ARCHIVED".
-	Status string `json:"status" api:"required"`
-	// Timestamp of when the record was last updated
-	UpdatedAt time.Time `json:"updatedAt" api:"required" format:"date-time"`
-	// The version number of the package
-	VersionNumber int64 `json:"versionNumber" api:"required"`
-	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
-	JSON struct {
-		ID                 respjson.Field
-		BillingID          respjson.Field
-		CompatibleAddonIDs respjson.Field
-		CreatedAt          respjson.Field
-		DefaultTrialConfig respjson.Field
-		Description        respjson.Field
-		DisplayName        respjson.Field
-		Entitlements       respjson.Field
-		IsLatest           respjson.Field
-		Metadata           respjson.Field
-		ParentPlanID       respjson.Field
-		PricingType        respjson.Field
-		ProductID          respjson.Field
-		Status             respjson.Field
-		UpdatedAt          respjson.Field
-		VersionNumber      respjson.Field
-		ExtraFields        map[string]respjson.Field
-		raw                string
-	} `json:"-"`
-}
-
-// Returns the unmodified JSON received from the API
-func (r V1EventPlanGetResponseData) RawJSON() string { return r.JSON.raw }
-func (r *V1EventPlanGetResponseData) UnmarshalJSON(data []byte) error {
-	return apijson.UnmarshalRoot(data, r)
-}
-
-// Default trial configuration for the plan
-type V1EventPlanGetResponseDataDefaultTrialConfig struct {
-	// The duration of the trial in the specified units
-	Duration float64 `json:"duration" api:"required"`
-	// The time unit for the trial duration (DAY or MONTH)
-	//
-	// Any of "DAY", "MONTH".
-	Units string `json:"units" api:"required"`
-	// Budget configuration for the trial
-	Budget V1EventPlanGetResponseDataDefaultTrialConfigBudget `json:"budget" api:"nullable"`
-	// Behavior when the trial ends (CONVERT_TO_PAID or CANCEL_SUBSCRIPTION)
-	//
-	// Any of "CONVERT_TO_PAID", "CANCEL_SUBSCRIPTION".
-	TrialEndBehavior string `json:"trialEndBehavior" api:"nullable"`
-	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
-	JSON struct {
-		Duration         respjson.Field
-		Units            respjson.Field
-		Budget           respjson.Field
-		TrialEndBehavior respjson.Field
-		ExtraFields      map[string]respjson.Field
-		raw              string
-	} `json:"-"`
-}
-
-// Returns the unmodified JSON received from the API
-func (r V1EventPlanGetResponseDataDefaultTrialConfig) RawJSON() string { return r.JSON.raw }
-func (r *V1EventPlanGetResponseDataDefaultTrialConfig) UnmarshalJSON(data []byte) error {
-	return apijson.UnmarshalRoot(data, r)
-}
-
-// Budget configuration for the trial
-type V1EventPlanGetResponseDataDefaultTrialConfigBudget struct {
-	// Whether the budget limit is a soft limit (allows overage) or hard limit
-	HasSoftLimit bool `json:"hasSoftLimit" api:"required"`
-	// The budget limit amount
-	Limit float64 `json:"limit" api:"required"`
-	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
-	JSON struct {
-		HasSoftLimit respjson.Field
-		Limit        respjson.Field
-		ExtraFields  map[string]respjson.Field
-		raw          string
-	} `json:"-"`
-}
-
-// Returns the unmodified JSON received from the API
-func (r V1EventPlanGetResponseDataDefaultTrialConfigBudget) RawJSON() string { return r.JSON.raw }
-func (r *V1EventPlanGetResponseDataDefaultTrialConfigBudget) UnmarshalJSON(data []byte) error {
-	return apijson.UnmarshalRoot(data, r)
-}
-
-// Entitlement reference with type and identifier
-type V1EventPlanGetResponseDataEntitlement struct {
-	// The unique identifier for the entity
-	ID string `json:"id" api:"required"`
-	// Any of "FEATURE", "CREDIT".
-	Type string `json:"type" api:"required"`
-	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
-	JSON struct {
-		ID          respjson.Field
-		Type        respjson.Field
-		ExtraFields map[string]respjson.Field
-		raw         string
-	} `json:"-"`
-}
-
-// Returns the unmodified JSON received from the API
-func (r V1EventPlanGetResponseDataEntitlement) RawJSON() string { return r.JSON.raw }
-func (r *V1EventPlanGetResponseDataEntitlement) UnmarshalJSON(data []byte) error {
+func (r PlanDataEntitlement) RawJSON() string { return r.JSON.raw }
+func (r *PlanDataEntitlement) UnmarshalJSON(data []byte) error {
 	return apijson.UnmarshalRoot(data, r)
 }
 
@@ -554,6 +453,40 @@ const (
 	V1EventPlanListResponseStatusArchived  V1EventPlanListResponseStatus = "ARCHIVED"
 )
 
+// Response containing task ID for publish operation
+type V1EventPlanPublishResponse struct {
+	Data V1EventPlanPublishResponseData `json:"data" api:"required"`
+	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
+	JSON struct {
+		Data        respjson.Field
+		ExtraFields map[string]respjson.Field
+		raw         string
+	} `json:"-"`
+}
+
+// Returns the unmodified JSON received from the API
+func (r V1EventPlanPublishResponse) RawJSON() string { return r.JSON.raw }
+func (r *V1EventPlanPublishResponse) UnmarshalJSON(data []byte) error {
+	return apijson.UnmarshalRoot(data, r)
+}
+
+type V1EventPlanPublishResponseData struct {
+	// Task ID for tracking the async publish operation
+	TaskID string `json:"taskId" api:"required" format:"uuid"`
+	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
+	JSON struct {
+		TaskID      respjson.Field
+		ExtraFields map[string]respjson.Field
+		raw         string
+	} `json:"-"`
+}
+
+// Returns the unmodified JSON received from the API
+func (r V1EventPlanPublishResponseData) RawJSON() string { return r.JSON.raw }
+func (r *V1EventPlanPublishResponseData) UnmarshalJSON(data []byte) error {
+	return apijson.UnmarshalRoot(data, r)
+}
+
 type V1EventPlanNewParams struct {
 	// The unique identifier for the entity
 	ID string `json:"id" api:"required"`
@@ -663,6 +596,86 @@ const (
 	V1EventPlanNewParamsStatusArchived  V1EventPlanNewParamsStatus = "ARCHIVED"
 )
 
+type V1EventPlanUpdateParams struct {
+	// The unique identifier for the entity in the billing provider
+	BillingID param.Opt[string] `json:"billingId,omitzero"`
+	// The description of the package
+	Description param.Opt[string] `json:"description,omitzero"`
+	// The ID of the parent plan, if applicable
+	ParentPlanID param.Opt[string] `json:"parentPlanId,omitzero"`
+	// The display name of the package
+	DisplayName        param.Opt[string] `json:"displayName,omitzero"`
+	CompatibleAddonIDs []string          `json:"compatibleAddonIds,omitzero"`
+	// Default trial configuration for the plan
+	DefaultTrialConfig V1EventPlanUpdateParamsDefaultTrialConfig `json:"defaultTrialConfig,omitzero"`
+	// Metadata associated with the entity
+	Metadata map[string]string `json:"metadata,omitzero"`
+	paramObj
+}
+
+func (r V1EventPlanUpdateParams) MarshalJSON() (data []byte, err error) {
+	type shadow V1EventPlanUpdateParams
+	return param.MarshalObject(r, (*shadow)(&r))
+}
+func (r *V1EventPlanUpdateParams) UnmarshalJSON(data []byte) error {
+	return apijson.UnmarshalRoot(data, r)
+}
+
+// Default trial configuration for the plan
+//
+// The properties Duration, Units are required.
+type V1EventPlanUpdateParamsDefaultTrialConfig struct {
+	// The duration of the trial in the specified units
+	Duration float64 `json:"duration" api:"required"`
+	// The time unit for the trial duration (DAY or MONTH)
+	//
+	// Any of "DAY", "MONTH".
+	Units string `json:"units,omitzero" api:"required"`
+	// Budget configuration for the trial
+	Budget V1EventPlanUpdateParamsDefaultTrialConfigBudget `json:"budget,omitzero"`
+	// Behavior when the trial ends (CONVERT_TO_PAID or CANCEL_SUBSCRIPTION)
+	//
+	// Any of "CONVERT_TO_PAID", "CANCEL_SUBSCRIPTION".
+	TrialEndBehavior string `json:"trialEndBehavior,omitzero"`
+	paramObj
+}
+
+func (r V1EventPlanUpdateParamsDefaultTrialConfig) MarshalJSON() (data []byte, err error) {
+	type shadow V1EventPlanUpdateParamsDefaultTrialConfig
+	return param.MarshalObject(r, (*shadow)(&r))
+}
+func (r *V1EventPlanUpdateParamsDefaultTrialConfig) UnmarshalJSON(data []byte) error {
+	return apijson.UnmarshalRoot(data, r)
+}
+
+func init() {
+	apijson.RegisterFieldValidator[V1EventPlanUpdateParamsDefaultTrialConfig](
+		"units", "DAY", "MONTH",
+	)
+	apijson.RegisterFieldValidator[V1EventPlanUpdateParamsDefaultTrialConfig](
+		"trialEndBehavior", "CONVERT_TO_PAID", "CANCEL_SUBSCRIPTION",
+	)
+}
+
+// Budget configuration for the trial
+//
+// The properties HasSoftLimit, Limit are required.
+type V1EventPlanUpdateParamsDefaultTrialConfigBudget struct {
+	// Whether the budget limit is a soft limit (allows overage) or hard limit
+	HasSoftLimit bool `json:"hasSoftLimit" api:"required"`
+	// The budget limit amount
+	Limit float64 `json:"limit" api:"required"`
+	paramObj
+}
+
+func (r V1EventPlanUpdateParamsDefaultTrialConfigBudget) MarshalJSON() (data []byte, err error) {
+	type shadow V1EventPlanUpdateParamsDefaultTrialConfigBudget
+	return param.MarshalObject(r, (*shadow)(&r))
+}
+func (r *V1EventPlanUpdateParamsDefaultTrialConfigBudget) UnmarshalJSON(data []byte) error {
+	return apijson.UnmarshalRoot(data, r)
+}
+
 type V1EventPlanListParams struct {
 	// Return items that come after this cursor
 	After param.Opt[string] `query:"after,omitzero" format:"uuid" json:"-"`
@@ -707,4 +720,41 @@ func (r V1EventPlanListParamsCreatedAt) URLQuery() (v url.Values, err error) {
 		ArrayFormat:  apiquery.ArrayQueryFormatComma,
 		NestedFormat: apiquery.NestedQueryFormatBrackets,
 	})
+}
+
+type V1EventPlanPublishParams struct {
+	// The migration type of the package
+	//
+	// Any of "NEW_CUSTOMERS", "ALL_CUSTOMERS".
+	MigrationType V1EventPlanPublishParamsMigrationType `json:"migrationType,omitzero" api:"required"`
+	paramObj
+}
+
+func (r V1EventPlanPublishParams) MarshalJSON() (data []byte, err error) {
+	type shadow V1EventPlanPublishParams
+	return param.MarshalObject(r, (*shadow)(&r))
+}
+func (r *V1EventPlanPublishParams) UnmarshalJSON(data []byte) error {
+	return apijson.UnmarshalRoot(data, r)
+}
+
+// The migration type of the package
+type V1EventPlanPublishParamsMigrationType string
+
+const (
+	V1EventPlanPublishParamsMigrationTypeNewCustomers V1EventPlanPublishParamsMigrationType = "NEW_CUSTOMERS"
+	V1EventPlanPublishParamsMigrationTypeAllCustomers V1EventPlanPublishParamsMigrationType = "ALL_CUSTOMERS"
+)
+
+type V1EventPlanSetPricingParams struct {
+	// Request to set the pricing configuration for a plan or addon.
+	SetPackagePricing SetPackagePricingParam
+	paramObj
+}
+
+func (r V1EventPlanSetPricingParams) MarshalJSON() (data []byte, err error) {
+	return shimjson.Marshal(r.SetPackagePricing)
+}
+func (r *V1EventPlanSetPricingParams) UnmarshalJSON(data []byte) error {
+	return json.Unmarshal(data, &r.SetPackagePricing)
 }
