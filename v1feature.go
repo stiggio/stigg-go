@@ -20,27 +20,27 @@ import (
 	"github.com/stiggio/stigg-go/packages/respjson"
 )
 
-// V1EventFeatureService contains methods and other services that help with
-// interacting with the stigg API.
+// V1FeatureService contains methods and other services that help with interacting
+// with the stigg API.
 //
 // Note, unlike clients, this service does not read variables from the environment
 // automatically. You should not instantiate this service directly, and instead use
-// the [NewV1EventFeatureService] method instead.
-type V1EventFeatureService struct {
+// the [NewV1FeatureService] method instead.
+type V1FeatureService struct {
 	Options []option.RequestOption
 }
 
-// NewV1EventFeatureService generates a new service that applies the given options
-// to each request. These options are applied after the parent client's options (if
+// NewV1FeatureService generates a new service that applies the given options to
+// each request. These options are applied after the parent client's options (if
 // there is one), and before any request-specific options.
-func NewV1EventFeatureService(opts ...option.RequestOption) (r V1EventFeatureService) {
-	r = V1EventFeatureService{}
+func NewV1FeatureService(opts ...option.RequestOption) (r V1FeatureService) {
+	r = V1FeatureService{}
 	r.Options = opts
 	return
 }
 
 // Archives a feature, preventing it from being used in new entitlements.
-func (r *V1EventFeatureService) ArchiveFeature(ctx context.Context, id string, opts ...option.RequestOption) (res *Feature, err error) {
+func (r *V1FeatureService) ArchiveFeature(ctx context.Context, id string, opts ...option.RequestOption) (res *Feature, err error) {
 	opts = slices.Concat(r.Options, opts)
 	if id == "" {
 		err = errors.New("missing required id parameter")
@@ -52,7 +52,7 @@ func (r *V1EventFeatureService) ArchiveFeature(ctx context.Context, id string, o
 }
 
 // Creates a new feature with the specified type, metering, and configuration.
-func (r *V1EventFeatureService) NewFeature(ctx context.Context, body V1EventFeatureNewFeatureParams, opts ...option.RequestOption) (res *Feature, err error) {
+func (r *V1FeatureService) NewFeature(ctx context.Context, body V1FeatureNewFeatureParams, opts ...option.RequestOption) (res *Feature, err error) {
 	opts = slices.Concat(r.Options, opts)
 	path := "api/v1/features"
 	err = requestconfig.ExecuteNewRequest(ctx, http.MethodPost, path, body, &res, opts...)
@@ -60,7 +60,7 @@ func (r *V1EventFeatureService) NewFeature(ctx context.Context, body V1EventFeat
 }
 
 // Retrieves a paginated list of features in the environment.
-func (r *V1EventFeatureService) ListFeatures(ctx context.Context, query V1EventFeatureListFeaturesParams, opts ...option.RequestOption) (res *pagination.MyCursorIDPage[V1EventFeatureListFeaturesResponse], err error) {
+func (r *V1FeatureService) ListFeatures(ctx context.Context, query V1FeatureListFeaturesParams, opts ...option.RequestOption) (res *pagination.MyCursorIDPage[V1FeatureListFeaturesResponse], err error) {
 	var raw *http.Response
 	opts = slices.Concat(r.Options, opts)
 	opts = append([]option.RequestOption{option.WithResponseInto(&raw)}, opts...)
@@ -78,12 +78,12 @@ func (r *V1EventFeatureService) ListFeatures(ctx context.Context, query V1EventF
 }
 
 // Retrieves a paginated list of features in the environment.
-func (r *V1EventFeatureService) ListFeaturesAutoPaging(ctx context.Context, query V1EventFeatureListFeaturesParams, opts ...option.RequestOption) *pagination.MyCursorIDPageAutoPager[V1EventFeatureListFeaturesResponse] {
+func (r *V1FeatureService) ListFeaturesAutoPaging(ctx context.Context, query V1FeatureListFeaturesParams, opts ...option.RequestOption) *pagination.MyCursorIDPageAutoPager[V1FeatureListFeaturesResponse] {
 	return pagination.NewMyCursorIDPageAutoPager(r.ListFeatures(ctx, query, opts...))
 }
 
 // Retrieves a feature by its unique identifier.
-func (r *V1EventFeatureService) GetFeature(ctx context.Context, id string, opts ...option.RequestOption) (res *Feature, err error) {
+func (r *V1FeatureService) GetFeature(ctx context.Context, id string, opts ...option.RequestOption) (res *Feature, err error) {
 	opts = slices.Concat(r.Options, opts)
 	if id == "" {
 		err = errors.New("missing required id parameter")
@@ -95,7 +95,7 @@ func (r *V1EventFeatureService) GetFeature(ctx context.Context, id string, opts 
 }
 
 // Restores an archived feature, allowing it to be used in entitlements again.
-func (r *V1EventFeatureService) UnarchiveFeature(ctx context.Context, id string, opts ...option.RequestOption) (res *Feature, err error) {
+func (r *V1FeatureService) UnarchiveFeature(ctx context.Context, id string, opts ...option.RequestOption) (res *Feature, err error) {
 	opts = slices.Concat(r.Options, opts)
 	if id == "" {
 		err = errors.New("missing required id parameter")
@@ -108,7 +108,7 @@ func (r *V1EventFeatureService) UnarchiveFeature(ctx context.Context, id string,
 
 // Updates an existing feature's properties such as display name, description, and
 // configuration.
-func (r *V1EventFeatureService) UpdateFeature(ctx context.Context, id string, body V1EventFeatureUpdateFeatureParams, opts ...option.RequestOption) (res *Feature, err error) {
+func (r *V1FeatureService) UpdateFeature(ctx context.Context, id string, body V1FeatureUpdateFeatureParams, opts ...option.RequestOption) (res *Feature, err error) {
 	opts = slices.Concat(r.Options, opts)
 	if id == "" {
 		err = errors.New("missing required id parameter")
@@ -247,7 +247,7 @@ func (r *FeatureDataUnitTransformation) UnmarshalJSON(data []byte) error {
 }
 
 // Feature configuration object
-type V1EventFeatureListFeaturesResponse struct {
+type V1FeatureListFeaturesResponse struct {
 	// The unique identifier for the feature
 	ID string `json:"id" api:"required"`
 	// Timestamp of when the record was created
@@ -257,15 +257,15 @@ type V1EventFeatureListFeaturesResponse struct {
 	// The display name for the feature
 	DisplayName string `json:"displayName" api:"required"`
 	// The configuration data for the feature
-	EnumConfiguration []V1EventFeatureListFeaturesResponseEnumConfiguration `json:"enumConfiguration" api:"required"`
+	EnumConfiguration []V1FeatureListFeaturesResponseEnumConfiguration `json:"enumConfiguration" api:"required"`
 	// The status of the feature
 	//
 	// Any of "NEW", "SUSPENDED", "ACTIVE".
-	FeatureStatus V1EventFeatureListFeaturesResponseFeatureStatus `json:"featureStatus" api:"required"`
+	FeatureStatus V1FeatureListFeaturesResponseFeatureStatus `json:"featureStatus" api:"required"`
 	// The type of the feature
 	//
 	// Any of "BOOLEAN", "NUMBER", "ENUM".
-	FeatureType V1EventFeatureListFeaturesResponseFeatureType `json:"featureType" api:"required"`
+	FeatureType V1FeatureListFeaturesResponseFeatureType `json:"featureType" api:"required"`
 	// The units for the feature
 	FeatureUnits string `json:"featureUnits" api:"required"`
 	// The plural units for the feature
@@ -275,9 +275,9 @@ type V1EventFeatureListFeaturesResponse struct {
 	// The meter type for the feature
 	//
 	// Any of "None", "FLUCTUATING", "INCREMENTAL".
-	MeterType V1EventFeatureListFeaturesResponseMeterType `json:"meterType" api:"required"`
+	MeterType V1FeatureListFeaturesResponseMeterType `json:"meterType" api:"required"`
 	// Unit transformation to be applied to the reported usage
-	UnitTransformation V1EventFeatureListFeaturesResponseUnitTransformation `json:"unitTransformation" api:"required"`
+	UnitTransformation V1FeatureListFeaturesResponseUnitTransformation `json:"unitTransformation" api:"required"`
 	// Timestamp of when the record was last updated
 	UpdatedAt time.Time `json:"updatedAt" api:"required" format:"date-time"`
 	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
@@ -301,12 +301,12 @@ type V1EventFeatureListFeaturesResponse struct {
 }
 
 // Returns the unmodified JSON received from the API
-func (r V1EventFeatureListFeaturesResponse) RawJSON() string { return r.JSON.raw }
-func (r *V1EventFeatureListFeaturesResponse) UnmarshalJSON(data []byte) error {
+func (r V1FeatureListFeaturesResponse) RawJSON() string { return r.JSON.raw }
+func (r *V1FeatureListFeaturesResponse) UnmarshalJSON(data []byte) error {
 	return apijson.UnmarshalRoot(data, r)
 }
 
-type V1EventFeatureListFeaturesResponseEnumConfiguration struct {
+type V1FeatureListFeaturesResponseEnumConfiguration struct {
 	// The display name for the enum configuration entity
 	DisplayName string `json:"displayName" api:"required"`
 	// The unique value identifier for the enum configuration entity
@@ -321,40 +321,40 @@ type V1EventFeatureListFeaturesResponseEnumConfiguration struct {
 }
 
 // Returns the unmodified JSON received from the API
-func (r V1EventFeatureListFeaturesResponseEnumConfiguration) RawJSON() string { return r.JSON.raw }
-func (r *V1EventFeatureListFeaturesResponseEnumConfiguration) UnmarshalJSON(data []byte) error {
+func (r V1FeatureListFeaturesResponseEnumConfiguration) RawJSON() string { return r.JSON.raw }
+func (r *V1FeatureListFeaturesResponseEnumConfiguration) UnmarshalJSON(data []byte) error {
 	return apijson.UnmarshalRoot(data, r)
 }
 
 // The status of the feature
-type V1EventFeatureListFeaturesResponseFeatureStatus string
+type V1FeatureListFeaturesResponseFeatureStatus string
 
 const (
-	V1EventFeatureListFeaturesResponseFeatureStatusNew       V1EventFeatureListFeaturesResponseFeatureStatus = "NEW"
-	V1EventFeatureListFeaturesResponseFeatureStatusSuspended V1EventFeatureListFeaturesResponseFeatureStatus = "SUSPENDED"
-	V1EventFeatureListFeaturesResponseFeatureStatusActive    V1EventFeatureListFeaturesResponseFeatureStatus = "ACTIVE"
+	V1FeatureListFeaturesResponseFeatureStatusNew       V1FeatureListFeaturesResponseFeatureStatus = "NEW"
+	V1FeatureListFeaturesResponseFeatureStatusSuspended V1FeatureListFeaturesResponseFeatureStatus = "SUSPENDED"
+	V1FeatureListFeaturesResponseFeatureStatusActive    V1FeatureListFeaturesResponseFeatureStatus = "ACTIVE"
 )
 
 // The type of the feature
-type V1EventFeatureListFeaturesResponseFeatureType string
+type V1FeatureListFeaturesResponseFeatureType string
 
 const (
-	V1EventFeatureListFeaturesResponseFeatureTypeBoolean V1EventFeatureListFeaturesResponseFeatureType = "BOOLEAN"
-	V1EventFeatureListFeaturesResponseFeatureTypeNumber  V1EventFeatureListFeaturesResponseFeatureType = "NUMBER"
-	V1EventFeatureListFeaturesResponseFeatureTypeEnum    V1EventFeatureListFeaturesResponseFeatureType = "ENUM"
+	V1FeatureListFeaturesResponseFeatureTypeBoolean V1FeatureListFeaturesResponseFeatureType = "BOOLEAN"
+	V1FeatureListFeaturesResponseFeatureTypeNumber  V1FeatureListFeaturesResponseFeatureType = "NUMBER"
+	V1FeatureListFeaturesResponseFeatureTypeEnum    V1FeatureListFeaturesResponseFeatureType = "ENUM"
 )
 
 // The meter type for the feature
-type V1EventFeatureListFeaturesResponseMeterType string
+type V1FeatureListFeaturesResponseMeterType string
 
 const (
-	V1EventFeatureListFeaturesResponseMeterTypeNone        V1EventFeatureListFeaturesResponseMeterType = "None"
-	V1EventFeatureListFeaturesResponseMeterTypeFluctuating V1EventFeatureListFeaturesResponseMeterType = "FLUCTUATING"
-	V1EventFeatureListFeaturesResponseMeterTypeIncremental V1EventFeatureListFeaturesResponseMeterType = "INCREMENTAL"
+	V1FeatureListFeaturesResponseMeterTypeNone        V1FeatureListFeaturesResponseMeterType = "None"
+	V1FeatureListFeaturesResponseMeterTypeFluctuating V1FeatureListFeaturesResponseMeterType = "FLUCTUATING"
+	V1FeatureListFeaturesResponseMeterTypeIncremental V1FeatureListFeaturesResponseMeterType = "INCREMENTAL"
 )
 
 // Unit transformation to be applied to the reported usage
-type V1EventFeatureListFeaturesResponseUnitTransformation struct {
+type V1FeatureListFeaturesResponseUnitTransformation struct {
 	// Divide usage by this number
 	Divide float64 `json:"divide" api:"required"`
 	// Singular feature units after the transformation
@@ -377,12 +377,12 @@ type V1EventFeatureListFeaturesResponseUnitTransformation struct {
 }
 
 // Returns the unmodified JSON received from the API
-func (r V1EventFeatureListFeaturesResponseUnitTransformation) RawJSON() string { return r.JSON.raw }
-func (r *V1EventFeatureListFeaturesResponseUnitTransformation) UnmarshalJSON(data []byte) error {
+func (r V1FeatureListFeaturesResponseUnitTransformation) RawJSON() string { return r.JSON.raw }
+func (r *V1FeatureListFeaturesResponseUnitTransformation) UnmarshalJSON(data []byte) error {
 	return apijson.UnmarshalRoot(data, r)
 }
 
-type V1EventFeatureNewFeatureParams struct {
+type V1FeatureNewFeatureParams struct {
 	// The unique identifier for the feature
 	ID string `json:"id" api:"required"`
 	// The display name for the feature
@@ -390,7 +390,7 @@ type V1EventFeatureNewFeatureParams struct {
 	// The type of the feature
 	//
 	// Any of "BOOLEAN", "NUMBER", "ENUM".
-	FeatureType V1EventFeatureNewFeatureParamsFeatureType `json:"featureType,omitzero" api:"required"`
+	FeatureType V1FeatureNewFeatureParamsFeatureType `json:"featureType,omitzero" api:"required"`
 	// The description for the feature
 	Description param.Opt[string] `json:"description,omitzero"`
 	// The units for the feature
@@ -398,41 +398,41 @@ type V1EventFeatureNewFeatureParams struct {
 	// The plural units for the feature
 	FeatureUnitsPlural param.Opt[string] `json:"featureUnitsPlural,omitzero"`
 	// Unit transformation to be applied to the reported usage
-	UnitTransformation V1EventFeatureNewFeatureParamsUnitTransformation `json:"unitTransformation,omitzero"`
+	UnitTransformation V1FeatureNewFeatureParamsUnitTransformation `json:"unitTransformation,omitzero"`
 	// The configuration data for the feature
-	EnumConfiguration []V1EventFeatureNewFeatureParamsEnumConfiguration `json:"enumConfiguration,omitzero"`
+	EnumConfiguration []V1FeatureNewFeatureParamsEnumConfiguration `json:"enumConfiguration,omitzero"`
 	// The status of the feature
 	//
 	// Any of "NEW", "SUSPENDED", "ACTIVE".
-	FeatureStatus V1EventFeatureNewFeatureParamsFeatureStatus `json:"featureStatus,omitzero"`
+	FeatureStatus V1FeatureNewFeatureParamsFeatureStatus `json:"featureStatus,omitzero"`
 	// The additional metadata for the feature
 	Metadata map[string]string `json:"metadata,omitzero"`
 	// The meter type for the feature
 	//
 	// Any of "None", "FLUCTUATING", "INCREMENTAL".
-	MeterType V1EventFeatureNewFeatureParamsMeterType `json:"meterType,omitzero"`
+	MeterType V1FeatureNewFeatureParamsMeterType `json:"meterType,omitzero"`
 	paramObj
 }
 
-func (r V1EventFeatureNewFeatureParams) MarshalJSON() (data []byte, err error) {
-	type shadow V1EventFeatureNewFeatureParams
+func (r V1FeatureNewFeatureParams) MarshalJSON() (data []byte, err error) {
+	type shadow V1FeatureNewFeatureParams
 	return param.MarshalObject(r, (*shadow)(&r))
 }
-func (r *V1EventFeatureNewFeatureParams) UnmarshalJSON(data []byte) error {
+func (r *V1FeatureNewFeatureParams) UnmarshalJSON(data []byte) error {
 	return apijson.UnmarshalRoot(data, r)
 }
 
 // The type of the feature
-type V1EventFeatureNewFeatureParamsFeatureType string
+type V1FeatureNewFeatureParamsFeatureType string
 
 const (
-	V1EventFeatureNewFeatureParamsFeatureTypeBoolean V1EventFeatureNewFeatureParamsFeatureType = "BOOLEAN"
-	V1EventFeatureNewFeatureParamsFeatureTypeNumber  V1EventFeatureNewFeatureParamsFeatureType = "NUMBER"
-	V1EventFeatureNewFeatureParamsFeatureTypeEnum    V1EventFeatureNewFeatureParamsFeatureType = "ENUM"
+	V1FeatureNewFeatureParamsFeatureTypeBoolean V1FeatureNewFeatureParamsFeatureType = "BOOLEAN"
+	V1FeatureNewFeatureParamsFeatureTypeNumber  V1FeatureNewFeatureParamsFeatureType = "NUMBER"
+	V1FeatureNewFeatureParamsFeatureTypeEnum    V1FeatureNewFeatureParamsFeatureType = "ENUM"
 )
 
 // The properties DisplayName, Value are required.
-type V1EventFeatureNewFeatureParamsEnumConfiguration struct {
+type V1FeatureNewFeatureParamsEnumConfiguration struct {
 	// The display name for the enum configuration entity
 	DisplayName string `json:"displayName" api:"required"`
 	// The unique value identifier for the enum configuration entity
@@ -440,36 +440,36 @@ type V1EventFeatureNewFeatureParamsEnumConfiguration struct {
 	paramObj
 }
 
-func (r V1EventFeatureNewFeatureParamsEnumConfiguration) MarshalJSON() (data []byte, err error) {
-	type shadow V1EventFeatureNewFeatureParamsEnumConfiguration
+func (r V1FeatureNewFeatureParamsEnumConfiguration) MarshalJSON() (data []byte, err error) {
+	type shadow V1FeatureNewFeatureParamsEnumConfiguration
 	return param.MarshalObject(r, (*shadow)(&r))
 }
-func (r *V1EventFeatureNewFeatureParamsEnumConfiguration) UnmarshalJSON(data []byte) error {
+func (r *V1FeatureNewFeatureParamsEnumConfiguration) UnmarshalJSON(data []byte) error {
 	return apijson.UnmarshalRoot(data, r)
 }
 
 // The status of the feature
-type V1EventFeatureNewFeatureParamsFeatureStatus string
+type V1FeatureNewFeatureParamsFeatureStatus string
 
 const (
-	V1EventFeatureNewFeatureParamsFeatureStatusNew       V1EventFeatureNewFeatureParamsFeatureStatus = "NEW"
-	V1EventFeatureNewFeatureParamsFeatureStatusSuspended V1EventFeatureNewFeatureParamsFeatureStatus = "SUSPENDED"
-	V1EventFeatureNewFeatureParamsFeatureStatusActive    V1EventFeatureNewFeatureParamsFeatureStatus = "ACTIVE"
+	V1FeatureNewFeatureParamsFeatureStatusNew       V1FeatureNewFeatureParamsFeatureStatus = "NEW"
+	V1FeatureNewFeatureParamsFeatureStatusSuspended V1FeatureNewFeatureParamsFeatureStatus = "SUSPENDED"
+	V1FeatureNewFeatureParamsFeatureStatusActive    V1FeatureNewFeatureParamsFeatureStatus = "ACTIVE"
 )
 
 // The meter type for the feature
-type V1EventFeatureNewFeatureParamsMeterType string
+type V1FeatureNewFeatureParamsMeterType string
 
 const (
-	V1EventFeatureNewFeatureParamsMeterTypeNone        V1EventFeatureNewFeatureParamsMeterType = "None"
-	V1EventFeatureNewFeatureParamsMeterTypeFluctuating V1EventFeatureNewFeatureParamsMeterType = "FLUCTUATING"
-	V1EventFeatureNewFeatureParamsMeterTypeIncremental V1EventFeatureNewFeatureParamsMeterType = "INCREMENTAL"
+	V1FeatureNewFeatureParamsMeterTypeNone        V1FeatureNewFeatureParamsMeterType = "None"
+	V1FeatureNewFeatureParamsMeterTypeFluctuating V1FeatureNewFeatureParamsMeterType = "FLUCTUATING"
+	V1FeatureNewFeatureParamsMeterTypeIncremental V1FeatureNewFeatureParamsMeterType = "INCREMENTAL"
 )
 
 // Unit transformation to be applied to the reported usage
 //
 // The property Divide is required.
-type V1EventFeatureNewFeatureParamsUnitTransformation struct {
+type V1FeatureNewFeatureParamsUnitTransformation struct {
 	// Divide usage by this number
 	Divide int64 `json:"divide" api:"required"`
 	// Singular feature units after the transformation
@@ -483,21 +483,21 @@ type V1EventFeatureNewFeatureParamsUnitTransformation struct {
 	paramObj
 }
 
-func (r V1EventFeatureNewFeatureParamsUnitTransformation) MarshalJSON() (data []byte, err error) {
-	type shadow V1EventFeatureNewFeatureParamsUnitTransformation
+func (r V1FeatureNewFeatureParamsUnitTransformation) MarshalJSON() (data []byte, err error) {
+	type shadow V1FeatureNewFeatureParamsUnitTransformation
 	return param.MarshalObject(r, (*shadow)(&r))
 }
-func (r *V1EventFeatureNewFeatureParamsUnitTransformation) UnmarshalJSON(data []byte) error {
+func (r *V1FeatureNewFeatureParamsUnitTransformation) UnmarshalJSON(data []byte) error {
 	return apijson.UnmarshalRoot(data, r)
 }
 
 func init() {
-	apijson.RegisterFieldValidator[V1EventFeatureNewFeatureParamsUnitTransformation](
+	apijson.RegisterFieldValidator[V1FeatureNewFeatureParamsUnitTransformation](
 		"round", "UP", "DOWN",
 	)
 }
 
-type V1EventFeatureListFeaturesParams struct {
+type V1FeatureListFeaturesParams struct {
 	// Filter by entity ID
 	ID param.Opt[string] `query:"id,omitzero" json:"-"`
 	// Return items that come after this cursor
@@ -513,13 +513,13 @@ type V1EventFeatureListFeaturesParams struct {
 	// Filter by feature status. Supports comma-separated values for multiple statuses
 	Status param.Opt[string] `query:"status,omitzero" json:"-"`
 	// Filter by creation date using range operators: gt, gte, lt, lte
-	CreatedAt V1EventFeatureListFeaturesParamsCreatedAt `query:"createdAt,omitzero" json:"-"`
+	CreatedAt V1FeatureListFeaturesParamsCreatedAt `query:"createdAt,omitzero" json:"-"`
 	paramObj
 }
 
-// URLQuery serializes [V1EventFeatureListFeaturesParams]'s query parameters as
+// URLQuery serializes [V1FeatureListFeaturesParams]'s query parameters as
 // `url.Values`.
-func (r V1EventFeatureListFeaturesParams) URLQuery() (v url.Values, err error) {
+func (r V1FeatureListFeaturesParams) URLQuery() (v url.Values, err error) {
 	return apiquery.MarshalWithSettings(r, apiquery.QuerySettings{
 		ArrayFormat:  apiquery.ArrayQueryFormatComma,
 		NestedFormat: apiquery.NestedQueryFormatBrackets,
@@ -527,7 +527,7 @@ func (r V1EventFeatureListFeaturesParams) URLQuery() (v url.Values, err error) {
 }
 
 // Filter by creation date using range operators: gt, gte, lt, lte
-type V1EventFeatureListFeaturesParamsCreatedAt struct {
+type V1FeatureListFeaturesParamsCreatedAt struct {
 	// Greater than the specified createdAt value
 	Gt param.Opt[time.Time] `query:"gt,omitzero" format:"date-time" json:"-"`
 	// Greater than or equal to the specified createdAt value
@@ -539,16 +539,16 @@ type V1EventFeatureListFeaturesParamsCreatedAt struct {
 	paramObj
 }
 
-// URLQuery serializes [V1EventFeatureListFeaturesParamsCreatedAt]'s query
-// parameters as `url.Values`.
-func (r V1EventFeatureListFeaturesParamsCreatedAt) URLQuery() (v url.Values, err error) {
+// URLQuery serializes [V1FeatureListFeaturesParamsCreatedAt]'s query parameters as
+// `url.Values`.
+func (r V1FeatureListFeaturesParamsCreatedAt) URLQuery() (v url.Values, err error) {
 	return apiquery.MarshalWithSettings(r, apiquery.QuerySettings{
 		ArrayFormat:  apiquery.ArrayQueryFormatComma,
 		NestedFormat: apiquery.NestedQueryFormatBrackets,
 	})
 }
 
-type V1EventFeatureUpdateFeatureParams struct {
+type V1FeatureUpdateFeatureParams struct {
 	// The description for the feature
 	Description param.Opt[string] `json:"description,omitzero"`
 	// The display name for the feature
@@ -558,25 +558,25 @@ type V1EventFeatureUpdateFeatureParams struct {
 	// The plural units for the feature
 	FeatureUnitsPlural param.Opt[string] `json:"featureUnitsPlural,omitzero"`
 	// Unit transformation to be applied to the reported usage
-	UnitTransformation V1EventFeatureUpdateFeatureParamsUnitTransformation `json:"unitTransformation,omitzero"`
+	UnitTransformation V1FeatureUpdateFeatureParamsUnitTransformation `json:"unitTransformation,omitzero"`
 	// The configuration data for the feature
-	EnumConfiguration []V1EventFeatureUpdateFeatureParamsEnumConfiguration `json:"enumConfiguration,omitzero"`
+	EnumConfiguration []V1FeatureUpdateFeatureParamsEnumConfiguration `json:"enumConfiguration,omitzero"`
 	// The additional metadata for the feature
-	Metadata map[string]string                      `json:"metadata,omitzero"`
-	Meter    V1EventFeatureUpdateFeatureParamsMeter `json:"meter,omitzero"`
+	Metadata map[string]string                 `json:"metadata,omitzero"`
+	Meter    V1FeatureUpdateFeatureParamsMeter `json:"meter,omitzero"`
 	paramObj
 }
 
-func (r V1EventFeatureUpdateFeatureParams) MarshalJSON() (data []byte, err error) {
-	type shadow V1EventFeatureUpdateFeatureParams
+func (r V1FeatureUpdateFeatureParams) MarshalJSON() (data []byte, err error) {
+	type shadow V1FeatureUpdateFeatureParams
 	return param.MarshalObject(r, (*shadow)(&r))
 }
-func (r *V1EventFeatureUpdateFeatureParams) UnmarshalJSON(data []byte) error {
+func (r *V1FeatureUpdateFeatureParams) UnmarshalJSON(data []byte) error {
 	return apijson.UnmarshalRoot(data, r)
 }
 
 // The properties DisplayName, Value are required.
-type V1EventFeatureUpdateFeatureParamsEnumConfiguration struct {
+type V1FeatureUpdateFeatureParamsEnumConfiguration struct {
 	// The display name for the enum configuration entity
 	DisplayName string `json:"displayName" api:"required"`
 	// The unique value identifier for the enum configuration entity
@@ -584,67 +584,67 @@ type V1EventFeatureUpdateFeatureParamsEnumConfiguration struct {
 	paramObj
 }
 
-func (r V1EventFeatureUpdateFeatureParamsEnumConfiguration) MarshalJSON() (data []byte, err error) {
-	type shadow V1EventFeatureUpdateFeatureParamsEnumConfiguration
+func (r V1FeatureUpdateFeatureParamsEnumConfiguration) MarshalJSON() (data []byte, err error) {
+	type shadow V1FeatureUpdateFeatureParamsEnumConfiguration
 	return param.MarshalObject(r, (*shadow)(&r))
 }
-func (r *V1EventFeatureUpdateFeatureParamsEnumConfiguration) UnmarshalJSON(data []byte) error {
+func (r *V1FeatureUpdateFeatureParamsEnumConfiguration) UnmarshalJSON(data []byte) error {
 	return apijson.UnmarshalRoot(data, r)
 }
 
 // The properties Aggregation, Filters are required.
-type V1EventFeatureUpdateFeatureParamsMeter struct {
-	Aggregation V1EventFeatureUpdateFeatureParamsMeterAggregation `json:"aggregation,omitzero" api:"required"`
-	Filters     []V1EventFeatureUpdateFeatureParamsMeterFilter    `json:"filters,omitzero" api:"required"`
+type V1FeatureUpdateFeatureParamsMeter struct {
+	Aggregation V1FeatureUpdateFeatureParamsMeterAggregation `json:"aggregation,omitzero" api:"required"`
+	Filters     []V1FeatureUpdateFeatureParamsMeterFilter    `json:"filters,omitzero" api:"required"`
 	paramObj
 }
 
-func (r V1EventFeatureUpdateFeatureParamsMeter) MarshalJSON() (data []byte, err error) {
-	type shadow V1EventFeatureUpdateFeatureParamsMeter
+func (r V1FeatureUpdateFeatureParamsMeter) MarshalJSON() (data []byte, err error) {
+	type shadow V1FeatureUpdateFeatureParamsMeter
 	return param.MarshalObject(r, (*shadow)(&r))
 }
-func (r *V1EventFeatureUpdateFeatureParamsMeter) UnmarshalJSON(data []byte) error {
+func (r *V1FeatureUpdateFeatureParamsMeter) UnmarshalJSON(data []byte) error {
 	return apijson.UnmarshalRoot(data, r)
 }
 
 // The property Function is required.
-type V1EventFeatureUpdateFeatureParamsMeterAggregation struct {
+type V1FeatureUpdateFeatureParamsMeterAggregation struct {
 	// Any of "SUM", "MAX", "MIN", "AVG", "COUNT", "UNIQUE".
 	Function string            `json:"function,omitzero" api:"required"`
 	Field    param.Opt[string] `json:"field,omitzero"`
 	paramObj
 }
 
-func (r V1EventFeatureUpdateFeatureParamsMeterAggregation) MarshalJSON() (data []byte, err error) {
-	type shadow V1EventFeatureUpdateFeatureParamsMeterAggregation
+func (r V1FeatureUpdateFeatureParamsMeterAggregation) MarshalJSON() (data []byte, err error) {
+	type shadow V1FeatureUpdateFeatureParamsMeterAggregation
 	return param.MarshalObject(r, (*shadow)(&r))
 }
-func (r *V1EventFeatureUpdateFeatureParamsMeterAggregation) UnmarshalJSON(data []byte) error {
+func (r *V1FeatureUpdateFeatureParamsMeterAggregation) UnmarshalJSON(data []byte) error {
 	return apijson.UnmarshalRoot(data, r)
 }
 
 func init() {
-	apijson.RegisterFieldValidator[V1EventFeatureUpdateFeatureParamsMeterAggregation](
+	apijson.RegisterFieldValidator[V1FeatureUpdateFeatureParamsMeterAggregation](
 		"function", "SUM", "MAX", "MIN", "AVG", "COUNT", "UNIQUE",
 	)
 }
 
 // The property Conditions is required.
-type V1EventFeatureUpdateFeatureParamsMeterFilter struct {
-	Conditions []V1EventFeatureUpdateFeatureParamsMeterFilterCondition `json:"conditions,omitzero" api:"required"`
+type V1FeatureUpdateFeatureParamsMeterFilter struct {
+	Conditions []V1FeatureUpdateFeatureParamsMeterFilterCondition `json:"conditions,omitzero" api:"required"`
 	paramObj
 }
 
-func (r V1EventFeatureUpdateFeatureParamsMeterFilter) MarshalJSON() (data []byte, err error) {
-	type shadow V1EventFeatureUpdateFeatureParamsMeterFilter
+func (r V1FeatureUpdateFeatureParamsMeterFilter) MarshalJSON() (data []byte, err error) {
+	type shadow V1FeatureUpdateFeatureParamsMeterFilter
 	return param.MarshalObject(r, (*shadow)(&r))
 }
-func (r *V1EventFeatureUpdateFeatureParamsMeterFilter) UnmarshalJSON(data []byte) error {
+func (r *V1FeatureUpdateFeatureParamsMeterFilter) UnmarshalJSON(data []byte) error {
 	return apijson.UnmarshalRoot(data, r)
 }
 
 // The properties Field, Operation are required.
-type V1EventFeatureUpdateFeatureParamsMeterFilterCondition struct {
+type V1FeatureUpdateFeatureParamsMeterFilterCondition struct {
 	Field string `json:"field" api:"required"`
 	// Any of "EQUALS", "NOT_EQUALS", "GREATER_THAN", "GREATER_THAN_OR_EQUAL",
 	// "LESS_THAN", "LESS_THAN_OR_EQUAL", "IS_NULL", "IS_NOT_NULL", "CONTAINS",
@@ -655,16 +655,16 @@ type V1EventFeatureUpdateFeatureParamsMeterFilterCondition struct {
 	paramObj
 }
 
-func (r V1EventFeatureUpdateFeatureParamsMeterFilterCondition) MarshalJSON() (data []byte, err error) {
-	type shadow V1EventFeatureUpdateFeatureParamsMeterFilterCondition
+func (r V1FeatureUpdateFeatureParamsMeterFilterCondition) MarshalJSON() (data []byte, err error) {
+	type shadow V1FeatureUpdateFeatureParamsMeterFilterCondition
 	return param.MarshalObject(r, (*shadow)(&r))
 }
-func (r *V1EventFeatureUpdateFeatureParamsMeterFilterCondition) UnmarshalJSON(data []byte) error {
+func (r *V1FeatureUpdateFeatureParamsMeterFilterCondition) UnmarshalJSON(data []byte) error {
 	return apijson.UnmarshalRoot(data, r)
 }
 
 func init() {
-	apijson.RegisterFieldValidator[V1EventFeatureUpdateFeatureParamsMeterFilterCondition](
+	apijson.RegisterFieldValidator[V1FeatureUpdateFeatureParamsMeterFilterCondition](
 		"operation", "EQUALS", "NOT_EQUALS", "GREATER_THAN", "GREATER_THAN_OR_EQUAL", "LESS_THAN", "LESS_THAN_OR_EQUAL", "IS_NULL", "IS_NOT_NULL", "CONTAINS", "STARTS_WITH", "ENDS_WITH", "IN",
 	)
 }
@@ -672,7 +672,7 @@ func init() {
 // Unit transformation to be applied to the reported usage
 //
 // The property Divide is required.
-type V1EventFeatureUpdateFeatureParamsUnitTransformation struct {
+type V1FeatureUpdateFeatureParamsUnitTransformation struct {
 	// Divide usage by this number
 	Divide int64 `json:"divide" api:"required"`
 	// Singular feature units after the transformation
@@ -686,16 +686,16 @@ type V1EventFeatureUpdateFeatureParamsUnitTransformation struct {
 	paramObj
 }
 
-func (r V1EventFeatureUpdateFeatureParamsUnitTransformation) MarshalJSON() (data []byte, err error) {
-	type shadow V1EventFeatureUpdateFeatureParamsUnitTransformation
+func (r V1FeatureUpdateFeatureParamsUnitTransformation) MarshalJSON() (data []byte, err error) {
+	type shadow V1FeatureUpdateFeatureParamsUnitTransformation
 	return param.MarshalObject(r, (*shadow)(&r))
 }
-func (r *V1EventFeatureUpdateFeatureParamsUnitTransformation) UnmarshalJSON(data []byte) error {
+func (r *V1FeatureUpdateFeatureParamsUnitTransformation) UnmarshalJSON(data []byte) error {
 	return apijson.UnmarshalRoot(data, r)
 }
 
 func init() {
-	apijson.RegisterFieldValidator[V1EventFeatureUpdateFeatureParamsUnitTransformation](
+	apijson.RegisterFieldValidator[V1FeatureUpdateFeatureParamsUnitTransformation](
 		"round", "UP", "DOWN",
 	)
 }

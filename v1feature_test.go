@@ -14,7 +14,7 @@ import (
 	"github.com/stiggio/stigg-go/option"
 )
 
-func TestV1EventFeatureArchiveFeature(t *testing.T) {
+func TestV1FeatureArchiveFeature(t *testing.T) {
 	t.Skip("Mock server tests are disabled")
 	baseURL := "http://localhost:4010"
 	if envURL, ok := os.LookupEnv("TEST_API_BASE_URL"); ok {
@@ -27,7 +27,7 @@ func TestV1EventFeatureArchiveFeature(t *testing.T) {
 		option.WithBaseURL(baseURL),
 		option.WithAPIKey("My API Key"),
 	)
-	_, err := client.V1.Events.Features.ArchiveFeature(context.TODO(), "x")
+	_, err := client.V1.Features.ArchiveFeature(context.TODO(), "x")
 	if err != nil {
 		var apierr *stigg.Error
 		if errors.As(err, &apierr) {
@@ -37,7 +37,7 @@ func TestV1EventFeatureArchiveFeature(t *testing.T) {
 	}
 }
 
-func TestV1EventFeatureNewFeatureWithOptionalParams(t *testing.T) {
+func TestV1FeatureNewFeatureWithOptionalParams(t *testing.T) {
 	t.Skip("Mock server tests are disabled")
 	baseURL := "http://localhost:4010"
 	if envURL, ok := os.LookupEnv("TEST_API_BASE_URL"); ok {
@@ -50,23 +50,23 @@ func TestV1EventFeatureNewFeatureWithOptionalParams(t *testing.T) {
 		option.WithBaseURL(baseURL),
 		option.WithAPIKey("My API Key"),
 	)
-	_, err := client.V1.Events.Features.NewFeature(context.TODO(), stigg.V1EventFeatureNewFeatureParams{
+	_, err := client.V1.Features.NewFeature(context.TODO(), stigg.V1FeatureNewFeatureParams{
 		ID:          "id",
 		DisplayName: "displayName",
-		FeatureType: stigg.V1EventFeatureNewFeatureParamsFeatureTypeBoolean,
+		FeatureType: stigg.V1FeatureNewFeatureParamsFeatureTypeBoolean,
 		Description: stigg.String("description"),
-		EnumConfiguration: []stigg.V1EventFeatureNewFeatureParamsEnumConfiguration{{
+		EnumConfiguration: []stigg.V1FeatureNewFeatureParamsEnumConfiguration{{
 			DisplayName: "displayName",
 			Value:       "value",
 		}},
-		FeatureStatus:      stigg.V1EventFeatureNewFeatureParamsFeatureStatusNew,
+		FeatureStatus:      stigg.V1FeatureNewFeatureParamsFeatureStatusNew,
 		FeatureUnits:       stigg.String("featureUnits"),
 		FeatureUnitsPlural: stigg.String("featureUnitsPlural"),
 		Metadata: map[string]string{
 			"foo": "string",
 		},
-		MeterType: stigg.V1EventFeatureNewFeatureParamsMeterTypeNone,
-		UnitTransformation: stigg.V1EventFeatureNewFeatureParamsUnitTransformation{
+		MeterType: stigg.V1FeatureNewFeatureParamsMeterTypeNone,
+		UnitTransformation: stigg.V1FeatureNewFeatureParamsUnitTransformation{
 			Divide:             0,
 			FeatureUnits:       stigg.String("featureUnits"),
 			FeatureUnitsPlural: stigg.String("featureUnitsPlural"),
@@ -82,7 +82,7 @@ func TestV1EventFeatureNewFeatureWithOptionalParams(t *testing.T) {
 	}
 }
 
-func TestV1EventFeatureListFeaturesWithOptionalParams(t *testing.T) {
+func TestV1FeatureListFeaturesWithOptionalParams(t *testing.T) {
 	t.Skip("Mock server tests are disabled")
 	baseURL := "http://localhost:4010"
 	if envURL, ok := os.LookupEnv("TEST_API_BASE_URL"); ok {
@@ -95,11 +95,11 @@ func TestV1EventFeatureListFeaturesWithOptionalParams(t *testing.T) {
 		option.WithBaseURL(baseURL),
 		option.WithAPIKey("My API Key"),
 	)
-	_, err := client.V1.Events.Features.ListFeatures(context.TODO(), stigg.V1EventFeatureListFeaturesParams{
+	_, err := client.V1.Features.ListFeatures(context.TODO(), stigg.V1FeatureListFeaturesParams{
 		ID:     stigg.String("id"),
 		After:  stigg.String("182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e"),
 		Before: stigg.String("182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e"),
-		CreatedAt: stigg.V1EventFeatureListFeaturesParamsCreatedAt{
+		CreatedAt: stigg.V1FeatureListFeaturesParamsCreatedAt{
 			Gt:  stigg.Time(time.Now()),
 			Gte: stigg.Time(time.Now()),
 			Lt:  stigg.Time(time.Now()),
@@ -119,7 +119,7 @@ func TestV1EventFeatureListFeaturesWithOptionalParams(t *testing.T) {
 	}
 }
 
-func TestV1EventFeatureGetFeature(t *testing.T) {
+func TestV1FeatureGetFeature(t *testing.T) {
 	t.Skip("Mock server tests are disabled")
 	baseURL := "http://localhost:4010"
 	if envURL, ok := os.LookupEnv("TEST_API_BASE_URL"); ok {
@@ -132,7 +132,7 @@ func TestV1EventFeatureGetFeature(t *testing.T) {
 		option.WithBaseURL(baseURL),
 		option.WithAPIKey("My API Key"),
 	)
-	_, err := client.V1.Events.Features.GetFeature(context.TODO(), "x")
+	_, err := client.V1.Features.GetFeature(context.TODO(), "x")
 	if err != nil {
 		var apierr *stigg.Error
 		if errors.As(err, &apierr) {
@@ -142,7 +142,7 @@ func TestV1EventFeatureGetFeature(t *testing.T) {
 	}
 }
 
-func TestV1EventFeatureUnarchiveFeature(t *testing.T) {
+func TestV1FeatureUnarchiveFeature(t *testing.T) {
 	t.Skip("Mock server tests are disabled")
 	baseURL := "http://localhost:4010"
 	if envURL, ok := os.LookupEnv("TEST_API_BASE_URL"); ok {
@@ -155,7 +155,7 @@ func TestV1EventFeatureUnarchiveFeature(t *testing.T) {
 		option.WithBaseURL(baseURL),
 		option.WithAPIKey("My API Key"),
 	)
-	_, err := client.V1.Events.Features.UnarchiveFeature(context.TODO(), "x")
+	_, err := client.V1.Features.UnarchiveFeature(context.TODO(), "x")
 	if err != nil {
 		var apierr *stigg.Error
 		if errors.As(err, &apierr) {
@@ -165,7 +165,7 @@ func TestV1EventFeatureUnarchiveFeature(t *testing.T) {
 	}
 }
 
-func TestV1EventFeatureUpdateFeatureWithOptionalParams(t *testing.T) {
+func TestV1FeatureUpdateFeatureWithOptionalParams(t *testing.T) {
 	t.Skip("Mock server tests are disabled")
 	baseURL := "http://localhost:4010"
 	if envURL, ok := os.LookupEnv("TEST_API_BASE_URL"); ok {
@@ -178,13 +178,13 @@ func TestV1EventFeatureUpdateFeatureWithOptionalParams(t *testing.T) {
 		option.WithBaseURL(baseURL),
 		option.WithAPIKey("My API Key"),
 	)
-	_, err := client.V1.Events.Features.UpdateFeature(
+	_, err := client.V1.Features.UpdateFeature(
 		context.TODO(),
 		"x",
-		stigg.V1EventFeatureUpdateFeatureParams{
+		stigg.V1FeatureUpdateFeatureParams{
 			Description: stigg.String("description"),
 			DisplayName: stigg.String("displayName"),
-			EnumConfiguration: []stigg.V1EventFeatureUpdateFeatureParamsEnumConfiguration{{
+			EnumConfiguration: []stigg.V1FeatureUpdateFeatureParamsEnumConfiguration{{
 				DisplayName: "displayName",
 				Value:       "value",
 			}},
@@ -193,13 +193,13 @@ func TestV1EventFeatureUpdateFeatureWithOptionalParams(t *testing.T) {
 			Metadata: map[string]string{
 				"foo": "string",
 			},
-			Meter: stigg.V1EventFeatureUpdateFeatureParamsMeter{
-				Aggregation: stigg.V1EventFeatureUpdateFeatureParamsMeterAggregation{
+			Meter: stigg.V1FeatureUpdateFeatureParamsMeter{
+				Aggregation: stigg.V1FeatureUpdateFeatureParamsMeterAggregation{
 					Function: "SUM",
 					Field:    stigg.String("field"),
 				},
-				Filters: []stigg.V1EventFeatureUpdateFeatureParamsMeterFilter{{
-					Conditions: []stigg.V1EventFeatureUpdateFeatureParamsMeterFilterCondition{{
+				Filters: []stigg.V1FeatureUpdateFeatureParamsMeterFilter{{
+					Conditions: []stigg.V1FeatureUpdateFeatureParamsMeterFilterCondition{{
 						Field:     "field",
 						Operation: "EQUALS",
 						Value:     stigg.String("value"),
@@ -207,7 +207,7 @@ func TestV1EventFeatureUpdateFeatureWithOptionalParams(t *testing.T) {
 					}},
 				}},
 			},
-			UnitTransformation: stigg.V1EventFeatureUpdateFeatureParamsUnitTransformation{
+			UnitTransformation: stigg.V1FeatureUpdateFeatureParamsUnitTransformation{
 				Divide:             0,
 				FeatureUnits:       stigg.String("featureUnits"),
 				FeatureUnitsPlural: stigg.String("featureUnitsPlural"),

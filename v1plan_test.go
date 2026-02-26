@@ -14,7 +14,7 @@ import (
 	"github.com/stiggio/stigg-go/option"
 )
 
-func TestV1EventAddonArchiveAddon(t *testing.T) {
+func TestV1PlanNewWithOptionalParams(t *testing.T) {
 	t.Skip("Mock server tests are disabled")
 	baseURL := "http://localhost:4010"
 	if envURL, ok := os.LookupEnv("TEST_API_BASE_URL"); ok {
@@ -27,41 +27,27 @@ func TestV1EventAddonArchiveAddon(t *testing.T) {
 		option.WithBaseURL(baseURL),
 		option.WithAPIKey("My API Key"),
 	)
-	_, err := client.V1.Events.Addons.ArchiveAddon(context.TODO(), "x")
-	if err != nil {
-		var apierr *stigg.Error
-		if errors.As(err, &apierr) {
-			t.Log(string(apierr.DumpRequest(true)))
-		}
-		t.Fatalf("err should be nil: %s", err.Error())
-	}
-}
-
-func TestV1EventAddonNewAddonWithOptionalParams(t *testing.T) {
-	t.Skip("Mock server tests are disabled")
-	baseURL := "http://localhost:4010"
-	if envURL, ok := os.LookupEnv("TEST_API_BASE_URL"); ok {
-		baseURL = envURL
-	}
-	if !testutil.CheckTestServer(t, baseURL) {
-		return
-	}
-	client := stigg.NewClient(
-		option.WithBaseURL(baseURL),
-		option.WithAPIKey("My API Key"),
-	)
-	_, err := client.V1.Events.Addons.NewAddon(context.TODO(), stigg.V1EventAddonNewAddonParams{
+	_, err := client.V1.Plans.New(context.TODO(), stigg.V1PlanNewParams{
 		ID:          "id",
 		DisplayName: "displayName",
 		ProductID:   "productId",
 		BillingID:   stigg.String("billingId"),
+		DefaultTrialConfig: stigg.V1PlanNewParamsDefaultTrialConfig{
+			Duration: 0,
+			Units:    "DAY",
+			Budget: stigg.V1PlanNewParamsDefaultTrialConfigBudget{
+				HasSoftLimit: true,
+				Limit:        0,
+			},
+			TrialEndBehavior: "CONVERT_TO_PAID",
+		},
 		Description: stigg.String("description"),
-		MaxQuantity: stigg.Int(0),
 		Metadata: map[string]string{
 			"foo": "string",
 		},
-		PricingType: stigg.V1EventAddonNewAddonParamsPricingTypeFree,
-		Status:      stigg.V1EventAddonNewAddonParamsStatusDraft,
+		ParentPlanID: stigg.String("parentPlanId"),
+		PricingType:  stigg.V1PlanNewParamsPricingTypeFree,
+		Status:       stigg.V1PlanNewParamsStatusDraft,
 	})
 	if err != nil {
 		var apierr *stigg.Error
@@ -72,7 +58,7 @@ func TestV1EventAddonNewAddonWithOptionalParams(t *testing.T) {
 	}
 }
 
-func TestV1EventAddonListAddonsWithOptionalParams(t *testing.T) {
+func TestV1PlanGet(t *testing.T) {
 	t.Skip("Mock server tests are disabled")
 	baseURL := "http://localhost:4010"
 	if envURL, ok := os.LookupEnv("TEST_API_BASE_URL"); ok {
@@ -85,10 +71,78 @@ func TestV1EventAddonListAddonsWithOptionalParams(t *testing.T) {
 		option.WithBaseURL(baseURL),
 		option.WithAPIKey("My API Key"),
 	)
-	_, err := client.V1.Events.Addons.ListAddons(context.TODO(), stigg.V1EventAddonListAddonsParams{
+	_, err := client.V1.Plans.Get(context.TODO(), "x")
+	if err != nil {
+		var apierr *stigg.Error
+		if errors.As(err, &apierr) {
+			t.Log(string(apierr.DumpRequest(true)))
+		}
+		t.Fatalf("err should be nil: %s", err.Error())
+	}
+}
+
+func TestV1PlanUpdateWithOptionalParams(t *testing.T) {
+	t.Skip("Mock server tests are disabled")
+	baseURL := "http://localhost:4010"
+	if envURL, ok := os.LookupEnv("TEST_API_BASE_URL"); ok {
+		baseURL = envURL
+	}
+	if !testutil.CheckTestServer(t, baseURL) {
+		return
+	}
+	client := stigg.NewClient(
+		option.WithBaseURL(baseURL),
+		option.WithAPIKey("My API Key"),
+	)
+	_, err := client.V1.Plans.Update(
+		context.TODO(),
+		"x",
+		stigg.V1PlanUpdateParams{
+			BillingID:          stigg.String("billingId"),
+			CompatibleAddonIDs: []string{"string"},
+			DefaultTrialConfig: stigg.V1PlanUpdateParamsDefaultTrialConfig{
+				Duration: 0,
+				Units:    "DAY",
+				Budget: stigg.V1PlanUpdateParamsDefaultTrialConfigBudget{
+					HasSoftLimit: true,
+					Limit:        0,
+				},
+				TrialEndBehavior: "CONVERT_TO_PAID",
+			},
+			Description: stigg.String("description"),
+			DisplayName: stigg.String("displayName"),
+			Metadata: map[string]string{
+				"foo": "string",
+			},
+			ParentPlanID: stigg.String("parentPlanId"),
+		},
+	)
+	if err != nil {
+		var apierr *stigg.Error
+		if errors.As(err, &apierr) {
+			t.Log(string(apierr.DumpRequest(true)))
+		}
+		t.Fatalf("err should be nil: %s", err.Error())
+	}
+}
+
+func TestV1PlanListWithOptionalParams(t *testing.T) {
+	t.Skip("Mock server tests are disabled")
+	baseURL := "http://localhost:4010"
+	if envURL, ok := os.LookupEnv("TEST_API_BASE_URL"); ok {
+		baseURL = envURL
+	}
+	if !testutil.CheckTestServer(t, baseURL) {
+		return
+	}
+	client := stigg.NewClient(
+		option.WithBaseURL(baseURL),
+		option.WithAPIKey("My API Key"),
+	)
+	_, err := client.V1.Plans.List(context.TODO(), stigg.V1PlanListParams{
 		After:  stigg.String("182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e"),
 		Before: stigg.String("182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e"),
-		CreatedAt: stigg.V1EventAddonListAddonsParamsCreatedAt{
+		CreatedAt: stigg.V1PlanListParamsCreatedAt{
 			Gt:  stigg.Time(time.Now()),
 			Gte: stigg.Time(time.Now()),
 			Lt:  stigg.Time(time.Now()),
@@ -107,7 +161,7 @@ func TestV1EventAddonListAddonsWithOptionalParams(t *testing.T) {
 	}
 }
 
-func TestV1EventAddonPublishAddon(t *testing.T) {
+func TestV1PlanArchive(t *testing.T) {
 	t.Skip("Mock server tests are disabled")
 	baseURL := "http://localhost:4010"
 	if envURL, ok := os.LookupEnv("TEST_API_BASE_URL"); ok {
@@ -120,11 +174,57 @@ func TestV1EventAddonPublishAddon(t *testing.T) {
 		option.WithBaseURL(baseURL),
 		option.WithAPIKey("My API Key"),
 	)
-	_, err := client.V1.Events.Addons.PublishAddon(
+	_, err := client.V1.Plans.Archive(context.TODO(), "x")
+	if err != nil {
+		var apierr *stigg.Error
+		if errors.As(err, &apierr) {
+			t.Log(string(apierr.DumpRequest(true)))
+		}
+		t.Fatalf("err should be nil: %s", err.Error())
+	}
+}
+
+func TestV1PlanNewDraft(t *testing.T) {
+	t.Skip("Mock server tests are disabled")
+	baseURL := "http://localhost:4010"
+	if envURL, ok := os.LookupEnv("TEST_API_BASE_URL"); ok {
+		baseURL = envURL
+	}
+	if !testutil.CheckTestServer(t, baseURL) {
+		return
+	}
+	client := stigg.NewClient(
+		option.WithBaseURL(baseURL),
+		option.WithAPIKey("My API Key"),
+	)
+	_, err := client.V1.Plans.NewDraft(context.TODO(), "x")
+	if err != nil {
+		var apierr *stigg.Error
+		if errors.As(err, &apierr) {
+			t.Log(string(apierr.DumpRequest(true)))
+		}
+		t.Fatalf("err should be nil: %s", err.Error())
+	}
+}
+
+func TestV1PlanPublish(t *testing.T) {
+	t.Skip("Mock server tests are disabled")
+	baseURL := "http://localhost:4010"
+	if envURL, ok := os.LookupEnv("TEST_API_BASE_URL"); ok {
+		baseURL = envURL
+	}
+	if !testutil.CheckTestServer(t, baseURL) {
+		return
+	}
+	client := stigg.NewClient(
+		option.WithBaseURL(baseURL),
+		option.WithAPIKey("My API Key"),
+	)
+	_, err := client.V1.Plans.Publish(
 		context.TODO(),
 		"x",
-		stigg.V1EventAddonPublishAddonParams{
-			MigrationType: stigg.V1EventAddonPublishAddonParamsMigrationTypeNewCustomers,
+		stigg.V1PlanPublishParams{
+			MigrationType: stigg.V1PlanPublishParamsMigrationTypeNewCustomers,
 		},
 	)
 	if err != nil {
@@ -136,7 +236,7 @@ func TestV1EventAddonPublishAddon(t *testing.T) {
 	}
 }
 
-func TestV1EventAddonGetAddon(t *testing.T) {
+func TestV1PlanRemoveDraft(t *testing.T) {
 	t.Skip("Mock server tests are disabled")
 	baseURL := "http://localhost:4010"
 	if envURL, ok := os.LookupEnv("TEST_API_BASE_URL"); ok {
@@ -149,7 +249,7 @@ func TestV1EventAddonGetAddon(t *testing.T) {
 		option.WithBaseURL(baseURL),
 		option.WithAPIKey("My API Key"),
 	)
-	_, err := client.V1.Events.Addons.GetAddon(context.TODO(), "x")
+	_, err := client.V1.Plans.RemoveDraft(context.TODO(), "x")
 	if err != nil {
 		var apierr *stigg.Error
 		if errors.As(err, &apierr) {
@@ -159,7 +259,7 @@ func TestV1EventAddonGetAddon(t *testing.T) {
 	}
 }
 
-func TestV1EventAddonSetPricingWithOptionalParams(t *testing.T) {
+func TestV1PlanSetPricingWithOptionalParams(t *testing.T) {
 	t.Skip("Mock server tests are disabled")
 	baseURL := "http://localhost:4010"
 	if envURL, ok := os.LookupEnv("TEST_API_BASE_URL"); ok {
@@ -172,10 +272,10 @@ func TestV1EventAddonSetPricingWithOptionalParams(t *testing.T) {
 		option.WithBaseURL(baseURL),
 		option.WithAPIKey("My API Key"),
 	)
-	_, err := client.V1.Events.Addons.SetPricing(
+	_, err := client.V1.Plans.SetPricing(
 		context.TODO(),
 		"x",
-		stigg.V1EventAddonSetPricingParams{
+		stigg.V1PlanSetPricingParams{
 			SetPackagePricing: stigg.SetPackagePricingParam{
 				PricingType: stigg.SetPackagePricingPricingTypeFree,
 				BillingID:   stigg.String("billingId"),
@@ -280,42 +380,6 @@ func TestV1EventAddonSetPricingWithOptionalParams(t *testing.T) {
 						AccordingTo: "SubscriptionStart",
 					},
 				}},
-			},
-		},
-	)
-	if err != nil {
-		var apierr *stigg.Error
-		if errors.As(err, &apierr) {
-			t.Log(string(apierr.DumpRequest(true)))
-		}
-		t.Fatalf("err should be nil: %s", err.Error())
-	}
-}
-
-func TestV1EventAddonUpdateAddonWithOptionalParams(t *testing.T) {
-	t.Skip("Mock server tests are disabled")
-	baseURL := "http://localhost:4010"
-	if envURL, ok := os.LookupEnv("TEST_API_BASE_URL"); ok {
-		baseURL = envURL
-	}
-	if !testutil.CheckTestServer(t, baseURL) {
-		return
-	}
-	client := stigg.NewClient(
-		option.WithBaseURL(baseURL),
-		option.WithAPIKey("My API Key"),
-	)
-	_, err := client.V1.Events.Addons.UpdateAddon(
-		context.TODO(),
-		"x",
-		stigg.V1EventAddonUpdateAddonParams{
-			BillingID:    stigg.String("billingId"),
-			Dependencies: []string{"string"},
-			Description:  stigg.String("description"),
-			DisplayName:  stigg.String("displayName"),
-			MaxQuantity:  stigg.Int(0),
-			Metadata: map[string]string{
-				"foo": "string",
 			},
 		},
 	)

@@ -13,7 +13,7 @@ import (
 	"github.com/stiggio/stigg-go/option"
 )
 
-func TestV1EventPlanEntitlementNew(t *testing.T) {
+func TestV1PlanEntitlementNew(t *testing.T) {
 	t.Skip("Mock server tests are disabled")
 	baseURL := "http://localhost:4010"
 	if envURL, ok := os.LookupEnv("TEST_API_BASE_URL"); ok {
@@ -26,12 +26,12 @@ func TestV1EventPlanEntitlementNew(t *testing.T) {
 		option.WithBaseURL(baseURL),
 		option.WithAPIKey("My API Key"),
 	)
-	_, err := client.V1.Events.Plans.Entitlements.New(
+	_, err := client.V1.Plans.Entitlements.New(
 		context.TODO(),
 		"planId",
-		stigg.V1EventPlanEntitlementNewParams{
-			Entitlements: []stigg.V1EventPlanEntitlementNewParamsEntitlement{{
-				Credit: stigg.V1EventPlanEntitlementNewParamsEntitlementCredit{
+		stigg.V1PlanEntitlementNewParams{
+			Entitlements: []stigg.V1PlanEntitlementNewParamsEntitlement{{
+				Credit: stigg.V1PlanEntitlementNewParamsEntitlementCredit{
 					Amount:              stigg.Float(1),
 					Cadence:             "MONTH",
 					CustomCurrencyID:    "customCurrencyId",
@@ -43,7 +43,7 @@ func TestV1EventPlanEntitlementNew(t *testing.T) {
 					IsGranted:           stigg.Bool(true),
 					Order:               stigg.Float(0),
 				},
-				Feature: stigg.V1EventPlanEntitlementNewParamsEntitlementFeature{
+				Feature: stigg.V1PlanEntitlementNewParamsEntitlementFeature{
 					FeatureID:           "featureId",
 					Behavior:            "Increment",
 					Description:         stigg.String("description"),
@@ -54,16 +54,16 @@ func TestV1EventPlanEntitlementNew(t *testing.T) {
 					HiddenFromWidgets:   []string{"PAYWALL"},
 					IsCustom:            stigg.Bool(true),
 					IsGranted:           stigg.Bool(true),
-					MonthlyResetPeriodConfiguration: stigg.V1EventPlanEntitlementNewParamsEntitlementFeatureMonthlyResetPeriodConfiguration{
+					MonthlyResetPeriodConfiguration: stigg.V1PlanEntitlementNewParamsEntitlementFeatureMonthlyResetPeriodConfiguration{
 						AccordingTo: "SubscriptionStart",
 					},
 					Order:       stigg.Float(0),
 					ResetPeriod: "YEAR",
 					UsageLimit:  stigg.Int(0),
-					WeeklyResetPeriodConfiguration: stigg.V1EventPlanEntitlementNewParamsEntitlementFeatureWeeklyResetPeriodConfiguration{
+					WeeklyResetPeriodConfiguration: stigg.V1PlanEntitlementNewParamsEntitlementFeatureWeeklyResetPeriodConfiguration{
 						AccordingTo: "SubscriptionStart",
 					},
-					YearlyResetPeriodConfiguration: stigg.V1EventPlanEntitlementNewParamsEntitlementFeatureYearlyResetPeriodConfiguration{
+					YearlyResetPeriodConfiguration: stigg.V1PlanEntitlementNewParamsEntitlementFeatureYearlyResetPeriodConfiguration{
 						AccordingTo: "SubscriptionStart",
 					},
 				},
@@ -79,7 +79,7 @@ func TestV1EventPlanEntitlementNew(t *testing.T) {
 	}
 }
 
-func TestV1EventPlanEntitlementUpdateWithOptionalParams(t *testing.T) {
+func TestV1PlanEntitlementUpdateWithOptionalParams(t *testing.T) {
 	t.Skip("Mock server tests are disabled")
 	baseURL := "http://localhost:4010"
 	if envURL, ok := os.LookupEnv("TEST_API_BASE_URL"); ok {
@@ -92,12 +92,12 @@ func TestV1EventPlanEntitlementUpdateWithOptionalParams(t *testing.T) {
 		option.WithBaseURL(baseURL),
 		option.WithAPIKey("My API Key"),
 	)
-	_, err := client.V1.Events.Plans.Entitlements.Update(
+	_, err := client.V1.Plans.Entitlements.Update(
 		context.TODO(),
 		"id",
-		stigg.V1EventPlanEntitlementUpdateParams{
+		stigg.V1PlanEntitlementUpdateParams{
 			PlanID: "planId",
-			Credit: stigg.V1EventPlanEntitlementUpdateParamsCredit{
+			Credit: stigg.V1PlanEntitlementUpdateParamsCredit{
 				Amount:              stigg.Float(1),
 				Behavior:            "Increment",
 				Cadence:             "MONTH",
@@ -108,7 +108,7 @@ func TestV1EventPlanEntitlementUpdateWithOptionalParams(t *testing.T) {
 				IsGranted:           stigg.Bool(true),
 				Order:               stigg.Float(0),
 			},
-			Feature: stigg.V1EventPlanEntitlementUpdateParamsFeature{
+			Feature: stigg.V1PlanEntitlementUpdateParamsFeature{
 				Behavior:            "Increment",
 				Description:         stigg.String("description"),
 				DisplayNameOverride: stigg.String("displayNameOverride"),
@@ -118,16 +118,16 @@ func TestV1EventPlanEntitlementUpdateWithOptionalParams(t *testing.T) {
 				HiddenFromWidgets:   []string{"PAYWALL"},
 				IsCustom:            stigg.Bool(true),
 				IsGranted:           stigg.Bool(true),
-				MonthlyResetPeriodConfiguration: stigg.V1EventPlanEntitlementUpdateParamsFeatureMonthlyResetPeriodConfiguration{
+				MonthlyResetPeriodConfiguration: stigg.V1PlanEntitlementUpdateParamsFeatureMonthlyResetPeriodConfiguration{
 					AccordingTo: "SubscriptionStart",
 				},
 				Order:       stigg.Float(0),
 				ResetPeriod: "YEAR",
 				UsageLimit:  stigg.Int(0),
-				WeeklyResetPeriodConfiguration: stigg.V1EventPlanEntitlementUpdateParamsFeatureWeeklyResetPeriodConfiguration{
+				WeeklyResetPeriodConfiguration: stigg.V1PlanEntitlementUpdateParamsFeatureWeeklyResetPeriodConfiguration{
 					AccordingTo: "SubscriptionStart",
 				},
-				YearlyResetPeriodConfiguration: stigg.V1EventPlanEntitlementUpdateParamsFeatureYearlyResetPeriodConfiguration{
+				YearlyResetPeriodConfiguration: stigg.V1PlanEntitlementUpdateParamsFeatureYearlyResetPeriodConfiguration{
 					AccordingTo: "SubscriptionStart",
 				},
 			},
@@ -142,7 +142,7 @@ func TestV1EventPlanEntitlementUpdateWithOptionalParams(t *testing.T) {
 	}
 }
 
-func TestV1EventPlanEntitlementList(t *testing.T) {
+func TestV1PlanEntitlementList(t *testing.T) {
 	t.Skip("Mock server tests are disabled")
 	baseURL := "http://localhost:4010"
 	if envURL, ok := os.LookupEnv("TEST_API_BASE_URL"); ok {
@@ -155,7 +155,7 @@ func TestV1EventPlanEntitlementList(t *testing.T) {
 		option.WithBaseURL(baseURL),
 		option.WithAPIKey("My API Key"),
 	)
-	_, err := client.V1.Events.Plans.Entitlements.List(context.TODO(), "planId")
+	_, err := client.V1.Plans.Entitlements.List(context.TODO(), "planId")
 	if err != nil {
 		var apierr *stigg.Error
 		if errors.As(err, &apierr) {
@@ -165,7 +165,7 @@ func TestV1EventPlanEntitlementList(t *testing.T) {
 	}
 }
 
-func TestV1EventPlanEntitlementDelete(t *testing.T) {
+func TestV1PlanEntitlementDelete(t *testing.T) {
 	t.Skip("Mock server tests are disabled")
 	baseURL := "http://localhost:4010"
 	if envURL, ok := os.LookupEnv("TEST_API_BASE_URL"); ok {
@@ -178,10 +178,10 @@ func TestV1EventPlanEntitlementDelete(t *testing.T) {
 		option.WithBaseURL(baseURL),
 		option.WithAPIKey("My API Key"),
 	)
-	_, err := client.V1.Events.Plans.Entitlements.Delete(
+	_, err := client.V1.Plans.Entitlements.Delete(
 		context.TODO(),
 		"id",
-		stigg.V1EventPlanEntitlementDeleteParams{
+		stigg.V1PlanEntitlementDeleteParams{
 			PlanID: "planId",
 		},
 	)

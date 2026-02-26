@@ -13,7 +13,7 @@ import (
 	"github.com/stiggio/stigg-go/option"
 )
 
-func TestV1EventAddonEntitlementNew(t *testing.T) {
+func TestV1AddonEntitlementNew(t *testing.T) {
 	t.Skip("Mock server tests are disabled")
 	baseURL := "http://localhost:4010"
 	if envURL, ok := os.LookupEnv("TEST_API_BASE_URL"); ok {
@@ -26,12 +26,12 @@ func TestV1EventAddonEntitlementNew(t *testing.T) {
 		option.WithBaseURL(baseURL),
 		option.WithAPIKey("My API Key"),
 	)
-	_, err := client.V1.Events.Addons.Entitlements.New(
+	_, err := client.V1.Addons.Entitlements.New(
 		context.TODO(),
 		"addonId",
-		stigg.V1EventAddonEntitlementNewParams{
-			Entitlements: []stigg.V1EventAddonEntitlementNewParamsEntitlement{{
-				Credit: stigg.V1EventAddonEntitlementNewParamsEntitlementCredit{
+		stigg.V1AddonEntitlementNewParams{
+			Entitlements: []stigg.V1AddonEntitlementNewParamsEntitlement{{
+				Credit: stigg.V1AddonEntitlementNewParamsEntitlementCredit{
 					Amount:              stigg.Float(1),
 					Cadence:             "MONTH",
 					CustomCurrencyID:    "customCurrencyId",
@@ -43,7 +43,7 @@ func TestV1EventAddonEntitlementNew(t *testing.T) {
 					IsGranted:           stigg.Bool(true),
 					Order:               stigg.Float(0),
 				},
-				Feature: stigg.V1EventAddonEntitlementNewParamsEntitlementFeature{
+				Feature: stigg.V1AddonEntitlementNewParamsEntitlementFeature{
 					FeatureID:           "featureId",
 					Behavior:            "Increment",
 					Description:         stigg.String("description"),
@@ -54,16 +54,16 @@ func TestV1EventAddonEntitlementNew(t *testing.T) {
 					HiddenFromWidgets:   []string{"PAYWALL"},
 					IsCustom:            stigg.Bool(true),
 					IsGranted:           stigg.Bool(true),
-					MonthlyResetPeriodConfiguration: stigg.V1EventAddonEntitlementNewParamsEntitlementFeatureMonthlyResetPeriodConfiguration{
+					MonthlyResetPeriodConfiguration: stigg.V1AddonEntitlementNewParamsEntitlementFeatureMonthlyResetPeriodConfiguration{
 						AccordingTo: "SubscriptionStart",
 					},
 					Order:       stigg.Float(0),
 					ResetPeriod: "YEAR",
 					UsageLimit:  stigg.Int(0),
-					WeeklyResetPeriodConfiguration: stigg.V1EventAddonEntitlementNewParamsEntitlementFeatureWeeklyResetPeriodConfiguration{
+					WeeklyResetPeriodConfiguration: stigg.V1AddonEntitlementNewParamsEntitlementFeatureWeeklyResetPeriodConfiguration{
 						AccordingTo: "SubscriptionStart",
 					},
-					YearlyResetPeriodConfiguration: stigg.V1EventAddonEntitlementNewParamsEntitlementFeatureYearlyResetPeriodConfiguration{
+					YearlyResetPeriodConfiguration: stigg.V1AddonEntitlementNewParamsEntitlementFeatureYearlyResetPeriodConfiguration{
 						AccordingTo: "SubscriptionStart",
 					},
 				},
@@ -79,7 +79,7 @@ func TestV1EventAddonEntitlementNew(t *testing.T) {
 	}
 }
 
-func TestV1EventAddonEntitlementUpdateWithOptionalParams(t *testing.T) {
+func TestV1AddonEntitlementUpdateWithOptionalParams(t *testing.T) {
 	t.Skip("Mock server tests are disabled")
 	baseURL := "http://localhost:4010"
 	if envURL, ok := os.LookupEnv("TEST_API_BASE_URL"); ok {
@@ -92,12 +92,12 @@ func TestV1EventAddonEntitlementUpdateWithOptionalParams(t *testing.T) {
 		option.WithBaseURL(baseURL),
 		option.WithAPIKey("My API Key"),
 	)
-	_, err := client.V1.Events.Addons.Entitlements.Update(
+	_, err := client.V1.Addons.Entitlements.Update(
 		context.TODO(),
 		"id",
-		stigg.V1EventAddonEntitlementUpdateParams{
+		stigg.V1AddonEntitlementUpdateParams{
 			AddonID: "addonId",
-			Credit: stigg.V1EventAddonEntitlementUpdateParamsCredit{
+			Credit: stigg.V1AddonEntitlementUpdateParamsCredit{
 				Amount:              stigg.Float(1),
 				Behavior:            "Increment",
 				Cadence:             "MONTH",
@@ -108,7 +108,7 @@ func TestV1EventAddonEntitlementUpdateWithOptionalParams(t *testing.T) {
 				IsGranted:           stigg.Bool(true),
 				Order:               stigg.Float(0),
 			},
-			Feature: stigg.V1EventAddonEntitlementUpdateParamsFeature{
+			Feature: stigg.V1AddonEntitlementUpdateParamsFeature{
 				Behavior:            "Increment",
 				Description:         stigg.String("description"),
 				DisplayNameOverride: stigg.String("displayNameOverride"),
@@ -118,16 +118,16 @@ func TestV1EventAddonEntitlementUpdateWithOptionalParams(t *testing.T) {
 				HiddenFromWidgets:   []string{"PAYWALL"},
 				IsCustom:            stigg.Bool(true),
 				IsGranted:           stigg.Bool(true),
-				MonthlyResetPeriodConfiguration: stigg.V1EventAddonEntitlementUpdateParamsFeatureMonthlyResetPeriodConfiguration{
+				MonthlyResetPeriodConfiguration: stigg.V1AddonEntitlementUpdateParamsFeatureMonthlyResetPeriodConfiguration{
 					AccordingTo: "SubscriptionStart",
 				},
 				Order:       stigg.Float(0),
 				ResetPeriod: "YEAR",
 				UsageLimit:  stigg.Int(0),
-				WeeklyResetPeriodConfiguration: stigg.V1EventAddonEntitlementUpdateParamsFeatureWeeklyResetPeriodConfiguration{
+				WeeklyResetPeriodConfiguration: stigg.V1AddonEntitlementUpdateParamsFeatureWeeklyResetPeriodConfiguration{
 					AccordingTo: "SubscriptionStart",
 				},
-				YearlyResetPeriodConfiguration: stigg.V1EventAddonEntitlementUpdateParamsFeatureYearlyResetPeriodConfiguration{
+				YearlyResetPeriodConfiguration: stigg.V1AddonEntitlementUpdateParamsFeatureYearlyResetPeriodConfiguration{
 					AccordingTo: "SubscriptionStart",
 				},
 			},
@@ -142,7 +142,7 @@ func TestV1EventAddonEntitlementUpdateWithOptionalParams(t *testing.T) {
 	}
 }
 
-func TestV1EventAddonEntitlementList(t *testing.T) {
+func TestV1AddonEntitlementList(t *testing.T) {
 	t.Skip("Mock server tests are disabled")
 	baseURL := "http://localhost:4010"
 	if envURL, ok := os.LookupEnv("TEST_API_BASE_URL"); ok {
@@ -155,7 +155,7 @@ func TestV1EventAddonEntitlementList(t *testing.T) {
 		option.WithBaseURL(baseURL),
 		option.WithAPIKey("My API Key"),
 	)
-	_, err := client.V1.Events.Addons.Entitlements.List(context.TODO(), "addonId")
+	_, err := client.V1.Addons.Entitlements.List(context.TODO(), "addonId")
 	if err != nil {
 		var apierr *stigg.Error
 		if errors.As(err, &apierr) {
@@ -165,7 +165,7 @@ func TestV1EventAddonEntitlementList(t *testing.T) {
 	}
 }
 
-func TestV1EventAddonEntitlementDelete(t *testing.T) {
+func TestV1AddonEntitlementDelete(t *testing.T) {
 	t.Skip("Mock server tests are disabled")
 	baseURL := "http://localhost:4010"
 	if envURL, ok := os.LookupEnv("TEST_API_BASE_URL"); ok {
@@ -178,10 +178,10 @@ func TestV1EventAddonEntitlementDelete(t *testing.T) {
 		option.WithBaseURL(baseURL),
 		option.WithAPIKey("My API Key"),
 	)
-	_, err := client.V1.Events.Addons.Entitlements.Delete(
+	_, err := client.V1.Addons.Entitlements.Delete(
 		context.TODO(),
 		"id",
-		stigg.V1EventAddonEntitlementDeleteParams{
+		stigg.V1AddonEntitlementDeleteParams{
 			AddonID: "addonId",
 		},
 	)
