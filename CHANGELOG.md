@@ -1,5 +1,20 @@
 # Changelog
 
+## 0.1.0-alpha.10 (2026-02-27)
+
+Full Changelog: [v0.1.0-alpha.9...v0.1.0-alpha.10](https://github.com/stiggio/stigg-go/compare/v0.1.0-alpha.9...v0.1.0-alpha.10)
+
+### Features
+
+* **api:** api update ([4c17d93](https://github.com/stiggio/stigg-go/commit/4c17d93cb8e7f3c957a62d636fe8b7ce8f6b965a))
+* **api:** stainless config updates ([c68b5fd](https://github.com/stiggio/stigg-go/commit/c68b5fd085f034c598d724860f9b36a96511c1bf))
+* **api:** update endpoints and models ([876942a](https://github.com/stiggio/stigg-go/commit/876942a17990cc2b24b5ed1a706d736698bcc440))
+
+
+### Chores
+
+* **internal:** move custom custom `json` tags to `api` ([1598cbd](https://github.com/stiggio/stigg-go/commit/1598cbd538c4e638358b85f2aa5f4d4c00c4a514))
+
 ## 0.1.0-alpha.9 (2026-02-22)
 
 Full Changelog: [v0.1.0-alpha.8...v0.1.0-alpha.9](https://github.com/stiggio/stigg-go/compare/v0.1.0-alpha.8...v0.1.0-alpha.9)
