@@ -220,7 +220,8 @@ type SubscriptionData struct {
 	//
 	// Any of "PAYMENT_PENDING", "ACTIVE", "EXPIRED", "IN_TRIAL", "CANCELED",
 	// "NOT_STARTED".
-	Status string `json:"status" api:"required"`
+	Status string                  `json:"status" api:"required"`
+	Addons []SubscriptionDataAddon `json:"addons"`
 	// Subscription cancellation date
 	CancellationDate time.Time `json:"cancellationDate" api:"nullable" format:"date-time"`
 	// Subscription cancel reason
@@ -262,6 +263,7 @@ type SubscriptionData struct {
 		PricingType               respjson.Field
 		StartDate                 respjson.Field
 		Status                    respjson.Field
+		Addons                    respjson.Field
 		CancellationDate          respjson.Field
 		CancelReason              respjson.Field
 		CurrentBillingPeriodEnd   respjson.Field
@@ -282,6 +284,27 @@ type SubscriptionData struct {
 // Returns the unmodified JSON received from the API
 func (r SubscriptionData) RawJSON() string { return r.JSON.raw }
 func (r *SubscriptionData) UnmarshalJSON(data []byte) error {
+	return apijson.UnmarshalRoot(data, r)
+}
+
+// Addon configuration
+type SubscriptionDataAddon struct {
+	// Addon ID
+	ID string `json:"id" api:"required"`
+	// Number of addon instances
+	Quantity int64 `json:"quantity" api:"required"`
+	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
+	JSON struct {
+		ID          respjson.Field
+		Quantity    respjson.Field
+		ExtraFields map[string]respjson.Field
+		raw         string
+	} `json:"-"`
+}
+
+// Returns the unmodified JSON received from the API
+func (r SubscriptionDataAddon) RawJSON() string { return r.JSON.raw }
+func (r *SubscriptionDataAddon) UnmarshalJSON(data []byte) error {
 	return apijson.UnmarshalRoot(data, r)
 }
 
@@ -335,7 +358,8 @@ type V1SubscriptionListResponse struct {
 	//
 	// Any of "PAYMENT_PENDING", "ACTIVE", "EXPIRED", "IN_TRIAL", "CANCELED",
 	// "NOT_STARTED".
-	Status V1SubscriptionListResponseStatus `json:"status" api:"required"`
+	Status V1SubscriptionListResponseStatus  `json:"status" api:"required"`
+	Addons []V1SubscriptionListResponseAddon `json:"addons"`
 	// Subscription cancellation date
 	CancellationDate time.Time `json:"cancellationDate" api:"nullable" format:"date-time"`
 	// Subscription cancel reason
@@ -377,6 +401,7 @@ type V1SubscriptionListResponse struct {
 		PricingType               respjson.Field
 		StartDate                 respjson.Field
 		Status                    respjson.Field
+		Addons                    respjson.Field
 		CancellationDate          respjson.Field
 		CancelReason              respjson.Field
 		CurrentBillingPeriodEnd   respjson.Field
@@ -430,6 +455,27 @@ const (
 	V1SubscriptionListResponseStatusCanceled       V1SubscriptionListResponseStatus = "CANCELED"
 	V1SubscriptionListResponseStatusNotStarted     V1SubscriptionListResponseStatus = "NOT_STARTED"
 )
+
+// Addon configuration
+type V1SubscriptionListResponseAddon struct {
+	// Addon ID
+	ID string `json:"id" api:"required"`
+	// Number of addon instances
+	Quantity int64 `json:"quantity" api:"required"`
+	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
+	JSON struct {
+		ID          respjson.Field
+		Quantity    respjson.Field
+		ExtraFields map[string]respjson.Field
+		raw         string
+	} `json:"-"`
+}
+
+// Returns the unmodified JSON received from the API
+func (r V1SubscriptionListResponseAddon) RawJSON() string { return r.JSON.raw }
+func (r *V1SubscriptionListResponseAddon) UnmarshalJSON(data []byte) error {
+	return apijson.UnmarshalRoot(data, r)
+}
 
 // Subscription cancel reason
 type V1SubscriptionListResponseCancelReason string
@@ -734,15 +780,15 @@ func (r *V1SubscriptionPreviewResponseDataBillingPeriodRange) UnmarshalJSON(data
 	return apijson.UnmarshalRoot(data, r)
 }
 
-// Free item in subscription
+// Addon configuration
 type V1SubscriptionPreviewResponseDataFreeItem struct {
 	// Addon ID
-	AddonID string `json:"addonId" api:"required"`
-	// Quantity
-	Quantity float64 `json:"quantity" api:"required"`
+	ID string `json:"id" api:"required"`
+	// Number of addon instances
+	Quantity int64 `json:"quantity" api:"required"`
 	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
 	JSON struct {
-		AddonID     respjson.Field
+		ID          respjson.Field
 		Quantity    respjson.Field
 		ExtraFields map[string]respjson.Field
 		raw         string
@@ -1227,7 +1273,8 @@ type V1SubscriptionProvisionResponseDataSubscription struct {
 	//
 	// Any of "PAYMENT_PENDING", "ACTIVE", "EXPIRED", "IN_TRIAL", "CANCELED",
 	// "NOT_STARTED".
-	Status string `json:"status" api:"required"`
+	Status string                                                 `json:"status" api:"required"`
+	Addons []V1SubscriptionProvisionResponseDataSubscriptionAddon `json:"addons"`
 	// Subscription cancellation date
 	CancellationDate time.Time `json:"cancellationDate" api:"nullable" format:"date-time"`
 	// Subscription cancel reason
@@ -1269,6 +1316,7 @@ type V1SubscriptionProvisionResponseDataSubscription struct {
 		PricingType               respjson.Field
 		StartDate                 respjson.Field
 		Status                    respjson.Field
+		Addons                    respjson.Field
 		CancellationDate          respjson.Field
 		CancelReason              respjson.Field
 		CurrentBillingPeriodEnd   respjson.Field
@@ -1289,6 +1337,27 @@ type V1SubscriptionProvisionResponseDataSubscription struct {
 // Returns the unmodified JSON received from the API
 func (r V1SubscriptionProvisionResponseDataSubscription) RawJSON() string { return r.JSON.raw }
 func (r *V1SubscriptionProvisionResponseDataSubscription) UnmarshalJSON(data []byte) error {
+	return apijson.UnmarshalRoot(data, r)
+}
+
+// Addon configuration
+type V1SubscriptionProvisionResponseDataSubscriptionAddon struct {
+	// Addon ID
+	ID string `json:"id" api:"required"`
+	// Number of addon instances
+	Quantity int64 `json:"quantity" api:"required"`
+	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
+	JSON struct {
+		ID          respjson.Field
+		Quantity    respjson.Field
+		ExtraFields map[string]respjson.Field
+		raw         string
+	} `json:"-"`
+}
+
+// Returns the unmodified JSON received from the API
+func (r V1SubscriptionProvisionResponseDataSubscriptionAddon) RawJSON() string { return r.JSON.raw }
+func (r *V1SubscriptionProvisionResponseDataSubscriptionAddon) UnmarshalJSON(data []byte) error {
 	return apijson.UnmarshalRoot(data, r)
 }
 
@@ -1491,11 +1560,14 @@ func (r *V1SubscriptionUpdateParams) UnmarshalJSON(data []byte) error {
 	return apijson.UnmarshalRoot(data, r)
 }
 
-// The properties AddonID, Quantity are required.
+// Addon configuration
+//
+// The properties ID, Quantity are required.
 type V1SubscriptionUpdateParamsAddon struct {
 	// Addon ID
-	AddonID  string  `json:"addonId" api:"required"`
-	Quantity float64 `json:"quantity" api:"required"`
+	ID string `json:"id" api:"required"`
+	// Number of addon instances
+	Quantity int64 `json:"quantity" api:"required"`
 	paramObj
 }
 
@@ -2046,7 +2118,13 @@ type V1SubscriptionImportParamsSubscription struct {
 	// Resource ID
 	ResourceID param.Opt[string] `json:"resourceId,omitzero"`
 	// Subscription start date
-	StartDate param.Opt[time.Time] `json:"startDate,omitzero" format:"date-time"`
+	StartDate param.Opt[time.Time]                          `json:"startDate,omitzero" format:"date-time"`
+	Addons    []V1SubscriptionImportParamsSubscriptionAddon `json:"addons,omitzero"`
+	// Billing period (MONTHLY or ANNUALLY)
+	//
+	// Any of "MONTHLY", "ANNUALLY".
+	BillingPeriod string                                         `json:"billingPeriod,omitzero"`
+	Charges       []V1SubscriptionImportParamsSubscriptionCharge `json:"charges,omitzero"`
 	// Additional metadata for the subscription
 	Metadata map[string]string `json:"metadata,omitzero"`
 	paramObj
@@ -2058,6 +2136,60 @@ func (r V1SubscriptionImportParamsSubscription) MarshalJSON() (data []byte, err 
 }
 func (r *V1SubscriptionImportParamsSubscription) UnmarshalJSON(data []byte) error {
 	return apijson.UnmarshalRoot(data, r)
+}
+
+func init() {
+	apijson.RegisterFieldValidator[V1SubscriptionImportParamsSubscription](
+		"billingPeriod", "MONTHLY", "ANNUALLY",
+	)
+}
+
+// Addon configuration
+//
+// The properties ID, Quantity are required.
+type V1SubscriptionImportParamsSubscriptionAddon struct {
+	// Addon ID
+	ID string `json:"id" api:"required"`
+	// Number of addon instances
+	Quantity int64 `json:"quantity" api:"required"`
+	paramObj
+}
+
+func (r V1SubscriptionImportParamsSubscriptionAddon) MarshalJSON() (data []byte, err error) {
+	type shadow V1SubscriptionImportParamsSubscriptionAddon
+	return param.MarshalObject(r, (*shadow)(&r))
+}
+func (r *V1SubscriptionImportParamsSubscriptionAddon) UnmarshalJSON(data []byte) error {
+	return apijson.UnmarshalRoot(data, r)
+}
+
+// Charge item
+//
+// The properties ID, Quantity, Type are required.
+type V1SubscriptionImportParamsSubscriptionCharge struct {
+	// Charge ID
+	ID string `json:"id" api:"required"`
+	// Charge quantity
+	Quantity float64 `json:"quantity" api:"required"`
+	// Charge type
+	//
+	// Any of "FEATURE", "CREDIT".
+	Type string `json:"type,omitzero" api:"required"`
+	paramObj
+}
+
+func (r V1SubscriptionImportParamsSubscriptionCharge) MarshalJSON() (data []byte, err error) {
+	type shadow V1SubscriptionImportParamsSubscriptionCharge
+	return param.MarshalObject(r, (*shadow)(&r))
+}
+func (r *V1SubscriptionImportParamsSubscriptionCharge) UnmarshalJSON(data []byte) error {
+	return apijson.UnmarshalRoot(data, r)
+}
+
+func init() {
+	apijson.RegisterFieldValidator[V1SubscriptionImportParamsSubscriptionCharge](
+		"type", "FEATURE", "CREDIT",
+	)
 }
 
 type V1SubscriptionMigrateParams struct {
@@ -2132,12 +2264,12 @@ func (r *V1SubscriptionPreviewParams) UnmarshalJSON(data []byte) error {
 
 // Addon configuration
 //
-// The property AddonID is required.
+// The properties ID, Quantity are required.
 type V1SubscriptionPreviewParamsAddon struct {
 	// Addon ID
-	AddonID string `json:"addonId" api:"required"`
+	ID string `json:"id" api:"required"`
 	// Number of addon instances
-	Quantity param.Opt[int64] `json:"quantity,omitzero"`
+	Quantity int64 `json:"quantity" api:"required"`
 	paramObj
 }
 
@@ -2480,12 +2612,14 @@ func (r *V1SubscriptionProvisionParams) UnmarshalJSON(data []byte) error {
 	return apijson.UnmarshalRoot(data, r)
 }
 
-// The property AddonID is required.
+// Addon configuration
+//
+// The properties ID, Quantity are required.
 type V1SubscriptionProvisionParamsAddon struct {
-	// Addon identifier
-	AddonID string `json:"addonId" api:"required"`
-	// Number of addon units
-	Quantity param.Opt[int64] `json:"quantity,omitzero"`
+	// Addon ID
+	ID string `json:"id" api:"required"`
+	// Number of addon instances
+	Quantity int64 `json:"quantity" api:"required"`
 	paramObj
 }
 

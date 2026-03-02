@@ -55,7 +55,7 @@ func TestV1SubscriptionUpdateWithOptionalParams(t *testing.T) {
 		"x",
 		stigg.V1SubscriptionUpdateParams{
 			Addons: []stigg.V1SubscriptionUpdateParamsAddon{{
-				AddonID:  "addonId",
+				ID:       "id",
 				Quantity: 0,
 			}},
 			AppliedCoupon: stigg.V1SubscriptionUpdateParamsAppliedCoupon{
@@ -280,8 +280,18 @@ func TestV1SubscriptionImportWithOptionalParams(t *testing.T) {
 			ID:         "id",
 			CustomerID: "customerId",
 			PlanID:     "planId",
-			BillingID:  stigg.String("billingId"),
-			EndDate:    stigg.Time(time.Now()),
+			Addons: []stigg.V1SubscriptionImportParamsSubscriptionAddon{{
+				ID:       "id",
+				Quantity: 0,
+			}},
+			BillingID:     stigg.String("billingId"),
+			BillingPeriod: "MONTHLY",
+			Charges: []stigg.V1SubscriptionImportParamsSubscriptionCharge{{
+				ID:       "id",
+				Quantity: 1,
+				Type:     "FEATURE",
+			}},
+			EndDate: stigg.Time(time.Now()),
 			Metadata: map[string]string{
 				"foo": "string",
 			},
@@ -345,8 +355,8 @@ func TestV1SubscriptionPreviewWithOptionalParams(t *testing.T) {
 		CustomerID: "customerId",
 		PlanID:     "planId",
 		Addons: []stigg.V1SubscriptionPreviewParamsAddon{{
-			AddonID:  "addonId",
-			Quantity: stigg.Int(1),
+			ID:       "id",
+			Quantity: 0,
 		}},
 		AppliedCoupon: stigg.V1SubscriptionPreviewParamsAppliedCoupon{
 			BillingCouponID: stigg.String("billingCouponId"),
@@ -438,8 +448,8 @@ func TestV1SubscriptionProvisionWithOptionalParams(t *testing.T) {
 		PlanID:     "planId",
 		ID:         stigg.String("id"),
 		Addons: []stigg.V1SubscriptionProvisionParamsAddon{{
-			AddonID:  "addonId",
-			Quantity: stigg.Int(1),
+			ID:       "id",
+			Quantity: 0,
 		}},
 		AppliedCoupon: stigg.V1SubscriptionProvisionParamsAppliedCoupon{
 			BillingCouponID: stigg.String("billingCouponId"),
