@@ -1534,11 +1534,13 @@ type V1SubscriptionUpdateParams struct {
 	AwaitPaymentConfirmation param.Opt[bool]   `json:"awaitPaymentConfirmation,omitzero"`
 	PromotionCode            param.Opt[string] `json:"promotionCode,omitzero"`
 	// Subscription trial end date
-	TrialEndDate       param.Opt[time.Time]                         `json:"trialEndDate,omitzero" format:"date-time"`
-	Budget             V1SubscriptionUpdateParamsBudget             `json:"budget,omitzero"`
-	MinimumSpend       V1SubscriptionUpdateParamsMinimumSpend       `json:"minimumSpend,omitzero"`
-	Addons             []V1SubscriptionUpdateParamsAddon            `json:"addons,omitzero"`
-	AppliedCoupon      V1SubscriptionUpdateParamsAppliedCoupon      `json:"appliedCoupon,omitzero"`
+	TrialEndDate  param.Opt[time.Time]                    `json:"trialEndDate,omitzero" format:"date-time"`
+	Budget        V1SubscriptionUpdateParamsBudget        `json:"budget,omitzero"`
+	MinimumSpend  V1SubscriptionUpdateParamsMinimumSpend  `json:"minimumSpend,omitzero"`
+	Addons        []V1SubscriptionUpdateParamsAddon       `json:"addons,omitzero"`
+	AppliedCoupon V1SubscriptionUpdateParamsAppliedCoupon `json:"appliedCoupon,omitzero"`
+	// Any of "UNCHANGED", "NOW".
+	BillingCycleAnchor V1SubscriptionUpdateParamsBillingCycleAnchor `json:"billingCycleAnchor,omitzero"`
 	BillingInformation V1SubscriptionUpdateParamsBillingInformation `json:"billingInformation,omitzero"`
 	// Any of "MONTHLY", "ANNUALLY".
 	BillingPeriod V1SubscriptionUpdateParamsBillingPeriod `json:"billingPeriod,omitzero"`
@@ -1658,6 +1660,13 @@ func init() {
 		"currency", "usd", "aed", "all", "amd", "ang", "aud", "awg", "azn", "bam", "bbd", "bdt", "bgn", "bif", "bmd", "bnd", "bsd", "bwp", "byn", "bzd", "brl", "cad", "cdf", "chf", "cny", "czk", "dkk", "dop", "dzd", "egp", "etb", "eur", "fjd", "gbp", "gel", "gip", "gmd", "gyd", "hkd", "hrk", "htg", "idr", "ils", "inr", "isk", "jmd", "jpy", "kes", "kgs", "khr", "kmf", "krw", "kyd", "kzt", "lbp", "lkr", "lrd", "lsl", "mad", "mdl", "mga", "mkd", "mmk", "mnt", "mop", "mro", "mvr", "mwk", "mxn", "myr", "mzn", "nad", "ngn", "nok", "npr", "nzd", "pgk", "php", "pkr", "pln", "qar", "ron", "rsd", "rub", "rwf", "sar", "sbd", "scr", "sek", "sgd", "sle", "sll", "sos", "szl", "thb", "tjs", "top", "try", "ttd", "tzs", "uah", "uzs", "vnd", "vuv", "wst", "xaf", "xcd", "yer", "zar", "zmw", "clp", "djf", "gnf", "ugx", "pyg", "xof", "xpf",
 	)
 }
+
+type V1SubscriptionUpdateParamsBillingCycleAnchor string
+
+const (
+	V1SubscriptionUpdateParamsBillingCycleAnchorUnchanged V1SubscriptionUpdateParamsBillingCycleAnchor = "UNCHANGED"
+	V1SubscriptionUpdateParamsBillingCycleAnchorNow       V1SubscriptionUpdateParamsBillingCycleAnchor = "NOW"
+)
 
 type V1SubscriptionUpdateParamsBillingInformation struct {
 	ChargeOnBehalfOfAccount param.Opt[string]  `json:"chargeOnBehalfOfAccount,omitzero"`
@@ -2237,6 +2246,10 @@ type V1SubscriptionPreviewParams struct {
 	AppliedCoupon V1SubscriptionPreviewParamsAppliedCoupon `json:"appliedCoupon,omitzero"`
 	// Billable features with quantities
 	BillableFeatures []V1SubscriptionPreviewParamsBillableFeature `json:"billableFeatures,omitzero"`
+	// Billing cycle anchor behavior for the subscription
+	//
+	// Any of "UNCHANGED", "NOW".
+	BillingCycleAnchor V1SubscriptionPreviewParamsBillingCycleAnchor `json:"billingCycleAnchor,omitzero"`
 	// Billing and tax configuration
 	BillingInformation V1SubscriptionPreviewParamsBillingInformation `json:"billingInformation,omitzero"`
 	// Billing period (MONTHLY or ANNUALLY)
@@ -2395,6 +2408,14 @@ func (r V1SubscriptionPreviewParamsBillableFeature) MarshalJSON() (data []byte, 
 func (r *V1SubscriptionPreviewParamsBillableFeature) UnmarshalJSON(data []byte) error {
 	return apijson.UnmarshalRoot(data, r)
 }
+
+// Billing cycle anchor behavior for the subscription
+type V1SubscriptionPreviewParamsBillingCycleAnchor string
+
+const (
+	V1SubscriptionPreviewParamsBillingCycleAnchorUnchanged V1SubscriptionPreviewParamsBillingCycleAnchor = "UNCHANGED"
+	V1SubscriptionPreviewParamsBillingCycleAnchorNow       V1SubscriptionPreviewParamsBillingCycleAnchor = "NOW"
+)
 
 // Billing and tax configuration
 type V1SubscriptionPreviewParamsBillingInformation struct {
@@ -2578,7 +2599,11 @@ type V1SubscriptionProvisionParams struct {
 	MinimumSpend V1SubscriptionProvisionParamsMinimumSpend `json:"minimumSpend,omitzero"`
 	Addons       []V1SubscriptionProvisionParamsAddon      `json:"addons,omitzero"`
 	// Coupon configuration
-	AppliedCoupon      V1SubscriptionProvisionParamsAppliedCoupon      `json:"appliedCoupon,omitzero"`
+	AppliedCoupon V1SubscriptionProvisionParamsAppliedCoupon `json:"appliedCoupon,omitzero"`
+	// Billing cycle anchor behavior for the subscription
+	//
+	// Any of "UNCHANGED", "NOW".
+	BillingCycleAnchor V1SubscriptionProvisionParamsBillingCycleAnchor `json:"billingCycleAnchor,omitzero"`
 	BillingInformation V1SubscriptionProvisionParamsBillingInformation `json:"billingInformation,omitzero"`
 	// Billing period (MONTHLY or ANNUALLY)
 	//
@@ -2726,6 +2751,14 @@ func init() {
 		"currency", "usd", "aed", "all", "amd", "ang", "aud", "awg", "azn", "bam", "bbd", "bdt", "bgn", "bif", "bmd", "bnd", "bsd", "bwp", "byn", "bzd", "brl", "cad", "cdf", "chf", "cny", "czk", "dkk", "dop", "dzd", "egp", "etb", "eur", "fjd", "gbp", "gel", "gip", "gmd", "gyd", "hkd", "hrk", "htg", "idr", "ils", "inr", "isk", "jmd", "jpy", "kes", "kgs", "khr", "kmf", "krw", "kyd", "kzt", "lbp", "lkr", "lrd", "lsl", "mad", "mdl", "mga", "mkd", "mmk", "mnt", "mop", "mro", "mvr", "mwk", "mxn", "myr", "mzn", "nad", "ngn", "nok", "npr", "nzd", "pgk", "php", "pkr", "pln", "qar", "ron", "rsd", "rub", "rwf", "sar", "sbd", "scr", "sek", "sgd", "sle", "sll", "sos", "szl", "thb", "tjs", "top", "try", "ttd", "tzs", "uah", "uzs", "vnd", "vuv", "wst", "xaf", "xcd", "yer", "zar", "zmw", "clp", "djf", "gnf", "ugx", "pyg", "xof", "xpf",
 	)
 }
+
+// Billing cycle anchor behavior for the subscription
+type V1SubscriptionProvisionParamsBillingCycleAnchor string
+
+const (
+	V1SubscriptionProvisionParamsBillingCycleAnchorUnchanged V1SubscriptionProvisionParamsBillingCycleAnchor = "UNCHANGED"
+	V1SubscriptionProvisionParamsBillingCycleAnchorNow       V1SubscriptionProvisionParamsBillingCycleAnchor = "NOW"
+)
 
 type V1SubscriptionProvisionParamsBillingInformation struct {
 	// Stripe Connect account to charge on behalf of
