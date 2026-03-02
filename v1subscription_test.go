@@ -77,6 +77,7 @@ func TestV1SubscriptionUpdateWithOptionalParams(t *testing.T) {
 				PromotionCode: stigg.String("promotionCode"),
 			},
 			AwaitPaymentConfirmation: stigg.Bool(true),
+			BillingCycleAnchor:       stigg.V1SubscriptionUpdateParamsBillingCycleAnchorUnchanged,
 			BillingInformation: stigg.V1SubscriptionUpdateParamsBillingInformation{
 				BillingAddress: stigg.V1SubscriptionUpdateParamsBillingInformationBillingAddress{
 					City:       stigg.String("city"),
@@ -381,6 +382,7 @@ func TestV1SubscriptionPreviewWithOptionalParams(t *testing.T) {
 			Quantity:  1,
 		}},
 		BillingCountryCode: stigg.String("billingCountryCode"),
+		BillingCycleAnchor: stigg.V1SubscriptionPreviewParamsBillingCycleAnchorUnchanged,
 		BillingInformation: stigg.V1SubscriptionPreviewParamsBillingInformation{
 			BillingAddress: stigg.V1SubscriptionPreviewParamsBillingInformationBillingAddress{
 				City:       stigg.String("city"),
@@ -471,6 +473,7 @@ func TestV1SubscriptionProvisionWithOptionalParams(t *testing.T) {
 		},
 		AwaitPaymentConfirmation: stigg.Bool(true),
 		BillingCountryCode:       stigg.String("billingCountryCode"),
+		BillingCycleAnchor:       stigg.V1SubscriptionProvisionParamsBillingCycleAnchorUnchanged,
 		BillingID:                stigg.String("billingId"),
 		BillingInformation: stigg.V1SubscriptionProvisionParamsBillingInformation{
 			BillingAddress: stigg.V1SubscriptionProvisionParamsBillingInformationBillingAddress{
