@@ -225,6 +225,10 @@ type SubscriptionData struct {
 	// "NOT_STARTED".
 	Status string                  `json:"status" api:"required"`
 	Addons []SubscriptionDataAddon `json:"addons"`
+	// Billing cycle anchor date
+	BillingCycleAnchor time.Time `json:"billingCycleAnchor" api:"nullable" format:"date-time"`
+	// Budget configuration
+	Budget SubscriptionDataBudget `json:"budget" api:"nullable"`
 	// Subscription cancellation date
 	CancellationDate time.Time `json:"cancellationDate" api:"nullable" format:"date-time"`
 	// Subscription cancel reason
@@ -234,6 +238,8 @@ type SubscriptionData struct {
 	// "PENDING_PAYMENT_EXPIRED", "ScheduledCancellation", "CustomerArchived",
 	// "AutoCancellationRule".
 	CancelReason string `json:"cancelReason" api:"nullable"`
+	// Coupons applied to the subscription
+	Coupons []SubscriptionDataCoupon `json:"coupons"`
 	// End of the current billing period
 	CurrentBillingPeriodEnd time.Time `json:"currentBillingPeriodEnd" api:"nullable" format:"date-time"`
 	// Start of the current billing period
@@ -242,8 +248,14 @@ type SubscriptionData struct {
 	EffectiveEndDate time.Time `json:"effectiveEndDate" api:"nullable" format:"date-time"`
 	// Subscription end date
 	EndDate time.Time `json:"endDate" api:"nullable" format:"date-time"`
+	// Scheduled future updates for the subscription
+	FutureUpdates []SubscriptionDataFutureUpdate `json:"futureUpdates"`
+	// Latest invoice for the subscription
+	LatestInvoice SubscriptionDataLatestInvoice `json:"latestInvoice" api:"nullable"`
 	// Additional metadata for the subscription
 	Metadata map[string]string `json:"metadata"`
+	// Minimum spend configuration
+	MinimumSpend SubscriptionDataMinimumSpend `json:"minimumSpend" api:"nullable"`
 	// Paying customer ID for delegated billing
 	PayingCustomerID string `json:"payingCustomerId" api:"nullable"`
 	// The method used to collect payments for a subscription
@@ -253,6 +265,10 @@ type SubscriptionData struct {
 	Prices                  []SubscriptionDataPrice `json:"prices"`
 	// Resource ID
 	ResourceID string `json:"resourceId" api:"nullable"`
+	// Entitlements associated with the subscription
+	SubscriptionEntitlements []SubscriptionDataSubscriptionEntitlement `json:"subscriptionEntitlements"`
+	// Trial configuration
+	Trial SubscriptionDataTrial `json:"trial" api:"nullable"`
 	// Subscription trial end date
 	TrialEndDate time.Time `json:"trialEndDate" api:"nullable" format:"date-time"`
 	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
@@ -267,17 +283,25 @@ type SubscriptionData struct {
 		StartDate                 respjson.Field
 		Status                    respjson.Field
 		Addons                    respjson.Field
+		BillingCycleAnchor        respjson.Field
+		Budget                    respjson.Field
 		CancellationDate          respjson.Field
 		CancelReason              respjson.Field
+		Coupons                   respjson.Field
 		CurrentBillingPeriodEnd   respjson.Field
 		CurrentBillingPeriodStart respjson.Field
 		EffectiveEndDate          respjson.Field
 		EndDate                   respjson.Field
+		FutureUpdates             respjson.Field
+		LatestInvoice             respjson.Field
 		Metadata                  respjson.Field
+		MinimumSpend              respjson.Field
 		PayingCustomerID          respjson.Field
 		PaymentCollectionMethod   respjson.Field
 		Prices                    respjson.Field
 		ResourceID                respjson.Field
+		SubscriptionEntitlements  respjson.Field
+		Trial                     respjson.Field
 		TrialEndDate              respjson.Field
 		ExtraFields               map[string]respjson.Field
 		raw                       string
@@ -311,27 +335,401 @@ func (r *SubscriptionDataAddon) UnmarshalJSON(data []byte) error {
 	return apijson.UnmarshalRoot(data, r)
 }
 
-type SubscriptionDataPrice struct {
-	// Price ID
+// Budget configuration
+type SubscriptionDataBudget struct {
+	// Whether the budget is a soft limit
+	HasSoftLimit bool `json:"hasSoftLimit" api:"required"`
+	// Maximum spending limit
+	Limit float64 `json:"limit" api:"required"`
+	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
+	JSON struct {
+		HasSoftLimit respjson.Field
+		Limit        respjson.Field
+		ExtraFields  map[string]respjson.Field
+		raw          string
+	} `json:"-"`
+}
+
+// Returns the unmodified JSON received from the API
+func (r SubscriptionDataBudget) RawJSON() string { return r.JSON.raw }
+func (r *SubscriptionDataBudget) UnmarshalJSON(data []byte) error {
+	return apijson.UnmarshalRoot(data, r)
+}
+
+// Coupon applied to a subscription
+type SubscriptionDataCoupon struct {
+	// Coupon ID
 	ID string `json:"id" api:"required"`
-	// Creation timestamp
-	CreatedAt string `json:"createdAt" api:"required"`
-	// Last update timestamp
-	UpdatedAt   string         `json:"updatedAt" api:"required"`
-	ExtraFields map[string]any `json:"" api:"extrafields"`
+	// Coupon name
+	Name string `json:"name" api:"required"`
+	// Coupon status
+	//
+	// Any of "ACTIVE", "EXPIRED", "REMOVED".
+	Status string `json:"status" api:"required"`
+	// Fixed amount discounts by currency
+	AmountsOff []SubscriptionDataCouponAmountsOff `json:"amountsOff" api:"nullable"`
+	// Percentage discount
+	PercentOff float64 `json:"percentOff" api:"nullable"`
 	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
 	JSON struct {
 		ID          respjson.Field
-		CreatedAt   respjson.Field
-		UpdatedAt   respjson.Field
+		Name        respjson.Field
+		Status      respjson.Field
+		AmountsOff  respjson.Field
+		PercentOff  respjson.Field
 		ExtraFields map[string]respjson.Field
 		raw         string
 	} `json:"-"`
 }
 
 // Returns the unmodified JSON received from the API
+func (r SubscriptionDataCoupon) RawJSON() string { return r.JSON.raw }
+func (r *SubscriptionDataCoupon) UnmarshalJSON(data []byte) error {
+	return apijson.UnmarshalRoot(data, r)
+}
+
+type SubscriptionDataCouponAmountsOff struct {
+	// The price amount
+	Amount float64 `json:"amount"`
+	// The price currency
+	//
+	// Any of "usd", "aed", "all", "amd", "ang", "aud", "awg", "azn", "bam", "bbd",
+	// "bdt", "bgn", "bif", "bmd", "bnd", "bsd", "bwp", "byn", "bzd", "brl", "cad",
+	// "cdf", "chf", "cny", "czk", "dkk", "dop", "dzd", "egp", "etb", "eur", "fjd",
+	// "gbp", "gel", "gip", "gmd", "gyd", "hkd", "hrk", "htg", "idr", "ils", "inr",
+	// "isk", "jmd", "jpy", "kes", "kgs", "khr", "kmf", "krw", "kyd", "kzt", "lbp",
+	// "lkr", "lrd", "lsl", "mad", "mdl", "mga", "mkd", "mmk", "mnt", "mop", "mro",
+	// "mvr", "mwk", "mxn", "myr", "mzn", "nad", "ngn", "nok", "npr", "nzd", "pgk",
+	// "php", "pkr", "pln", "qar", "ron", "rsd", "rub", "rwf", "sar", "sbd", "scr",
+	// "sek", "sgd", "sle", "sll", "sos", "szl", "thb", "tjs", "top", "try", "ttd",
+	// "tzs", "uah", "uzs", "vnd", "vuv", "wst", "xaf", "xcd", "yer", "zar", "zmw",
+	// "clp", "djf", "gnf", "ugx", "pyg", "xof", "xpf".
+	Currency string `json:"currency"`
+	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
+	JSON struct {
+		Amount      respjson.Field
+		Currency    respjson.Field
+		ExtraFields map[string]respjson.Field
+		raw         string
+	} `json:"-"`
+}
+
+// Returns the unmodified JSON received from the API
+func (r SubscriptionDataCouponAmountsOff) RawJSON() string { return r.JSON.raw }
+func (r *SubscriptionDataCouponAmountsOff) UnmarshalJSON(data []byte) error {
+	return apijson.UnmarshalRoot(data, r)
+}
+
+// Scheduled subscription update
+type SubscriptionDataFutureUpdate struct {
+	// Scheduled execution time
+	ScheduledExecutionTime time.Time `json:"scheduledExecutionTime" api:"required" format:"date-time"`
+	// Status of the scheduled update
+	//
+	// Any of "PENDING_PAYMENT", "SCHEDULED", "CANCELED", "DONE", "FAILED".
+	ScheduleStatus string `json:"scheduleStatus" api:"required"`
+	// Type of scheduled change
+	//
+	// Any of "DOWNGRADE", "PLAN", "BILLING_PERIOD", "UNIT_AMOUNT",
+	// "RECURRING_CREDITS", "PRICE_OVERRIDE", "ADDON", "COUPON", "MIGRATE_TO_LATEST",
+	// "ADDITIONAL_META_DATA", "BILLING_INFO_METADATA".
+	SubscriptionScheduleType string `json:"subscriptionScheduleType" api:"required"`
+	// Target package for the update
+	TargetPackage SubscriptionDataFutureUpdateTargetPackage `json:"targetPackage" api:"nullable"`
+	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
+	JSON struct {
+		ScheduledExecutionTime   respjson.Field
+		ScheduleStatus           respjson.Field
+		SubscriptionScheduleType respjson.Field
+		TargetPackage            respjson.Field
+		ExtraFields              map[string]respjson.Field
+		raw                      string
+	} `json:"-"`
+}
+
+// Returns the unmodified JSON received from the API
+func (r SubscriptionDataFutureUpdate) RawJSON() string { return r.JSON.raw }
+func (r *SubscriptionDataFutureUpdate) UnmarshalJSON(data []byte) error {
+	return apijson.UnmarshalRoot(data, r)
+}
+
+// Target package for the update
+type SubscriptionDataFutureUpdateTargetPackage struct {
+	// Target package for the update
+	ID string `json:"id" api:"required"`
+	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
+	JSON struct {
+		ID          respjson.Field
+		ExtraFields map[string]respjson.Field
+		raw         string
+	} `json:"-"`
+}
+
+// Returns the unmodified JSON received from the API
+func (r SubscriptionDataFutureUpdateTargetPackage) RawJSON() string { return r.JSON.raw }
+func (r *SubscriptionDataFutureUpdateTargetPackage) UnmarshalJSON(data []byte) error {
+	return apijson.UnmarshalRoot(data, r)
+}
+
+// Latest invoice for the subscription
+type SubscriptionDataLatestInvoice struct {
+	// Invoice billing ID
+	BillingID string `json:"billingId" api:"required"`
+	// Invoice creation date
+	CreatedAt time.Time `json:"createdAt" api:"required" format:"date-time"`
+	// Whether payment requires action
+	RequiresAction bool `json:"requiresAction" api:"required"`
+	// Invoice status
+	//
+	// Any of "OPEN", "CANCELED", "PAID".
+	Status string `json:"status" api:"required"`
+	// Amount due
+	AmountDue float64 `json:"amountDue" api:"nullable"`
+	// Billing reason
+	//
+	// Any of "BILLING_CYCLE", "SUBSCRIPTION_CREATION", "SUBSCRIPTION_UPDATE",
+	// "MANUAL", "MINIMUM_INVOICE_AMOUNT_EXCEEDED", "OTHER".
+	BillingReason string `json:"billingReason" api:"nullable"`
+	// Invoice currency
+	Currency string `json:"currency" api:"nullable"`
+	// Invoice PDF URL
+	PdfURL string `json:"pdfUrl" api:"nullable"`
+	// Total amount
+	Total float64 `json:"total" api:"nullable"`
+	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
+	JSON struct {
+		BillingID      respjson.Field
+		CreatedAt      respjson.Field
+		RequiresAction respjson.Field
+		Status         respjson.Field
+		AmountDue      respjson.Field
+		BillingReason  respjson.Field
+		Currency       respjson.Field
+		PdfURL         respjson.Field
+		Total          respjson.Field
+		ExtraFields    map[string]respjson.Field
+		raw            string
+	} `json:"-"`
+}
+
+// Returns the unmodified JSON received from the API
+func (r SubscriptionDataLatestInvoice) RawJSON() string { return r.JSON.raw }
+func (r *SubscriptionDataLatestInvoice) UnmarshalJSON(data []byte) error {
+	return apijson.UnmarshalRoot(data, r)
+}
+
+// Minimum spend configuration
+type SubscriptionDataMinimumSpend struct {
+	// The price amount
+	Amount float64 `json:"amount"`
+	// The price currency
+	//
+	// Any of "usd", "aed", "all", "amd", "ang", "aud", "awg", "azn", "bam", "bbd",
+	// "bdt", "bgn", "bif", "bmd", "bnd", "bsd", "bwp", "byn", "bzd", "brl", "cad",
+	// "cdf", "chf", "cny", "czk", "dkk", "dop", "dzd", "egp", "etb", "eur", "fjd",
+	// "gbp", "gel", "gip", "gmd", "gyd", "hkd", "hrk", "htg", "idr", "ils", "inr",
+	// "isk", "jmd", "jpy", "kes", "kgs", "khr", "kmf", "krw", "kyd", "kzt", "lbp",
+	// "lkr", "lrd", "lsl", "mad", "mdl", "mga", "mkd", "mmk", "mnt", "mop", "mro",
+	// "mvr", "mwk", "mxn", "myr", "mzn", "nad", "ngn", "nok", "npr", "nzd", "pgk",
+	// "php", "pkr", "pln", "qar", "ron", "rsd", "rub", "rwf", "sar", "sbd", "scr",
+	// "sek", "sgd", "sle", "sll", "sos", "szl", "thb", "tjs", "top", "try", "ttd",
+	// "tzs", "uah", "uzs", "vnd", "vuv", "wst", "xaf", "xcd", "yer", "zar", "zmw",
+	// "clp", "djf", "gnf", "ugx", "pyg", "xof", "xpf".
+	Currency string `json:"currency"`
+	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
+	JSON struct {
+		Amount      respjson.Field
+		Currency    respjson.Field
+		ExtraFields map[string]respjson.Field
+		raw         string
+	} `json:"-"`
+}
+
+// Returns the unmodified JSON received from the API
+func (r SubscriptionDataMinimumSpend) RawJSON() string { return r.JSON.raw }
+func (r *SubscriptionDataMinimumSpend) UnmarshalJSON(data []byte) error {
+	return apijson.UnmarshalRoot(data, r)
+}
+
+type SubscriptionDataPrice struct {
+	// Addon identifier for the price override
+	AddonID string `json:"addonId" api:"nullable"`
+	// The price amount
+	Amount float64 `json:"amount"`
+	// Whether this is a base charge override
+	BaseCharge bool `json:"baseCharge"`
+	// The billing country code of the price
+	BillingCountryCode string `json:"billingCountryCode"`
+	// Block size for pricing
+	BlockSize float64 `json:"blockSize"`
+	// The price currency
+	//
+	// Any of "usd", "aed", "all", "amd", "ang", "aud", "awg", "azn", "bam", "bbd",
+	// "bdt", "bgn", "bif", "bmd", "bnd", "bsd", "bwp", "byn", "bzd", "brl", "cad",
+	// "cdf", "chf", "cny", "czk", "dkk", "dop", "dzd", "egp", "etb", "eur", "fjd",
+	// "gbp", "gel", "gip", "gmd", "gyd", "hkd", "hrk", "htg", "idr", "ils", "inr",
+	// "isk", "jmd", "jpy", "kes", "kgs", "khr", "kmf", "krw", "kyd", "kzt", "lbp",
+	// "lkr", "lrd", "lsl", "mad", "mdl", "mga", "mkd", "mmk", "mnt", "mop", "mro",
+	// "mvr", "mwk", "mxn", "myr", "mzn", "nad", "ngn", "nok", "npr", "nzd", "pgk",
+	// "php", "pkr", "pln", "qar", "ron", "rsd", "rub", "rwf", "sar", "sbd", "scr",
+	// "sek", "sgd", "sle", "sll", "sos", "szl", "thb", "tjs", "top", "try", "ttd",
+	// "tzs", "uah", "uzs", "vnd", "vuv", "wst", "xaf", "xcd", "yer", "zar", "zmw",
+	// "clp", "djf", "gnf", "ugx", "pyg", "xof", "xpf".
+	Currency string `json:"currency"`
+	// Feature identifier for the price override
+	FeatureID string `json:"featureId" api:"nullable"`
+	// Pricing tiers configuration
+	Tiers []SubscriptionDataPriceTier `json:"tiers"`
+	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
+	JSON struct {
+		AddonID            respjson.Field
+		Amount             respjson.Field
+		BaseCharge         respjson.Field
+		BillingCountryCode respjson.Field
+		BlockSize          respjson.Field
+		Currency           respjson.Field
+		FeatureID          respjson.Field
+		Tiers              respjson.Field
+		ExtraFields        map[string]respjson.Field
+		raw                string
+	} `json:"-"`
+}
+
+// Returns the unmodified JSON received from the API
 func (r SubscriptionDataPrice) RawJSON() string { return r.JSON.raw }
 func (r *SubscriptionDataPrice) UnmarshalJSON(data []byte) error {
+	return apijson.UnmarshalRoot(data, r)
+}
+
+type SubscriptionDataPriceTier struct {
+	// The flat fee price of the price tier
+	FlatPrice SubscriptionDataPriceTierFlatPrice `json:"flatPrice"`
+	// The unit price of the price tier
+	UnitPrice SubscriptionDataPriceTierUnitPrice `json:"unitPrice"`
+	// The up to quantity of the price tier
+	UpTo float64 `json:"upTo"`
+	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
+	JSON struct {
+		FlatPrice   respjson.Field
+		UnitPrice   respjson.Field
+		UpTo        respjson.Field
+		ExtraFields map[string]respjson.Field
+		raw         string
+	} `json:"-"`
+}
+
+// Returns the unmodified JSON received from the API
+func (r SubscriptionDataPriceTier) RawJSON() string { return r.JSON.raw }
+func (r *SubscriptionDataPriceTier) UnmarshalJSON(data []byte) error {
+	return apijson.UnmarshalRoot(data, r)
+}
+
+// The flat fee price of the price tier
+type SubscriptionDataPriceTierFlatPrice struct {
+	// The price amount
+	Amount float64 `json:"amount" api:"required"`
+	// The price currency
+	//
+	// Any of "usd", "aed", "all", "amd", "ang", "aud", "awg", "azn", "bam", "bbd",
+	// "bdt", "bgn", "bif", "bmd", "bnd", "bsd", "bwp", "byn", "bzd", "brl", "cad",
+	// "cdf", "chf", "cny", "czk", "dkk", "dop", "dzd", "egp", "etb", "eur", "fjd",
+	// "gbp", "gel", "gip", "gmd", "gyd", "hkd", "hrk", "htg", "idr", "ils", "inr",
+	// "isk", "jmd", "jpy", "kes", "kgs", "khr", "kmf", "krw", "kyd", "kzt", "lbp",
+	// "lkr", "lrd", "lsl", "mad", "mdl", "mga", "mkd", "mmk", "mnt", "mop", "mro",
+	// "mvr", "mwk", "mxn", "myr", "mzn", "nad", "ngn", "nok", "npr", "nzd", "pgk",
+	// "php", "pkr", "pln", "qar", "ron", "rsd", "rub", "rwf", "sar", "sbd", "scr",
+	// "sek", "sgd", "sle", "sll", "sos", "szl", "thb", "tjs", "top", "try", "ttd",
+	// "tzs", "uah", "uzs", "vnd", "vuv", "wst", "xaf", "xcd", "yer", "zar", "zmw",
+	// "clp", "djf", "gnf", "ugx", "pyg", "xof", "xpf".
+	Currency string `json:"currency" api:"required"`
+	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
+	JSON struct {
+		Amount      respjson.Field
+		Currency    respjson.Field
+		ExtraFields map[string]respjson.Field
+		raw         string
+	} `json:"-"`
+}
+
+// Returns the unmodified JSON received from the API
+func (r SubscriptionDataPriceTierFlatPrice) RawJSON() string { return r.JSON.raw }
+func (r *SubscriptionDataPriceTierFlatPrice) UnmarshalJSON(data []byte) error {
+	return apijson.UnmarshalRoot(data, r)
+}
+
+// The unit price of the price tier
+type SubscriptionDataPriceTierUnitPrice struct {
+	// The price amount
+	Amount float64 `json:"amount" api:"required"`
+	// The price currency
+	//
+	// Any of "usd", "aed", "all", "amd", "ang", "aud", "awg", "azn", "bam", "bbd",
+	// "bdt", "bgn", "bif", "bmd", "bnd", "bsd", "bwp", "byn", "bzd", "brl", "cad",
+	// "cdf", "chf", "cny", "czk", "dkk", "dop", "dzd", "egp", "etb", "eur", "fjd",
+	// "gbp", "gel", "gip", "gmd", "gyd", "hkd", "hrk", "htg", "idr", "ils", "inr",
+	// "isk", "jmd", "jpy", "kes", "kgs", "khr", "kmf", "krw", "kyd", "kzt", "lbp",
+	// "lkr", "lrd", "lsl", "mad", "mdl", "mga", "mkd", "mmk", "mnt", "mop", "mro",
+	// "mvr", "mwk", "mxn", "myr", "mzn", "nad", "ngn", "nok", "npr", "nzd", "pgk",
+	// "php", "pkr", "pln", "qar", "ron", "rsd", "rub", "rwf", "sar", "sbd", "scr",
+	// "sek", "sgd", "sle", "sll", "sos", "szl", "thb", "tjs", "top", "try", "ttd",
+	// "tzs", "uah", "uzs", "vnd", "vuv", "wst", "xaf", "xcd", "yer", "zar", "zmw",
+	// "clp", "djf", "gnf", "ugx", "pyg", "xof", "xpf".
+	Currency string `json:"currency" api:"required"`
+	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
+	JSON struct {
+		Amount      respjson.Field
+		Currency    respjson.Field
+		ExtraFields map[string]respjson.Field
+		raw         string
+	} `json:"-"`
+}
+
+// Returns the unmodified JSON received from the API
+func (r SubscriptionDataPriceTierUnitPrice) RawJSON() string { return r.JSON.raw }
+func (r *SubscriptionDataPriceTierUnitPrice) UnmarshalJSON(data []byte) error {
+	return apijson.UnmarshalRoot(data, r)
+}
+
+// Subscription entitlement reference
+type SubscriptionDataSubscriptionEntitlement struct {
+	// Feature ID or currency ID
+	ID string `json:"id" api:"required"`
+	// Entitlement type (FEATURE or CREDIT)
+	//
+	// Any of "FEATURE", "CREDIT".
+	Type string `json:"type" api:"required"`
+	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
+	JSON struct {
+		ID          respjson.Field
+		Type        respjson.Field
+		ExtraFields map[string]respjson.Field
+		raw         string
+	} `json:"-"`
+}
+
+// Returns the unmodified JSON received from the API
+func (r SubscriptionDataSubscriptionEntitlement) RawJSON() string { return r.JSON.raw }
+func (r *SubscriptionDataSubscriptionEntitlement) UnmarshalJSON(data []byte) error {
+	return apijson.UnmarshalRoot(data, r)
+}
+
+// Trial configuration
+type SubscriptionDataTrial struct {
+	// Behavior when the trial ends
+	//
+	// Any of "CONVERT_TO_PAID", "CANCEL_SUBSCRIPTION".
+	TrialEndBehavior string `json:"trialEndBehavior" api:"required"`
+	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
+	JSON struct {
+		TrialEndBehavior respjson.Field
+		ExtraFields      map[string]respjson.Field
+		raw              string
+	} `json:"-"`
+}
+
+// Returns the unmodified JSON received from the API
+func (r SubscriptionDataTrial) RawJSON() string { return r.JSON.raw }
+func (r *SubscriptionDataTrial) UnmarshalJSON(data []byte) error {
 	return apijson.UnmarshalRoot(data, r)
 }
 
@@ -363,6 +761,10 @@ type V1SubscriptionListResponse struct {
 	// "NOT_STARTED".
 	Status V1SubscriptionListResponseStatus  `json:"status" api:"required"`
 	Addons []V1SubscriptionListResponseAddon `json:"addons"`
+	// Billing cycle anchor date
+	BillingCycleAnchor time.Time `json:"billingCycleAnchor" api:"nullable" format:"date-time"`
+	// Budget configuration
+	Budget V1SubscriptionListResponseBudget `json:"budget" api:"nullable"`
 	// Subscription cancellation date
 	CancellationDate time.Time `json:"cancellationDate" api:"nullable" format:"date-time"`
 	// Subscription cancel reason
@@ -372,6 +774,8 @@ type V1SubscriptionListResponse struct {
 	// "PENDING_PAYMENT_EXPIRED", "ScheduledCancellation", "CustomerArchived",
 	// "AutoCancellationRule".
 	CancelReason V1SubscriptionListResponseCancelReason `json:"cancelReason" api:"nullable"`
+	// Coupons applied to the subscription
+	Coupons []V1SubscriptionListResponseCoupon `json:"coupons"`
 	// End of the current billing period
 	CurrentBillingPeriodEnd time.Time `json:"currentBillingPeriodEnd" api:"nullable" format:"date-time"`
 	// Start of the current billing period
@@ -380,8 +784,14 @@ type V1SubscriptionListResponse struct {
 	EffectiveEndDate time.Time `json:"effectiveEndDate" api:"nullable" format:"date-time"`
 	// Subscription end date
 	EndDate time.Time `json:"endDate" api:"nullable" format:"date-time"`
+	// Scheduled future updates for the subscription
+	FutureUpdates []V1SubscriptionListResponseFutureUpdate `json:"futureUpdates"`
+	// Latest invoice for the subscription
+	LatestInvoice V1SubscriptionListResponseLatestInvoice `json:"latestInvoice" api:"nullable"`
 	// Additional metadata for the subscription
 	Metadata map[string]string `json:"metadata"`
+	// Minimum spend configuration
+	MinimumSpend V1SubscriptionListResponseMinimumSpend `json:"minimumSpend" api:"nullable"`
 	// Paying customer ID for delegated billing
 	PayingCustomerID string `json:"payingCustomerId" api:"nullable"`
 	// The method used to collect payments for a subscription
@@ -391,6 +801,10 @@ type V1SubscriptionListResponse struct {
 	Prices                  []V1SubscriptionListResponsePrice                 `json:"prices"`
 	// Resource ID
 	ResourceID string `json:"resourceId" api:"nullable"`
+	// Entitlements associated with the subscription
+	SubscriptionEntitlements []V1SubscriptionListResponseSubscriptionEntitlement `json:"subscriptionEntitlements"`
+	// Trial configuration
+	Trial V1SubscriptionListResponseTrial `json:"trial" api:"nullable"`
 	// Subscription trial end date
 	TrialEndDate time.Time `json:"trialEndDate" api:"nullable" format:"date-time"`
 	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
@@ -405,17 +819,25 @@ type V1SubscriptionListResponse struct {
 		StartDate                 respjson.Field
 		Status                    respjson.Field
 		Addons                    respjson.Field
+		BillingCycleAnchor        respjson.Field
+		Budget                    respjson.Field
 		CancellationDate          respjson.Field
 		CancelReason              respjson.Field
+		Coupons                   respjson.Field
 		CurrentBillingPeriodEnd   respjson.Field
 		CurrentBillingPeriodStart respjson.Field
 		EffectiveEndDate          respjson.Field
 		EndDate                   respjson.Field
+		FutureUpdates             respjson.Field
+		LatestInvoice             respjson.Field
 		Metadata                  respjson.Field
+		MinimumSpend              respjson.Field
 		PayingCustomerID          respjson.Field
 		PaymentCollectionMethod   respjson.Field
 		Prices                    respjson.Field
 		ResourceID                respjson.Field
+		SubscriptionEntitlements  respjson.Field
+		Trial                     respjson.Field
 		TrialEndDate              respjson.Field
 		ExtraFields               map[string]respjson.Field
 		raw                       string
@@ -480,6 +902,27 @@ func (r *V1SubscriptionListResponseAddon) UnmarshalJSON(data []byte) error {
 	return apijson.UnmarshalRoot(data, r)
 }
 
+// Budget configuration
+type V1SubscriptionListResponseBudget struct {
+	// Whether the budget is a soft limit
+	HasSoftLimit bool `json:"hasSoftLimit" api:"required"`
+	// Maximum spending limit
+	Limit float64 `json:"limit" api:"required"`
+	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
+	JSON struct {
+		HasSoftLimit respjson.Field
+		Limit        respjson.Field
+		ExtraFields  map[string]respjson.Field
+		raw          string
+	} `json:"-"`
+}
+
+// Returns the unmodified JSON received from the API
+func (r V1SubscriptionListResponseBudget) RawJSON() string { return r.JSON.raw }
+func (r *V1SubscriptionListResponseBudget) UnmarshalJSON(data []byte) error {
+	return apijson.UnmarshalRoot(data, r)
+}
+
 // Subscription cancel reason
 type V1SubscriptionListResponseCancelReason string
 
@@ -497,6 +940,201 @@ const (
 	V1SubscriptionListResponseCancelReasonAutoCancellationRule  V1SubscriptionListResponseCancelReason = "AutoCancellationRule"
 )
 
+// Coupon applied to a subscription
+type V1SubscriptionListResponseCoupon struct {
+	// Coupon ID
+	ID string `json:"id" api:"required"`
+	// Coupon name
+	Name string `json:"name" api:"required"`
+	// Coupon status
+	//
+	// Any of "ACTIVE", "EXPIRED", "REMOVED".
+	Status string `json:"status" api:"required"`
+	// Fixed amount discounts by currency
+	AmountsOff []V1SubscriptionListResponseCouponAmountsOff `json:"amountsOff" api:"nullable"`
+	// Percentage discount
+	PercentOff float64 `json:"percentOff" api:"nullable"`
+	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
+	JSON struct {
+		ID          respjson.Field
+		Name        respjson.Field
+		Status      respjson.Field
+		AmountsOff  respjson.Field
+		PercentOff  respjson.Field
+		ExtraFields map[string]respjson.Field
+		raw         string
+	} `json:"-"`
+}
+
+// Returns the unmodified JSON received from the API
+func (r V1SubscriptionListResponseCoupon) RawJSON() string { return r.JSON.raw }
+func (r *V1SubscriptionListResponseCoupon) UnmarshalJSON(data []byte) error {
+	return apijson.UnmarshalRoot(data, r)
+}
+
+type V1SubscriptionListResponseCouponAmountsOff struct {
+	// The price amount
+	Amount float64 `json:"amount"`
+	// The price currency
+	//
+	// Any of "usd", "aed", "all", "amd", "ang", "aud", "awg", "azn", "bam", "bbd",
+	// "bdt", "bgn", "bif", "bmd", "bnd", "bsd", "bwp", "byn", "bzd", "brl", "cad",
+	// "cdf", "chf", "cny", "czk", "dkk", "dop", "dzd", "egp", "etb", "eur", "fjd",
+	// "gbp", "gel", "gip", "gmd", "gyd", "hkd", "hrk", "htg", "idr", "ils", "inr",
+	// "isk", "jmd", "jpy", "kes", "kgs", "khr", "kmf", "krw", "kyd", "kzt", "lbp",
+	// "lkr", "lrd", "lsl", "mad", "mdl", "mga", "mkd", "mmk", "mnt", "mop", "mro",
+	// "mvr", "mwk", "mxn", "myr", "mzn", "nad", "ngn", "nok", "npr", "nzd", "pgk",
+	// "php", "pkr", "pln", "qar", "ron", "rsd", "rub", "rwf", "sar", "sbd", "scr",
+	// "sek", "sgd", "sle", "sll", "sos", "szl", "thb", "tjs", "top", "try", "ttd",
+	// "tzs", "uah", "uzs", "vnd", "vuv", "wst", "xaf", "xcd", "yer", "zar", "zmw",
+	// "clp", "djf", "gnf", "ugx", "pyg", "xof", "xpf".
+	Currency string `json:"currency"`
+	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
+	JSON struct {
+		Amount      respjson.Field
+		Currency    respjson.Field
+		ExtraFields map[string]respjson.Field
+		raw         string
+	} `json:"-"`
+}
+
+// Returns the unmodified JSON received from the API
+func (r V1SubscriptionListResponseCouponAmountsOff) RawJSON() string { return r.JSON.raw }
+func (r *V1SubscriptionListResponseCouponAmountsOff) UnmarshalJSON(data []byte) error {
+	return apijson.UnmarshalRoot(data, r)
+}
+
+// Scheduled subscription update
+type V1SubscriptionListResponseFutureUpdate struct {
+	// Scheduled execution time
+	ScheduledExecutionTime time.Time `json:"scheduledExecutionTime" api:"required" format:"date-time"`
+	// Status of the scheduled update
+	//
+	// Any of "PENDING_PAYMENT", "SCHEDULED", "CANCELED", "DONE", "FAILED".
+	ScheduleStatus string `json:"scheduleStatus" api:"required"`
+	// Type of scheduled change
+	//
+	// Any of "DOWNGRADE", "PLAN", "BILLING_PERIOD", "UNIT_AMOUNT",
+	// "RECURRING_CREDITS", "PRICE_OVERRIDE", "ADDON", "COUPON", "MIGRATE_TO_LATEST",
+	// "ADDITIONAL_META_DATA", "BILLING_INFO_METADATA".
+	SubscriptionScheduleType string `json:"subscriptionScheduleType" api:"required"`
+	// Target package for the update
+	TargetPackage V1SubscriptionListResponseFutureUpdateTargetPackage `json:"targetPackage" api:"nullable"`
+	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
+	JSON struct {
+		ScheduledExecutionTime   respjson.Field
+		ScheduleStatus           respjson.Field
+		SubscriptionScheduleType respjson.Field
+		TargetPackage            respjson.Field
+		ExtraFields              map[string]respjson.Field
+		raw                      string
+	} `json:"-"`
+}
+
+// Returns the unmodified JSON received from the API
+func (r V1SubscriptionListResponseFutureUpdate) RawJSON() string { return r.JSON.raw }
+func (r *V1SubscriptionListResponseFutureUpdate) UnmarshalJSON(data []byte) error {
+	return apijson.UnmarshalRoot(data, r)
+}
+
+// Target package for the update
+type V1SubscriptionListResponseFutureUpdateTargetPackage struct {
+	// Target package for the update
+	ID string `json:"id" api:"required"`
+	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
+	JSON struct {
+		ID          respjson.Field
+		ExtraFields map[string]respjson.Field
+		raw         string
+	} `json:"-"`
+}
+
+// Returns the unmodified JSON received from the API
+func (r V1SubscriptionListResponseFutureUpdateTargetPackage) RawJSON() string { return r.JSON.raw }
+func (r *V1SubscriptionListResponseFutureUpdateTargetPackage) UnmarshalJSON(data []byte) error {
+	return apijson.UnmarshalRoot(data, r)
+}
+
+// Latest invoice for the subscription
+type V1SubscriptionListResponseLatestInvoice struct {
+	// Invoice billing ID
+	BillingID string `json:"billingId" api:"required"`
+	// Invoice creation date
+	CreatedAt time.Time `json:"createdAt" api:"required" format:"date-time"`
+	// Whether payment requires action
+	RequiresAction bool `json:"requiresAction" api:"required"`
+	// Invoice status
+	//
+	// Any of "OPEN", "CANCELED", "PAID".
+	Status string `json:"status" api:"required"`
+	// Amount due
+	AmountDue float64 `json:"amountDue" api:"nullable"`
+	// Billing reason
+	//
+	// Any of "BILLING_CYCLE", "SUBSCRIPTION_CREATION", "SUBSCRIPTION_UPDATE",
+	// "MANUAL", "MINIMUM_INVOICE_AMOUNT_EXCEEDED", "OTHER".
+	BillingReason string `json:"billingReason" api:"nullable"`
+	// Invoice currency
+	Currency string `json:"currency" api:"nullable"`
+	// Invoice PDF URL
+	PdfURL string `json:"pdfUrl" api:"nullable"`
+	// Total amount
+	Total float64 `json:"total" api:"nullable"`
+	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
+	JSON struct {
+		BillingID      respjson.Field
+		CreatedAt      respjson.Field
+		RequiresAction respjson.Field
+		Status         respjson.Field
+		AmountDue      respjson.Field
+		BillingReason  respjson.Field
+		Currency       respjson.Field
+		PdfURL         respjson.Field
+		Total          respjson.Field
+		ExtraFields    map[string]respjson.Field
+		raw            string
+	} `json:"-"`
+}
+
+// Returns the unmodified JSON received from the API
+func (r V1SubscriptionListResponseLatestInvoice) RawJSON() string { return r.JSON.raw }
+func (r *V1SubscriptionListResponseLatestInvoice) UnmarshalJSON(data []byte) error {
+	return apijson.UnmarshalRoot(data, r)
+}
+
+// Minimum spend configuration
+type V1SubscriptionListResponseMinimumSpend struct {
+	// The price amount
+	Amount float64 `json:"amount"`
+	// The price currency
+	//
+	// Any of "usd", "aed", "all", "amd", "ang", "aud", "awg", "azn", "bam", "bbd",
+	// "bdt", "bgn", "bif", "bmd", "bnd", "bsd", "bwp", "byn", "bzd", "brl", "cad",
+	// "cdf", "chf", "cny", "czk", "dkk", "dop", "dzd", "egp", "etb", "eur", "fjd",
+	// "gbp", "gel", "gip", "gmd", "gyd", "hkd", "hrk", "htg", "idr", "ils", "inr",
+	// "isk", "jmd", "jpy", "kes", "kgs", "khr", "kmf", "krw", "kyd", "kzt", "lbp",
+	// "lkr", "lrd", "lsl", "mad", "mdl", "mga", "mkd", "mmk", "mnt", "mop", "mro",
+	// "mvr", "mwk", "mxn", "myr", "mzn", "nad", "ngn", "nok", "npr", "nzd", "pgk",
+	// "php", "pkr", "pln", "qar", "ron", "rsd", "rub", "rwf", "sar", "sbd", "scr",
+	// "sek", "sgd", "sle", "sll", "sos", "szl", "thb", "tjs", "top", "try", "ttd",
+	// "tzs", "uah", "uzs", "vnd", "vuv", "wst", "xaf", "xcd", "yer", "zar", "zmw",
+	// "clp", "djf", "gnf", "ugx", "pyg", "xof", "xpf".
+	Currency string `json:"currency"`
+	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
+	JSON struct {
+		Amount      respjson.Field
+		Currency    respjson.Field
+		ExtraFields map[string]respjson.Field
+		raw         string
+	} `json:"-"`
+}
+
+// Returns the unmodified JSON received from the API
+func (r V1SubscriptionListResponseMinimumSpend) RawJSON() string { return r.JSON.raw }
+func (r *V1SubscriptionListResponseMinimumSpend) UnmarshalJSON(data []byte) error {
+	return apijson.UnmarshalRoot(data, r)
+}
+
 // The method used to collect payments for a subscription
 type V1SubscriptionListResponsePaymentCollectionMethod string
 
@@ -507,26 +1145,184 @@ const (
 )
 
 type V1SubscriptionListResponsePrice struct {
-	// Price ID
-	ID string `json:"id" api:"required"`
-	// Creation timestamp
-	CreatedAt string `json:"createdAt" api:"required"`
-	// Last update timestamp
-	UpdatedAt   string         `json:"updatedAt" api:"required"`
-	ExtraFields map[string]any `json:"" api:"extrafields"`
+	// Addon identifier for the price override
+	AddonID string `json:"addonId" api:"nullable"`
+	// The price amount
+	Amount float64 `json:"amount"`
+	// Whether this is a base charge override
+	BaseCharge bool `json:"baseCharge"`
+	// The billing country code of the price
+	BillingCountryCode string `json:"billingCountryCode"`
+	// Block size for pricing
+	BlockSize float64 `json:"blockSize"`
+	// The price currency
+	//
+	// Any of "usd", "aed", "all", "amd", "ang", "aud", "awg", "azn", "bam", "bbd",
+	// "bdt", "bgn", "bif", "bmd", "bnd", "bsd", "bwp", "byn", "bzd", "brl", "cad",
+	// "cdf", "chf", "cny", "czk", "dkk", "dop", "dzd", "egp", "etb", "eur", "fjd",
+	// "gbp", "gel", "gip", "gmd", "gyd", "hkd", "hrk", "htg", "idr", "ils", "inr",
+	// "isk", "jmd", "jpy", "kes", "kgs", "khr", "kmf", "krw", "kyd", "kzt", "lbp",
+	// "lkr", "lrd", "lsl", "mad", "mdl", "mga", "mkd", "mmk", "mnt", "mop", "mro",
+	// "mvr", "mwk", "mxn", "myr", "mzn", "nad", "ngn", "nok", "npr", "nzd", "pgk",
+	// "php", "pkr", "pln", "qar", "ron", "rsd", "rub", "rwf", "sar", "sbd", "scr",
+	// "sek", "sgd", "sle", "sll", "sos", "szl", "thb", "tjs", "top", "try", "ttd",
+	// "tzs", "uah", "uzs", "vnd", "vuv", "wst", "xaf", "xcd", "yer", "zar", "zmw",
+	// "clp", "djf", "gnf", "ugx", "pyg", "xof", "xpf".
+	Currency string `json:"currency"`
+	// Feature identifier for the price override
+	FeatureID string `json:"featureId" api:"nullable"`
+	// Pricing tiers configuration
+	Tiers []V1SubscriptionListResponsePriceTier `json:"tiers"`
 	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
 	JSON struct {
-		ID          respjson.Field
-		CreatedAt   respjson.Field
-		UpdatedAt   respjson.Field
-		ExtraFields map[string]respjson.Field
-		raw         string
+		AddonID            respjson.Field
+		Amount             respjson.Field
+		BaseCharge         respjson.Field
+		BillingCountryCode respjson.Field
+		BlockSize          respjson.Field
+		Currency           respjson.Field
+		FeatureID          respjson.Field
+		Tiers              respjson.Field
+		ExtraFields        map[string]respjson.Field
+		raw                string
 	} `json:"-"`
 }
 
 // Returns the unmodified JSON received from the API
 func (r V1SubscriptionListResponsePrice) RawJSON() string { return r.JSON.raw }
 func (r *V1SubscriptionListResponsePrice) UnmarshalJSON(data []byte) error {
+	return apijson.UnmarshalRoot(data, r)
+}
+
+type V1SubscriptionListResponsePriceTier struct {
+	// The flat fee price of the price tier
+	FlatPrice V1SubscriptionListResponsePriceTierFlatPrice `json:"flatPrice"`
+	// The unit price of the price tier
+	UnitPrice V1SubscriptionListResponsePriceTierUnitPrice `json:"unitPrice"`
+	// The up to quantity of the price tier
+	UpTo float64 `json:"upTo"`
+	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
+	JSON struct {
+		FlatPrice   respjson.Field
+		UnitPrice   respjson.Field
+		UpTo        respjson.Field
+		ExtraFields map[string]respjson.Field
+		raw         string
+	} `json:"-"`
+}
+
+// Returns the unmodified JSON received from the API
+func (r V1SubscriptionListResponsePriceTier) RawJSON() string { return r.JSON.raw }
+func (r *V1SubscriptionListResponsePriceTier) UnmarshalJSON(data []byte) error {
+	return apijson.UnmarshalRoot(data, r)
+}
+
+// The flat fee price of the price tier
+type V1SubscriptionListResponsePriceTierFlatPrice struct {
+	// The price amount
+	Amount float64 `json:"amount" api:"required"`
+	// The price currency
+	//
+	// Any of "usd", "aed", "all", "amd", "ang", "aud", "awg", "azn", "bam", "bbd",
+	// "bdt", "bgn", "bif", "bmd", "bnd", "bsd", "bwp", "byn", "bzd", "brl", "cad",
+	// "cdf", "chf", "cny", "czk", "dkk", "dop", "dzd", "egp", "etb", "eur", "fjd",
+	// "gbp", "gel", "gip", "gmd", "gyd", "hkd", "hrk", "htg", "idr", "ils", "inr",
+	// "isk", "jmd", "jpy", "kes", "kgs", "khr", "kmf", "krw", "kyd", "kzt", "lbp",
+	// "lkr", "lrd", "lsl", "mad", "mdl", "mga", "mkd", "mmk", "mnt", "mop", "mro",
+	// "mvr", "mwk", "mxn", "myr", "mzn", "nad", "ngn", "nok", "npr", "nzd", "pgk",
+	// "php", "pkr", "pln", "qar", "ron", "rsd", "rub", "rwf", "sar", "sbd", "scr",
+	// "sek", "sgd", "sle", "sll", "sos", "szl", "thb", "tjs", "top", "try", "ttd",
+	// "tzs", "uah", "uzs", "vnd", "vuv", "wst", "xaf", "xcd", "yer", "zar", "zmw",
+	// "clp", "djf", "gnf", "ugx", "pyg", "xof", "xpf".
+	Currency string `json:"currency" api:"required"`
+	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
+	JSON struct {
+		Amount      respjson.Field
+		Currency    respjson.Field
+		ExtraFields map[string]respjson.Field
+		raw         string
+	} `json:"-"`
+}
+
+// Returns the unmodified JSON received from the API
+func (r V1SubscriptionListResponsePriceTierFlatPrice) RawJSON() string { return r.JSON.raw }
+func (r *V1SubscriptionListResponsePriceTierFlatPrice) UnmarshalJSON(data []byte) error {
+	return apijson.UnmarshalRoot(data, r)
+}
+
+// The unit price of the price tier
+type V1SubscriptionListResponsePriceTierUnitPrice struct {
+	// The price amount
+	Amount float64 `json:"amount" api:"required"`
+	// The price currency
+	//
+	// Any of "usd", "aed", "all", "amd", "ang", "aud", "awg", "azn", "bam", "bbd",
+	// "bdt", "bgn", "bif", "bmd", "bnd", "bsd", "bwp", "byn", "bzd", "brl", "cad",
+	// "cdf", "chf", "cny", "czk", "dkk", "dop", "dzd", "egp", "etb", "eur", "fjd",
+	// "gbp", "gel", "gip", "gmd", "gyd", "hkd", "hrk", "htg", "idr", "ils", "inr",
+	// "isk", "jmd", "jpy", "kes", "kgs", "khr", "kmf", "krw", "kyd", "kzt", "lbp",
+	// "lkr", "lrd", "lsl", "mad", "mdl", "mga", "mkd", "mmk", "mnt", "mop", "mro",
+	// "mvr", "mwk", "mxn", "myr", "mzn", "nad", "ngn", "nok", "npr", "nzd", "pgk",
+	// "php", "pkr", "pln", "qar", "ron", "rsd", "rub", "rwf", "sar", "sbd", "scr",
+	// "sek", "sgd", "sle", "sll", "sos", "szl", "thb", "tjs", "top", "try", "ttd",
+	// "tzs", "uah", "uzs", "vnd", "vuv", "wst", "xaf", "xcd", "yer", "zar", "zmw",
+	// "clp", "djf", "gnf", "ugx", "pyg", "xof", "xpf".
+	Currency string `json:"currency" api:"required"`
+	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
+	JSON struct {
+		Amount      respjson.Field
+		Currency    respjson.Field
+		ExtraFields map[string]respjson.Field
+		raw         string
+	} `json:"-"`
+}
+
+// Returns the unmodified JSON received from the API
+func (r V1SubscriptionListResponsePriceTierUnitPrice) RawJSON() string { return r.JSON.raw }
+func (r *V1SubscriptionListResponsePriceTierUnitPrice) UnmarshalJSON(data []byte) error {
+	return apijson.UnmarshalRoot(data, r)
+}
+
+// Subscription entitlement reference
+type V1SubscriptionListResponseSubscriptionEntitlement struct {
+	// Feature ID or currency ID
+	ID string `json:"id" api:"required"`
+	// Entitlement type (FEATURE or CREDIT)
+	//
+	// Any of "FEATURE", "CREDIT".
+	Type string `json:"type" api:"required"`
+	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
+	JSON struct {
+		ID          respjson.Field
+		Type        respjson.Field
+		ExtraFields map[string]respjson.Field
+		raw         string
+	} `json:"-"`
+}
+
+// Returns the unmodified JSON received from the API
+func (r V1SubscriptionListResponseSubscriptionEntitlement) RawJSON() string { return r.JSON.raw }
+func (r *V1SubscriptionListResponseSubscriptionEntitlement) UnmarshalJSON(data []byte) error {
+	return apijson.UnmarshalRoot(data, r)
+}
+
+// Trial configuration
+type V1SubscriptionListResponseTrial struct {
+	// Behavior when the trial ends
+	//
+	// Any of "CONVERT_TO_PAID", "CANCEL_SUBSCRIPTION".
+	TrialEndBehavior string `json:"trialEndBehavior" api:"required"`
+	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
+	JSON struct {
+		TrialEndBehavior respjson.Field
+		ExtraFields      map[string]respjson.Field
+		raw              string
+	} `json:"-"`
+}
+
+// Returns the unmodified JSON received from the API
+func (r V1SubscriptionListResponseTrial) RawJSON() string { return r.JSON.raw }
+func (r *V1SubscriptionListResponseTrial) UnmarshalJSON(data []byte) error {
 	return apijson.UnmarshalRoot(data, r)
 }
 
@@ -1278,6 +2074,10 @@ type V1SubscriptionProvisionResponseDataSubscription struct {
 	// "NOT_STARTED".
 	Status string                                                 `json:"status" api:"required"`
 	Addons []V1SubscriptionProvisionResponseDataSubscriptionAddon `json:"addons"`
+	// Billing cycle anchor date
+	BillingCycleAnchor time.Time `json:"billingCycleAnchor" api:"nullable" format:"date-time"`
+	// Budget configuration
+	Budget V1SubscriptionProvisionResponseDataSubscriptionBudget `json:"budget" api:"nullable"`
 	// Subscription cancellation date
 	CancellationDate time.Time `json:"cancellationDate" api:"nullable" format:"date-time"`
 	// Subscription cancel reason
@@ -1287,6 +2087,8 @@ type V1SubscriptionProvisionResponseDataSubscription struct {
 	// "PENDING_PAYMENT_EXPIRED", "ScheduledCancellation", "CustomerArchived",
 	// "AutoCancellationRule".
 	CancelReason string `json:"cancelReason" api:"nullable"`
+	// Coupons applied to the subscription
+	Coupons []V1SubscriptionProvisionResponseDataSubscriptionCoupon `json:"coupons"`
 	// End of the current billing period
 	CurrentBillingPeriodEnd time.Time `json:"currentBillingPeriodEnd" api:"nullable" format:"date-time"`
 	// Start of the current billing period
@@ -1295,8 +2097,14 @@ type V1SubscriptionProvisionResponseDataSubscription struct {
 	EffectiveEndDate time.Time `json:"effectiveEndDate" api:"nullable" format:"date-time"`
 	// Subscription end date
 	EndDate time.Time `json:"endDate" api:"nullable" format:"date-time"`
+	// Scheduled future updates for the subscription
+	FutureUpdates []V1SubscriptionProvisionResponseDataSubscriptionFutureUpdate `json:"futureUpdates"`
+	// Latest invoice for the subscription
+	LatestInvoice V1SubscriptionProvisionResponseDataSubscriptionLatestInvoice `json:"latestInvoice" api:"nullable"`
 	// Additional metadata for the subscription
 	Metadata map[string]string `json:"metadata"`
+	// Minimum spend configuration
+	MinimumSpend V1SubscriptionProvisionResponseDataSubscriptionMinimumSpend `json:"minimumSpend" api:"nullable"`
 	// Paying customer ID for delegated billing
 	PayingCustomerID string `json:"payingCustomerId" api:"nullable"`
 	// The method used to collect payments for a subscription
@@ -1306,6 +2114,10 @@ type V1SubscriptionProvisionResponseDataSubscription struct {
 	Prices                  []V1SubscriptionProvisionResponseDataSubscriptionPrice `json:"prices"`
 	// Resource ID
 	ResourceID string `json:"resourceId" api:"nullable"`
+	// Entitlements associated with the subscription
+	SubscriptionEntitlements []V1SubscriptionProvisionResponseDataSubscriptionSubscriptionEntitlement `json:"subscriptionEntitlements"`
+	// Trial configuration
+	Trial V1SubscriptionProvisionResponseDataSubscriptionTrial `json:"trial" api:"nullable"`
 	// Subscription trial end date
 	TrialEndDate time.Time `json:"trialEndDate" api:"nullable" format:"date-time"`
 	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
@@ -1320,17 +2132,25 @@ type V1SubscriptionProvisionResponseDataSubscription struct {
 		StartDate                 respjson.Field
 		Status                    respjson.Field
 		Addons                    respjson.Field
+		BillingCycleAnchor        respjson.Field
+		Budget                    respjson.Field
 		CancellationDate          respjson.Field
 		CancelReason              respjson.Field
+		Coupons                   respjson.Field
 		CurrentBillingPeriodEnd   respjson.Field
 		CurrentBillingPeriodStart respjson.Field
 		EffectiveEndDate          respjson.Field
 		EndDate                   respjson.Field
+		FutureUpdates             respjson.Field
+		LatestInvoice             respjson.Field
 		Metadata                  respjson.Field
+		MinimumSpend              respjson.Field
 		PayingCustomerID          respjson.Field
 		PaymentCollectionMethod   respjson.Field
 		Prices                    respjson.Field
 		ResourceID                respjson.Field
+		SubscriptionEntitlements  respjson.Field
+		Trial                     respjson.Field
 		TrialEndDate              respjson.Field
 		ExtraFields               map[string]respjson.Field
 		raw                       string
@@ -1364,44 +2184,62 @@ func (r *V1SubscriptionProvisionResponseDataSubscriptionAddon) UnmarshalJSON(dat
 	return apijson.UnmarshalRoot(data, r)
 }
 
-type V1SubscriptionProvisionResponseDataSubscriptionPrice struct {
-	// Addon identifier for the price override
-	AddonID string `json:"addonId" api:"nullable"`
-	// Whether this is a base charge override
-	BaseCharge bool `json:"baseCharge"`
-	// Block size for pricing
-	BlockSize float64 `json:"blockSize"`
-	// Feature identifier for the price override
-	FeatureID string `json:"featureId" api:"nullable"`
-	// Override price amount
-	Price V1SubscriptionProvisionResponseDataSubscriptionPricePrice `json:"price"`
-	// Pricing tiers configuration
-	Tiers []V1SubscriptionProvisionResponseDataSubscriptionPriceTier `json:"tiers"`
+// Budget configuration
+type V1SubscriptionProvisionResponseDataSubscriptionBudget struct {
+	// Whether the budget is a soft limit
+	HasSoftLimit bool `json:"hasSoftLimit" api:"required"`
+	// Maximum spending limit
+	Limit float64 `json:"limit" api:"required"`
 	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
 	JSON struct {
-		AddonID     respjson.Field
-		BaseCharge  respjson.Field
-		BlockSize   respjson.Field
-		FeatureID   respjson.Field
-		Price       respjson.Field
-		Tiers       respjson.Field
+		HasSoftLimit respjson.Field
+		Limit        respjson.Field
+		ExtraFields  map[string]respjson.Field
+		raw          string
+	} `json:"-"`
+}
+
+// Returns the unmodified JSON received from the API
+func (r V1SubscriptionProvisionResponseDataSubscriptionBudget) RawJSON() string { return r.JSON.raw }
+func (r *V1SubscriptionProvisionResponseDataSubscriptionBudget) UnmarshalJSON(data []byte) error {
+	return apijson.UnmarshalRoot(data, r)
+}
+
+// Coupon applied to a subscription
+type V1SubscriptionProvisionResponseDataSubscriptionCoupon struct {
+	// Coupon ID
+	ID string `json:"id" api:"required"`
+	// Coupon name
+	Name string `json:"name" api:"required"`
+	// Coupon status
+	//
+	// Any of "ACTIVE", "EXPIRED", "REMOVED".
+	Status string `json:"status" api:"required"`
+	// Fixed amount discounts by currency
+	AmountsOff []V1SubscriptionProvisionResponseDataSubscriptionCouponAmountsOff `json:"amountsOff" api:"nullable"`
+	// Percentage discount
+	PercentOff float64 `json:"percentOff" api:"nullable"`
+	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
+	JSON struct {
+		ID          respjson.Field
+		Name        respjson.Field
+		Status      respjson.Field
+		AmountsOff  respjson.Field
+		PercentOff  respjson.Field
 		ExtraFields map[string]respjson.Field
 		raw         string
 	} `json:"-"`
 }
 
 // Returns the unmodified JSON received from the API
-func (r V1SubscriptionProvisionResponseDataSubscriptionPrice) RawJSON() string { return r.JSON.raw }
-func (r *V1SubscriptionProvisionResponseDataSubscriptionPrice) UnmarshalJSON(data []byte) error {
+func (r V1SubscriptionProvisionResponseDataSubscriptionCoupon) RawJSON() string { return r.JSON.raw }
+func (r *V1SubscriptionProvisionResponseDataSubscriptionCoupon) UnmarshalJSON(data []byte) error {
 	return apijson.UnmarshalRoot(data, r)
 }
 
-// Override price amount
-type V1SubscriptionProvisionResponseDataSubscriptionPricePrice struct {
+type V1SubscriptionProvisionResponseDataSubscriptionCouponAmountsOff struct {
 	// The price amount
 	Amount float64 `json:"amount"`
-	// The billing country code of the price
-	BillingCountryCode string `json:"billingCountryCode" api:"nullable"`
 	// The price currency
 	//
 	// Any of "usd", "aed", "all", "amd", "ang", "aud", "awg", "azn", "bam", "bbd",
@@ -1418,19 +2256,207 @@ type V1SubscriptionProvisionResponseDataSubscriptionPricePrice struct {
 	Currency string `json:"currency"`
 	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
 	JSON struct {
+		Amount      respjson.Field
+		Currency    respjson.Field
+		ExtraFields map[string]respjson.Field
+		raw         string
+	} `json:"-"`
+}
+
+// Returns the unmodified JSON received from the API
+func (r V1SubscriptionProvisionResponseDataSubscriptionCouponAmountsOff) RawJSON() string {
+	return r.JSON.raw
+}
+func (r *V1SubscriptionProvisionResponseDataSubscriptionCouponAmountsOff) UnmarshalJSON(data []byte) error {
+	return apijson.UnmarshalRoot(data, r)
+}
+
+// Scheduled subscription update
+type V1SubscriptionProvisionResponseDataSubscriptionFutureUpdate struct {
+	// Scheduled execution time
+	ScheduledExecutionTime time.Time `json:"scheduledExecutionTime" api:"required" format:"date-time"`
+	// Status of the scheduled update
+	//
+	// Any of "PENDING_PAYMENT", "SCHEDULED", "CANCELED", "DONE", "FAILED".
+	ScheduleStatus string `json:"scheduleStatus" api:"required"`
+	// Type of scheduled change
+	//
+	// Any of "DOWNGRADE", "PLAN", "BILLING_PERIOD", "UNIT_AMOUNT",
+	// "RECURRING_CREDITS", "PRICE_OVERRIDE", "ADDON", "COUPON", "MIGRATE_TO_LATEST",
+	// "ADDITIONAL_META_DATA", "BILLING_INFO_METADATA".
+	SubscriptionScheduleType string `json:"subscriptionScheduleType" api:"required"`
+	// Target package for the update
+	TargetPackage V1SubscriptionProvisionResponseDataSubscriptionFutureUpdateTargetPackage `json:"targetPackage" api:"nullable"`
+	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
+	JSON struct {
+		ScheduledExecutionTime   respjson.Field
+		ScheduleStatus           respjson.Field
+		SubscriptionScheduleType respjson.Field
+		TargetPackage            respjson.Field
+		ExtraFields              map[string]respjson.Field
+		raw                      string
+	} `json:"-"`
+}
+
+// Returns the unmodified JSON received from the API
+func (r V1SubscriptionProvisionResponseDataSubscriptionFutureUpdate) RawJSON() string {
+	return r.JSON.raw
+}
+func (r *V1SubscriptionProvisionResponseDataSubscriptionFutureUpdate) UnmarshalJSON(data []byte) error {
+	return apijson.UnmarshalRoot(data, r)
+}
+
+// Target package for the update
+type V1SubscriptionProvisionResponseDataSubscriptionFutureUpdateTargetPackage struct {
+	// Target package for the update
+	ID string `json:"id" api:"required"`
+	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
+	JSON struct {
+		ID          respjson.Field
+		ExtraFields map[string]respjson.Field
+		raw         string
+	} `json:"-"`
+}
+
+// Returns the unmodified JSON received from the API
+func (r V1SubscriptionProvisionResponseDataSubscriptionFutureUpdateTargetPackage) RawJSON() string {
+	return r.JSON.raw
+}
+func (r *V1SubscriptionProvisionResponseDataSubscriptionFutureUpdateTargetPackage) UnmarshalJSON(data []byte) error {
+	return apijson.UnmarshalRoot(data, r)
+}
+
+// Latest invoice for the subscription
+type V1SubscriptionProvisionResponseDataSubscriptionLatestInvoice struct {
+	// Invoice billing ID
+	BillingID string `json:"billingId" api:"required"`
+	// Invoice creation date
+	CreatedAt time.Time `json:"createdAt" api:"required" format:"date-time"`
+	// Whether payment requires action
+	RequiresAction bool `json:"requiresAction" api:"required"`
+	// Invoice status
+	//
+	// Any of "OPEN", "CANCELED", "PAID".
+	Status string `json:"status" api:"required"`
+	// Amount due
+	AmountDue float64 `json:"amountDue" api:"nullable"`
+	// Billing reason
+	//
+	// Any of "BILLING_CYCLE", "SUBSCRIPTION_CREATION", "SUBSCRIPTION_UPDATE",
+	// "MANUAL", "MINIMUM_INVOICE_AMOUNT_EXCEEDED", "OTHER".
+	BillingReason string `json:"billingReason" api:"nullable"`
+	// Invoice currency
+	Currency string `json:"currency" api:"nullable"`
+	// Invoice PDF URL
+	PdfURL string `json:"pdfUrl" api:"nullable"`
+	// Total amount
+	Total float64 `json:"total" api:"nullable"`
+	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
+	JSON struct {
+		BillingID      respjson.Field
+		CreatedAt      respjson.Field
+		RequiresAction respjson.Field
+		Status         respjson.Field
+		AmountDue      respjson.Field
+		BillingReason  respjson.Field
+		Currency       respjson.Field
+		PdfURL         respjson.Field
+		Total          respjson.Field
+		ExtraFields    map[string]respjson.Field
+		raw            string
+	} `json:"-"`
+}
+
+// Returns the unmodified JSON received from the API
+func (r V1SubscriptionProvisionResponseDataSubscriptionLatestInvoice) RawJSON() string {
+	return r.JSON.raw
+}
+func (r *V1SubscriptionProvisionResponseDataSubscriptionLatestInvoice) UnmarshalJSON(data []byte) error {
+	return apijson.UnmarshalRoot(data, r)
+}
+
+// Minimum spend configuration
+type V1SubscriptionProvisionResponseDataSubscriptionMinimumSpend struct {
+	// The price amount
+	Amount float64 `json:"amount"`
+	// The price currency
+	//
+	// Any of "usd", "aed", "all", "amd", "ang", "aud", "awg", "azn", "bam", "bbd",
+	// "bdt", "bgn", "bif", "bmd", "bnd", "bsd", "bwp", "byn", "bzd", "brl", "cad",
+	// "cdf", "chf", "cny", "czk", "dkk", "dop", "dzd", "egp", "etb", "eur", "fjd",
+	// "gbp", "gel", "gip", "gmd", "gyd", "hkd", "hrk", "htg", "idr", "ils", "inr",
+	// "isk", "jmd", "jpy", "kes", "kgs", "khr", "kmf", "krw", "kyd", "kzt", "lbp",
+	// "lkr", "lrd", "lsl", "mad", "mdl", "mga", "mkd", "mmk", "mnt", "mop", "mro",
+	// "mvr", "mwk", "mxn", "myr", "mzn", "nad", "ngn", "nok", "npr", "nzd", "pgk",
+	// "php", "pkr", "pln", "qar", "ron", "rsd", "rub", "rwf", "sar", "sbd", "scr",
+	// "sek", "sgd", "sle", "sll", "sos", "szl", "thb", "tjs", "top", "try", "ttd",
+	// "tzs", "uah", "uzs", "vnd", "vuv", "wst", "xaf", "xcd", "yer", "zar", "zmw",
+	// "clp", "djf", "gnf", "ugx", "pyg", "xof", "xpf".
+	Currency string `json:"currency"`
+	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
+	JSON struct {
+		Amount      respjson.Field
+		Currency    respjson.Field
+		ExtraFields map[string]respjson.Field
+		raw         string
+	} `json:"-"`
+}
+
+// Returns the unmodified JSON received from the API
+func (r V1SubscriptionProvisionResponseDataSubscriptionMinimumSpend) RawJSON() string {
+	return r.JSON.raw
+}
+func (r *V1SubscriptionProvisionResponseDataSubscriptionMinimumSpend) UnmarshalJSON(data []byte) error {
+	return apijson.UnmarshalRoot(data, r)
+}
+
+type V1SubscriptionProvisionResponseDataSubscriptionPrice struct {
+	// Addon identifier for the price override
+	AddonID string `json:"addonId" api:"nullable"`
+	// The price amount
+	Amount float64 `json:"amount"`
+	// Whether this is a base charge override
+	BaseCharge bool `json:"baseCharge"`
+	// The billing country code of the price
+	BillingCountryCode string `json:"billingCountryCode"`
+	// Block size for pricing
+	BlockSize float64 `json:"blockSize"`
+	// The price currency
+	//
+	// Any of "usd", "aed", "all", "amd", "ang", "aud", "awg", "azn", "bam", "bbd",
+	// "bdt", "bgn", "bif", "bmd", "bnd", "bsd", "bwp", "byn", "bzd", "brl", "cad",
+	// "cdf", "chf", "cny", "czk", "dkk", "dop", "dzd", "egp", "etb", "eur", "fjd",
+	// "gbp", "gel", "gip", "gmd", "gyd", "hkd", "hrk", "htg", "idr", "ils", "inr",
+	// "isk", "jmd", "jpy", "kes", "kgs", "khr", "kmf", "krw", "kyd", "kzt", "lbp",
+	// "lkr", "lrd", "lsl", "mad", "mdl", "mga", "mkd", "mmk", "mnt", "mop", "mro",
+	// "mvr", "mwk", "mxn", "myr", "mzn", "nad", "ngn", "nok", "npr", "nzd", "pgk",
+	// "php", "pkr", "pln", "qar", "ron", "rsd", "rub", "rwf", "sar", "sbd", "scr",
+	// "sek", "sgd", "sle", "sll", "sos", "szl", "thb", "tjs", "top", "try", "ttd",
+	// "tzs", "uah", "uzs", "vnd", "vuv", "wst", "xaf", "xcd", "yer", "zar", "zmw",
+	// "clp", "djf", "gnf", "ugx", "pyg", "xof", "xpf".
+	Currency string `json:"currency"`
+	// Feature identifier for the price override
+	FeatureID string `json:"featureId" api:"nullable"`
+	// Pricing tiers configuration
+	Tiers []V1SubscriptionProvisionResponseDataSubscriptionPriceTier `json:"tiers"`
+	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
+	JSON struct {
+		AddonID            respjson.Field
 		Amount             respjson.Field
+		BaseCharge         respjson.Field
 		BillingCountryCode respjson.Field
+		BlockSize          respjson.Field
 		Currency           respjson.Field
+		FeatureID          respjson.Field
+		Tiers              respjson.Field
 		ExtraFields        map[string]respjson.Field
 		raw                string
 	} `json:"-"`
 }
 
 // Returns the unmodified JSON received from the API
-func (r V1SubscriptionProvisionResponseDataSubscriptionPricePrice) RawJSON() string {
-	return r.JSON.raw
-}
-func (r *V1SubscriptionProvisionResponseDataSubscriptionPricePrice) UnmarshalJSON(data []byte) error {
+func (r V1SubscriptionProvisionResponseDataSubscriptionPrice) RawJSON() string { return r.JSON.raw }
+func (r *V1SubscriptionProvisionResponseDataSubscriptionPrice) UnmarshalJSON(data []byte) error {
 	return apijson.UnmarshalRoot(data, r)
 }
 
@@ -1460,9 +2486,7 @@ func (r *V1SubscriptionProvisionResponseDataSubscriptionPriceTier) UnmarshalJSON
 // The flat fee price of the price tier
 type V1SubscriptionProvisionResponseDataSubscriptionPriceTierFlatPrice struct {
 	// The price amount
-	Amount float64 `json:"amount"`
-	// The billing country code of the price
-	BillingCountryCode string `json:"billingCountryCode" api:"nullable"`
+	Amount float64 `json:"amount" api:"required"`
 	// The price currency
 	//
 	// Any of "usd", "aed", "all", "amd", "ang", "aud", "awg", "azn", "bam", "bbd",
@@ -1476,14 +2500,13 @@ type V1SubscriptionProvisionResponseDataSubscriptionPriceTierFlatPrice struct {
 	// "sek", "sgd", "sle", "sll", "sos", "szl", "thb", "tjs", "top", "try", "ttd",
 	// "tzs", "uah", "uzs", "vnd", "vuv", "wst", "xaf", "xcd", "yer", "zar", "zmw",
 	// "clp", "djf", "gnf", "ugx", "pyg", "xof", "xpf".
-	Currency string `json:"currency"`
+	Currency string `json:"currency" api:"required"`
 	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
 	JSON struct {
-		Amount             respjson.Field
-		BillingCountryCode respjson.Field
-		Currency           respjson.Field
-		ExtraFields        map[string]respjson.Field
-		raw                string
+		Amount      respjson.Field
+		Currency    respjson.Field
+		ExtraFields map[string]respjson.Field
+		raw         string
 	} `json:"-"`
 }
 
@@ -1498,9 +2521,7 @@ func (r *V1SubscriptionProvisionResponseDataSubscriptionPriceTierFlatPrice) Unma
 // The unit price of the price tier
 type V1SubscriptionProvisionResponseDataSubscriptionPriceTierUnitPrice struct {
 	// The price amount
-	Amount float64 `json:"amount"`
-	// The billing country code of the price
-	BillingCountryCode string `json:"billingCountryCode" api:"nullable"`
+	Amount float64 `json:"amount" api:"required"`
 	// The price currency
 	//
 	// Any of "usd", "aed", "all", "amd", "ang", "aud", "awg", "azn", "bam", "bbd",
@@ -1514,14 +2535,13 @@ type V1SubscriptionProvisionResponseDataSubscriptionPriceTierUnitPrice struct {
 	// "sek", "sgd", "sle", "sll", "sos", "szl", "thb", "tjs", "top", "try", "ttd",
 	// "tzs", "uah", "uzs", "vnd", "vuv", "wst", "xaf", "xcd", "yer", "zar", "zmw",
 	// "clp", "djf", "gnf", "ugx", "pyg", "xof", "xpf".
-	Currency string `json:"currency"`
+	Currency string `json:"currency" api:"required"`
 	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
 	JSON struct {
-		Amount             respjson.Field
-		BillingCountryCode respjson.Field
-		Currency           respjson.Field
-		ExtraFields        map[string]respjson.Field
-		raw                string
+		Amount      respjson.Field
+		Currency    respjson.Field
+		ExtraFields map[string]respjson.Field
+		raw         string
 	} `json:"-"`
 }
 
@@ -1533,12 +2553,58 @@ func (r *V1SubscriptionProvisionResponseDataSubscriptionPriceTierUnitPrice) Unma
 	return apijson.UnmarshalRoot(data, r)
 }
 
+// Subscription entitlement reference
+type V1SubscriptionProvisionResponseDataSubscriptionSubscriptionEntitlement struct {
+	// Feature ID or currency ID
+	ID string `json:"id" api:"required"`
+	// Entitlement type (FEATURE or CREDIT)
+	//
+	// Any of "FEATURE", "CREDIT".
+	Type string `json:"type" api:"required"`
+	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
+	JSON struct {
+		ID          respjson.Field
+		Type        respjson.Field
+		ExtraFields map[string]respjson.Field
+		raw         string
+	} `json:"-"`
+}
+
+// Returns the unmodified JSON received from the API
+func (r V1SubscriptionProvisionResponseDataSubscriptionSubscriptionEntitlement) RawJSON() string {
+	return r.JSON.raw
+}
+func (r *V1SubscriptionProvisionResponseDataSubscriptionSubscriptionEntitlement) UnmarshalJSON(data []byte) error {
+	return apijson.UnmarshalRoot(data, r)
+}
+
+// Trial configuration
+type V1SubscriptionProvisionResponseDataSubscriptionTrial struct {
+	// Behavior when the trial ends
+	//
+	// Any of "CONVERT_TO_PAID", "CANCEL_SUBSCRIPTION".
+	TrialEndBehavior string `json:"trialEndBehavior" api:"required"`
+	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
+	JSON struct {
+		TrialEndBehavior respjson.Field
+		ExtraFields      map[string]respjson.Field
+		raw              string
+	} `json:"-"`
+}
+
+// Returns the unmodified JSON received from the API
+func (r V1SubscriptionProvisionResponseDataSubscriptionTrial) RawJSON() string { return r.JSON.raw }
+func (r *V1SubscriptionProvisionResponseDataSubscriptionTrial) UnmarshalJSON(data []byte) error {
+	return apijson.UnmarshalRoot(data, r)
+}
+
 type V1SubscriptionUpdateParams struct {
 	AwaitPaymentConfirmation param.Opt[bool]   `json:"awaitPaymentConfirmation,omitzero"`
 	PromotionCode            param.Opt[string] `json:"promotionCode,omitzero"`
 	// Subscription trial end date
-	TrialEndDate  param.Opt[time.Time]                    `json:"trialEndDate,omitzero" format:"date-time"`
-	Budget        V1SubscriptionUpdateParamsBudget        `json:"budget,omitzero"`
+	TrialEndDate param.Opt[time.Time]             `json:"trialEndDate,omitzero" format:"date-time"`
+	Budget       V1SubscriptionUpdateParamsBudget `json:"budget,omitzero"`
+	// Minimum spend amount
 	MinimumSpend  V1SubscriptionUpdateParamsMinimumSpend  `json:"minimumSpend,omitzero"`
 	Addons        []V1SubscriptionUpdateParamsAddon       `json:"addons,omitzero"`
 	AppliedCoupon V1SubscriptionUpdateParamsAppliedCoupon `json:"appliedCoupon,omitzero"`
@@ -1632,9 +2698,14 @@ func (r *V1SubscriptionUpdateParamsAppliedCouponDiscount) UnmarshalJSON(data []b
 	return apijson.UnmarshalRoot(data, r)
 }
 
-// The property Amount is required.
+// Monetary amount with currency
+//
+// The properties Amount, Currency are required.
 type V1SubscriptionUpdateParamsAppliedCouponDiscountAmountsOff struct {
+	// The price amount
 	Amount float64 `json:"amount" api:"required"`
+	// The price currency
+	//
 	// Any of "usd", "aed", "all", "amd", "ang", "aud", "awg", "azn", "bam", "bbd",
 	// "bdt", "bgn", "bif", "bmd", "bnd", "bsd", "bwp", "byn", "bzd", "brl", "cad",
 	// "cdf", "chf", "cny", "czk", "dkk", "dop", "dzd", "egp", "etb", "eur", "fjd",
@@ -1646,7 +2717,7 @@ type V1SubscriptionUpdateParamsAppliedCouponDiscountAmountsOff struct {
 	// "sek", "sgd", "sle", "sll", "sos", "szl", "thb", "tjs", "top", "try", "ttd",
 	// "tzs", "uah", "uzs", "vnd", "vuv", "wst", "xaf", "xcd", "yer", "zar", "zmw",
 	// "clp", "djf", "gnf", "ugx", "pyg", "xof", "xpf".
-	Currency string `json:"currency,omitzero"`
+	Currency string `json:"currency,omitzero" api:"required"`
 	paramObj
 }
 
@@ -1753,8 +2824,10 @@ const (
 
 // The properties HasSoftLimit, Limit are required.
 type V1SubscriptionUpdateParamsBudget struct {
-	HasSoftLimit bool    `json:"hasSoftLimit" api:"required"`
-	Limit        float64 `json:"limit" api:"required"`
+	// Whether the budget is a soft limit
+	HasSoftLimit bool `json:"hasSoftLimit" api:"required"`
+	// Maximum spending limit
+	Limit float64 `json:"limit" api:"required"`
 	paramObj
 }
 
@@ -1790,8 +2863,24 @@ func init() {
 	)
 }
 
+// Minimum spend amount
 type V1SubscriptionUpdateParamsMinimumSpend struct {
-	Minimum V1SubscriptionUpdateParamsMinimumSpendMinimum `json:"minimum,omitzero"`
+	// The price amount
+	Amount param.Opt[float64] `json:"amount,omitzero"`
+	// The price currency
+	//
+	// Any of "usd", "aed", "all", "amd", "ang", "aud", "awg", "azn", "bam", "bbd",
+	// "bdt", "bgn", "bif", "bmd", "bnd", "bsd", "bwp", "byn", "bzd", "brl", "cad",
+	// "cdf", "chf", "cny", "czk", "dkk", "dop", "dzd", "egp", "etb", "eur", "fjd",
+	// "gbp", "gel", "gip", "gmd", "gyd", "hkd", "hrk", "htg", "idr", "ils", "inr",
+	// "isk", "jmd", "jpy", "kes", "kgs", "khr", "kmf", "krw", "kyd", "kzt", "lbp",
+	// "lkr", "lrd", "lsl", "mad", "mdl", "mga", "mkd", "mmk", "mnt", "mop", "mro",
+	// "mvr", "mwk", "mxn", "myr", "mzn", "nad", "ngn", "nok", "npr", "nzd", "pgk",
+	// "php", "pkr", "pln", "qar", "ron", "rsd", "rub", "rwf", "sar", "sbd", "scr",
+	// "sek", "sgd", "sle", "sll", "sos", "szl", "thb", "tjs", "top", "try", "ttd",
+	// "tzs", "uah", "uzs", "vnd", "vuv", "wst", "xaf", "xcd", "yer", "zar", "zmw",
+	// "clp", "djf", "gnf", "ugx", "pyg", "xof", "xpf".
+	Currency string `json:"currency,omitzero"`
 	paramObj
 }
 
@@ -1803,9 +2892,25 @@ func (r *V1SubscriptionUpdateParamsMinimumSpend) UnmarshalJSON(data []byte) erro
 	return apijson.UnmarshalRoot(data, r)
 }
 
-// The property Amount is required.
-type V1SubscriptionUpdateParamsMinimumSpendMinimum struct {
-	Amount float64 `json:"amount" api:"required"`
+func init() {
+	apijson.RegisterFieldValidator[V1SubscriptionUpdateParamsMinimumSpend](
+		"currency", "usd", "aed", "all", "amd", "ang", "aud", "awg", "azn", "bam", "bbd", "bdt", "bgn", "bif", "bmd", "bnd", "bsd", "bwp", "byn", "bzd", "brl", "cad", "cdf", "chf", "cny", "czk", "dkk", "dop", "dzd", "egp", "etb", "eur", "fjd", "gbp", "gel", "gip", "gmd", "gyd", "hkd", "hrk", "htg", "idr", "ils", "inr", "isk", "jmd", "jpy", "kes", "kgs", "khr", "kmf", "krw", "kyd", "kzt", "lbp", "lkr", "lrd", "lsl", "mad", "mdl", "mga", "mkd", "mmk", "mnt", "mop", "mro", "mvr", "mwk", "mxn", "myr", "mzn", "nad", "ngn", "nok", "npr", "nzd", "pgk", "php", "pkr", "pln", "qar", "ron", "rsd", "rub", "rwf", "sar", "sbd", "scr", "sek", "sgd", "sle", "sll", "sos", "szl", "thb", "tjs", "top", "try", "ttd", "tzs", "uah", "uzs", "vnd", "vuv", "wst", "xaf", "xcd", "yer", "zar", "zmw", "clp", "djf", "gnf", "ugx", "pyg", "xof", "xpf",
+	)
+}
+
+type V1SubscriptionUpdateParamsPriceOverride struct {
+	// Addon ID
+	AddonID param.Opt[string] `json:"addonId,omitzero"`
+	// The price amount
+	Amount param.Opt[float64] `json:"amount,omitzero"`
+	// Whether this is a base charge override
+	BaseCharge param.Opt[bool] `json:"baseCharge,omitzero"`
+	// The corresponding custom currency id of the recurring credits price
+	CurrencyID param.Opt[string] `json:"currencyId,omitzero"`
+	// Feature ID
+	FeatureID param.Opt[string] `json:"featureId,omitzero"`
+	// The price currency
+	//
 	// Any of "usd", "aed", "all", "amd", "ang", "aud", "awg", "azn", "bam", "bbd",
 	// "bdt", "bgn", "bif", "bmd", "bnd", "bsd", "bwp", "byn", "bzd", "brl", "cad",
 	// "cdf", "chf", "cny", "czk", "dkk", "dop", "dzd", "egp", "etb", "eur", "fjd",
@@ -1818,33 +2923,6 @@ type V1SubscriptionUpdateParamsMinimumSpendMinimum struct {
 	// "tzs", "uah", "uzs", "vnd", "vuv", "wst", "xaf", "xcd", "yer", "zar", "zmw",
 	// "clp", "djf", "gnf", "ugx", "pyg", "xof", "xpf".
 	Currency string `json:"currency,omitzero"`
-	paramObj
-}
-
-func (r V1SubscriptionUpdateParamsMinimumSpendMinimum) MarshalJSON() (data []byte, err error) {
-	type shadow V1SubscriptionUpdateParamsMinimumSpendMinimum
-	return param.MarshalObject(r, (*shadow)(&r))
-}
-func (r *V1SubscriptionUpdateParamsMinimumSpendMinimum) UnmarshalJSON(data []byte) error {
-	return apijson.UnmarshalRoot(data, r)
-}
-
-func init() {
-	apijson.RegisterFieldValidator[V1SubscriptionUpdateParamsMinimumSpendMinimum](
-		"currency", "usd", "aed", "all", "amd", "ang", "aud", "awg", "azn", "bam", "bbd", "bdt", "bgn", "bif", "bmd", "bnd", "bsd", "bwp", "byn", "bzd", "brl", "cad", "cdf", "chf", "cny", "czk", "dkk", "dop", "dzd", "egp", "etb", "eur", "fjd", "gbp", "gel", "gip", "gmd", "gyd", "hkd", "hrk", "htg", "idr", "ils", "inr", "isk", "jmd", "jpy", "kes", "kgs", "khr", "kmf", "krw", "kyd", "kzt", "lbp", "lkr", "lrd", "lsl", "mad", "mdl", "mga", "mkd", "mmk", "mnt", "mop", "mro", "mvr", "mwk", "mxn", "myr", "mzn", "nad", "ngn", "nok", "npr", "nzd", "pgk", "php", "pkr", "pln", "qar", "ron", "rsd", "rub", "rwf", "sar", "sbd", "scr", "sek", "sgd", "sle", "sll", "sos", "szl", "thb", "tjs", "top", "try", "ttd", "tzs", "uah", "uzs", "vnd", "vuv", "wst", "xaf", "xcd", "yer", "zar", "zmw", "clp", "djf", "gnf", "ugx", "pyg", "xof", "xpf",
-	)
-}
-
-type V1SubscriptionUpdateParamsPriceOverride struct {
-	// Addon ID
-	AddonID param.Opt[string] `json:"addonId,omitzero"`
-	// Whether this is a base charge override
-	BaseCharge param.Opt[bool] `json:"baseCharge,omitzero"`
-	// The corresponding custom currency id of the recurring credits price
-	CurrencyID param.Opt[string] `json:"currencyId,omitzero"`
-	// Feature ID
-	FeatureID param.Opt[string]                            `json:"featureId,omitzero"`
-	Price     V1SubscriptionUpdateParamsPriceOverridePrice `json:"price,omitzero"`
 	paramObj
 }
 
@@ -1856,34 +2934,8 @@ func (r *V1SubscriptionUpdateParamsPriceOverride) UnmarshalJSON(data []byte) err
 	return apijson.UnmarshalRoot(data, r)
 }
 
-// The property Amount is required.
-type V1SubscriptionUpdateParamsPriceOverridePrice struct {
-	Amount float64 `json:"amount" api:"required"`
-	// Any of "usd", "aed", "all", "amd", "ang", "aud", "awg", "azn", "bam", "bbd",
-	// "bdt", "bgn", "bif", "bmd", "bnd", "bsd", "bwp", "byn", "bzd", "brl", "cad",
-	// "cdf", "chf", "cny", "czk", "dkk", "dop", "dzd", "egp", "etb", "eur", "fjd",
-	// "gbp", "gel", "gip", "gmd", "gyd", "hkd", "hrk", "htg", "idr", "ils", "inr",
-	// "isk", "jmd", "jpy", "kes", "kgs", "khr", "kmf", "krw", "kyd", "kzt", "lbp",
-	// "lkr", "lrd", "lsl", "mad", "mdl", "mga", "mkd", "mmk", "mnt", "mop", "mro",
-	// "mvr", "mwk", "mxn", "myr", "mzn", "nad", "ngn", "nok", "npr", "nzd", "pgk",
-	// "php", "pkr", "pln", "qar", "ron", "rsd", "rub", "rwf", "sar", "sbd", "scr",
-	// "sek", "sgd", "sle", "sll", "sos", "szl", "thb", "tjs", "top", "try", "ttd",
-	// "tzs", "uah", "uzs", "vnd", "vuv", "wst", "xaf", "xcd", "yer", "zar", "zmw",
-	// "clp", "djf", "gnf", "ugx", "pyg", "xof", "xpf".
-	Currency string `json:"currency,omitzero"`
-	paramObj
-}
-
-func (r V1SubscriptionUpdateParamsPriceOverridePrice) MarshalJSON() (data []byte, err error) {
-	type shadow V1SubscriptionUpdateParamsPriceOverridePrice
-	return param.MarshalObject(r, (*shadow)(&r))
-}
-func (r *V1SubscriptionUpdateParamsPriceOverridePrice) UnmarshalJSON(data []byte) error {
-	return apijson.UnmarshalRoot(data, r)
-}
-
 func init() {
-	apijson.RegisterFieldValidator[V1SubscriptionUpdateParamsPriceOverridePrice](
+	apijson.RegisterFieldValidator[V1SubscriptionUpdateParamsPriceOverride](
 		"currency", "usd", "aed", "all", "amd", "ang", "aud", "awg", "azn", "bam", "bbd", "bdt", "bgn", "bif", "bmd", "bnd", "bsd", "bwp", "byn", "bzd", "brl", "cad", "cdf", "chf", "cny", "czk", "dkk", "dop", "dzd", "egp", "etb", "eur", "fjd", "gbp", "gel", "gip", "gmd", "gyd", "hkd", "hrk", "htg", "idr", "ils", "inr", "isk", "jmd", "jpy", "kes", "kgs", "khr", "kmf", "krw", "kyd", "kzt", "lbp", "lkr", "lrd", "lsl", "mad", "mdl", "mga", "mkd", "mmk", "mnt", "mop", "mro", "mvr", "mwk", "mxn", "myr", "mzn", "nad", "ngn", "nok", "npr", "nzd", "pgk", "php", "pkr", "pln", "qar", "ron", "rsd", "rub", "rwf", "sar", "sbd", "scr", "sek", "sgd", "sle", "sll", "sos", "szl", "thb", "tjs", "top", "try", "ttd", "tzs", "uah", "uzs", "vnd", "vuv", "wst", "xaf", "xcd", "yer", "zar", "zmw", "clp", "djf", "gnf", "ugx", "pyg", "xof", "xpf",
 	)
 }
@@ -2596,9 +3648,10 @@ type V1SubscriptionProvisionParams struct {
 	// Whether to wait for payment confirmation before returning the subscription
 	AwaitPaymentConfirmation param.Opt[bool] `json:"awaitPaymentConfirmation,omitzero"`
 	// Subscription start date
-	StartDate    param.Opt[time.Time]                      `json:"startDate,omitzero" format:"date-time"`
-	UnitQuantity param.Opt[float64]                        `json:"unitQuantity,omitzero"`
-	Budget       V1SubscriptionProvisionParamsBudget       `json:"budget,omitzero"`
+	StartDate    param.Opt[time.Time]                `json:"startDate,omitzero" format:"date-time"`
+	UnitQuantity param.Opt[float64]                  `json:"unitQuantity,omitzero"`
+	Budget       V1SubscriptionProvisionParamsBudget `json:"budget,omitzero"`
+	// Minimum spend amount
 	MinimumSpend V1SubscriptionProvisionParamsMinimumSpend `json:"minimumSpend,omitzero"`
 	Addons       []V1SubscriptionProvisionParamsAddon      `json:"addons,omitzero"`
 	// Coupon configuration
@@ -2924,24 +3977,8 @@ func (r *V1SubscriptionProvisionParamsCheckoutOptions) UnmarshalJSON(data []byte
 	return apijson.UnmarshalRoot(data, r)
 }
 
-type V1SubscriptionProvisionParamsMinimumSpend struct {
-	// Minimum spend amount
-	Minimum V1SubscriptionProvisionParamsMinimumSpendMinimum `json:"minimum,omitzero"`
-	paramObj
-}
-
-func (r V1SubscriptionProvisionParamsMinimumSpend) MarshalJSON() (data []byte, err error) {
-	type shadow V1SubscriptionProvisionParamsMinimumSpend
-	return param.MarshalObject(r, (*shadow)(&r))
-}
-func (r *V1SubscriptionProvisionParamsMinimumSpend) UnmarshalJSON(data []byte) error {
-	return apijson.UnmarshalRoot(data, r)
-}
-
 // Minimum spend amount
-type V1SubscriptionProvisionParamsMinimumSpendMinimum struct {
-	// The billing country code of the price
-	BillingCountryCode param.Opt[string] `json:"billingCountryCode,omitzero"`
+type V1SubscriptionProvisionParamsMinimumSpend struct {
 	// The price amount
 	Amount param.Opt[float64] `json:"amount,omitzero"`
 	// The price currency
@@ -2961,16 +3998,16 @@ type V1SubscriptionProvisionParamsMinimumSpendMinimum struct {
 	paramObj
 }
 
-func (r V1SubscriptionProvisionParamsMinimumSpendMinimum) MarshalJSON() (data []byte, err error) {
-	type shadow V1SubscriptionProvisionParamsMinimumSpendMinimum
+func (r V1SubscriptionProvisionParamsMinimumSpend) MarshalJSON() (data []byte, err error) {
+	type shadow V1SubscriptionProvisionParamsMinimumSpend
 	return param.MarshalObject(r, (*shadow)(&r))
 }
-func (r *V1SubscriptionProvisionParamsMinimumSpendMinimum) UnmarshalJSON(data []byte) error {
+func (r *V1SubscriptionProvisionParamsMinimumSpend) UnmarshalJSON(data []byte) error {
 	return apijson.UnmarshalRoot(data, r)
 }
 
 func init() {
-	apijson.RegisterFieldValidator[V1SubscriptionProvisionParamsMinimumSpendMinimum](
+	apijson.RegisterFieldValidator[V1SubscriptionProvisionParamsMinimumSpend](
 		"currency", "usd", "aed", "all", "amd", "ang", "aud", "awg", "azn", "bam", "bbd", "bdt", "bgn", "bif", "bmd", "bnd", "bsd", "bwp", "byn", "bzd", "brl", "cad", "cdf", "chf", "cny", "czk", "dkk", "dop", "dzd", "egp", "etb", "eur", "fjd", "gbp", "gel", "gip", "gmd", "gyd", "hkd", "hrk", "htg", "idr", "ils", "inr", "isk", "jmd", "jpy", "kes", "kgs", "khr", "kmf", "krw", "kyd", "kzt", "lbp", "lkr", "lrd", "lsl", "mad", "mdl", "mga", "mkd", "mmk", "mnt", "mop", "mro", "mvr", "mwk", "mxn", "myr", "mzn", "nad", "ngn", "nok", "npr", "nzd", "pgk", "php", "pkr", "pln", "qar", "ron", "rsd", "rub", "rwf", "sar", "sbd", "scr", "sek", "sgd", "sle", "sll", "sos", "szl", "thb", "tjs", "top", "try", "ttd", "tzs", "uah", "uzs", "vnd", "vuv", "wst", "xaf", "xcd", "yer", "zar", "zmw", "clp", "djf", "gnf", "ugx", "pyg", "xof", "xpf",
 	)
 }
@@ -2989,15 +4026,31 @@ type V1SubscriptionProvisionParamsPriceOverride struct {
 	AddonID param.Opt[string] `json:"addonId,omitzero"`
 	// Feature identifier for the price override
 	FeatureID param.Opt[string] `json:"featureId,omitzero"`
+	// The price amount
+	Amount param.Opt[float64] `json:"amount,omitzero"`
 	// Whether this is a base charge override
 	BaseCharge param.Opt[bool] `json:"baseCharge,omitzero"`
+	// The billing country code of the price
+	BillingCountryCode param.Opt[string] `json:"billingCountryCode,omitzero"`
 	// Block size for pricing
 	BlockSize param.Opt[float64] `json:"blockSize,omitzero"`
 	// Any of "BEGINNING_OF_BILLING_PERIOD", "MONTHLY".
 	CreditGrantCadence string                                               `json:"creditGrantCadence,omitzero"`
 	CreditRate         V1SubscriptionProvisionParamsPriceOverrideCreditRate `json:"creditRate,omitzero"`
-	// Override price amount
-	Price V1SubscriptionProvisionParamsPriceOverridePrice `json:"price,omitzero"`
+	// The price currency
+	//
+	// Any of "usd", "aed", "all", "amd", "ang", "aud", "awg", "azn", "bam", "bbd",
+	// "bdt", "bgn", "bif", "bmd", "bnd", "bsd", "bwp", "byn", "bzd", "brl", "cad",
+	// "cdf", "chf", "cny", "czk", "dkk", "dop", "dzd", "egp", "etb", "eur", "fjd",
+	// "gbp", "gel", "gip", "gmd", "gyd", "hkd", "hrk", "htg", "idr", "ils", "inr",
+	// "isk", "jmd", "jpy", "kes", "kgs", "khr", "kmf", "krw", "kyd", "kzt", "lbp",
+	// "lkr", "lrd", "lsl", "mad", "mdl", "mga", "mkd", "mmk", "mnt", "mop", "mro",
+	// "mvr", "mwk", "mxn", "myr", "mzn", "nad", "ngn", "nok", "npr", "nzd", "pgk",
+	// "php", "pkr", "pln", "qar", "ron", "rsd", "rub", "rwf", "sar", "sbd", "scr",
+	// "sek", "sgd", "sle", "sll", "sos", "szl", "thb", "tjs", "top", "try", "ttd",
+	// "tzs", "uah", "uzs", "vnd", "vuv", "wst", "xaf", "xcd", "yer", "zar", "zmw",
+	// "clp", "djf", "gnf", "ugx", "pyg", "xof", "xpf".
+	Currency string `json:"currency,omitzero"`
 	// Pricing tiers configuration
 	Tiers []V1SubscriptionProvisionParamsPriceOverrideTier `json:"tiers,omitzero"`
 	paramObj
@@ -3014,6 +4067,9 @@ func (r *V1SubscriptionProvisionParamsPriceOverride) UnmarshalJSON(data []byte) 
 func init() {
 	apijson.RegisterFieldValidator[V1SubscriptionProvisionParamsPriceOverride](
 		"creditGrantCadence", "BEGINNING_OF_BILLING_PERIOD", "MONTHLY",
+	)
+	apijson.RegisterFieldValidator[V1SubscriptionProvisionParamsPriceOverride](
+		"currency", "usd", "aed", "all", "amd", "ang", "aud", "awg", "azn", "bam", "bbd", "bdt", "bgn", "bif", "bmd", "bnd", "bsd", "bwp", "byn", "bzd", "brl", "cad", "cdf", "chf", "cny", "czk", "dkk", "dop", "dzd", "egp", "etb", "eur", "fjd", "gbp", "gel", "gip", "gmd", "gyd", "hkd", "hrk", "htg", "idr", "ils", "inr", "isk", "jmd", "jpy", "kes", "kgs", "khr", "kmf", "krw", "kyd", "kzt", "lbp", "lkr", "lrd", "lsl", "mad", "mdl", "mga", "mkd", "mmk", "mnt", "mop", "mro", "mvr", "mwk", "mxn", "myr", "mzn", "nad", "ngn", "nok", "npr", "nzd", "pgk", "php", "pkr", "pln", "qar", "ron", "rsd", "rub", "rwf", "sar", "sbd", "scr", "sek", "sgd", "sle", "sll", "sos", "szl", "thb", "tjs", "top", "try", "ttd", "tzs", "uah", "uzs", "vnd", "vuv", "wst", "xaf", "xcd", "yer", "zar", "zmw", "clp", "djf", "gnf", "ugx", "pyg", "xof", "xpf",
 	)
 }
 
@@ -3036,43 +4092,6 @@ func (r *V1SubscriptionProvisionParamsPriceOverrideCreditRate) UnmarshalJSON(dat
 	return apijson.UnmarshalRoot(data, r)
 }
 
-// Override price amount
-type V1SubscriptionProvisionParamsPriceOverridePrice struct {
-	// The billing country code of the price
-	BillingCountryCode param.Opt[string] `json:"billingCountryCode,omitzero"`
-	// The price amount
-	Amount param.Opt[float64] `json:"amount,omitzero"`
-	// The price currency
-	//
-	// Any of "usd", "aed", "all", "amd", "ang", "aud", "awg", "azn", "bam", "bbd",
-	// "bdt", "bgn", "bif", "bmd", "bnd", "bsd", "bwp", "byn", "bzd", "brl", "cad",
-	// "cdf", "chf", "cny", "czk", "dkk", "dop", "dzd", "egp", "etb", "eur", "fjd",
-	// "gbp", "gel", "gip", "gmd", "gyd", "hkd", "hrk", "htg", "idr", "ils", "inr",
-	// "isk", "jmd", "jpy", "kes", "kgs", "khr", "kmf", "krw", "kyd", "kzt", "lbp",
-	// "lkr", "lrd", "lsl", "mad", "mdl", "mga", "mkd", "mmk", "mnt", "mop", "mro",
-	// "mvr", "mwk", "mxn", "myr", "mzn", "nad", "ngn", "nok", "npr", "nzd", "pgk",
-	// "php", "pkr", "pln", "qar", "ron", "rsd", "rub", "rwf", "sar", "sbd", "scr",
-	// "sek", "sgd", "sle", "sll", "sos", "szl", "thb", "tjs", "top", "try", "ttd",
-	// "tzs", "uah", "uzs", "vnd", "vuv", "wst", "xaf", "xcd", "yer", "zar", "zmw",
-	// "clp", "djf", "gnf", "ugx", "pyg", "xof", "xpf".
-	Currency string `json:"currency,omitzero"`
-	paramObj
-}
-
-func (r V1SubscriptionProvisionParamsPriceOverridePrice) MarshalJSON() (data []byte, err error) {
-	type shadow V1SubscriptionProvisionParamsPriceOverridePrice
-	return param.MarshalObject(r, (*shadow)(&r))
-}
-func (r *V1SubscriptionProvisionParamsPriceOverridePrice) UnmarshalJSON(data []byte) error {
-	return apijson.UnmarshalRoot(data, r)
-}
-
-func init() {
-	apijson.RegisterFieldValidator[V1SubscriptionProvisionParamsPriceOverridePrice](
-		"currency", "usd", "aed", "all", "amd", "ang", "aud", "awg", "azn", "bam", "bbd", "bdt", "bgn", "bif", "bmd", "bnd", "bsd", "bwp", "byn", "bzd", "brl", "cad", "cdf", "chf", "cny", "czk", "dkk", "dop", "dzd", "egp", "etb", "eur", "fjd", "gbp", "gel", "gip", "gmd", "gyd", "hkd", "hrk", "htg", "idr", "ils", "inr", "isk", "jmd", "jpy", "kes", "kgs", "khr", "kmf", "krw", "kyd", "kzt", "lbp", "lkr", "lrd", "lsl", "mad", "mdl", "mga", "mkd", "mmk", "mnt", "mop", "mro", "mvr", "mwk", "mxn", "myr", "mzn", "nad", "ngn", "nok", "npr", "nzd", "pgk", "php", "pkr", "pln", "qar", "ron", "rsd", "rub", "rwf", "sar", "sbd", "scr", "sek", "sgd", "sle", "sll", "sos", "szl", "thb", "tjs", "top", "try", "ttd", "tzs", "uah", "uzs", "vnd", "vuv", "wst", "xaf", "xcd", "yer", "zar", "zmw", "clp", "djf", "gnf", "ugx", "pyg", "xof", "xpf",
-	)
-}
-
 type V1SubscriptionProvisionParamsPriceOverrideTier struct {
 	// The up to quantity of the price tier
 	UpTo param.Opt[float64] `json:"upTo,omitzero"`
@@ -3092,11 +4111,11 @@ func (r *V1SubscriptionProvisionParamsPriceOverrideTier) UnmarshalJSON(data []by
 }
 
 // The flat fee price of the price tier
+//
+// The properties Amount, Currency are required.
 type V1SubscriptionProvisionParamsPriceOverrideTierFlatPrice struct {
-	// The billing country code of the price
-	BillingCountryCode param.Opt[string] `json:"billingCountryCode,omitzero"`
 	// The price amount
-	Amount param.Opt[float64] `json:"amount,omitzero"`
+	Amount float64 `json:"amount" api:"required"`
 	// The price currency
 	//
 	// Any of "usd", "aed", "all", "amd", "ang", "aud", "awg", "azn", "bam", "bbd",
@@ -3110,7 +4129,7 @@ type V1SubscriptionProvisionParamsPriceOverrideTierFlatPrice struct {
 	// "sek", "sgd", "sle", "sll", "sos", "szl", "thb", "tjs", "top", "try", "ttd",
 	// "tzs", "uah", "uzs", "vnd", "vuv", "wst", "xaf", "xcd", "yer", "zar", "zmw",
 	// "clp", "djf", "gnf", "ugx", "pyg", "xof", "xpf".
-	Currency string `json:"currency,omitzero"`
+	Currency string `json:"currency,omitzero" api:"required"`
 	paramObj
 }
 
@@ -3129,11 +4148,11 @@ func init() {
 }
 
 // The unit price of the price tier
+//
+// The properties Amount, Currency are required.
 type V1SubscriptionProvisionParamsPriceOverrideTierUnitPrice struct {
-	// The billing country code of the price
-	BillingCountryCode param.Opt[string] `json:"billingCountryCode,omitzero"`
 	// The price amount
-	Amount param.Opt[float64] `json:"amount,omitzero"`
+	Amount float64 `json:"amount" api:"required"`
 	// The price currency
 	//
 	// Any of "usd", "aed", "all", "amd", "ang", "aud", "awg", "azn", "bam", "bbd",
@@ -3147,7 +4166,7 @@ type V1SubscriptionProvisionParamsPriceOverrideTierUnitPrice struct {
 	// "sek", "sgd", "sle", "sll", "sos", "szl", "thb", "tjs", "top", "try", "ttd",
 	// "tzs", "uah", "uzs", "vnd", "vuv", "wst", "xaf", "xcd", "yer", "zar", "zmw",
 	// "clp", "djf", "gnf", "ugx", "pyg", "xof", "xpf".
-	Currency string `json:"currency,omitzero"`
+	Currency string `json:"currency,omitzero" api:"required"`
 	paramObj
 }
 
