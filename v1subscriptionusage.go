@@ -17,6 +17,8 @@ import (
 	"github.com/stiggio/stigg-go/packages/respjson"
 )
 
+// Operations related to subscriptions
+//
 // V1SubscriptionUsageService contains methods and other services that help with
 // interacting with the stigg API.
 //
