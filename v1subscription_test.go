@@ -118,20 +118,16 @@ func TestV1SubscriptionUpdateWithOptionalParams(t *testing.T) {
 				"foo": "string",
 			},
 			MinimumSpend: stigg.V1SubscriptionUpdateParamsMinimumSpend{
-				Minimum: stigg.V1SubscriptionUpdateParamsMinimumSpendMinimum{
-					Amount:   0,
-					Currency: "usd",
-				},
+				Amount:   stigg.Float(0),
+				Currency: "usd",
 			},
 			PriceOverrides: []stigg.V1SubscriptionUpdateParamsPriceOverride{{
 				AddonID:    stigg.String("addonId"),
+				Amount:     stigg.Float(0),
 				BaseCharge: stigg.Bool(true),
+				Currency:   "usd",
 				CurrencyID: stigg.String("currencyId"),
 				FeatureID:  stigg.String("featureId"),
-				Price: stigg.V1SubscriptionUpdateParamsPriceOverridePrice{
-					Amount:   0,
-					Currency: "usd",
-				},
 			}},
 			PromotionCode:    stigg.String("promotionCode"),
 			ScheduleStrategy: stigg.V1SubscriptionUpdateParamsScheduleStrategyEndOfBillingPeriod,
@@ -523,17 +519,16 @@ func TestV1SubscriptionProvisionWithOptionalParams(t *testing.T) {
 			"foo": "string",
 		},
 		MinimumSpend: stigg.V1SubscriptionProvisionParamsMinimumSpend{
-			Minimum: stigg.V1SubscriptionProvisionParamsMinimumSpendMinimum{
-				Amount:             stigg.Float(0),
-				BillingCountryCode: stigg.String("billingCountryCode"),
-				Currency:           "usd",
-			},
+			Amount:   stigg.Float(0),
+			Currency: "usd",
 		},
 		PayingCustomerID:        stigg.String("payingCustomerId"),
 		PaymentCollectionMethod: stigg.V1SubscriptionProvisionParamsPaymentCollectionMethodCharge,
 		PriceOverrides: []stigg.V1SubscriptionProvisionParamsPriceOverride{{
 			AddonID:            stigg.String("addonId"),
+			Amount:             stigg.Float(0),
 			BaseCharge:         stigg.Bool(true),
+			BillingCountryCode: stigg.String("billingCountryCode"),
 			BlockSize:          stigg.Float(0),
 			CreditGrantCadence: "BEGINNING_OF_BILLING_PERIOD",
 			CreditRate: stigg.V1SubscriptionProvisionParamsPriceOverrideCreditRate{
@@ -541,22 +536,16 @@ func TestV1SubscriptionProvisionWithOptionalParams(t *testing.T) {
 				CurrencyID:  "currencyId",
 				CostFormula: stigg.String("costFormula"),
 			},
+			Currency:  "usd",
 			FeatureID: stigg.String("featureId"),
-			Price: stigg.V1SubscriptionProvisionParamsPriceOverridePrice{
-				Amount:             stigg.Float(0),
-				BillingCountryCode: stigg.String("billingCountryCode"),
-				Currency:           "usd",
-			},
 			Tiers: []stigg.V1SubscriptionProvisionParamsPriceOverrideTier{{
 				FlatPrice: stigg.V1SubscriptionProvisionParamsPriceOverrideTierFlatPrice{
-					Amount:             stigg.Float(0),
-					BillingCountryCode: stigg.String("billingCountryCode"),
-					Currency:           "usd",
+					Amount:   0,
+					Currency: "usd",
 				},
 				UnitPrice: stigg.V1SubscriptionProvisionParamsPriceOverrideTierUnitPrice{
-					Amount:             stigg.Float(0),
-					BillingCountryCode: stigg.String("billingCountryCode"),
-					Currency:           "usd",
+					Amount:   0,
+					Currency: "usd",
 				},
 				UpTo: stigg.Float(0),
 			}},
