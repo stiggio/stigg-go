@@ -28,10 +28,13 @@ import (
 // automatically. You should not instantiate this service directly, and instead use
 // the [NewV1SubscriptionService] method instead.
 type V1SubscriptionService struct {
-	Options      []option.RequestOption
+	Options []option.RequestOption
+	// Operations related to subscriptions
 	FutureUpdate V1SubscriptionFutureUpdateService
-	Usage        V1SubscriptionUsageService
-	Invoice      V1SubscriptionInvoiceService
+	// Operations related to subscriptions
+	Usage V1SubscriptionUsageService
+	// Operations related to subscriptions
+	Invoice V1SubscriptionInvoiceService
 }
 
 // NewV1SubscriptionService generates a new service that applies the given options

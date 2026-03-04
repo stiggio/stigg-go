@@ -20,6 +20,8 @@ import (
 	"github.com/stiggio/stigg-go/packages/respjson"
 )
 
+// Operations related to products
+//
 // V1ProductService contains methods and other services that help with interacting
 // with the stigg API.
 //

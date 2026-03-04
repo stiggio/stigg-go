@@ -15,6 +15,8 @@ import (
 	"github.com/stiggio/stigg-go/packages/param"
 )
 
+// Operations related to customers
+//
 // V1CustomerPaymentMethodService contains methods and other services that help
 // with interacting with the stigg API.
 //

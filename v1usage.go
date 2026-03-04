@@ -19,6 +19,8 @@ import (
 	"github.com/stiggio/stigg-go/packages/respjson"
 )
 
+// Operations related to usage & metering
+//
 // V1UsageService contains methods and other services that help with interacting
 // with the stigg API.
 //

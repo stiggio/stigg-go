@@ -22,6 +22,8 @@ import (
 	"github.com/stiggio/stigg-go/packages/respjson"
 )
 
+// Operations related to plans
+//
 // V1PlanService contains methods and other services that help with interacting
 // with the stigg API.
 //
