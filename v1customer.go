@@ -27,8 +27,10 @@ import (
 // automatically. You should not instantiate this service directly, and instead use
 // the [NewV1CustomerService] method instead.
 type V1CustomerService struct {
-	Options                 []option.RequestOption
-	PaymentMethod           V1CustomerPaymentMethodService
+	Options []option.RequestOption
+	// Operations related to customers
+	PaymentMethod V1CustomerPaymentMethodService
+	// Operations related to promotional entitlements
 	PromotionalEntitlements V1CustomerPromotionalEntitlementService
 }
 

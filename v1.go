@@ -16,13 +16,20 @@ type V1Service struct {
 	Options       []option.RequestOption
 	Customers     V1CustomerService
 	Subscriptions V1SubscriptionService
-	Coupons       V1CouponService
-	Events        V1EventService
-	Features      V1FeatureService
-	Addons        V1AddonService
-	Plans         V1PlanService
-	Usage         V1UsageService
-	Products      V1ProductService
+	// Operations related to coupons
+	Coupons V1CouponService
+	// Operations related to usage & metering
+	Events V1EventService
+	// Operations related to features
+	Features V1FeatureService
+	// Operations related to addons
+	Addons V1AddonService
+	// Operations related to plans
+	Plans V1PlanService
+	// Operations related to usage & metering
+	Usage V1UsageService
+	// Operations related to products
+	Products V1ProductService
 }
 
 // NewV1Service generates a new service that applies the given options to each
