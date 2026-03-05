@@ -97,6 +97,7 @@ func TestV1AddonUpdateWithOptionalParams(t *testing.T) {
 			Metadata: map[string]string{
 				"foo": "string",
 			},
+			Status: stigg.V1AddonUpdateParamsStatusDraft,
 		},
 	)
 	if err != nil {

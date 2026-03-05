@@ -1333,6 +1333,10 @@ type V1AddonUpdateParams struct {
 	Dependencies []string `json:"dependencies,omitzero"`
 	// Metadata associated with the entity
 	Metadata map[string]string `json:"metadata,omitzero"`
+	// The status of the package
+	//
+	// Any of "DRAFT", "PUBLISHED", "ARCHIVED".
+	Status V1AddonUpdateParamsStatus `json:"status,omitzero"`
 	paramObj
 }
 
@@ -1343,6 +1347,15 @@ func (r V1AddonUpdateParams) MarshalJSON() (data []byte, err error) {
 func (r *V1AddonUpdateParams) UnmarshalJSON(data []byte) error {
 	return apijson.UnmarshalRoot(data, r)
 }
+
+// The status of the package
+type V1AddonUpdateParamsStatus string
+
+const (
+	V1AddonUpdateParamsStatusDraft     V1AddonUpdateParamsStatus = "DRAFT"
+	V1AddonUpdateParamsStatusPublished V1AddonUpdateParamsStatus = "PUBLISHED"
+	V1AddonUpdateParamsStatusArchived  V1AddonUpdateParamsStatus = "ARCHIVED"
+)
 
 type V1AddonListParams struct {
 	// Return items that come after this cursor
