@@ -271,6 +271,9 @@ type V1UsageHistoryParams struct {
 	// The end date of the range
 	EndDate param.Opt[time.Time] `query:"endDate,omitzero" format:"date-time" json:"-"`
 	GroupBy param.Opt[string]    `query:"groupBy,omitzero" json:"-"`
+	// When true, includes usage data from the most recent cancelled or expired
+	// subscription
+	IncludeHistoricalUsage param.Opt[bool] `query:"includeHistoricalUsage,omitzero" json:"-"`
 	paramObj
 }
 
