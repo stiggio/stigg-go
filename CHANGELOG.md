@@ -1,5 +1,14 @@
 # Changelog
 
+## 0.1.0-alpha.16 (2026-03-07)
+
+Full Changelog: [v0.1.0-alpha.15...v0.1.0-alpha.16](https://github.com/stiggio/stigg-go/compare/v0.1.0-alpha.15...v0.1.0-alpha.16)
+
+### Chores
+
+* **ci:** skip uploading artifacts on stainless-internal branches ([89c72f6](https://github.com/stiggio/stigg-go/commit/89c72f69b0a64cab7d976b104eaa8f2e6c7b99f9))
+* **internal:** codegen related update ([5a443f6](https://github.com/stiggio/stigg-go/commit/5a443f67ca4a53a1fec8fd61f2652fd470a7b48f))
+
 ## 0.1.0-alpha.15 (2026-03-05)
 
 Full Changelog: [v0.1.0-alpha.14...v0.1.0-alpha.15](https://github.com/stiggio/stigg-go/compare/v0.1.0-alpha.14...v0.1.0-alpha.15)
