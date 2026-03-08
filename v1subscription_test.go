@@ -114,6 +114,29 @@ func TestV1SubscriptionUpdateWithOptionalParams(t *testing.T) {
 				Quantity: 1,
 				Type:     "FEATURE",
 			}},
+			Entitlements: []stigg.V1SubscriptionUpdateParamsEntitlement{{
+				Credit: stigg.V1SubscriptionUpdateParamsEntitlementCredit{
+					Amount:     1,
+					Cadence:    "MONTH",
+					CurrencyID: "currencyId",
+				},
+				Feature: stigg.V1SubscriptionUpdateParamsEntitlementFeature{
+					FeatureID:         "featureId",
+					HasSoftLimit:      stigg.Bool(true),
+					HasUnlimitedUsage: stigg.Bool(true),
+					MonthlyResetPeriodConfiguration: stigg.V1SubscriptionUpdateParamsEntitlementFeatureMonthlyResetPeriodConfiguration{
+						AccordingTo: "SubscriptionStart",
+					},
+					ResetPeriod: "YEAR",
+					UsageLimit:  stigg.Int(0),
+					WeeklyResetPeriodConfiguration: stigg.V1SubscriptionUpdateParamsEntitlementFeatureWeeklyResetPeriodConfiguration{
+						AccordingTo: "SubscriptionStart",
+					},
+					YearlyResetPeriodConfiguration: stigg.V1SubscriptionUpdateParamsEntitlementFeatureYearlyResetPeriodConfiguration{
+						AccordingTo: "SubscriptionStart",
+					},
+				},
+			}},
 			Metadata: map[string]string{
 				"foo": "string",
 			},
@@ -131,24 +154,7 @@ func TestV1SubscriptionUpdateWithOptionalParams(t *testing.T) {
 			}},
 			PromotionCode:    stigg.String("promotionCode"),
 			ScheduleStrategy: stigg.V1SubscriptionUpdateParamsScheduleStrategyEndOfBillingPeriod,
-			SubscriptionEntitlements: []stigg.V1SubscriptionUpdateParamsSubscriptionEntitlement{{
-				ID:                stigg.String("id"),
-				FeatureID:         stigg.String("featureId"),
-				HasSoftLimit:      stigg.Bool(true),
-				HasUnlimitedUsage: stigg.Bool(true),
-				MonthlyResetPeriodConfiguration: stigg.V1SubscriptionUpdateParamsSubscriptionEntitlementMonthlyResetPeriodConfiguration{
-					AccordingTo: "SubscriptionStart",
-				},
-				ResetPeriod: "YEAR",
-				UsageLimit:  stigg.Float(0),
-				WeeklyResetPeriodConfiguration: stigg.V1SubscriptionUpdateParamsSubscriptionEntitlementWeeklyResetPeriodConfiguration{
-					AccordingTo: "SubscriptionStart",
-				},
-				YearlyResetPeriodConfiguration: stigg.V1SubscriptionUpdateParamsSubscriptionEntitlementYearlyResetPeriodConfiguration{
-					AccordingTo: "SubscriptionStart",
-				},
-			}},
-			TrialEndDate: stigg.Time(time.Now()),
+			TrialEndDate:     stigg.Time(time.Now()),
 		},
 	)
 	if err != nil {
@@ -515,6 +521,29 @@ func TestV1SubscriptionProvisionWithOptionalParams(t *testing.T) {
 			CollectPhoneNumber:    stigg.Bool(true),
 			ReferenceID:           stigg.String("referenceId"),
 		},
+		Entitlements: []stigg.V1SubscriptionProvisionParamsEntitlement{{
+			Credit: stigg.V1SubscriptionProvisionParamsEntitlementCredit{
+				Amount:     1,
+				Cadence:    "MONTH",
+				CurrencyID: "currencyId",
+			},
+			Feature: stigg.V1SubscriptionProvisionParamsEntitlementFeature{
+				FeatureID:         "featureId",
+				HasSoftLimit:      stigg.Bool(true),
+				HasUnlimitedUsage: stigg.Bool(true),
+				MonthlyResetPeriodConfiguration: stigg.V1SubscriptionProvisionParamsEntitlementFeatureMonthlyResetPeriodConfiguration{
+					AccordingTo: "SubscriptionStart",
+				},
+				ResetPeriod: "YEAR",
+				UsageLimit:  stigg.Int(0),
+				WeeklyResetPeriodConfiguration: stigg.V1SubscriptionProvisionParamsEntitlementFeatureWeeklyResetPeriodConfiguration{
+					AccordingTo: "SubscriptionStart",
+				},
+				YearlyResetPeriodConfiguration: stigg.V1SubscriptionProvisionParamsEntitlementFeatureYearlyResetPeriodConfiguration{
+					AccordingTo: "SubscriptionStart",
+				},
+			},
+		}},
 		Metadata: map[string]string{
 			"foo": "string",
 		},
@@ -554,11 +583,6 @@ func TestV1SubscriptionProvisionWithOptionalParams(t *testing.T) {
 		SalesforceID:     stigg.String("salesforceId"),
 		ScheduleStrategy: stigg.V1SubscriptionProvisionParamsScheduleStrategyEndOfBillingPeriod,
 		StartDate:        stigg.Time(time.Now()),
-		SubscriptionEntitlements: []stigg.V1SubscriptionProvisionParamsSubscriptionEntitlement{{
-			FeatureID:  "featureId",
-			UsageLimit: 0,
-			IsGranted:  stigg.Bool(true),
-		}},
 		TrialOverrideConfiguration: stigg.V1SubscriptionProvisionParamsTrialOverrideConfiguration{
 			IsTrial:          true,
 			TrialEndBehavior: "CONVERT_TO_PAID",
