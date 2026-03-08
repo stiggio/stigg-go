@@ -2614,12 +2614,12 @@ type V1SubscriptionUpdateParams struct {
 	// Any of "MONTHLY", "ANNUALLY".
 	BillingPeriod V1SubscriptionUpdateParamsBillingPeriod `json:"billingPeriod,omitzero"`
 	Charges       []V1SubscriptionUpdateParamsCharge      `json:"charges,omitzero"`
+	Entitlements  []V1SubscriptionUpdateParamsEntitlement `json:"entitlements,omitzero"`
 	// Additional metadata for the subscription
 	Metadata       map[string]string                         `json:"metadata,omitzero"`
 	PriceOverrides []V1SubscriptionUpdateParamsPriceOverride `json:"priceOverrides,omitzero"`
 	// Any of "END_OF_BILLING_PERIOD", "END_OF_BILLING_MONTH", "IMMEDIATE".
-	ScheduleStrategy         V1SubscriptionUpdateParamsScheduleStrategy          `json:"scheduleStrategy,omitzero"`
-	SubscriptionEntitlements []V1SubscriptionUpdateParamsSubscriptionEntitlement `json:"subscriptionEntitlements,omitzero"`
+	ScheduleStrategy V1SubscriptionUpdateParamsScheduleStrategy `json:"scheduleStrategy,omitzero"`
 	paramObj
 }
 
@@ -2863,6 +2863,167 @@ func init() {
 	)
 }
 
+// A single subscription entitlement. Provide exactly one of feature or credit.
+type V1SubscriptionUpdateParamsEntitlement struct {
+	// Credit entitlement configuration
+	Credit V1SubscriptionUpdateParamsEntitlementCredit `json:"credit,omitzero"`
+	// Feature entitlement configuration
+	Feature V1SubscriptionUpdateParamsEntitlementFeature `json:"feature,omitzero"`
+	paramObj
+}
+
+func (r V1SubscriptionUpdateParamsEntitlement) MarshalJSON() (data []byte, err error) {
+	type shadow V1SubscriptionUpdateParamsEntitlement
+	return param.MarshalObject(r, (*shadow)(&r))
+}
+func (r *V1SubscriptionUpdateParamsEntitlement) UnmarshalJSON(data []byte) error {
+	return apijson.UnmarshalRoot(data, r)
+}
+
+// Credit entitlement configuration
+//
+// The properties Amount, Cadence, CurrencyID are required.
+type V1SubscriptionUpdateParamsEntitlementCredit struct {
+	// Credit grant amount
+	Amount float64 `json:"amount" api:"required"`
+	// Credit grant cadence (MONTH or YEAR)
+	//
+	// Any of "MONTH", "YEAR".
+	Cadence string `json:"cadence,omitzero" api:"required"`
+	// The custom currency ID for the credit entitlement
+	CurrencyID string `json:"currencyId" api:"required"`
+	paramObj
+}
+
+func (r V1SubscriptionUpdateParamsEntitlementCredit) MarshalJSON() (data []byte, err error) {
+	type shadow V1SubscriptionUpdateParamsEntitlementCredit
+	return param.MarshalObject(r, (*shadow)(&r))
+}
+func (r *V1SubscriptionUpdateParamsEntitlementCredit) UnmarshalJSON(data []byte) error {
+	return apijson.UnmarshalRoot(data, r)
+}
+
+func init() {
+	apijson.RegisterFieldValidator[V1SubscriptionUpdateParamsEntitlementCredit](
+		"cadence", "MONTH", "YEAR",
+	)
+}
+
+// Feature entitlement configuration
+//
+// The property FeatureID is required.
+type V1SubscriptionUpdateParamsEntitlementFeature struct {
+	// The feature ID to attach the entitlement to
+	FeatureID string `json:"featureId" api:"required"`
+	// Whether the usage limit is a soft limit
+	HasSoftLimit param.Opt[bool] `json:"hasSoftLimit,omitzero"`
+	// Whether usage is unlimited
+	HasUnlimitedUsage param.Opt[bool] `json:"hasUnlimitedUsage,omitzero"`
+	// Maximum allowed usage for the feature
+	UsageLimit param.Opt[int64] `json:"usageLimit,omitzero"`
+	// Configuration for monthly reset period
+	MonthlyResetPeriodConfiguration V1SubscriptionUpdateParamsEntitlementFeatureMonthlyResetPeriodConfiguration `json:"monthlyResetPeriodConfiguration,omitzero"`
+	// Configuration for weekly reset period
+	WeeklyResetPeriodConfiguration V1SubscriptionUpdateParamsEntitlementFeatureWeeklyResetPeriodConfiguration `json:"weeklyResetPeriodConfiguration,omitzero"`
+	// Configuration for yearly reset period
+	YearlyResetPeriodConfiguration V1SubscriptionUpdateParamsEntitlementFeatureYearlyResetPeriodConfiguration `json:"yearlyResetPeriodConfiguration,omitzero"`
+	// Period at which usage resets
+	//
+	// Any of "YEAR", "MONTH", "WEEK", "DAY", "HOUR".
+	ResetPeriod string `json:"resetPeriod,omitzero"`
+	paramObj
+}
+
+func (r V1SubscriptionUpdateParamsEntitlementFeature) MarshalJSON() (data []byte, err error) {
+	type shadow V1SubscriptionUpdateParamsEntitlementFeature
+	return param.MarshalObject(r, (*shadow)(&r))
+}
+func (r *V1SubscriptionUpdateParamsEntitlementFeature) UnmarshalJSON(data []byte) error {
+	return apijson.UnmarshalRoot(data, r)
+}
+
+func init() {
+	apijson.RegisterFieldValidator[V1SubscriptionUpdateParamsEntitlementFeature](
+		"resetPeriod", "YEAR", "MONTH", "WEEK", "DAY", "HOUR",
+	)
+}
+
+// Configuration for monthly reset period
+//
+// The property AccordingTo is required.
+type V1SubscriptionUpdateParamsEntitlementFeatureMonthlyResetPeriodConfiguration struct {
+	// Reset anchor (SubscriptionStart or StartOfTheMonth)
+	//
+	// Any of "SubscriptionStart", "StartOfTheMonth".
+	AccordingTo string `json:"accordingTo,omitzero" api:"required"`
+	paramObj
+}
+
+func (r V1SubscriptionUpdateParamsEntitlementFeatureMonthlyResetPeriodConfiguration) MarshalJSON() (data []byte, err error) {
+	type shadow V1SubscriptionUpdateParamsEntitlementFeatureMonthlyResetPeriodConfiguration
+	return param.MarshalObject(r, (*shadow)(&r))
+}
+func (r *V1SubscriptionUpdateParamsEntitlementFeatureMonthlyResetPeriodConfiguration) UnmarshalJSON(data []byte) error {
+	return apijson.UnmarshalRoot(data, r)
+}
+
+func init() {
+	apijson.RegisterFieldValidator[V1SubscriptionUpdateParamsEntitlementFeatureMonthlyResetPeriodConfiguration](
+		"accordingTo", "SubscriptionStart", "StartOfTheMonth",
+	)
+}
+
+// Configuration for weekly reset period
+//
+// The property AccordingTo is required.
+type V1SubscriptionUpdateParamsEntitlementFeatureWeeklyResetPeriodConfiguration struct {
+	// Reset anchor (SubscriptionStart or specific day)
+	//
+	// Any of "SubscriptionStart", "EverySunday", "EveryMonday", "EveryTuesday",
+	// "EveryWednesday", "EveryThursday", "EveryFriday", "EverySaturday".
+	AccordingTo string `json:"accordingTo,omitzero" api:"required"`
+	paramObj
+}
+
+func (r V1SubscriptionUpdateParamsEntitlementFeatureWeeklyResetPeriodConfiguration) MarshalJSON() (data []byte, err error) {
+	type shadow V1SubscriptionUpdateParamsEntitlementFeatureWeeklyResetPeriodConfiguration
+	return param.MarshalObject(r, (*shadow)(&r))
+}
+func (r *V1SubscriptionUpdateParamsEntitlementFeatureWeeklyResetPeriodConfiguration) UnmarshalJSON(data []byte) error {
+	return apijson.UnmarshalRoot(data, r)
+}
+
+func init() {
+	apijson.RegisterFieldValidator[V1SubscriptionUpdateParamsEntitlementFeatureWeeklyResetPeriodConfiguration](
+		"accordingTo", "SubscriptionStart", "EverySunday", "EveryMonday", "EveryTuesday", "EveryWednesday", "EveryThursday", "EveryFriday", "EverySaturday",
+	)
+}
+
+// Configuration for yearly reset period
+//
+// The property AccordingTo is required.
+type V1SubscriptionUpdateParamsEntitlementFeatureYearlyResetPeriodConfiguration struct {
+	// Reset anchor (SubscriptionStart)
+	//
+	// Any of "SubscriptionStart".
+	AccordingTo string `json:"accordingTo,omitzero" api:"required"`
+	paramObj
+}
+
+func (r V1SubscriptionUpdateParamsEntitlementFeatureYearlyResetPeriodConfiguration) MarshalJSON() (data []byte, err error) {
+	type shadow V1SubscriptionUpdateParamsEntitlementFeatureYearlyResetPeriodConfiguration
+	return param.MarshalObject(r, (*shadow)(&r))
+}
+func (r *V1SubscriptionUpdateParamsEntitlementFeatureYearlyResetPeriodConfiguration) UnmarshalJSON(data []byte) error {
+	return apijson.UnmarshalRoot(data, r)
+}
+
+func init() {
+	apijson.RegisterFieldValidator[V1SubscriptionUpdateParamsEntitlementFeatureYearlyResetPeriodConfiguration](
+		"accordingTo", "SubscriptionStart",
+	)
+}
+
 // Minimum spend amount
 type V1SubscriptionUpdateParamsMinimumSpend struct {
 	// The price amount
@@ -2947,98 +3108,6 @@ const (
 	V1SubscriptionUpdateParamsScheduleStrategyEndOfBillingMonth  V1SubscriptionUpdateParamsScheduleStrategy = "END_OF_BILLING_MONTH"
 	V1SubscriptionUpdateParamsScheduleStrategyImmediate          V1SubscriptionUpdateParamsScheduleStrategy = "IMMEDIATE"
 )
-
-type V1SubscriptionUpdateParamsSubscriptionEntitlement struct {
-	ID                              param.Opt[string]                                                                `json:"id,omitzero"`
-	FeatureID                       param.Opt[string]                                                                `json:"featureId,omitzero"`
-	HasSoftLimit                    param.Opt[bool]                                                                  `json:"hasSoftLimit,omitzero"`
-	HasUnlimitedUsage               param.Opt[bool]                                                                  `json:"hasUnlimitedUsage,omitzero"`
-	UsageLimit                      param.Opt[float64]                                                               `json:"usageLimit,omitzero"`
-	MonthlyResetPeriodConfiguration V1SubscriptionUpdateParamsSubscriptionEntitlementMonthlyResetPeriodConfiguration `json:"monthlyResetPeriodConfiguration,omitzero"`
-	// Any of "YEAR", "MONTH", "WEEK", "DAY", "HOUR".
-	ResetPeriod                    string                                                                          `json:"resetPeriod,omitzero"`
-	WeeklyResetPeriodConfiguration V1SubscriptionUpdateParamsSubscriptionEntitlementWeeklyResetPeriodConfiguration `json:"weeklyResetPeriodConfiguration,omitzero"`
-	YearlyResetPeriodConfiguration V1SubscriptionUpdateParamsSubscriptionEntitlementYearlyResetPeriodConfiguration `json:"yearlyResetPeriodConfiguration,omitzero"`
-	paramObj
-}
-
-func (r V1SubscriptionUpdateParamsSubscriptionEntitlement) MarshalJSON() (data []byte, err error) {
-	type shadow V1SubscriptionUpdateParamsSubscriptionEntitlement
-	return param.MarshalObject(r, (*shadow)(&r))
-}
-func (r *V1SubscriptionUpdateParamsSubscriptionEntitlement) UnmarshalJSON(data []byte) error {
-	return apijson.UnmarshalRoot(data, r)
-}
-
-func init() {
-	apijson.RegisterFieldValidator[V1SubscriptionUpdateParamsSubscriptionEntitlement](
-		"resetPeriod", "YEAR", "MONTH", "WEEK", "DAY", "HOUR",
-	)
-}
-
-// The property AccordingTo is required.
-type V1SubscriptionUpdateParamsSubscriptionEntitlementMonthlyResetPeriodConfiguration struct {
-	// Any of "SubscriptionStart", "StartOfTheMonth".
-	AccordingTo string `json:"accordingTo,omitzero" api:"required"`
-	paramObj
-}
-
-func (r V1SubscriptionUpdateParamsSubscriptionEntitlementMonthlyResetPeriodConfiguration) MarshalJSON() (data []byte, err error) {
-	type shadow V1SubscriptionUpdateParamsSubscriptionEntitlementMonthlyResetPeriodConfiguration
-	return param.MarshalObject(r, (*shadow)(&r))
-}
-func (r *V1SubscriptionUpdateParamsSubscriptionEntitlementMonthlyResetPeriodConfiguration) UnmarshalJSON(data []byte) error {
-	return apijson.UnmarshalRoot(data, r)
-}
-
-func init() {
-	apijson.RegisterFieldValidator[V1SubscriptionUpdateParamsSubscriptionEntitlementMonthlyResetPeriodConfiguration](
-		"accordingTo", "SubscriptionStart", "StartOfTheMonth",
-	)
-}
-
-// The property AccordingTo is required.
-type V1SubscriptionUpdateParamsSubscriptionEntitlementWeeklyResetPeriodConfiguration struct {
-	// Any of "SubscriptionStart", "EverySunday", "EveryMonday", "EveryTuesday",
-	// "EveryWednesday", "EveryThursday", "EveryFriday", "EverySaturday".
-	AccordingTo string `json:"accordingTo,omitzero" api:"required"`
-	paramObj
-}
-
-func (r V1SubscriptionUpdateParamsSubscriptionEntitlementWeeklyResetPeriodConfiguration) MarshalJSON() (data []byte, err error) {
-	type shadow V1SubscriptionUpdateParamsSubscriptionEntitlementWeeklyResetPeriodConfiguration
-	return param.MarshalObject(r, (*shadow)(&r))
-}
-func (r *V1SubscriptionUpdateParamsSubscriptionEntitlementWeeklyResetPeriodConfiguration) UnmarshalJSON(data []byte) error {
-	return apijson.UnmarshalRoot(data, r)
-}
-
-func init() {
-	apijson.RegisterFieldValidator[V1SubscriptionUpdateParamsSubscriptionEntitlementWeeklyResetPeriodConfiguration](
-		"accordingTo", "SubscriptionStart", "EverySunday", "EveryMonday", "EveryTuesday", "EveryWednesday", "EveryThursday", "EveryFriday", "EverySaturday",
-	)
-}
-
-// The property AccordingTo is required.
-type V1SubscriptionUpdateParamsSubscriptionEntitlementYearlyResetPeriodConfiguration struct {
-	// Any of "SubscriptionStart".
-	AccordingTo string `json:"accordingTo,omitzero" api:"required"`
-	paramObj
-}
-
-func (r V1SubscriptionUpdateParamsSubscriptionEntitlementYearlyResetPeriodConfiguration) MarshalJSON() (data []byte, err error) {
-	type shadow V1SubscriptionUpdateParamsSubscriptionEntitlementYearlyResetPeriodConfiguration
-	return param.MarshalObject(r, (*shadow)(&r))
-}
-func (r *V1SubscriptionUpdateParamsSubscriptionEntitlementYearlyResetPeriodConfiguration) UnmarshalJSON(data []byte) error {
-	return apijson.UnmarshalRoot(data, r)
-}
-
-func init() {
-	apijson.RegisterFieldValidator[V1SubscriptionUpdateParamsSubscriptionEntitlementYearlyResetPeriodConfiguration](
-		"accordingTo", "SubscriptionStart",
-	)
-}
 
 type V1SubscriptionListParams struct {
 	// Return items that come after this cursor
@@ -3668,6 +3737,7 @@ type V1SubscriptionProvisionParams struct {
 	Charges       []V1SubscriptionProvisionParamsCharge      `json:"charges,omitzero"`
 	// Checkout page configuration for payment collection
 	CheckoutOptions V1SubscriptionProvisionParamsCheckoutOptions `json:"checkoutOptions,omitzero"`
+	Entitlements    []V1SubscriptionProvisionParamsEntitlement   `json:"entitlements,omitzero"`
 	// Additional metadata for the subscription
 	Metadata map[string]string `json:"metadata,omitzero"`
 	// How payments should be collected for this subscription
@@ -3678,8 +3748,7 @@ type V1SubscriptionProvisionParams struct {
 	// Strategy for scheduling subscription changes
 	//
 	// Any of "END_OF_BILLING_PERIOD", "END_OF_BILLING_MONTH", "IMMEDIATE".
-	ScheduleStrategy         V1SubscriptionProvisionParamsScheduleStrategy          `json:"scheduleStrategy,omitzero"`
-	SubscriptionEntitlements []V1SubscriptionProvisionParamsSubscriptionEntitlement `json:"subscriptionEntitlements,omitzero"`
+	ScheduleStrategy V1SubscriptionProvisionParamsScheduleStrategy `json:"scheduleStrategy,omitzero"`
 	// Trial period override settings
 	TrialOverrideConfiguration V1SubscriptionProvisionParamsTrialOverrideConfiguration `json:"trialOverrideConfiguration,omitzero"`
 	paramObj
@@ -3977,6 +4046,167 @@ func (r *V1SubscriptionProvisionParamsCheckoutOptions) UnmarshalJSON(data []byte
 	return apijson.UnmarshalRoot(data, r)
 }
 
+// A single subscription entitlement. Provide exactly one of feature or credit.
+type V1SubscriptionProvisionParamsEntitlement struct {
+	// Credit entitlement configuration
+	Credit V1SubscriptionProvisionParamsEntitlementCredit `json:"credit,omitzero"`
+	// Feature entitlement configuration
+	Feature V1SubscriptionProvisionParamsEntitlementFeature `json:"feature,omitzero"`
+	paramObj
+}
+
+func (r V1SubscriptionProvisionParamsEntitlement) MarshalJSON() (data []byte, err error) {
+	type shadow V1SubscriptionProvisionParamsEntitlement
+	return param.MarshalObject(r, (*shadow)(&r))
+}
+func (r *V1SubscriptionProvisionParamsEntitlement) UnmarshalJSON(data []byte) error {
+	return apijson.UnmarshalRoot(data, r)
+}
+
+// Credit entitlement configuration
+//
+// The properties Amount, Cadence, CurrencyID are required.
+type V1SubscriptionProvisionParamsEntitlementCredit struct {
+	// Credit grant amount
+	Amount float64 `json:"amount" api:"required"`
+	// Credit grant cadence (MONTH or YEAR)
+	//
+	// Any of "MONTH", "YEAR".
+	Cadence string `json:"cadence,omitzero" api:"required"`
+	// The custom currency ID for the credit entitlement
+	CurrencyID string `json:"currencyId" api:"required"`
+	paramObj
+}
+
+func (r V1SubscriptionProvisionParamsEntitlementCredit) MarshalJSON() (data []byte, err error) {
+	type shadow V1SubscriptionProvisionParamsEntitlementCredit
+	return param.MarshalObject(r, (*shadow)(&r))
+}
+func (r *V1SubscriptionProvisionParamsEntitlementCredit) UnmarshalJSON(data []byte) error {
+	return apijson.UnmarshalRoot(data, r)
+}
+
+func init() {
+	apijson.RegisterFieldValidator[V1SubscriptionProvisionParamsEntitlementCredit](
+		"cadence", "MONTH", "YEAR",
+	)
+}
+
+// Feature entitlement configuration
+//
+// The property FeatureID is required.
+type V1SubscriptionProvisionParamsEntitlementFeature struct {
+	// The feature ID to attach the entitlement to
+	FeatureID string `json:"featureId" api:"required"`
+	// Whether the usage limit is a soft limit
+	HasSoftLimit param.Opt[bool] `json:"hasSoftLimit,omitzero"`
+	// Whether usage is unlimited
+	HasUnlimitedUsage param.Opt[bool] `json:"hasUnlimitedUsage,omitzero"`
+	// Maximum allowed usage for the feature
+	UsageLimit param.Opt[int64] `json:"usageLimit,omitzero"`
+	// Configuration for monthly reset period
+	MonthlyResetPeriodConfiguration V1SubscriptionProvisionParamsEntitlementFeatureMonthlyResetPeriodConfiguration `json:"monthlyResetPeriodConfiguration,omitzero"`
+	// Configuration for weekly reset period
+	WeeklyResetPeriodConfiguration V1SubscriptionProvisionParamsEntitlementFeatureWeeklyResetPeriodConfiguration `json:"weeklyResetPeriodConfiguration,omitzero"`
+	// Configuration for yearly reset period
+	YearlyResetPeriodConfiguration V1SubscriptionProvisionParamsEntitlementFeatureYearlyResetPeriodConfiguration `json:"yearlyResetPeriodConfiguration,omitzero"`
+	// Period at which usage resets
+	//
+	// Any of "YEAR", "MONTH", "WEEK", "DAY", "HOUR".
+	ResetPeriod string `json:"resetPeriod,omitzero"`
+	paramObj
+}
+
+func (r V1SubscriptionProvisionParamsEntitlementFeature) MarshalJSON() (data []byte, err error) {
+	type shadow V1SubscriptionProvisionParamsEntitlementFeature
+	return param.MarshalObject(r, (*shadow)(&r))
+}
+func (r *V1SubscriptionProvisionParamsEntitlementFeature) UnmarshalJSON(data []byte) error {
+	return apijson.UnmarshalRoot(data, r)
+}
+
+func init() {
+	apijson.RegisterFieldValidator[V1SubscriptionProvisionParamsEntitlementFeature](
+		"resetPeriod", "YEAR", "MONTH", "WEEK", "DAY", "HOUR",
+	)
+}
+
+// Configuration for monthly reset period
+//
+// The property AccordingTo is required.
+type V1SubscriptionProvisionParamsEntitlementFeatureMonthlyResetPeriodConfiguration struct {
+	// Reset anchor (SubscriptionStart or StartOfTheMonth)
+	//
+	// Any of "SubscriptionStart", "StartOfTheMonth".
+	AccordingTo string `json:"accordingTo,omitzero" api:"required"`
+	paramObj
+}
+
+func (r V1SubscriptionProvisionParamsEntitlementFeatureMonthlyResetPeriodConfiguration) MarshalJSON() (data []byte, err error) {
+	type shadow V1SubscriptionProvisionParamsEntitlementFeatureMonthlyResetPeriodConfiguration
+	return param.MarshalObject(r, (*shadow)(&r))
+}
+func (r *V1SubscriptionProvisionParamsEntitlementFeatureMonthlyResetPeriodConfiguration) UnmarshalJSON(data []byte) error {
+	return apijson.UnmarshalRoot(data, r)
+}
+
+func init() {
+	apijson.RegisterFieldValidator[V1SubscriptionProvisionParamsEntitlementFeatureMonthlyResetPeriodConfiguration](
+		"accordingTo", "SubscriptionStart", "StartOfTheMonth",
+	)
+}
+
+// Configuration for weekly reset period
+//
+// The property AccordingTo is required.
+type V1SubscriptionProvisionParamsEntitlementFeatureWeeklyResetPeriodConfiguration struct {
+	// Reset anchor (SubscriptionStart or specific day)
+	//
+	// Any of "SubscriptionStart", "EverySunday", "EveryMonday", "EveryTuesday",
+	// "EveryWednesday", "EveryThursday", "EveryFriday", "EverySaturday".
+	AccordingTo string `json:"accordingTo,omitzero" api:"required"`
+	paramObj
+}
+
+func (r V1SubscriptionProvisionParamsEntitlementFeatureWeeklyResetPeriodConfiguration) MarshalJSON() (data []byte, err error) {
+	type shadow V1SubscriptionProvisionParamsEntitlementFeatureWeeklyResetPeriodConfiguration
+	return param.MarshalObject(r, (*shadow)(&r))
+}
+func (r *V1SubscriptionProvisionParamsEntitlementFeatureWeeklyResetPeriodConfiguration) UnmarshalJSON(data []byte) error {
+	return apijson.UnmarshalRoot(data, r)
+}
+
+func init() {
+	apijson.RegisterFieldValidator[V1SubscriptionProvisionParamsEntitlementFeatureWeeklyResetPeriodConfiguration](
+		"accordingTo", "SubscriptionStart", "EverySunday", "EveryMonday", "EveryTuesday", "EveryWednesday", "EveryThursday", "EveryFriday", "EverySaturday",
+	)
+}
+
+// Configuration for yearly reset period
+//
+// The property AccordingTo is required.
+type V1SubscriptionProvisionParamsEntitlementFeatureYearlyResetPeriodConfiguration struct {
+	// Reset anchor (SubscriptionStart)
+	//
+	// Any of "SubscriptionStart".
+	AccordingTo string `json:"accordingTo,omitzero" api:"required"`
+	paramObj
+}
+
+func (r V1SubscriptionProvisionParamsEntitlementFeatureYearlyResetPeriodConfiguration) MarshalJSON() (data []byte, err error) {
+	type shadow V1SubscriptionProvisionParamsEntitlementFeatureYearlyResetPeriodConfiguration
+	return param.MarshalObject(r, (*shadow)(&r))
+}
+func (r *V1SubscriptionProvisionParamsEntitlementFeatureYearlyResetPeriodConfiguration) UnmarshalJSON(data []byte) error {
+	return apijson.UnmarshalRoot(data, r)
+}
+
+func init() {
+	apijson.RegisterFieldValidator[V1SubscriptionProvisionParamsEntitlementFeatureYearlyResetPeriodConfiguration](
+		"accordingTo", "SubscriptionStart",
+	)
+}
+
 // Minimum spend amount
 type V1SubscriptionProvisionParamsMinimumSpend struct {
 	// The price amount
@@ -4192,23 +4422,6 @@ const (
 	V1SubscriptionProvisionParamsScheduleStrategyEndOfBillingMonth  V1SubscriptionProvisionParamsScheduleStrategy = "END_OF_BILLING_MONTH"
 	V1SubscriptionProvisionParamsScheduleStrategyImmediate          V1SubscriptionProvisionParamsScheduleStrategy = "IMMEDIATE"
 )
-
-// The properties FeatureID, UsageLimit are required.
-type V1SubscriptionProvisionParamsSubscriptionEntitlement struct {
-	// Feature ID
-	FeatureID  string          `json:"featureId" api:"required"`
-	UsageLimit float64         `json:"usageLimit" api:"required"`
-	IsGranted  param.Opt[bool] `json:"isGranted,omitzero"`
-	paramObj
-}
-
-func (r V1SubscriptionProvisionParamsSubscriptionEntitlement) MarshalJSON() (data []byte, err error) {
-	type shadow V1SubscriptionProvisionParamsSubscriptionEntitlement
-	return param.MarshalObject(r, (*shadow)(&r))
-}
-func (r *V1SubscriptionProvisionParamsSubscriptionEntitlement) UnmarshalJSON(data []byte) error {
-	return apijson.UnmarshalRoot(data, r)
-}
 
 // Trial period override settings
 //
