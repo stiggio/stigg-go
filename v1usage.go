@@ -273,7 +273,7 @@ type V1UsageHistoryParams struct {
 	GroupBy param.Opt[string]    `query:"groupBy,omitzero" json:"-"`
 	// When true, includes usage data from the most recent cancelled or expired
 	// subscription
-	IncludeHistoricalUsage param.Opt[bool] `query:"includeHistoricalUsage,omitzero" json:"-"`
+	IncludeInactiveSubscriptions param.Opt[bool] `query:"includeInactiveSubscriptions,omitzero" json:"-"`
 	paramObj
 }
 
