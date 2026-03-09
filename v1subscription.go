@@ -19,6 +19,7 @@ import (
 	"github.com/stiggio/stigg-go/packages/pagination"
 	"github.com/stiggio/stigg-go/packages/param"
 	"github.com/stiggio/stigg-go/packages/respjson"
+	"github.com/stiggio/stigg-go/shared/constant"
 )
 
 // V1SubscriptionService contains methods and other services that help with
@@ -2612,9 +2613,9 @@ type V1SubscriptionUpdateParams struct {
 	BillingCycleAnchor V1SubscriptionUpdateParamsBillingCycleAnchor `json:"billingCycleAnchor,omitzero"`
 	BillingInformation V1SubscriptionUpdateParamsBillingInformation `json:"billingInformation,omitzero"`
 	// Any of "MONTHLY", "ANNUALLY".
-	BillingPeriod V1SubscriptionUpdateParamsBillingPeriod `json:"billingPeriod,omitzero"`
-	Charges       []V1SubscriptionUpdateParamsCharge      `json:"charges,omitzero"`
-	Entitlements  []V1SubscriptionUpdateParamsEntitlement `json:"entitlements,omitzero"`
+	BillingPeriod V1SubscriptionUpdateParamsBillingPeriod      `json:"billingPeriod,omitzero"`
+	Charges       []V1SubscriptionUpdateParamsCharge           `json:"charges,omitzero"`
+	Entitlements  []V1SubscriptionUpdateParamsEntitlementUnion `json:"entitlements,omitzero"`
 	// Additional metadata for the subscription
 	Metadata       map[string]string                         `json:"metadata,omitzero"`
 	PriceOverrides []V1SubscriptionUpdateParamsPriceOverride `json:"priceOverrides,omitzero"`
@@ -2863,58 +2864,137 @@ func init() {
 	)
 }
 
-// A single subscription entitlement. Provide exactly one of feature or credit.
-type V1SubscriptionUpdateParamsEntitlement struct {
-	// Credit entitlement configuration
-	Credit V1SubscriptionUpdateParamsEntitlementCredit `json:"credit,omitzero"`
-	// Feature entitlement configuration
-	Feature V1SubscriptionUpdateParamsEntitlementFeature `json:"feature,omitzero"`
-	paramObj
-}
-
-func (r V1SubscriptionUpdateParamsEntitlement) MarshalJSON() (data []byte, err error) {
-	type shadow V1SubscriptionUpdateParamsEntitlement
-	return param.MarshalObject(r, (*shadow)(&r))
-}
-func (r *V1SubscriptionUpdateParamsEntitlement) UnmarshalJSON(data []byte) error {
-	return apijson.UnmarshalRoot(data, r)
-}
-
-// Credit entitlement configuration
+// Only one field can be non-zero.
 //
-// The properties Amount, Cadence, CurrencyID are required.
-type V1SubscriptionUpdateParamsEntitlementCredit struct {
-	// Credit grant amount
-	Amount float64 `json:"amount" api:"required"`
-	// Credit grant cadence (MONTH or YEAR)
-	//
-	// Any of "MONTH", "YEAR".
-	Cadence string `json:"cadence,omitzero" api:"required"`
-	// The custom currency ID for the credit entitlement
-	CurrencyID string `json:"currencyId" api:"required"`
-	paramObj
+// Use [param.IsOmitted] to confirm if a field is set.
+type V1SubscriptionUpdateParamsEntitlementUnion struct {
+	OfFeature *V1SubscriptionUpdateParamsEntitlementFeature `json:",omitzero,inline"`
+	OfCredit  *V1SubscriptionUpdateParamsEntitlementCredit  `json:",omitzero,inline"`
+	paramUnion
 }
 
-func (r V1SubscriptionUpdateParamsEntitlementCredit) MarshalJSON() (data []byte, err error) {
-	type shadow V1SubscriptionUpdateParamsEntitlementCredit
-	return param.MarshalObject(r, (*shadow)(&r))
+func (u V1SubscriptionUpdateParamsEntitlementUnion) MarshalJSON() ([]byte, error) {
+	return param.MarshalUnion(u, u.OfFeature, u.OfCredit)
 }
-func (r *V1SubscriptionUpdateParamsEntitlementCredit) UnmarshalJSON(data []byte) error {
-	return apijson.UnmarshalRoot(data, r)
+func (u *V1SubscriptionUpdateParamsEntitlementUnion) UnmarshalJSON(data []byte) error {
+	return apijson.UnmarshalRoot(data, u)
+}
+
+func (u *V1SubscriptionUpdateParamsEntitlementUnion) asAny() any {
+	if !param.IsOmitted(u.OfFeature) {
+		return u.OfFeature
+	} else if !param.IsOmitted(u.OfCredit) {
+		return u.OfCredit
+	}
+	return nil
+}
+
+// Returns a pointer to the underlying variant's property, if present.
+func (u V1SubscriptionUpdateParamsEntitlementUnion) GetHasSoftLimit() *bool {
+	if vt := u.OfFeature; vt != nil && vt.HasSoftLimit.Valid() {
+		return &vt.HasSoftLimit.Value
+	}
+	return nil
+}
+
+// Returns a pointer to the underlying variant's property, if present.
+func (u V1SubscriptionUpdateParamsEntitlementUnion) GetHasUnlimitedUsage() *bool {
+	if vt := u.OfFeature; vt != nil && vt.HasUnlimitedUsage.Valid() {
+		return &vt.HasUnlimitedUsage.Value
+	}
+	return nil
+}
+
+// Returns a pointer to the underlying variant's property, if present.
+func (u V1SubscriptionUpdateParamsEntitlementUnion) GetMonthlyResetPeriodConfiguration() *V1SubscriptionUpdateParamsEntitlementFeatureMonthlyResetPeriodConfiguration {
+	if vt := u.OfFeature; vt != nil {
+		return &vt.MonthlyResetPeriodConfiguration
+	}
+	return nil
+}
+
+// Returns a pointer to the underlying variant's property, if present.
+func (u V1SubscriptionUpdateParamsEntitlementUnion) GetResetPeriod() *string {
+	if vt := u.OfFeature; vt != nil {
+		return &vt.ResetPeriod
+	}
+	return nil
+}
+
+// Returns a pointer to the underlying variant's property, if present.
+func (u V1SubscriptionUpdateParamsEntitlementUnion) GetUsageLimit() *int64 {
+	if vt := u.OfFeature; vt != nil && vt.UsageLimit.Valid() {
+		return &vt.UsageLimit.Value
+	}
+	return nil
+}
+
+// Returns a pointer to the underlying variant's property, if present.
+func (u V1SubscriptionUpdateParamsEntitlementUnion) GetWeeklyResetPeriodConfiguration() *V1SubscriptionUpdateParamsEntitlementFeatureWeeklyResetPeriodConfiguration {
+	if vt := u.OfFeature; vt != nil {
+		return &vt.WeeklyResetPeriodConfiguration
+	}
+	return nil
+}
+
+// Returns a pointer to the underlying variant's property, if present.
+func (u V1SubscriptionUpdateParamsEntitlementUnion) GetYearlyResetPeriodConfiguration() *V1SubscriptionUpdateParamsEntitlementFeatureYearlyResetPeriodConfiguration {
+	if vt := u.OfFeature; vt != nil {
+		return &vt.YearlyResetPeriodConfiguration
+	}
+	return nil
+}
+
+// Returns a pointer to the underlying variant's property, if present.
+func (u V1SubscriptionUpdateParamsEntitlementUnion) GetAmount() *float64 {
+	if vt := u.OfCredit; vt != nil {
+		return &vt.Amount
+	}
+	return nil
+}
+
+// Returns a pointer to the underlying variant's property, if present.
+func (u V1SubscriptionUpdateParamsEntitlementUnion) GetCadence() *string {
+	if vt := u.OfCredit; vt != nil {
+		return &vt.Cadence
+	}
+	return nil
+}
+
+// Returns a pointer to the underlying variant's property, if present.
+func (u V1SubscriptionUpdateParamsEntitlementUnion) GetID() *string {
+	if vt := u.OfFeature; vt != nil {
+		return (*string)(&vt.ID)
+	} else if vt := u.OfCredit; vt != nil {
+		return (*string)(&vt.ID)
+	}
+	return nil
+}
+
+// Returns a pointer to the underlying variant's property, if present.
+func (u V1SubscriptionUpdateParamsEntitlementUnion) GetType() *string {
+	if vt := u.OfFeature; vt != nil {
+		return (*string)(&vt.Type)
+	} else if vt := u.OfCredit; vt != nil {
+		return (*string)(&vt.Type)
+	}
+	return nil
 }
 
 func init() {
-	apijson.RegisterFieldValidator[V1SubscriptionUpdateParamsEntitlementCredit](
-		"cadence", "MONTH", "YEAR",
+	apijson.RegisterUnion[V1SubscriptionUpdateParamsEntitlementUnion](
+		"type",
+		apijson.Discriminator[V1SubscriptionUpdateParamsEntitlementFeature]("FEATURE"),
+		apijson.Discriminator[V1SubscriptionUpdateParamsEntitlementCredit]("CREDIT"),
 	)
 }
 
-// Feature entitlement configuration
+// Feature entitlement configuration for a subscription
 //
-// The property FeatureID is required.
+// The properties ID, Type are required.
 type V1SubscriptionUpdateParamsEntitlementFeature struct {
 	// The feature ID to attach the entitlement to
-	FeatureID string `json:"featureId" api:"required"`
+	ID string `json:"id" api:"required"`
 	// Whether the usage limit is a soft limit
 	HasSoftLimit param.Opt[bool] `json:"hasSoftLimit,omitzero"`
 	// Whether usage is unlimited
@@ -2931,6 +3011,10 @@ type V1SubscriptionUpdateParamsEntitlementFeature struct {
 	//
 	// Any of "YEAR", "MONTH", "WEEK", "DAY", "HOUR".
 	ResetPeriod string `json:"resetPeriod,omitzero"`
+	// SubscriptionFeatureEntitlementRequest
+	//
+	// This field can be elided, and will marshal its zero value as "FEATURE".
+	Type constant.Feature `json:"type" api:"required"`
 	paramObj
 }
 
@@ -3021,6 +3105,39 @@ func (r *V1SubscriptionUpdateParamsEntitlementFeatureYearlyResetPeriodConfigurat
 func init() {
 	apijson.RegisterFieldValidator[V1SubscriptionUpdateParamsEntitlementFeatureYearlyResetPeriodConfiguration](
 		"accordingTo", "SubscriptionStart",
+	)
+}
+
+// Credit entitlement configuration for a subscription
+//
+// The properties ID, Amount, Cadence, Type are required.
+type V1SubscriptionUpdateParamsEntitlementCredit struct {
+	// The custom currency ID for the credit entitlement
+	ID string `json:"id" api:"required"`
+	// Credit grant amount
+	Amount float64 `json:"amount" api:"required"`
+	// Credit grant cadence (MONTH or YEAR)
+	//
+	// Any of "MONTH", "YEAR".
+	Cadence string `json:"cadence,omitzero" api:"required"`
+	// SubscriptionCreditEntitlementRequest
+	//
+	// This field can be elided, and will marshal its zero value as "CREDIT".
+	Type constant.Credit `json:"type" api:"required"`
+	paramObj
+}
+
+func (r V1SubscriptionUpdateParamsEntitlementCredit) MarshalJSON() (data []byte, err error) {
+	type shadow V1SubscriptionUpdateParamsEntitlementCredit
+	return param.MarshalObject(r, (*shadow)(&r))
+}
+func (r *V1SubscriptionUpdateParamsEntitlementCredit) UnmarshalJSON(data []byte) error {
+	return apijson.UnmarshalRoot(data, r)
+}
+
+func init() {
+	apijson.RegisterFieldValidator[V1SubscriptionUpdateParamsEntitlementCredit](
+		"cadence", "MONTH", "YEAR",
 	)
 }
 
@@ -3736,8 +3853,8 @@ type V1SubscriptionProvisionParams struct {
 	BillingPeriod V1SubscriptionProvisionParamsBillingPeriod `json:"billingPeriod,omitzero"`
 	Charges       []V1SubscriptionProvisionParamsCharge      `json:"charges,omitzero"`
 	// Checkout page configuration for payment collection
-	CheckoutOptions V1SubscriptionProvisionParamsCheckoutOptions `json:"checkoutOptions,omitzero"`
-	Entitlements    []V1SubscriptionProvisionParamsEntitlement   `json:"entitlements,omitzero"`
+	CheckoutOptions V1SubscriptionProvisionParamsCheckoutOptions    `json:"checkoutOptions,omitzero"`
+	Entitlements    []V1SubscriptionProvisionParamsEntitlementUnion `json:"entitlements,omitzero"`
 	// Additional metadata for the subscription
 	Metadata map[string]string `json:"metadata,omitzero"`
 	// How payments should be collected for this subscription
@@ -4046,58 +4163,137 @@ func (r *V1SubscriptionProvisionParamsCheckoutOptions) UnmarshalJSON(data []byte
 	return apijson.UnmarshalRoot(data, r)
 }
 
-// A single subscription entitlement. Provide exactly one of feature or credit.
-type V1SubscriptionProvisionParamsEntitlement struct {
-	// Credit entitlement configuration
-	Credit V1SubscriptionProvisionParamsEntitlementCredit `json:"credit,omitzero"`
-	// Feature entitlement configuration
-	Feature V1SubscriptionProvisionParamsEntitlementFeature `json:"feature,omitzero"`
-	paramObj
-}
-
-func (r V1SubscriptionProvisionParamsEntitlement) MarshalJSON() (data []byte, err error) {
-	type shadow V1SubscriptionProvisionParamsEntitlement
-	return param.MarshalObject(r, (*shadow)(&r))
-}
-func (r *V1SubscriptionProvisionParamsEntitlement) UnmarshalJSON(data []byte) error {
-	return apijson.UnmarshalRoot(data, r)
-}
-
-// Credit entitlement configuration
+// Only one field can be non-zero.
 //
-// The properties Amount, Cadence, CurrencyID are required.
-type V1SubscriptionProvisionParamsEntitlementCredit struct {
-	// Credit grant amount
-	Amount float64 `json:"amount" api:"required"`
-	// Credit grant cadence (MONTH or YEAR)
-	//
-	// Any of "MONTH", "YEAR".
-	Cadence string `json:"cadence,omitzero" api:"required"`
-	// The custom currency ID for the credit entitlement
-	CurrencyID string `json:"currencyId" api:"required"`
-	paramObj
+// Use [param.IsOmitted] to confirm if a field is set.
+type V1SubscriptionProvisionParamsEntitlementUnion struct {
+	OfFeature *V1SubscriptionProvisionParamsEntitlementFeature `json:",omitzero,inline"`
+	OfCredit  *V1SubscriptionProvisionParamsEntitlementCredit  `json:",omitzero,inline"`
+	paramUnion
 }
 
-func (r V1SubscriptionProvisionParamsEntitlementCredit) MarshalJSON() (data []byte, err error) {
-	type shadow V1SubscriptionProvisionParamsEntitlementCredit
-	return param.MarshalObject(r, (*shadow)(&r))
+func (u V1SubscriptionProvisionParamsEntitlementUnion) MarshalJSON() ([]byte, error) {
+	return param.MarshalUnion(u, u.OfFeature, u.OfCredit)
 }
-func (r *V1SubscriptionProvisionParamsEntitlementCredit) UnmarshalJSON(data []byte) error {
-	return apijson.UnmarshalRoot(data, r)
+func (u *V1SubscriptionProvisionParamsEntitlementUnion) UnmarshalJSON(data []byte) error {
+	return apijson.UnmarshalRoot(data, u)
+}
+
+func (u *V1SubscriptionProvisionParamsEntitlementUnion) asAny() any {
+	if !param.IsOmitted(u.OfFeature) {
+		return u.OfFeature
+	} else if !param.IsOmitted(u.OfCredit) {
+		return u.OfCredit
+	}
+	return nil
+}
+
+// Returns a pointer to the underlying variant's property, if present.
+func (u V1SubscriptionProvisionParamsEntitlementUnion) GetHasSoftLimit() *bool {
+	if vt := u.OfFeature; vt != nil && vt.HasSoftLimit.Valid() {
+		return &vt.HasSoftLimit.Value
+	}
+	return nil
+}
+
+// Returns a pointer to the underlying variant's property, if present.
+func (u V1SubscriptionProvisionParamsEntitlementUnion) GetHasUnlimitedUsage() *bool {
+	if vt := u.OfFeature; vt != nil && vt.HasUnlimitedUsage.Valid() {
+		return &vt.HasUnlimitedUsage.Value
+	}
+	return nil
+}
+
+// Returns a pointer to the underlying variant's property, if present.
+func (u V1SubscriptionProvisionParamsEntitlementUnion) GetMonthlyResetPeriodConfiguration() *V1SubscriptionProvisionParamsEntitlementFeatureMonthlyResetPeriodConfiguration {
+	if vt := u.OfFeature; vt != nil {
+		return &vt.MonthlyResetPeriodConfiguration
+	}
+	return nil
+}
+
+// Returns a pointer to the underlying variant's property, if present.
+func (u V1SubscriptionProvisionParamsEntitlementUnion) GetResetPeriod() *string {
+	if vt := u.OfFeature; vt != nil {
+		return &vt.ResetPeriod
+	}
+	return nil
+}
+
+// Returns a pointer to the underlying variant's property, if present.
+func (u V1SubscriptionProvisionParamsEntitlementUnion) GetUsageLimit() *int64 {
+	if vt := u.OfFeature; vt != nil && vt.UsageLimit.Valid() {
+		return &vt.UsageLimit.Value
+	}
+	return nil
+}
+
+// Returns a pointer to the underlying variant's property, if present.
+func (u V1SubscriptionProvisionParamsEntitlementUnion) GetWeeklyResetPeriodConfiguration() *V1SubscriptionProvisionParamsEntitlementFeatureWeeklyResetPeriodConfiguration {
+	if vt := u.OfFeature; vt != nil {
+		return &vt.WeeklyResetPeriodConfiguration
+	}
+	return nil
+}
+
+// Returns a pointer to the underlying variant's property, if present.
+func (u V1SubscriptionProvisionParamsEntitlementUnion) GetYearlyResetPeriodConfiguration() *V1SubscriptionProvisionParamsEntitlementFeatureYearlyResetPeriodConfiguration {
+	if vt := u.OfFeature; vt != nil {
+		return &vt.YearlyResetPeriodConfiguration
+	}
+	return nil
+}
+
+// Returns a pointer to the underlying variant's property, if present.
+func (u V1SubscriptionProvisionParamsEntitlementUnion) GetAmount() *float64 {
+	if vt := u.OfCredit; vt != nil {
+		return &vt.Amount
+	}
+	return nil
+}
+
+// Returns a pointer to the underlying variant's property, if present.
+func (u V1SubscriptionProvisionParamsEntitlementUnion) GetCadence() *string {
+	if vt := u.OfCredit; vt != nil {
+		return &vt.Cadence
+	}
+	return nil
+}
+
+// Returns a pointer to the underlying variant's property, if present.
+func (u V1SubscriptionProvisionParamsEntitlementUnion) GetID() *string {
+	if vt := u.OfFeature; vt != nil {
+		return (*string)(&vt.ID)
+	} else if vt := u.OfCredit; vt != nil {
+		return (*string)(&vt.ID)
+	}
+	return nil
+}
+
+// Returns a pointer to the underlying variant's property, if present.
+func (u V1SubscriptionProvisionParamsEntitlementUnion) GetType() *string {
+	if vt := u.OfFeature; vt != nil {
+		return (*string)(&vt.Type)
+	} else if vt := u.OfCredit; vt != nil {
+		return (*string)(&vt.Type)
+	}
+	return nil
 }
 
 func init() {
-	apijson.RegisterFieldValidator[V1SubscriptionProvisionParamsEntitlementCredit](
-		"cadence", "MONTH", "YEAR",
+	apijson.RegisterUnion[V1SubscriptionProvisionParamsEntitlementUnion](
+		"type",
+		apijson.Discriminator[V1SubscriptionProvisionParamsEntitlementFeature]("FEATURE"),
+		apijson.Discriminator[V1SubscriptionProvisionParamsEntitlementCredit]("CREDIT"),
 	)
 }
 
-// Feature entitlement configuration
+// Feature entitlement configuration for a subscription
 //
-// The property FeatureID is required.
+// The properties ID, Type are required.
 type V1SubscriptionProvisionParamsEntitlementFeature struct {
 	// The feature ID to attach the entitlement to
-	FeatureID string `json:"featureId" api:"required"`
+	ID string `json:"id" api:"required"`
 	// Whether the usage limit is a soft limit
 	HasSoftLimit param.Opt[bool] `json:"hasSoftLimit,omitzero"`
 	// Whether usage is unlimited
@@ -4114,6 +4310,10 @@ type V1SubscriptionProvisionParamsEntitlementFeature struct {
 	//
 	// Any of "YEAR", "MONTH", "WEEK", "DAY", "HOUR".
 	ResetPeriod string `json:"resetPeriod,omitzero"`
+	// SubscriptionFeatureEntitlementRequest
+	//
+	// This field can be elided, and will marshal its zero value as "FEATURE".
+	Type constant.Feature `json:"type" api:"required"`
 	paramObj
 }
 
@@ -4204,6 +4404,39 @@ func (r *V1SubscriptionProvisionParamsEntitlementFeatureYearlyResetPeriodConfigu
 func init() {
 	apijson.RegisterFieldValidator[V1SubscriptionProvisionParamsEntitlementFeatureYearlyResetPeriodConfiguration](
 		"accordingTo", "SubscriptionStart",
+	)
+}
+
+// Credit entitlement configuration for a subscription
+//
+// The properties ID, Amount, Cadence, Type are required.
+type V1SubscriptionProvisionParamsEntitlementCredit struct {
+	// The custom currency ID for the credit entitlement
+	ID string `json:"id" api:"required"`
+	// Credit grant amount
+	Amount float64 `json:"amount" api:"required"`
+	// Credit grant cadence (MONTH or YEAR)
+	//
+	// Any of "MONTH", "YEAR".
+	Cadence string `json:"cadence,omitzero" api:"required"`
+	// SubscriptionCreditEntitlementRequest
+	//
+	// This field can be elided, and will marshal its zero value as "CREDIT".
+	Type constant.Credit `json:"type" api:"required"`
+	paramObj
+}
+
+func (r V1SubscriptionProvisionParamsEntitlementCredit) MarshalJSON() (data []byte, err error) {
+	type shadow V1SubscriptionProvisionParamsEntitlementCredit
+	return param.MarshalObject(r, (*shadow)(&r))
+}
+func (r *V1SubscriptionProvisionParamsEntitlementCredit) UnmarshalJSON(data []byte) error {
+	return apijson.UnmarshalRoot(data, r)
+}
+
+func init() {
+	apijson.RegisterFieldValidator[V1SubscriptionProvisionParamsEntitlementCredit](
+		"cadence", "MONTH", "YEAR",
 	)
 }
 
