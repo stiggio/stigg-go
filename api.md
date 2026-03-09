@@ -122,6 +122,33 @@ Methods:
 
 - <code title="post /api/v1/events">client.V1.Events.<a href="https://pkg.go.dev/github.com/stiggio/stigg-go#V1EventService.Report">Report</a>(ctx <a href="https://pkg.go.dev/context">context</a>.<a href="https://pkg.go.dev/context#Context">Context</a>, body <a href="https://pkg.go.dev/github.com/stiggio/stigg-go">stigg</a>.<a href="https://pkg.go.dev/github.com/stiggio/stigg-go#V1EventReportParams">V1EventReportParams</a>) (\*<a href="https://pkg.go.dev/github.com/stiggio/stigg-go">stigg</a>.<a href="https://pkg.go.dev/github.com/stiggio/stigg-go#V1EventReportResponse">V1EventReportResponse</a>, <a href="https://pkg.go.dev/builtin#error">error</a>)</code>
 
+### Credits
+
+Response Types:
+
+- <a href="https://pkg.go.dev/github.com/stiggio/stigg-go">stigg</a>.<a href="https://pkg.go.dev/github.com/stiggio/stigg-go#V1EventCreditGetAutoRechargeResponse">V1EventCreditGetAutoRechargeResponse</a>
+- <a href="https://pkg.go.dev/github.com/stiggio/stigg-go">stigg</a>.<a href="https://pkg.go.dev/github.com/stiggio/stigg-go#V1EventCreditGetUsageResponse">V1EventCreditGetUsageResponse</a>
+- <a href="https://pkg.go.dev/github.com/stiggio/stigg-go">stigg</a>.<a href="https://pkg.go.dev/github.com/stiggio/stigg-go#V1EventCreditListLedgerResponse">V1EventCreditListLedgerResponse</a>
+
+Methods:
+
+- <code title="get /api/v1/credits/auto-recharge">client.V1.Events.Credits.<a href="https://pkg.go.dev/github.com/stiggio/stigg-go#V1EventCreditService.GetAutoRecharge">GetAutoRecharge</a>(ctx <a href="https://pkg.go.dev/context">context</a>.<a href="https://pkg.go.dev/context#Context">Context</a>, query <a href="https://pkg.go.dev/github.com/stiggio/stigg-go">stigg</a>.<a href="https://pkg.go.dev/github.com/stiggio/stigg-go#V1EventCreditGetAutoRechargeParams">V1EventCreditGetAutoRechargeParams</a>) (\*<a href="https://pkg.go.dev/github.com/stiggio/stigg-go">stigg</a>.<a href="https://pkg.go.dev/github.com/stiggio/stigg-go#V1EventCreditGetAutoRechargeResponse">V1EventCreditGetAutoRechargeResponse</a>, <a href="https://pkg.go.dev/builtin#error">error</a>)</code>
+- <code title="get /api/v1/credits/usage">client.V1.Events.Credits.<a href="https://pkg.go.dev/github.com/stiggio/stigg-go#V1EventCreditService.GetUsage">GetUsage</a>(ctx <a href="https://pkg.go.dev/context">context</a>.<a href="https://pkg.go.dev/context#Context">Context</a>, query <a href="https://pkg.go.dev/github.com/stiggio/stigg-go">stigg</a>.<a href="https://pkg.go.dev/github.com/stiggio/stigg-go#V1EventCreditGetUsageParams">V1EventCreditGetUsageParams</a>) (\*<a href="https://pkg.go.dev/github.com/stiggio/stigg-go">stigg</a>.<a href="https://pkg.go.dev/github.com/stiggio/stigg-go#V1EventCreditGetUsageResponse">V1EventCreditGetUsageResponse</a>, <a href="https://pkg.go.dev/builtin#error">error</a>)</code>
+- <code title="get /api/v1/credits/ledger">client.V1.Events.Credits.<a href="https://pkg.go.dev/github.com/stiggio/stigg-go#V1EventCreditService.ListLedger">ListLedger</a>(ctx <a href="https://pkg.go.dev/context">context</a>.<a href="https://pkg.go.dev/context#Context">Context</a>, query <a href="https://pkg.go.dev/github.com/stiggio/stigg-go">stigg</a>.<a href="https://pkg.go.dev/github.com/stiggio/stigg-go#V1EventCreditListLedgerParams">V1EventCreditListLedgerParams</a>) (\*<a href="https://pkg.go.dev/github.com/stiggio/stigg-go/packages/pagination">pagination</a>.<a href="https://pkg.go.dev/github.com/stiggio/stigg-go/packages/pagination#MyCursorIDPage">MyCursorIDPage</a>[<a href="https://pkg.go.dev/github.com/stiggio/stigg-go">stigg</a>.<a href="https://pkg.go.dev/github.com/stiggio/stigg-go#V1EventCreditListLedgerResponse">V1EventCreditListLedgerResponse</a>], <a href="https://pkg.go.dev/builtin#error">error</a>)</code>
+
+#### Grants
+
+Response Types:
+
+- <a href="https://pkg.go.dev/github.com/stiggio/stigg-go">stigg</a>.<a href="https://pkg.go.dev/github.com/stiggio/stigg-go#CreditGrantResponse">CreditGrantResponse</a>
+- <a href="https://pkg.go.dev/github.com/stiggio/stigg-go">stigg</a>.<a href="https://pkg.go.dev/github.com/stiggio/stigg-go#V1EventCreditGrantListResponse">V1EventCreditGrantListResponse</a>
+
+Methods:
+
+- <code title="post /api/v1/credits/grants">client.V1.Events.Credits.Grants.<a href="https://pkg.go.dev/github.com/stiggio/stigg-go#V1EventCreditGrantService.New">New</a>(ctx <a href="https://pkg.go.dev/context">context</a>.<a href="https://pkg.go.dev/context#Context">Context</a>, body <a href="https://pkg.go.dev/github.com/stiggio/stigg-go">stigg</a>.<a href="https://pkg.go.dev/github.com/stiggio/stigg-go#V1EventCreditGrantNewParams">V1EventCreditGrantNewParams</a>) (\*<a href="https://pkg.go.dev/github.com/stiggio/stigg-go">stigg</a>.<a href="https://pkg.go.dev/github.com/stiggio/stigg-go#CreditGrantResponse">CreditGrantResponse</a>, <a href="https://pkg.go.dev/builtin#error">error</a>)</code>
+- <code title="get /api/v1/credits/grants">client.V1.Events.Credits.Grants.<a href="https://pkg.go.dev/github.com/stiggio/stigg-go#V1EventCreditGrantService.List">List</a>(ctx <a href="https://pkg.go.dev/context">context</a>.<a href="https://pkg.go.dev/context#Context">Context</a>, query <a href="https://pkg.go.dev/github.com/stiggio/stigg-go">stigg</a>.<a href="https://pkg.go.dev/github.com/stiggio/stigg-go#V1EventCreditGrantListParams">V1EventCreditGrantListParams</a>) (\*<a href="https://pkg.go.dev/github.com/stiggio/stigg-go/packages/pagination">pagination</a>.<a href="https://pkg.go.dev/github.com/stiggio/stigg-go/packages/pagination#MyCursorIDPage">MyCursorIDPage</a>[<a href="https://pkg.go.dev/github.com/stiggio/stigg-go">stigg</a>.<a href="https://pkg.go.dev/github.com/stiggio/stigg-go#V1EventCreditGrantListResponse">V1EventCreditGrantListResponse</a>], <a href="https://pkg.go.dev/builtin#error">error</a>)</code>
+- <code title="post /api/v1/credits/grants/{id}/void">client.V1.Events.Credits.Grants.<a href="https://pkg.go.dev/github.com/stiggio/stigg-go#V1EventCreditGrantService.Void">Void</a>(ctx <a href="https://pkg.go.dev/context">context</a>.<a href="https://pkg.go.dev/context#Context">Context</a>, id <a href="https://pkg.go.dev/builtin#string">string</a>) (\*<a href="https://pkg.go.dev/github.com/stiggio/stigg-go">stigg</a>.<a href="https://pkg.go.dev/github.com/stiggio/stigg-go#CreditGrantResponse">CreditGrantResponse</a>, <a href="https://pkg.go.dev/builtin#error">error</a>)</code>
+
 ## Features
 
 Response Types:
