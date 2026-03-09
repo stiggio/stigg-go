@@ -39,7 +39,7 @@ func TestV1CouponNew(t *testing.T) {
 			"foo": "string",
 		},
 		Name:       "name",
-		PercentOff: stigg.Float(1),
+		PercentOff: stigg.Int(1),
 	})
 	if err != nil {
 		var apierr *stigg.Error
