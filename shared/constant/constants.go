@@ -18,6 +18,15 @@ func ValueOf[T Constant[T]]() T {
 	return t.Default()
 }
 
+type Credit string  // Always "CREDIT"
+type Feature string // Always "FEATURE"
+
+func (c Credit) Default() Credit   { return "CREDIT" }
+func (c Feature) Default() Feature { return "FEATURE" }
+
+func (c Credit) MarshalJSON() ([]byte, error)  { return marshalString(c) }
+func (c Feature) MarshalJSON() ([]byte, error) { return marshalString(c) }
+
 type constant[T any] interface {
 	Constant[T]
 	*T

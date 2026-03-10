@@ -114,14 +114,9 @@ func TestV1SubscriptionUpdateWithOptionalParams(t *testing.T) {
 				Quantity: 1,
 				Type:     "FEATURE",
 			}},
-			Entitlements: []stigg.V1SubscriptionUpdateParamsEntitlement{{
-				Credit: stigg.V1SubscriptionUpdateParamsEntitlementCredit{
-					Amount:     1,
-					Cadence:    "MONTH",
-					CurrencyID: "currencyId",
-				},
-				Feature: stigg.V1SubscriptionUpdateParamsEntitlementFeature{
-					FeatureID:         "featureId",
+			Entitlements: []stigg.V1SubscriptionUpdateParamsEntitlementUnion{{
+				OfFeature: &stigg.V1SubscriptionUpdateParamsEntitlementFeature{
+					ID:                "id",
 					HasSoftLimit:      stigg.Bool(true),
 					HasUnlimitedUsage: stigg.Bool(true),
 					MonthlyResetPeriodConfiguration: stigg.V1SubscriptionUpdateParamsEntitlementFeatureMonthlyResetPeriodConfiguration{
@@ -521,14 +516,9 @@ func TestV1SubscriptionProvisionWithOptionalParams(t *testing.T) {
 			CollectPhoneNumber:    stigg.Bool(true),
 			ReferenceID:           stigg.String("referenceId"),
 		},
-		Entitlements: []stigg.V1SubscriptionProvisionParamsEntitlement{{
-			Credit: stigg.V1SubscriptionProvisionParamsEntitlementCredit{
-				Amount:     1,
-				Cadence:    "MONTH",
-				CurrencyID: "currencyId",
-			},
-			Feature: stigg.V1SubscriptionProvisionParamsEntitlementFeature{
-				FeatureID:         "featureId",
+		Entitlements: []stigg.V1SubscriptionProvisionParamsEntitlementUnion{{
+			OfFeature: &stigg.V1SubscriptionProvisionParamsEntitlementFeature{
+				ID:                "id",
 				HasSoftLimit:      stigg.Bool(true),
 				HasUnlimitedUsage: stigg.Bool(true),
 				MonthlyResetPeriodConfiguration: stigg.V1SubscriptionProvisionParamsEntitlementFeatureMonthlyResetPeriodConfiguration{

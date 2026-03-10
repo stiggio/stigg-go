@@ -30,21 +30,9 @@ func TestV1AddonEntitlementNew(t *testing.T) {
 		context.TODO(),
 		"addonId",
 		stigg.V1AddonEntitlementNewParams{
-			Entitlements: []stigg.V1AddonEntitlementNewParamsEntitlement{{
-				Credit: stigg.V1AddonEntitlementNewParamsEntitlementCredit{
-					Amount:              stigg.Float(1),
-					Cadence:             "MONTH",
-					CustomCurrencyID:    "customCurrencyId",
-					Behavior:            "Increment",
-					Description:         stigg.String("description"),
-					DisplayNameOverride: stigg.String("displayNameOverride"),
-					HiddenFromWidgets:   []string{"PAYWALL"},
-					IsCustom:            stigg.Bool(true),
-					IsGranted:           stigg.Bool(true),
-					Order:               stigg.Float(0),
-				},
-				Feature: stigg.V1AddonEntitlementNewParamsEntitlementFeature{
-					FeatureID:           "featureId",
+			Entitlements: []stigg.V1AddonEntitlementNewParamsEntitlementUnion{{
+				OfFeature: &stigg.V1AddonEntitlementNewParamsEntitlementFeature{
+					ID:                  "id",
 					Behavior:            "Increment",
 					Description:         stigg.String("description"),
 					DisplayNameOverride: stigg.String("displayNameOverride"),
@@ -97,18 +85,7 @@ func TestV1AddonEntitlementUpdateWithOptionalParams(t *testing.T) {
 		"id",
 		stigg.V1AddonEntitlementUpdateParams{
 			AddonID: "addonId",
-			Credit: stigg.V1AddonEntitlementUpdateParamsCredit{
-				Amount:              stigg.Float(1),
-				Behavior:            "Increment",
-				Cadence:             "MONTH",
-				Description:         stigg.String("description"),
-				DisplayNameOverride: stigg.String("displayNameOverride"),
-				HiddenFromWidgets:   []string{"PAYWALL"},
-				IsCustom:            stigg.Bool(true),
-				IsGranted:           stigg.Bool(true),
-				Order:               stigg.Float(0),
-			},
-			Feature: stigg.V1AddonEntitlementUpdateParamsFeature{
+			OfFeature: &stigg.V1AddonEntitlementUpdateParamsBodyFeature{
 				Behavior:            "Increment",
 				Description:         stigg.String("description"),
 				DisplayNameOverride: stigg.String("displayNameOverride"),
@@ -118,16 +95,16 @@ func TestV1AddonEntitlementUpdateWithOptionalParams(t *testing.T) {
 				HiddenFromWidgets:   []string{"PAYWALL"},
 				IsCustom:            stigg.Bool(true),
 				IsGranted:           stigg.Bool(true),
-				MonthlyResetPeriodConfiguration: stigg.V1AddonEntitlementUpdateParamsFeatureMonthlyResetPeriodConfiguration{
+				MonthlyResetPeriodConfiguration: stigg.V1AddonEntitlementUpdateParamsBodyFeatureMonthlyResetPeriodConfiguration{
 					AccordingTo: "SubscriptionStart",
 				},
 				Order:       stigg.Float(0),
 				ResetPeriod: "YEAR",
 				UsageLimit:  stigg.Int(0),
-				WeeklyResetPeriodConfiguration: stigg.V1AddonEntitlementUpdateParamsFeatureWeeklyResetPeriodConfiguration{
+				WeeklyResetPeriodConfiguration: stigg.V1AddonEntitlementUpdateParamsBodyFeatureWeeklyResetPeriodConfiguration{
 					AccordingTo: "SubscriptionStart",
 				},
-				YearlyResetPeriodConfiguration: stigg.V1AddonEntitlementUpdateParamsFeatureYearlyResetPeriodConfiguration{
+				YearlyResetPeriodConfiguration: stigg.V1AddonEntitlementUpdateParamsBodyFeatureYearlyResetPeriodConfiguration{
 					AccordingTo: "SubscriptionStart",
 				},
 			},

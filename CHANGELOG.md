@@ -1,5 +1,17 @@
 # Changelog
 
+## 0.1.0-alpha.17 (2026-03-10)
+
+Full Changelog: [v0.1.0-alpha.16...v0.1.0-alpha.17](https://github.com/stiggio/stigg-go/compare/v0.1.0-alpha.16...v0.1.0-alpha.17)
+
+### Features
+
+* **api:** added credits resources ([0f3ca7e](https://github.com/stiggio/stigg-go/commit/0f3ca7e46e5c044cc6ad59dc5719182942264d9a))
+* **api:** api update ([7ccb79a](https://github.com/stiggio/stigg-go/commit/7ccb79a52938f9e918a097ba345a926b73041f90))
+* **api:** api update ([3b8cbcc](https://github.com/stiggio/stigg-go/commit/3b8cbcc7ae5e726647fcf9c4ded02873c8613fd5))
+* **api:** api update ([213a89f](https://github.com/stiggio/stigg-go/commit/213a89ff9ca61a6c40951d6c3a1a65cce35389f1))
+* **api:** api update ([245dccb](https://github.com/stiggio/stigg-go/commit/245dccbfd8293bcfecf7534dda4037ea8776baed))
+
 ## 0.1.0-alpha.16 (2026-03-08)
 
 Full Changelog: [v0.1.0-alpha.15...v0.1.0-alpha.16](https://github.com/stiggio/stigg-go/compare/v0.1.0-alpha.15...v0.1.0-alpha.16)

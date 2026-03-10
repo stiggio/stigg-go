@@ -192,6 +192,8 @@ type CustomerResponseData struct {
 	CreatedAt time.Time `json:"createdAt" api:"required" format:"date-time"`
 	// Timestamp of when the record was last updated
 	UpdatedAt time.Time `json:"updatedAt" api:"required" format:"date-time"`
+	// The unique identifier for the entity in the billing provider
+	BillingID string `json:"billingId" api:"nullable"`
 	// Customer level coupon
 	CouponID string `json:"couponId" api:"nullable"`
 	// The default payment method details
@@ -210,6 +212,7 @@ type CustomerResponseData struct {
 		ArchivedAt           respjson.Field
 		CreatedAt            respjson.Field
 		UpdatedAt            respjson.Field
+		BillingID            respjson.Field
 		CouponID             respjson.Field
 		DefaultPaymentMethod respjson.Field
 		Email                respjson.Field
@@ -296,6 +299,8 @@ type V1CustomerListResponse struct {
 	CreatedAt time.Time `json:"createdAt" api:"required" format:"date-time"`
 	// Timestamp of when the record was last updated
 	UpdatedAt time.Time `json:"updatedAt" api:"required" format:"date-time"`
+	// The unique identifier for the entity in the billing provider
+	BillingID string `json:"billingId" api:"nullable"`
 	// Customer level coupon
 	CouponID string `json:"couponId" api:"nullable"`
 	// The default payment method details
@@ -314,6 +319,7 @@ type V1CustomerListResponse struct {
 		ArchivedAt           respjson.Field
 		CreatedAt            respjson.Field
 		UpdatedAt            respjson.Field
+		BillingID            respjson.Field
 		CouponID             respjson.Field
 		DefaultPaymentMethod respjson.Field
 		Email                respjson.Field
@@ -451,6 +457,8 @@ func (r *V1CustomerListResourcesResponse) UnmarshalJSON(data []byte) error {
 }
 
 type V1CustomerUpdateParams struct {
+	// The unique identifier for the entity in the billing provider
+	BillingID param.Opt[string] `json:"billingId,omitzero"`
 	// Customer level coupon
 	CouponID param.Opt[string] `json:"couponId,omitzero"`
 	// The email of the customer
@@ -609,6 +617,8 @@ func (r V1CustomerListResourcesParams) URLQuery() (v url.Values, err error) {
 type V1CustomerProvisionParams struct {
 	// Customer slug
 	ID string `json:"id" api:"required"`
+	// The unique identifier for the entity in the billing provider
+	BillingID param.Opt[string] `json:"billingId,omitzero"`
 	// Customer level coupon
 	CouponID param.Opt[string] `json:"couponId,omitzero"`
 	// The email of the customer

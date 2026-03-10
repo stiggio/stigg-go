@@ -31,12 +31,12 @@ func TestV1UsageHistoryWithOptionalParams(t *testing.T) {
 		context.TODO(),
 		"featureId",
 		stigg.V1UsageHistoryParams{
-			CustomerID:             "customerId",
-			StartDate:              time.Now(),
-			EndDate:                stigg.Time(time.Now()),
-			GroupBy:                stigg.String("groupBy"),
-			IncludeHistoricalUsage: stigg.Bool(true),
-			ResourceID:             stigg.String("resourceId"),
+			CustomerID:                   "customerId",
+			StartDate:                    time.Now(),
+			EndDate:                      stigg.Time(time.Now()),
+			GroupBy:                      stigg.String("groupBy"),
+			IncludeInactiveSubscriptions: stigg.Bool(true),
+			ResourceID:                   stigg.String("resourceId"),
 		},
 	)
 	if err != nil {
