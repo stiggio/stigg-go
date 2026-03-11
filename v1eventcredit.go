@@ -46,7 +46,7 @@ func (r *V1EventCreditService) GetAutoRecharge(ctx context.Context, query V1Even
 	opts = slices.Concat(r.Options, opts)
 	path := "api/v1/credits/auto-recharge"
 	err = requestconfig.ExecuteNewRequest(ctx, http.MethodGet, path, query, &res, opts...)
-	return
+	return res, err
 }
 
 // Retrieves credit usage time-series data for a customer, grouped by feature, over
@@ -55,7 +55,7 @@ func (r *V1EventCreditService) GetUsage(ctx context.Context, query V1EventCredit
 	opts = slices.Concat(r.Options, opts)
 	path := "api/v1/credits/usage"
 	err = requestconfig.ExecuteNewRequest(ctx, http.MethodGet, path, query, &res, opts...)
-	return
+	return res, err
 }
 
 // Retrieves a paginated list of credit ledger events for a customer.

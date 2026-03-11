@@ -48,11 +48,11 @@ func (r *V1CustomerPromotionalEntitlementService) New(ctx context.Context, id st
 	opts = slices.Concat(r.Options, opts)
 	if id == "" {
 		err = errors.New("missing required id parameter")
-		return
+		return nil, err
 	}
 	path := fmt.Sprintf("api/v1/customers/%s/promotional-entitlements", id)
 	err = requestconfig.ExecuteNewRequest(ctx, http.MethodPost, path, body, &res, opts...)
-	return
+	return res, err
 }
 
 // Retrieves a paginated list of a customer's promotional entitlements.
@@ -62,7 +62,7 @@ func (r *V1CustomerPromotionalEntitlementService) List(ctx context.Context, id s
 	opts = append([]option.RequestOption{option.WithResponseInto(&raw)}, opts...)
 	if id == "" {
 		err = errors.New("missing required id parameter")
-		return
+		return nil, err
 	}
 	path := fmt.Sprintf("api/v1/customers/%s/promotional-entitlements", id)
 	cfg, err := requestconfig.NewRequestConfig(ctx, http.MethodGet, path, query, &res, opts...)
@@ -88,15 +88,15 @@ func (r *V1CustomerPromotionalEntitlementService) Revoke(ctx context.Context, fe
 	opts = slices.Concat(r.Options, opts)
 	if body.ID == "" {
 		err = errors.New("missing required id parameter")
-		return
+		return nil, err
 	}
 	if featureID == "" {
 		err = errors.New("missing required featureId parameter")
-		return
+		return nil, err
 	}
 	path := fmt.Sprintf("api/v1/customers/%s/promotional-entitlements/%s", body.ID, featureID)
 	err = requestconfig.ExecuteNewRequest(ctx, http.MethodDelete, path, nil, &res, opts...)
-	return
+	return res, err
 }
 
 // Response object
