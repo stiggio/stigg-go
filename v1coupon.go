@@ -47,7 +47,7 @@ func (r *V1CouponService) New(ctx context.Context, body V1CouponNewParams, opts 
 	opts = slices.Concat(r.Options, opts)
 	path := "api/v1/coupons"
 	err = requestconfig.ExecuteNewRequest(ctx, http.MethodPost, path, body, &res, opts...)
-	return
+	return res, err
 }
 
 // Retrieves a coupon by its unique identifier.
@@ -55,11 +55,11 @@ func (r *V1CouponService) Get(ctx context.Context, id string, opts ...option.Req
 	opts = slices.Concat(r.Options, opts)
 	if id == "" {
 		err = errors.New("missing required id parameter")
-		return
+		return nil, err
 	}
 	path := fmt.Sprintf("api/v1/coupons/%s", id)
 	err = requestconfig.ExecuteNewRequest(ctx, http.MethodGet, path, nil, &res, opts...)
-	return
+	return res, err
 }
 
 // Retrieves a paginated list of coupons in the environment.
@@ -90,11 +90,11 @@ func (r *V1CouponService) ArchiveCoupon(ctx context.Context, id string, opts ...
 	opts = slices.Concat(r.Options, opts)
 	if id == "" {
 		err = errors.New("missing required id parameter")
-		return
+		return nil, err
 	}
 	path := fmt.Sprintf("api/v1/coupons/%s/archive", id)
 	err = requestconfig.ExecuteNewRequest(ctx, http.MethodPost, path, nil, &res, opts...)
-	return
+	return res, err
 }
 
 // Updates an existing coupon's properties such as name, description, and metadata.
@@ -102,11 +102,11 @@ func (r *V1CouponService) UpdateCoupon(ctx context.Context, id string, body V1Co
 	opts = slices.Concat(r.Options, opts)
 	if id == "" {
 		err = errors.New("missing required id parameter")
-		return
+		return nil, err
 	}
 	path := fmt.Sprintf("api/v1/coupons/%s", id)
 	err = requestconfig.ExecuteNewRequest(ctx, http.MethodPatch, path, body, &res, opts...)
-	return
+	return res, err
 }
 
 // Response object

@@ -50,7 +50,7 @@ func (r *V1PlanService) New(ctx context.Context, body V1PlanNewParams, opts ...o
 	opts = slices.Concat(r.Options, opts)
 	path := "api/v1/plans"
 	err = requestconfig.ExecuteNewRequest(ctx, http.MethodPost, path, body, &res, opts...)
-	return
+	return res, err
 }
 
 // Retrieves a plan by its unique identifier, including entitlements and pricing
@@ -59,11 +59,11 @@ func (r *V1PlanService) Get(ctx context.Context, id string, opts ...option.Reque
 	opts = slices.Concat(r.Options, opts)
 	if id == "" {
 		err = errors.New("missing required id parameter")
-		return
+		return nil, err
 	}
 	path := fmt.Sprintf("api/v1/plans/%s", id)
 	err = requestconfig.ExecuteNewRequest(ctx, http.MethodGet, path, nil, &res, opts...)
-	return
+	return res, err
 }
 
 // Updates an existing plan's properties such as display name, description, and
@@ -72,11 +72,11 @@ func (r *V1PlanService) Update(ctx context.Context, id string, body V1PlanUpdate
 	opts = slices.Concat(r.Options, opts)
 	if id == "" {
 		err = errors.New("missing required id parameter")
-		return
+		return nil, err
 	}
 	path := fmt.Sprintf("api/v1/plans/%s", id)
 	err = requestconfig.ExecuteNewRequest(ctx, http.MethodPatch, path, body, &res, opts...)
-	return
+	return res, err
 }
 
 // Retrieves a paginated list of plans in the environment.
@@ -107,11 +107,11 @@ func (r *V1PlanService) Archive(ctx context.Context, id string, opts ...option.R
 	opts = slices.Concat(r.Options, opts)
 	if id == "" {
 		err = errors.New("missing required id parameter")
-		return
+		return nil, err
 	}
 	path := fmt.Sprintf("api/v1/plans/%s/archive", id)
 	err = requestconfig.ExecuteNewRequest(ctx, http.MethodPost, path, nil, &res, opts...)
-	return
+	return res, err
 }
 
 // Creates a draft version of an existing plan for modification before publishing.
@@ -119,11 +119,11 @@ func (r *V1PlanService) NewDraft(ctx context.Context, id string, opts ...option.
 	opts = slices.Concat(r.Options, opts)
 	if id == "" {
 		err = errors.New("missing required id parameter")
-		return
+		return nil, err
 	}
 	path := fmt.Sprintf("api/v1/plans/%s/draft", id)
 	err = requestconfig.ExecuteNewRequest(ctx, http.MethodPost, path, nil, &res, opts...)
-	return
+	return res, err
 }
 
 // Publishes a draft plan, making it available for use in subscriptions.
@@ -131,11 +131,11 @@ func (r *V1PlanService) Publish(ctx context.Context, id string, body V1PlanPubli
 	opts = slices.Concat(r.Options, opts)
 	if id == "" {
 		err = errors.New("missing required id parameter")
-		return
+		return nil, err
 	}
 	path := fmt.Sprintf("api/v1/plans/%s/publish", id)
 	err = requestconfig.ExecuteNewRequest(ctx, http.MethodPost, path, body, &res, opts...)
-	return
+	return res, err
 }
 
 // Removes a draft version of a plan.
@@ -143,11 +143,11 @@ func (r *V1PlanService) RemoveDraft(ctx context.Context, id string, opts ...opti
 	opts = slices.Concat(r.Options, opts)
 	if id == "" {
 		err = errors.New("missing required id parameter")
-		return
+		return nil, err
 	}
 	path := fmt.Sprintf("api/v1/plans/%s/draft", id)
 	err = requestconfig.ExecuteNewRequest(ctx, http.MethodDelete, path, nil, &res, opts...)
-	return
+	return res, err
 }
 
 // Sets the pricing configuration for a plan, including pricing models, overage
@@ -156,11 +156,11 @@ func (r *V1PlanService) SetPricing(ctx context.Context, id string, body V1PlanSe
 	opts = slices.Concat(r.Options, opts)
 	if id == "" {
 		err = errors.New("missing required id parameter")
-		return
+		return nil, err
 	}
 	path := fmt.Sprintf("api/v1/plans/%s/charges", id)
 	err = requestconfig.ExecuteNewRequest(ctx, http.MethodPut, path, body, &res, opts...)
-	return
+	return res, err
 }
 
 // Response object

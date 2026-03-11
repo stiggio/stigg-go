@@ -47,7 +47,7 @@ func (r *V1EventCreditGrantService) New(ctx context.Context, body V1EventCreditG
 	opts = slices.Concat(r.Options, opts)
 	path := "api/v1/credits/grants"
 	err = requestconfig.ExecuteNewRequest(ctx, http.MethodPost, path, body, &res, opts...)
-	return
+	return res, err
 }
 
 // Retrieves a paginated list of credit grants for a customer.
@@ -79,11 +79,11 @@ func (r *V1EventCreditGrantService) Void(ctx context.Context, id string, opts ..
 	opts = slices.Concat(r.Options, opts)
 	if id == "" {
 		err = errors.New("missing required id parameter")
-		return
+		return nil, err
 	}
 	path := fmt.Sprintf("api/v1/credits/grants/%s/void", id)
 	err = requestconfig.ExecuteNewRequest(ctx, http.MethodPost, path, nil, &res, opts...)
-	return
+	return res, err
 }
 
 // Response object

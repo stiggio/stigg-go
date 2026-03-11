@@ -44,11 +44,11 @@ func (r *V1SubscriptionUsageService) ChargeUsage(ctx context.Context, id string,
 	opts = slices.Concat(r.Options, opts)
 	if id == "" {
 		err = errors.New("missing required id parameter")
-		return
+		return nil, err
 	}
 	path := fmt.Sprintf("api/v1/subscriptions/%s/usage/charge", id)
 	err = requestconfig.ExecuteNewRequest(ctx, http.MethodPost, path, body, &res, opts...)
-	return
+	return res, err
 }
 
 // Triggers a usage sync for a subscription, reporting current usage to the billing
@@ -57,11 +57,11 @@ func (r *V1SubscriptionUsageService) Sync(ctx context.Context, id string, opts .
 	opts = slices.Concat(r.Options, opts)
 	if id == "" {
 		err = errors.New("missing required id parameter")
-		return
+		return nil, err
 	}
 	path := fmt.Sprintf("api/v1/subscriptions/%s/usage/sync", id)
 	err = requestconfig.ExecuteNewRequest(ctx, http.MethodPost, path, nil, &res, opts...)
-	return
+	return res, err
 }
 
 // Response object

@@ -43,11 +43,11 @@ func (r *V1AddonEntitlementService) New(ctx context.Context, addonID string, bod
 	opts = slices.Concat(r.Options, opts)
 	if addonID == "" {
 		err = errors.New("missing required addonId parameter")
-		return
+		return nil, err
 	}
 	path := fmt.Sprintf("api/v1/addons/%s/entitlements", addonID)
 	err = requestconfig.ExecuteNewRequest(ctx, http.MethodPost, path, body, &res, opts...)
-	return
+	return res, err
 }
 
 // Updates an existing entitlement on a draft addon.
@@ -55,15 +55,15 @@ func (r *V1AddonEntitlementService) Update(ctx context.Context, id string, param
 	opts = slices.Concat(r.Options, opts)
 	if params.AddonID == "" {
 		err = errors.New("missing required addonId parameter")
-		return
+		return nil, err
 	}
 	if id == "" {
 		err = errors.New("missing required id parameter")
-		return
+		return nil, err
 	}
 	path := fmt.Sprintf("api/v1/addons/%s/entitlements/%s", params.AddonID, id)
 	err = requestconfig.ExecuteNewRequest(ctx, http.MethodPatch, path, params, &res, opts...)
-	return
+	return res, err
 }
 
 // Retrieves a list of entitlements for an addon.
@@ -71,11 +71,11 @@ func (r *V1AddonEntitlementService) List(ctx context.Context, addonID string, op
 	opts = slices.Concat(r.Options, opts)
 	if addonID == "" {
 		err = errors.New("missing required addonId parameter")
-		return
+		return nil, err
 	}
 	path := fmt.Sprintf("api/v1/addons/%s/entitlements", addonID)
 	err = requestconfig.ExecuteNewRequest(ctx, http.MethodGet, path, nil, &res, opts...)
-	return
+	return res, err
 }
 
 // Deletes an entitlement from a draft addon.
@@ -83,15 +83,15 @@ func (r *V1AddonEntitlementService) Delete(ctx context.Context, id string, body 
 	opts = slices.Concat(r.Options, opts)
 	if body.AddonID == "" {
 		err = errors.New("missing required addonId parameter")
-		return
+		return nil, err
 	}
 	if id == "" {
 		err = errors.New("missing required id parameter")
-		return
+		return nil, err
 	}
 	path := fmt.Sprintf("api/v1/addons/%s/entitlements/%s", body.AddonID, id)
 	err = requestconfig.ExecuteNewRequest(ctx, http.MethodDelete, path, nil, &res, opts...)
-	return
+	return res, err
 }
 
 // Response object

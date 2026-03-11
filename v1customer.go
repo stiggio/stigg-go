@@ -51,11 +51,11 @@ func (r *V1CustomerService) Get(ctx context.Context, id string, opts ...option.R
 	opts = slices.Concat(r.Options, opts)
 	if id == "" {
 		err = errors.New("missing required id parameter")
-		return
+		return nil, err
 	}
 	path := fmt.Sprintf("api/v1/customers/%s", id)
 	err = requestconfig.ExecuteNewRequest(ctx, http.MethodGet, path, nil, &res, opts...)
-	return
+	return res, err
 }
 
 // Updates an existing customer's properties such as name, email, and billing
@@ -64,11 +64,11 @@ func (r *V1CustomerService) Update(ctx context.Context, id string, body V1Custom
 	opts = slices.Concat(r.Options, opts)
 	if id == "" {
 		err = errors.New("missing required id parameter")
-		return
+		return nil, err
 	}
 	path := fmt.Sprintf("api/v1/customers/%s", id)
 	err = requestconfig.ExecuteNewRequest(ctx, http.MethodPatch, path, body, &res, opts...)
-	return
+	return res, err
 }
 
 // Retrieves a paginated list of customers in the environment.
@@ -100,11 +100,11 @@ func (r *V1CustomerService) Archive(ctx context.Context, id string, opts ...opti
 	opts = slices.Concat(r.Options, opts)
 	if id == "" {
 		err = errors.New("missing required id parameter")
-		return
+		return nil, err
 	}
 	path := fmt.Sprintf("api/v1/customers/%s/archive", id)
 	err = requestconfig.ExecuteNewRequest(ctx, http.MethodPost, path, nil, &res, opts...)
-	return
+	return res, err
 }
 
 // Imports multiple customers in bulk. Used for migrating customer data from
@@ -113,7 +113,7 @@ func (r *V1CustomerService) Import(ctx context.Context, body V1CustomerImportPar
 	opts = slices.Concat(r.Options, opts)
 	path := "api/v1/customers/import"
 	err = requestconfig.ExecuteNewRequest(ctx, http.MethodPost, path, body, &res, opts...)
-	return
+	return res, err
 }
 
 // Retrieves a paginated list of resources within the same customer.
@@ -123,7 +123,7 @@ func (r *V1CustomerService) ListResources(ctx context.Context, id string, query 
 	opts = append([]option.RequestOption{option.WithResponseInto(&raw)}, opts...)
 	if id == "" {
 		err = errors.New("missing required id parameter")
-		return
+		return nil, err
 	}
 	path := fmt.Sprintf("api/v1/customers/%s/resources", id)
 	cfg, err := requestconfig.NewRequestConfig(ctx, http.MethodGet, path, query, &res, opts...)
@@ -149,7 +149,7 @@ func (r *V1CustomerService) Provision(ctx context.Context, body V1CustomerProvis
 	opts = slices.Concat(r.Options, opts)
 	path := "api/v1/customers"
 	err = requestconfig.ExecuteNewRequest(ctx, http.MethodPost, path, body, &res, opts...)
-	return
+	return res, err
 }
 
 // Restores an archived customer, allowing them to create new subscriptions again.
@@ -157,11 +157,11 @@ func (r *V1CustomerService) Unarchive(ctx context.Context, id string, opts ...op
 	opts = slices.Concat(r.Options, opts)
 	if id == "" {
 		err = errors.New("missing required id parameter")
-		return
+		return nil, err
 	}
 	path := fmt.Sprintf("api/v1/customers/%s/unarchive", id)
 	err = requestconfig.ExecuteNewRequest(ctx, http.MethodPost, path, nil, &res, opts...)
-	return
+	return res, err
 }
 
 // Response object

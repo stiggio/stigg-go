@@ -45,15 +45,15 @@ func (r *V1UsageService) History(ctx context.Context, featureID string, params V
 	opts = slices.Concat(r.Options, opts)
 	if params.CustomerID == "" {
 		err = errors.New("missing required customerId parameter")
-		return
+		return nil, err
 	}
 	if featureID == "" {
 		err = errors.New("missing required featureId parameter")
-		return
+		return nil, err
 	}
 	path := fmt.Sprintf("api/v1/usage/%s/history/%s", params.CustomerID, featureID)
 	err = requestconfig.ExecuteNewRequest(ctx, http.MethodGet, path, params, &res, opts...)
-	return
+	return res, err
 }
 
 // Reports usage measurements for metered features. The reported usage is used to
@@ -62,7 +62,7 @@ func (r *V1UsageService) Report(ctx context.Context, body V1UsageReportParams, o
 	opts = slices.Concat(r.Options, opts)
 	path := "api/v1/usage"
 	err = requestconfig.ExecuteNewRequest(ctx, http.MethodPost, path, body, &res, opts...)
-	return
+	return res, err
 }
 
 // Response object

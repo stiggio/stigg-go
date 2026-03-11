@@ -41,11 +41,11 @@ func (r *V1SubscriptionFutureUpdateService) CancelPendingPayment(ctx context.Con
 	opts = slices.Concat(r.Options, opts)
 	if id == "" {
 		err = errors.New("missing required id parameter")
-		return
+		return nil, err
 	}
 	path := fmt.Sprintf("api/v1/subscriptions/%s/future-update/pending-payment", id)
 	err = requestconfig.ExecuteNewRequest(ctx, http.MethodDelete, path, nil, &res, opts...)
-	return
+	return res, err
 }
 
 // Cancels a scheduled subscription update, such as a future downgrade or plan
@@ -54,11 +54,11 @@ func (r *V1SubscriptionFutureUpdateService) CancelSchedule(ctx context.Context, 
 	opts = slices.Concat(r.Options, opts)
 	if id == "" {
 		err = errors.New("missing required id parameter")
-		return
+		return nil, err
 	}
 	path := fmt.Sprintf("api/v1/subscriptions/%s/future-update/schedule", id)
 	err = requestconfig.ExecuteNewRequest(ctx, http.MethodDelete, path, nil, &res, opts...)
-	return
+	return res, err
 }
 
 // Response object

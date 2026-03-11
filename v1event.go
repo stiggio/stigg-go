@@ -44,7 +44,7 @@ func (r *V1EventService) Report(ctx context.Context, body V1EventReportParams, o
 	opts = slices.Concat(r.Options, opts)
 	path := "api/v1/events"
 	err = requestconfig.ExecuteNewRequest(ctx, http.MethodPost, path, body, &res, opts...)
-	return
+	return res, err
 }
 
 // Response object
