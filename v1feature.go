@@ -46,11 +46,11 @@ func (r *V1FeatureService) ArchiveFeature(ctx context.Context, id string, opts .
 	opts = slices.Concat(r.Options, opts)
 	if id == "" {
 		err = errors.New("missing required id parameter")
-		return
+		return nil, err
 	}
 	path := fmt.Sprintf("api/v1/features/%s/archive", id)
 	err = requestconfig.ExecuteNewRequest(ctx, http.MethodPost, path, nil, &res, opts...)
-	return
+	return res, err
 }
 
 // Creates a new feature with the specified type, metering, and configuration.
@@ -58,7 +58,7 @@ func (r *V1FeatureService) NewFeature(ctx context.Context, body V1FeatureNewFeat
 	opts = slices.Concat(r.Options, opts)
 	path := "api/v1/features"
 	err = requestconfig.ExecuteNewRequest(ctx, http.MethodPost, path, body, &res, opts...)
-	return
+	return res, err
 }
 
 // Retrieves a paginated list of features in the environment.
@@ -89,11 +89,11 @@ func (r *V1FeatureService) GetFeature(ctx context.Context, id string, opts ...op
 	opts = slices.Concat(r.Options, opts)
 	if id == "" {
 		err = errors.New("missing required id parameter")
-		return
+		return nil, err
 	}
 	path := fmt.Sprintf("api/v1/features/%s", id)
 	err = requestconfig.ExecuteNewRequest(ctx, http.MethodGet, path, nil, &res, opts...)
-	return
+	return res, err
 }
 
 // Restores an archived feature, allowing it to be used in entitlements again.
@@ -101,11 +101,11 @@ func (r *V1FeatureService) UnarchiveFeature(ctx context.Context, id string, opts
 	opts = slices.Concat(r.Options, opts)
 	if id == "" {
 		err = errors.New("missing required id parameter")
-		return
+		return nil, err
 	}
 	path := fmt.Sprintf("api/v1/features/%s/unarchive", id)
 	err = requestconfig.ExecuteNewRequest(ctx, http.MethodPost, path, nil, &res, opts...)
-	return
+	return res, err
 }
 
 // Updates an existing feature's properties such as display name, description, and
@@ -114,11 +114,11 @@ func (r *V1FeatureService) UpdateFeature(ctx context.Context, id string, body V1
 	opts = slices.Concat(r.Options, opts)
 	if id == "" {
 		err = errors.New("missing required id parameter")
-		return
+		return nil, err
 	}
 	path := fmt.Sprintf("api/v1/features/%s", id)
 	err = requestconfig.ExecuteNewRequest(ctx, http.MethodPatch, path, body, &res, opts...)
-	return
+	return res, err
 }
 
 // Response object

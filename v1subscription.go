@@ -56,11 +56,11 @@ func (r *V1SubscriptionService) Get(ctx context.Context, id string, opts ...opti
 	opts = slices.Concat(r.Options, opts)
 	if id == "" {
 		err = errors.New("missing required id parameter")
-		return
+		return nil, err
 	}
 	path := fmt.Sprintf("api/v1/subscriptions/%s", id)
 	err = requestconfig.ExecuteNewRequest(ctx, http.MethodGet, path, nil, &res, opts...)
-	return
+	return res, err
 }
 
 // Updates an active subscription's properties including billing period, add-ons,
@@ -69,11 +69,11 @@ func (r *V1SubscriptionService) Update(ctx context.Context, id string, body V1Su
 	opts = slices.Concat(r.Options, opts)
 	if id == "" {
 		err = errors.New("missing required id parameter")
-		return
+		return nil, err
 	}
 	path := fmt.Sprintf("api/v1/subscriptions/%s", id)
 	err = requestconfig.ExecuteNewRequest(ctx, http.MethodPatch, path, body, &res, opts...)
-	return
+	return res, err
 }
 
 // Retrieves a paginated list of subscriptions, with optional filters for customer,
@@ -107,11 +107,11 @@ func (r *V1SubscriptionService) Cancel(ctx context.Context, id string, body V1Su
 	opts = slices.Concat(r.Options, opts)
 	if id == "" {
 		err = errors.New("missing required id parameter")
-		return
+		return nil, err
 	}
 	path := fmt.Sprintf("api/v1/subscriptions/%s/cancel", id)
 	err = requestconfig.ExecuteNewRequest(ctx, http.MethodPost, path, body, &res, opts...)
-	return
+	return res, err
 }
 
 // Delegates the payment responsibility of a subscription to a different customer.
@@ -120,11 +120,11 @@ func (r *V1SubscriptionService) Delegate(ctx context.Context, id string, body V1
 	opts = slices.Concat(r.Options, opts)
 	if id == "" {
 		err = errors.New("missing required id parameter")
-		return
+		return nil, err
 	}
 	path := fmt.Sprintf("api/v1/subscriptions/%s/delegate", id)
 	err = requestconfig.ExecuteNewRequest(ctx, http.MethodPost, path, body, &res, opts...)
-	return
+	return res, err
 }
 
 // Imports multiple subscriptions in bulk. Used for migrating subscription data
@@ -133,7 +133,7 @@ func (r *V1SubscriptionService) Import(ctx context.Context, body V1SubscriptionI
 	opts = slices.Concat(r.Options, opts)
 	path := "api/v1/subscriptions/import"
 	err = requestconfig.ExecuteNewRequest(ctx, http.MethodPost, path, body, &res, opts...)
-	return
+	return res, err
 }
 
 // Migrates a subscription to the latest published version of its plan or add-ons.
@@ -142,11 +142,11 @@ func (r *V1SubscriptionService) Migrate(ctx context.Context, id string, body V1S
 	opts = slices.Concat(r.Options, opts)
 	if id == "" {
 		err = errors.New("missing required id parameter")
-		return
+		return nil, err
 	}
 	path := fmt.Sprintf("api/v1/subscriptions/%s/migrate", id)
 	err = requestconfig.ExecuteNewRequest(ctx, http.MethodPost, path, body, &res, opts...)
-	return
+	return res, err
 }
 
 // Previews the pricing impact of creating or updating a subscription without
@@ -155,7 +155,7 @@ func (r *V1SubscriptionService) Preview(ctx context.Context, body V1Subscription
 	opts = slices.Concat(r.Options, opts)
 	path := "api/v1/subscriptions/preview"
 	err = requestconfig.ExecuteNewRequest(ctx, http.MethodPost, path, body, &res, opts...)
-	return
+	return res, err
 }
 
 // Creates a new subscription for an existing customer. When payment is required
@@ -164,7 +164,7 @@ func (r *V1SubscriptionService) Provision(ctx context.Context, body V1Subscripti
 	opts = slices.Concat(r.Options, opts)
 	path := "api/v1/subscriptions"
 	err = requestconfig.ExecuteNewRequest(ctx, http.MethodPost, path, body, &res, opts...)
-	return
+	return res, err
 }
 
 // Transfers a subscription to a different resource ID. Used for multi-resource
@@ -173,11 +173,11 @@ func (r *V1SubscriptionService) Transfer(ctx context.Context, id string, body V1
 	opts = slices.Concat(r.Options, opts)
 	if id == "" {
 		err = errors.New("missing required id parameter")
-		return
+		return nil, err
 	}
 	path := fmt.Sprintf("api/v1/subscriptions/%s/transfer", id)
 	err = requestconfig.ExecuteNewRequest(ctx, http.MethodPost, path, body, &res, opts...)
-	return
+	return res, err
 }
 
 // Response object

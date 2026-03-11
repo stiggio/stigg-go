@@ -42,11 +42,11 @@ func (r *V1SubscriptionInvoiceService) MarkAsPaid(ctx context.Context, id string
 	opts = slices.Concat(r.Options, opts)
 	if id == "" {
 		err = errors.New("missing required id parameter")
-		return
+		return nil, err
 	}
 	path := fmt.Sprintf("api/v1/subscriptions/%s/invoice/paid", id)
 	err = requestconfig.ExecuteNewRequest(ctx, http.MethodPost, path, nil, &res, opts...)
-	return
+	return res, err
 }
 
 // Response object

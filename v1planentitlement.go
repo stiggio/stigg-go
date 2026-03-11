@@ -43,11 +43,11 @@ func (r *V1PlanEntitlementService) New(ctx context.Context, planID string, body 
 	opts = slices.Concat(r.Options, opts)
 	if planID == "" {
 		err = errors.New("missing required planId parameter")
-		return
+		return nil, err
 	}
 	path := fmt.Sprintf("api/v1/plans/%s/entitlements", planID)
 	err = requestconfig.ExecuteNewRequest(ctx, http.MethodPost, path, body, &res, opts...)
-	return
+	return res, err
 }
 
 // Updates an existing entitlement on a draft plan.
@@ -55,15 +55,15 @@ func (r *V1PlanEntitlementService) Update(ctx context.Context, id string, params
 	opts = slices.Concat(r.Options, opts)
 	if params.PlanID == "" {
 		err = errors.New("missing required planId parameter")
-		return
+		return nil, err
 	}
 	if id == "" {
 		err = errors.New("missing required id parameter")
-		return
+		return nil, err
 	}
 	path := fmt.Sprintf("api/v1/plans/%s/entitlements/%s", params.PlanID, id)
 	err = requestconfig.ExecuteNewRequest(ctx, http.MethodPatch, path, params, &res, opts...)
-	return
+	return res, err
 }
 
 // Retrieves a list of entitlements for a plan.
@@ -71,11 +71,11 @@ func (r *V1PlanEntitlementService) List(ctx context.Context, planID string, opts
 	opts = slices.Concat(r.Options, opts)
 	if planID == "" {
 		err = errors.New("missing required planId parameter")
-		return
+		return nil, err
 	}
 	path := fmt.Sprintf("api/v1/plans/%s/entitlements", planID)
 	err = requestconfig.ExecuteNewRequest(ctx, http.MethodGet, path, nil, &res, opts...)
-	return
+	return res, err
 }
 
 // Deletes an entitlement from a draft plan.
@@ -83,15 +83,15 @@ func (r *V1PlanEntitlementService) Delete(ctx context.Context, id string, body V
 	opts = slices.Concat(r.Options, opts)
 	if body.PlanID == "" {
 		err = errors.New("missing required planId parameter")
-		return
+		return nil, err
 	}
 	if id == "" {
 		err = errors.New("missing required id parameter")
-		return
+		return nil, err
 	}
 	path := fmt.Sprintf("api/v1/plans/%s/entitlements/%s", body.PlanID, id)
 	err = requestconfig.ExecuteNewRequest(ctx, http.MethodDelete, path, nil, &res, opts...)
-	return
+	return res, err
 }
 
 // Response object

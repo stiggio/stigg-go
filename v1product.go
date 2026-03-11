@@ -47,11 +47,11 @@ func (r *V1ProductService) ArchiveProduct(ctx context.Context, id string, opts .
 	opts = slices.Concat(r.Options, opts)
 	if id == "" {
 		err = errors.New("missing required id parameter")
-		return
+		return nil, err
 	}
 	path := fmt.Sprintf("api/v1/products/%s/archive", id)
 	err = requestconfig.ExecuteNewRequest(ctx, http.MethodPost, path, nil, &res, opts...)
-	return
+	return res, err
 }
 
 // Creates a new product.
@@ -59,7 +59,7 @@ func (r *V1ProductService) NewProduct(ctx context.Context, body V1ProductNewProd
 	opts = slices.Concat(r.Options, opts)
 	path := "api/v1/products"
 	err = requestconfig.ExecuteNewRequest(ctx, http.MethodPost, path, body, &res, opts...)
-	return
+	return res, err
 }
 
 // Duplicates an existing product, including its plans, addons, and configuration.
@@ -67,11 +67,11 @@ func (r *V1ProductService) DuplicateProduct(ctx context.Context, id string, body
 	opts = slices.Concat(r.Options, opts)
 	if id == "" {
 		err = errors.New("missing required id parameter")
-		return
+		return nil, err
 	}
 	path := fmt.Sprintf("api/v1/products/%s/duplicate", id)
 	err = requestconfig.ExecuteNewRequest(ctx, http.MethodPost, path, body, &res, opts...)
-	return
+	return res, err
 }
 
 // Retrieves a paginated list of products in the environment.
@@ -102,11 +102,11 @@ func (r *V1ProductService) UnarchiveProduct(ctx context.Context, id string, opts
 	opts = slices.Concat(r.Options, opts)
 	if id == "" {
 		err = errors.New("missing required id parameter")
-		return
+		return nil, err
 	}
 	path := fmt.Sprintf("api/v1/products/%s/unarchive", id)
 	err = requestconfig.ExecuteNewRequest(ctx, http.MethodPost, path, nil, &res, opts...)
-	return
+	return res, err
 }
 
 // Updates an existing product's properties such as display name, description, and
@@ -115,11 +115,11 @@ func (r *V1ProductService) UpdateProduct(ctx context.Context, id string, body V1
 	opts = slices.Concat(r.Options, opts)
 	if id == "" {
 		err = errors.New("missing required id parameter")
-		return
+		return nil, err
 	}
 	path := fmt.Sprintf("api/v1/products/%s", id)
 	err = requestconfig.ExecuteNewRequest(ctx, http.MethodPatch, path, body, &res, opts...)
-	return
+	return res, err
 }
 
 // Response object
