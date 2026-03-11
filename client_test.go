@@ -38,7 +38,7 @@ func TestUserAgentHeader(t *testing.T) {
 			},
 		}),
 	)
-	client.V1.Customers.Get(context.Background(), "REPLACE_ME")
+	_, _ = client.V1.Customers.Get(context.Background(), "REPLACE_ME")
 	if userAgent != fmt.Sprintf("Stigg/Go %s", internal.PackageVersion) {
 		t.Errorf("Expected User-Agent to be correct, but got: %#v", userAgent)
 	}
