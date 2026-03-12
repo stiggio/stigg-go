@@ -135,7 +135,7 @@ func TestV1CustomerArchive(t *testing.T) {
 	}
 }
 
-func TestV1CustomerImport(t *testing.T) {
+func TestV1CustomerImportWithOptionalParams(t *testing.T) {
 	t.Skip("Mock server tests are disabled")
 	baseURL := "http://localhost:4010"
 	if envURL, ok := os.LookupEnv("TEST_API_BASE_URL"); ok {
@@ -150,15 +150,18 @@ func TestV1CustomerImport(t *testing.T) {
 	)
 	_, err := client.V1.Customers.Import(context.TODO(), stigg.V1CustomerImportParams{
 		Customers: []stigg.V1CustomerImportParamsCustomer{{
-			ID:    "id",
-			Email: stigg.String("dev@stainless.com"),
-			Name:  stigg.String("name"),
+			ID:        "id",
+			Email:     stigg.String("dev@stainless.com"),
+			Name:      stigg.String("name"),
+			BillingID: stigg.String("billingId"),
 			Metadata: map[string]string{
 				"foo": "string",
 			},
 			PaymentMethodID: stigg.String("paymentMethodId"),
+			SalesforceID:    stigg.String("salesforceId"),
 			UpdatedAt:       stigg.Time(time.Now()),
 		}},
+		IntegrationID: stigg.String("integrationId"),
 	})
 	if err != nil {
 		var apierr *stigg.Error
