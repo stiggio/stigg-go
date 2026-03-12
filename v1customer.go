@@ -559,6 +559,8 @@ func (r V1CustomerListParamsCreatedAt) URLQuery() (v url.Values, err error) {
 type V1CustomerImportParams struct {
 	// List of customer objects to import
 	Customers []V1CustomerImportParamsCustomer `json:"customers,omitzero" api:"required"`
+	// Integration details
+	IntegrationID param.Opt[string] `json:"integrationId,omitzero"`
 	paramObj
 }
 
@@ -578,8 +580,12 @@ type V1CustomerImportParamsCustomer struct {
 	Name param.Opt[string] `json:"name,omitzero" api:"required"`
 	// Customer slug
 	ID string `json:"id" api:"required"`
+	// Id in the billing provider
+	BillingID param.Opt[string] `json:"billingId,omitzero"`
 	// Billing provider payment method id
 	PaymentMethodID param.Opt[string] `json:"paymentMethodId,omitzero"`
+	// The unique identifier for the customer in Salesforce integration
+	SalesforceID param.Opt[string] `json:"salesforceId,omitzero"`
 	// Timestamp of when the record was last updated
 	UpdatedAt param.Opt[time.Time] `json:"updatedAt,omitzero" format:"date-time"`
 	// Additional metadata
