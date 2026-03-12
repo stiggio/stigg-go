@@ -1,5 +1,20 @@
 # Changelog
 
+## 0.1.0-alpha.18 (2026-03-12)
+
+Full Changelog: [v0.1.0-alpha.17...v0.1.0-alpha.18](https://github.com/stiggio/stigg-go/compare/v0.1.0-alpha.17...v0.1.0-alpha.18)
+
+### Features
+
+* **api:** api update ([b028427](https://github.com/stiggio/stigg-go/commit/b028427e5f59035c5686a0a12172018ea3f3c798))
+
+
+### Chores
+
+* **internal:** minor cleanup ([9dbe222](https://github.com/stiggio/stigg-go/commit/9dbe2224a424aaafbbe566c30c17ca99c7c7ceb1))
+* **internal:** use explicit returns ([cdb4afb](https://github.com/stiggio/stigg-go/commit/cdb4afbccf16c1c049eab41ea69eeb3f64c24283))
+* **internal:** use explicit returns in more places ([a7ab8a6](https://github.com/stiggio/stigg-go/commit/a7ab8a608f213b9ffa520e1f02233d9a26a068c0))
+
 ## 0.1.0-alpha.17 (2026-03-10)
 
 Full Changelog: [v0.1.0-alpha.16...v0.1.0-alpha.17](https://github.com/stiggio/stigg-go/compare/v0.1.0-alpha.16...v0.1.0-alpha.17)
