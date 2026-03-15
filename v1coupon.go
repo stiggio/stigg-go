@@ -194,7 +194,7 @@ func (r *CouponData) UnmarshalJSON(data []byte) error {
 type CouponDataAmountsOff struct {
 	// The price amount
 	Amount float64 `json:"amount" api:"required"`
-	// The price currency
+	// ISO 4217 currency code
 	//
 	// Any of "usd", "aed", "all", "amd", "ang", "aud", "awg", "azn", "bam", "bbd",
 	// "bdt", "bgn", "bif", "bmd", "bnd", "bsd", "bwp", "byn", "bzd", "brl", "cad",
@@ -290,7 +290,7 @@ func (r *V1CouponListResponse) UnmarshalJSON(data []byte) error {
 type V1CouponListResponseAmountsOff struct {
 	// The price amount
 	Amount float64 `json:"amount" api:"required"`
-	// The price currency
+	// ISO 4217 currency code
 	//
 	// Any of "usd", "aed", "all", "amd", "ang", "aud", "awg", "azn", "bam", "bbd",
 	// "bdt", "bgn", "bif", "bmd", "bnd", "bsd", "bwp", "byn", "bzd", "brl", "cad",
@@ -376,7 +376,7 @@ func (r *V1CouponNewParams) UnmarshalJSON(data []byte) error {
 type V1CouponNewParamsAmountsOff struct {
 	// The price amount
 	Amount float64 `json:"amount" api:"required"`
-	// The price currency
+	// ISO 4217 currency code
 	//
 	// Any of "usd", "aed", "all", "amd", "ang", "aud", "awg", "azn", "bam", "bbd",
 	// "bdt", "bgn", "bif", "bmd", "bnd", "bsd", "bwp", "byn", "bzd", "brl", "cad",

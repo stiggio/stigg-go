@@ -629,7 +629,7 @@ func (r *SubscriptionDataPriceTier) UnmarshalJSON(data []byte) error {
 type SubscriptionDataPriceTierFlatPrice struct {
 	// The price amount
 	Amount float64 `json:"amount" api:"required"`
-	// The price currency
+	// ISO 4217 currency code
 	//
 	// Any of "usd", "aed", "all", "amd", "ang", "aud", "awg", "azn", "bam", "bbd",
 	// "bdt", "bgn", "bif", "bmd", "bnd", "bsd", "bwp", "byn", "bzd", "brl", "cad",
@@ -662,7 +662,7 @@ func (r *SubscriptionDataPriceTierFlatPrice) UnmarshalJSON(data []byte) error {
 type SubscriptionDataPriceTierUnitPrice struct {
 	// The price amount
 	Amount float64 `json:"amount" api:"required"`
-	// The price currency
+	// ISO 4217 currency code
 	//
 	// Any of "usd", "aed", "all", "amd", "ang", "aud", "awg", "azn", "bam", "bbd",
 	// "bdt", "bgn", "bif", "bmd", "bnd", "bsd", "bwp", "byn", "bzd", "brl", "cad",
@@ -1222,7 +1222,7 @@ func (r *V1SubscriptionListResponsePriceTier) UnmarshalJSON(data []byte) error {
 type V1SubscriptionListResponsePriceTierFlatPrice struct {
 	// The price amount
 	Amount float64 `json:"amount" api:"required"`
-	// The price currency
+	// ISO 4217 currency code
 	//
 	// Any of "usd", "aed", "all", "amd", "ang", "aud", "awg", "azn", "bam", "bbd",
 	// "bdt", "bgn", "bif", "bmd", "bnd", "bsd", "bwp", "byn", "bzd", "brl", "cad",
@@ -1255,7 +1255,7 @@ func (r *V1SubscriptionListResponsePriceTierFlatPrice) UnmarshalJSON(data []byte
 type V1SubscriptionListResponsePriceTierUnitPrice struct {
 	// The price amount
 	Amount float64 `json:"amount" api:"required"`
-	// The price currency
+	// ISO 4217 currency code
 	//
 	// Any of "usd", "aed", "all", "amd", "ang", "aud", "awg", "azn", "bam", "bbd",
 	// "bdt", "bgn", "bif", "bmd", "bnd", "bsd", "bwp", "byn", "bzd", "brl", "cad",
@@ -2488,7 +2488,7 @@ func (r *V1SubscriptionProvisionResponseDataSubscriptionPriceTier) UnmarshalJSON
 type V1SubscriptionProvisionResponseDataSubscriptionPriceTierFlatPrice struct {
 	// The price amount
 	Amount float64 `json:"amount" api:"required"`
-	// The price currency
+	// ISO 4217 currency code
 	//
 	// Any of "usd", "aed", "all", "amd", "ang", "aud", "awg", "azn", "bam", "bbd",
 	// "bdt", "bgn", "bif", "bmd", "bnd", "bsd", "bwp", "byn", "bzd", "brl", "cad",
@@ -2523,7 +2523,7 @@ func (r *V1SubscriptionProvisionResponseDataSubscriptionPriceTierFlatPrice) Unma
 type V1SubscriptionProvisionResponseDataSubscriptionPriceTierUnitPrice struct {
 	// The price amount
 	Amount float64 `json:"amount" api:"required"`
-	// The price currency
+	// ISO 4217 currency code
 	//
 	// Any of "usd", "aed", "all", "amd", "ang", "aud", "awg", "azn", "bam", "bbd",
 	// "bdt", "bgn", "bif", "bmd", "bnd", "bsd", "bwp", "byn", "bzd", "brl", "cad",
@@ -2705,7 +2705,7 @@ func (r *V1SubscriptionUpdateParamsAppliedCouponDiscount) UnmarshalJSON(data []b
 type V1SubscriptionUpdateParamsAppliedCouponDiscountAmountsOff struct {
 	// The price amount
 	Amount float64 `json:"amount" api:"required"`
-	// The price currency
+	// ISO 4217 currency code
 	//
 	// Any of "usd", "aed", "all", "amd", "ang", "aud", "awg", "azn", "bam", "bbd",
 	// "bdt", "bgn", "bif", "bmd", "bnd", "bsd", "bwp", "byn", "bzd", "brl", "cad",
@@ -3600,7 +3600,7 @@ func (r *V1SubscriptionPreviewParamsAppliedCouponDiscount) UnmarshalJSON(data []
 type V1SubscriptionPreviewParamsAppliedCouponDiscountAmountsOff struct {
 	// The price amount
 	Amount float64 `json:"amount" api:"required"`
-	// The price currency
+	// ISO 4217 currency code
 	//
 	// Any of "usd", "aed", "all", "amd", "ang", "aud", "awg", "azn", "bam", "bbd",
 	// "bdt", "bgn", "bif", "bmd", "bnd", "bsd", "bwp", "byn", "bzd", "brl", "cad",
@@ -3963,7 +3963,7 @@ func (r *V1SubscriptionProvisionParamsAppliedCouponDiscount) UnmarshalJSON(data 
 type V1SubscriptionProvisionParamsAppliedCouponDiscountAmountsOff struct {
 	// The price amount
 	Amount float64 `json:"amount" api:"required"`
-	// The price currency
+	// ISO 4217 currency code
 	//
 	// Any of "usd", "aed", "all", "amd", "ang", "aud", "awg", "azn", "bam", "bbd",
 	// "bdt", "bgn", "bif", "bmd", "bnd", "bsd", "bwp", "byn", "bzd", "brl", "cad",
@@ -4579,7 +4579,7 @@ func (r *V1SubscriptionProvisionParamsPriceOverrideTier) UnmarshalJSON(data []by
 type V1SubscriptionProvisionParamsPriceOverrideTierFlatPrice struct {
 	// The price amount
 	Amount float64 `json:"amount" api:"required"`
-	// The price currency
+	// ISO 4217 currency code
 	//
 	// Any of "usd", "aed", "all", "amd", "ang", "aud", "awg", "azn", "bam", "bbd",
 	// "bdt", "bgn", "bif", "bmd", "bnd", "bsd", "bwp", "byn", "bzd", "brl", "cad",
@@ -4616,7 +4616,7 @@ func init() {
 type V1SubscriptionProvisionParamsPriceOverrideTierUnitPrice struct {
 	// The price amount
 	Amount float64 `json:"amount" api:"required"`
-	// The price currency
+	// ISO 4217 currency code
 	//
 	// Any of "usd", "aed", "all", "amd", "ang", "aud", "awg", "azn", "bam", "bbd",
 	// "bdt", "bgn", "bif", "bmd", "bnd", "bsd", "bwp", "byn", "bzd", "brl", "cad",
