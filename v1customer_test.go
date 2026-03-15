@@ -54,9 +54,10 @@ func TestV1CustomerUpdateWithOptionalParams(t *testing.T) {
 		context.TODO(),
 		"x",
 		stigg.V1CustomerUpdateParams{
-			BillingID: stigg.String("billingId"),
-			CouponID:  stigg.String("couponId"),
-			Email:     stigg.String("dev@stainless.com"),
+			BillingCurrency: stigg.V1CustomerUpdateParamsBillingCurrencyUsd,
+			BillingID:       stigg.String("billingId"),
+			CouponID:        stigg.String("couponId"),
+			Email:           stigg.String("dev@stainless.com"),
 			Integrations: []stigg.V1CustomerUpdateParamsIntegration{{
 				ID:               "id",
 				SyncedEntityID:   stigg.String("syncedEntityId"),
@@ -217,9 +218,10 @@ func TestV1CustomerProvisionWithOptionalParams(t *testing.T) {
 		option.WithAPIKey("My API Key"),
 	)
 	_, err := client.V1.Customers.Provision(context.TODO(), stigg.V1CustomerProvisionParams{
-		ID:        "id",
-		BillingID: stigg.String("billingId"),
-		CouponID:  stigg.String("couponId"),
+		ID:              "id",
+		BillingCurrency: stigg.V1CustomerProvisionParamsBillingCurrencyUsd,
+		BillingID:       stigg.String("billingId"),
+		CouponID:        stigg.String("couponId"),
 		DefaultPaymentMethod: stigg.V1CustomerProvisionParamsDefaultPaymentMethod{
 			BillingID:       stigg.String("billingId"),
 			CardExpiryMonth: stigg.Float(0),

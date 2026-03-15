@@ -590,7 +590,7 @@ func (r *V1EventCreditGrantNewParamsBillingInformationBillingAddress) UnmarshalJ
 type V1EventCreditGrantNewParamsCost struct {
 	// The price amount
 	Amount float64 `json:"amount" api:"required"`
-	// The price currency
+	// ISO 4217 currency code
 	//
 	// Any of "usd", "aed", "all", "amd", "ang", "aud", "awg", "azn", "bam", "bbd",
 	// "bdt", "bgn", "bif", "bmd", "bnd", "bsd", "bwp", "byn", "bzd", "brl", "cad",
