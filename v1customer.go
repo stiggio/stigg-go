@@ -192,6 +192,20 @@ type CustomerResponseData struct {
 	CreatedAt time.Time `json:"createdAt" api:"required" format:"date-time"`
 	// Timestamp of when the record was last updated
 	UpdatedAt time.Time `json:"updatedAt" api:"required" format:"date-time"`
+	// The billing currency of the customer
+	//
+	// Any of "usd", "aed", "all", "amd", "ang", "aud", "awg", "azn", "bam", "bbd",
+	// "bdt", "bgn", "bif", "bmd", "bnd", "bsd", "bwp", "byn", "bzd", "brl", "cad",
+	// "cdf", "chf", "cny", "czk", "dkk", "dop", "dzd", "egp", "etb", "eur", "fjd",
+	// "gbp", "gel", "gip", "gmd", "gyd", "hkd", "hrk", "htg", "idr", "ils", "inr",
+	// "isk", "jmd", "jpy", "kes", "kgs", "khr", "kmf", "krw", "kyd", "kzt", "lbp",
+	// "lkr", "lrd", "lsl", "mad", "mdl", "mga", "mkd", "mmk", "mnt", "mop", "mro",
+	// "mvr", "mwk", "mxn", "myr", "mzn", "nad", "ngn", "nok", "npr", "nzd", "pgk",
+	// "php", "pkr", "pln", "qar", "ron", "rsd", "rub", "rwf", "sar", "sbd", "scr",
+	// "sek", "sgd", "sle", "sll", "sos", "szl", "thb", "tjs", "top", "try", "ttd",
+	// "tzs", "uah", "uzs", "vnd", "vuv", "wst", "xaf", "xcd", "yer", "zar", "zmw",
+	// "clp", "djf", "gnf", "ugx", "pyg", "xof", "xpf".
+	BillingCurrency string `json:"billingCurrency" api:"nullable"`
 	// The unique identifier for the entity in the billing provider
 	BillingID string `json:"billingId" api:"nullable"`
 	// Customer level coupon
@@ -212,6 +226,7 @@ type CustomerResponseData struct {
 		ArchivedAt           respjson.Field
 		CreatedAt            respjson.Field
 		UpdatedAt            respjson.Field
+		BillingCurrency      respjson.Field
 		BillingID            respjson.Field
 		CouponID             respjson.Field
 		DefaultPaymentMethod respjson.Field
@@ -299,6 +314,20 @@ type V1CustomerListResponse struct {
 	CreatedAt time.Time `json:"createdAt" api:"required" format:"date-time"`
 	// Timestamp of when the record was last updated
 	UpdatedAt time.Time `json:"updatedAt" api:"required" format:"date-time"`
+	// The billing currency of the customer
+	//
+	// Any of "usd", "aed", "all", "amd", "ang", "aud", "awg", "azn", "bam", "bbd",
+	// "bdt", "bgn", "bif", "bmd", "bnd", "bsd", "bwp", "byn", "bzd", "brl", "cad",
+	// "cdf", "chf", "cny", "czk", "dkk", "dop", "dzd", "egp", "etb", "eur", "fjd",
+	// "gbp", "gel", "gip", "gmd", "gyd", "hkd", "hrk", "htg", "idr", "ils", "inr",
+	// "isk", "jmd", "jpy", "kes", "kgs", "khr", "kmf", "krw", "kyd", "kzt", "lbp",
+	// "lkr", "lrd", "lsl", "mad", "mdl", "mga", "mkd", "mmk", "mnt", "mop", "mro",
+	// "mvr", "mwk", "mxn", "myr", "mzn", "nad", "ngn", "nok", "npr", "nzd", "pgk",
+	// "php", "pkr", "pln", "qar", "ron", "rsd", "rub", "rwf", "sar", "sbd", "scr",
+	// "sek", "sgd", "sle", "sll", "sos", "szl", "thb", "tjs", "top", "try", "ttd",
+	// "tzs", "uah", "uzs", "vnd", "vuv", "wst", "xaf", "xcd", "yer", "zar", "zmw",
+	// "clp", "djf", "gnf", "ugx", "pyg", "xof", "xpf".
+	BillingCurrency V1CustomerListResponseBillingCurrency `json:"billingCurrency" api:"nullable"`
 	// The unique identifier for the entity in the billing provider
 	BillingID string `json:"billingId" api:"nullable"`
 	// Customer level coupon
@@ -319,6 +348,7 @@ type V1CustomerListResponse struct {
 		ArchivedAt           respjson.Field
 		CreatedAt            respjson.Field
 		UpdatedAt            respjson.Field
+		BillingCurrency      respjson.Field
 		BillingID            respjson.Field
 		CouponID             respjson.Field
 		DefaultPaymentMethod respjson.Field
@@ -336,6 +366,128 @@ func (r V1CustomerListResponse) RawJSON() string { return r.JSON.raw }
 func (r *V1CustomerListResponse) UnmarshalJSON(data []byte) error {
 	return apijson.UnmarshalRoot(data, r)
 }
+
+// The billing currency of the customer
+type V1CustomerListResponseBillingCurrency string
+
+const (
+	V1CustomerListResponseBillingCurrencyUsd V1CustomerListResponseBillingCurrency = "usd"
+	V1CustomerListResponseBillingCurrencyAed V1CustomerListResponseBillingCurrency = "aed"
+	V1CustomerListResponseBillingCurrencyAll V1CustomerListResponseBillingCurrency = "all"
+	V1CustomerListResponseBillingCurrencyAmd V1CustomerListResponseBillingCurrency = "amd"
+	V1CustomerListResponseBillingCurrencyAng V1CustomerListResponseBillingCurrency = "ang"
+	V1CustomerListResponseBillingCurrencyAud V1CustomerListResponseBillingCurrency = "aud"
+	V1CustomerListResponseBillingCurrencyAwg V1CustomerListResponseBillingCurrency = "awg"
+	V1CustomerListResponseBillingCurrencyAzn V1CustomerListResponseBillingCurrency = "azn"
+	V1CustomerListResponseBillingCurrencyBam V1CustomerListResponseBillingCurrency = "bam"
+	V1CustomerListResponseBillingCurrencyBbd V1CustomerListResponseBillingCurrency = "bbd"
+	V1CustomerListResponseBillingCurrencyBdt V1CustomerListResponseBillingCurrency = "bdt"
+	V1CustomerListResponseBillingCurrencyBgn V1CustomerListResponseBillingCurrency = "bgn"
+	V1CustomerListResponseBillingCurrencyBif V1CustomerListResponseBillingCurrency = "bif"
+	V1CustomerListResponseBillingCurrencyBmd V1CustomerListResponseBillingCurrency = "bmd"
+	V1CustomerListResponseBillingCurrencyBnd V1CustomerListResponseBillingCurrency = "bnd"
+	V1CustomerListResponseBillingCurrencyBsd V1CustomerListResponseBillingCurrency = "bsd"
+	V1CustomerListResponseBillingCurrencyBwp V1CustomerListResponseBillingCurrency = "bwp"
+	V1CustomerListResponseBillingCurrencyByn V1CustomerListResponseBillingCurrency = "byn"
+	V1CustomerListResponseBillingCurrencyBzd V1CustomerListResponseBillingCurrency = "bzd"
+	V1CustomerListResponseBillingCurrencyBrl V1CustomerListResponseBillingCurrency = "brl"
+	V1CustomerListResponseBillingCurrencyCad V1CustomerListResponseBillingCurrency = "cad"
+	V1CustomerListResponseBillingCurrencyCdf V1CustomerListResponseBillingCurrency = "cdf"
+	V1CustomerListResponseBillingCurrencyChf V1CustomerListResponseBillingCurrency = "chf"
+	V1CustomerListResponseBillingCurrencyCny V1CustomerListResponseBillingCurrency = "cny"
+	V1CustomerListResponseBillingCurrencyCzk V1CustomerListResponseBillingCurrency = "czk"
+	V1CustomerListResponseBillingCurrencyDkk V1CustomerListResponseBillingCurrency = "dkk"
+	V1CustomerListResponseBillingCurrencyDop V1CustomerListResponseBillingCurrency = "dop"
+	V1CustomerListResponseBillingCurrencyDzd V1CustomerListResponseBillingCurrency = "dzd"
+	V1CustomerListResponseBillingCurrencyEgp V1CustomerListResponseBillingCurrency = "egp"
+	V1CustomerListResponseBillingCurrencyEtb V1CustomerListResponseBillingCurrency = "etb"
+	V1CustomerListResponseBillingCurrencyEur V1CustomerListResponseBillingCurrency = "eur"
+	V1CustomerListResponseBillingCurrencyFjd V1CustomerListResponseBillingCurrency = "fjd"
+	V1CustomerListResponseBillingCurrencyGbp V1CustomerListResponseBillingCurrency = "gbp"
+	V1CustomerListResponseBillingCurrencyGel V1CustomerListResponseBillingCurrency = "gel"
+	V1CustomerListResponseBillingCurrencyGip V1CustomerListResponseBillingCurrency = "gip"
+	V1CustomerListResponseBillingCurrencyGmd V1CustomerListResponseBillingCurrency = "gmd"
+	V1CustomerListResponseBillingCurrencyGyd V1CustomerListResponseBillingCurrency = "gyd"
+	V1CustomerListResponseBillingCurrencyHkd V1CustomerListResponseBillingCurrency = "hkd"
+	V1CustomerListResponseBillingCurrencyHrk V1CustomerListResponseBillingCurrency = "hrk"
+	V1CustomerListResponseBillingCurrencyHtg V1CustomerListResponseBillingCurrency = "htg"
+	V1CustomerListResponseBillingCurrencyIdr V1CustomerListResponseBillingCurrency = "idr"
+	V1CustomerListResponseBillingCurrencyIls V1CustomerListResponseBillingCurrency = "ils"
+	V1CustomerListResponseBillingCurrencyInr V1CustomerListResponseBillingCurrency = "inr"
+	V1CustomerListResponseBillingCurrencyIsk V1CustomerListResponseBillingCurrency = "isk"
+	V1CustomerListResponseBillingCurrencyJmd V1CustomerListResponseBillingCurrency = "jmd"
+	V1CustomerListResponseBillingCurrencyJpy V1CustomerListResponseBillingCurrency = "jpy"
+	V1CustomerListResponseBillingCurrencyKes V1CustomerListResponseBillingCurrency = "kes"
+	V1CustomerListResponseBillingCurrencyKgs V1CustomerListResponseBillingCurrency = "kgs"
+	V1CustomerListResponseBillingCurrencyKhr V1CustomerListResponseBillingCurrency = "khr"
+	V1CustomerListResponseBillingCurrencyKmf V1CustomerListResponseBillingCurrency = "kmf"
+	V1CustomerListResponseBillingCurrencyKrw V1CustomerListResponseBillingCurrency = "krw"
+	V1CustomerListResponseBillingCurrencyKyd V1CustomerListResponseBillingCurrency = "kyd"
+	V1CustomerListResponseBillingCurrencyKzt V1CustomerListResponseBillingCurrency = "kzt"
+	V1CustomerListResponseBillingCurrencyLbp V1CustomerListResponseBillingCurrency = "lbp"
+	V1CustomerListResponseBillingCurrencyLkr V1CustomerListResponseBillingCurrency = "lkr"
+	V1CustomerListResponseBillingCurrencyLrd V1CustomerListResponseBillingCurrency = "lrd"
+	V1CustomerListResponseBillingCurrencyLsl V1CustomerListResponseBillingCurrency = "lsl"
+	V1CustomerListResponseBillingCurrencyMad V1CustomerListResponseBillingCurrency = "mad"
+	V1CustomerListResponseBillingCurrencyMdl V1CustomerListResponseBillingCurrency = "mdl"
+	V1CustomerListResponseBillingCurrencyMga V1CustomerListResponseBillingCurrency = "mga"
+	V1CustomerListResponseBillingCurrencyMkd V1CustomerListResponseBillingCurrency = "mkd"
+	V1CustomerListResponseBillingCurrencyMmk V1CustomerListResponseBillingCurrency = "mmk"
+	V1CustomerListResponseBillingCurrencyMnt V1CustomerListResponseBillingCurrency = "mnt"
+	V1CustomerListResponseBillingCurrencyMop V1CustomerListResponseBillingCurrency = "mop"
+	V1CustomerListResponseBillingCurrencyMro V1CustomerListResponseBillingCurrency = "mro"
+	V1CustomerListResponseBillingCurrencyMvr V1CustomerListResponseBillingCurrency = "mvr"
+	V1CustomerListResponseBillingCurrencyMwk V1CustomerListResponseBillingCurrency = "mwk"
+	V1CustomerListResponseBillingCurrencyMxn V1CustomerListResponseBillingCurrency = "mxn"
+	V1CustomerListResponseBillingCurrencyMyr V1CustomerListResponseBillingCurrency = "myr"
+	V1CustomerListResponseBillingCurrencyMzn V1CustomerListResponseBillingCurrency = "mzn"
+	V1CustomerListResponseBillingCurrencyNad V1CustomerListResponseBillingCurrency = "nad"
+	V1CustomerListResponseBillingCurrencyNgn V1CustomerListResponseBillingCurrency = "ngn"
+	V1CustomerListResponseBillingCurrencyNok V1CustomerListResponseBillingCurrency = "nok"
+	V1CustomerListResponseBillingCurrencyNpr V1CustomerListResponseBillingCurrency = "npr"
+	V1CustomerListResponseBillingCurrencyNzd V1CustomerListResponseBillingCurrency = "nzd"
+	V1CustomerListResponseBillingCurrencyPgk V1CustomerListResponseBillingCurrency = "pgk"
+	V1CustomerListResponseBillingCurrencyPhp V1CustomerListResponseBillingCurrency = "php"
+	V1CustomerListResponseBillingCurrencyPkr V1CustomerListResponseBillingCurrency = "pkr"
+	V1CustomerListResponseBillingCurrencyPln V1CustomerListResponseBillingCurrency = "pln"
+	V1CustomerListResponseBillingCurrencyQar V1CustomerListResponseBillingCurrency = "qar"
+	V1CustomerListResponseBillingCurrencyRon V1CustomerListResponseBillingCurrency = "ron"
+	V1CustomerListResponseBillingCurrencyRsd V1CustomerListResponseBillingCurrency = "rsd"
+	V1CustomerListResponseBillingCurrencyRub V1CustomerListResponseBillingCurrency = "rub"
+	V1CustomerListResponseBillingCurrencyRwf V1CustomerListResponseBillingCurrency = "rwf"
+	V1CustomerListResponseBillingCurrencySar V1CustomerListResponseBillingCurrency = "sar"
+	V1CustomerListResponseBillingCurrencySbd V1CustomerListResponseBillingCurrency = "sbd"
+	V1CustomerListResponseBillingCurrencyScr V1CustomerListResponseBillingCurrency = "scr"
+	V1CustomerListResponseBillingCurrencySek V1CustomerListResponseBillingCurrency = "sek"
+	V1CustomerListResponseBillingCurrencySgd V1CustomerListResponseBillingCurrency = "sgd"
+	V1CustomerListResponseBillingCurrencySle V1CustomerListResponseBillingCurrency = "sle"
+	V1CustomerListResponseBillingCurrencySll V1CustomerListResponseBillingCurrency = "sll"
+	V1CustomerListResponseBillingCurrencySos V1CustomerListResponseBillingCurrency = "sos"
+	V1CustomerListResponseBillingCurrencySzl V1CustomerListResponseBillingCurrency = "szl"
+	V1CustomerListResponseBillingCurrencyThb V1CustomerListResponseBillingCurrency = "thb"
+	V1CustomerListResponseBillingCurrencyTjs V1CustomerListResponseBillingCurrency = "tjs"
+	V1CustomerListResponseBillingCurrencyTop V1CustomerListResponseBillingCurrency = "top"
+	V1CustomerListResponseBillingCurrencyTry V1CustomerListResponseBillingCurrency = "try"
+	V1CustomerListResponseBillingCurrencyTtd V1CustomerListResponseBillingCurrency = "ttd"
+	V1CustomerListResponseBillingCurrencyTzs V1CustomerListResponseBillingCurrency = "tzs"
+	V1CustomerListResponseBillingCurrencyUah V1CustomerListResponseBillingCurrency = "uah"
+	V1CustomerListResponseBillingCurrencyUzs V1CustomerListResponseBillingCurrency = "uzs"
+	V1CustomerListResponseBillingCurrencyVnd V1CustomerListResponseBillingCurrency = "vnd"
+	V1CustomerListResponseBillingCurrencyVuv V1CustomerListResponseBillingCurrency = "vuv"
+	V1CustomerListResponseBillingCurrencyWst V1CustomerListResponseBillingCurrency = "wst"
+	V1CustomerListResponseBillingCurrencyXaf V1CustomerListResponseBillingCurrency = "xaf"
+	V1CustomerListResponseBillingCurrencyXcd V1CustomerListResponseBillingCurrency = "xcd"
+	V1CustomerListResponseBillingCurrencyYer V1CustomerListResponseBillingCurrency = "yer"
+	V1CustomerListResponseBillingCurrencyZar V1CustomerListResponseBillingCurrency = "zar"
+	V1CustomerListResponseBillingCurrencyZmw V1CustomerListResponseBillingCurrency = "zmw"
+	V1CustomerListResponseBillingCurrencyClp V1CustomerListResponseBillingCurrency = "clp"
+	V1CustomerListResponseBillingCurrencyDjf V1CustomerListResponseBillingCurrency = "djf"
+	V1CustomerListResponseBillingCurrencyGnf V1CustomerListResponseBillingCurrency = "gnf"
+	V1CustomerListResponseBillingCurrencyUgx V1CustomerListResponseBillingCurrency = "ugx"
+	V1CustomerListResponseBillingCurrencyPyg V1CustomerListResponseBillingCurrency = "pyg"
+	V1CustomerListResponseBillingCurrencyXof V1CustomerListResponseBillingCurrency = "xof"
+	V1CustomerListResponseBillingCurrencyXpf V1CustomerListResponseBillingCurrency = "xpf"
+)
 
 // The default payment method details
 type V1CustomerListResponseDefaultPaymentMethod struct {
@@ -465,6 +617,20 @@ type V1CustomerUpdateParams struct {
 	Email param.Opt[string] `json:"email,omitzero" format:"email"`
 	// The name of the customer
 	Name param.Opt[string] `json:"name,omitzero"`
+	// The billing currency of the customer
+	//
+	// Any of "usd", "aed", "all", "amd", "ang", "aud", "awg", "azn", "bam", "bbd",
+	// "bdt", "bgn", "bif", "bmd", "bnd", "bsd", "bwp", "byn", "bzd", "brl", "cad",
+	// "cdf", "chf", "cny", "czk", "dkk", "dop", "dzd", "egp", "etb", "eur", "fjd",
+	// "gbp", "gel", "gip", "gmd", "gyd", "hkd", "hrk", "htg", "idr", "ils", "inr",
+	// "isk", "jmd", "jpy", "kes", "kgs", "khr", "kmf", "krw", "kyd", "kzt", "lbp",
+	// "lkr", "lrd", "lsl", "mad", "mdl", "mga", "mkd", "mmk", "mnt", "mop", "mro",
+	// "mvr", "mwk", "mxn", "myr", "mzn", "nad", "ngn", "nok", "npr", "nzd", "pgk",
+	// "php", "pkr", "pln", "qar", "ron", "rsd", "rub", "rwf", "sar", "sbd", "scr",
+	// "sek", "sgd", "sle", "sll", "sos", "szl", "thb", "tjs", "top", "try", "ttd",
+	// "tzs", "uah", "uzs", "vnd", "vuv", "wst", "xaf", "xcd", "yer", "zar", "zmw",
+	// "clp", "djf", "gnf", "ugx", "pyg", "xof", "xpf".
+	BillingCurrency V1CustomerUpdateParamsBillingCurrency `json:"billingCurrency,omitzero"`
 	// List of integrations
 	Integrations []V1CustomerUpdateParamsIntegration `json:"integrations,omitzero"`
 	// Additional metadata
@@ -479,6 +645,128 @@ func (r V1CustomerUpdateParams) MarshalJSON() (data []byte, err error) {
 func (r *V1CustomerUpdateParams) UnmarshalJSON(data []byte) error {
 	return apijson.UnmarshalRoot(data, r)
 }
+
+// The billing currency of the customer
+type V1CustomerUpdateParamsBillingCurrency string
+
+const (
+	V1CustomerUpdateParamsBillingCurrencyUsd V1CustomerUpdateParamsBillingCurrency = "usd"
+	V1CustomerUpdateParamsBillingCurrencyAed V1CustomerUpdateParamsBillingCurrency = "aed"
+	V1CustomerUpdateParamsBillingCurrencyAll V1CustomerUpdateParamsBillingCurrency = "all"
+	V1CustomerUpdateParamsBillingCurrencyAmd V1CustomerUpdateParamsBillingCurrency = "amd"
+	V1CustomerUpdateParamsBillingCurrencyAng V1CustomerUpdateParamsBillingCurrency = "ang"
+	V1CustomerUpdateParamsBillingCurrencyAud V1CustomerUpdateParamsBillingCurrency = "aud"
+	V1CustomerUpdateParamsBillingCurrencyAwg V1CustomerUpdateParamsBillingCurrency = "awg"
+	V1CustomerUpdateParamsBillingCurrencyAzn V1CustomerUpdateParamsBillingCurrency = "azn"
+	V1CustomerUpdateParamsBillingCurrencyBam V1CustomerUpdateParamsBillingCurrency = "bam"
+	V1CustomerUpdateParamsBillingCurrencyBbd V1CustomerUpdateParamsBillingCurrency = "bbd"
+	V1CustomerUpdateParamsBillingCurrencyBdt V1CustomerUpdateParamsBillingCurrency = "bdt"
+	V1CustomerUpdateParamsBillingCurrencyBgn V1CustomerUpdateParamsBillingCurrency = "bgn"
+	V1CustomerUpdateParamsBillingCurrencyBif V1CustomerUpdateParamsBillingCurrency = "bif"
+	V1CustomerUpdateParamsBillingCurrencyBmd V1CustomerUpdateParamsBillingCurrency = "bmd"
+	V1CustomerUpdateParamsBillingCurrencyBnd V1CustomerUpdateParamsBillingCurrency = "bnd"
+	V1CustomerUpdateParamsBillingCurrencyBsd V1CustomerUpdateParamsBillingCurrency = "bsd"
+	V1CustomerUpdateParamsBillingCurrencyBwp V1CustomerUpdateParamsBillingCurrency = "bwp"
+	V1CustomerUpdateParamsBillingCurrencyByn V1CustomerUpdateParamsBillingCurrency = "byn"
+	V1CustomerUpdateParamsBillingCurrencyBzd V1CustomerUpdateParamsBillingCurrency = "bzd"
+	V1CustomerUpdateParamsBillingCurrencyBrl V1CustomerUpdateParamsBillingCurrency = "brl"
+	V1CustomerUpdateParamsBillingCurrencyCad V1CustomerUpdateParamsBillingCurrency = "cad"
+	V1CustomerUpdateParamsBillingCurrencyCdf V1CustomerUpdateParamsBillingCurrency = "cdf"
+	V1CustomerUpdateParamsBillingCurrencyChf V1CustomerUpdateParamsBillingCurrency = "chf"
+	V1CustomerUpdateParamsBillingCurrencyCny V1CustomerUpdateParamsBillingCurrency = "cny"
+	V1CustomerUpdateParamsBillingCurrencyCzk V1CustomerUpdateParamsBillingCurrency = "czk"
+	V1CustomerUpdateParamsBillingCurrencyDkk V1CustomerUpdateParamsBillingCurrency = "dkk"
+	V1CustomerUpdateParamsBillingCurrencyDop V1CustomerUpdateParamsBillingCurrency = "dop"
+	V1CustomerUpdateParamsBillingCurrencyDzd V1CustomerUpdateParamsBillingCurrency = "dzd"
+	V1CustomerUpdateParamsBillingCurrencyEgp V1CustomerUpdateParamsBillingCurrency = "egp"
+	V1CustomerUpdateParamsBillingCurrencyEtb V1CustomerUpdateParamsBillingCurrency = "etb"
+	V1CustomerUpdateParamsBillingCurrencyEur V1CustomerUpdateParamsBillingCurrency = "eur"
+	V1CustomerUpdateParamsBillingCurrencyFjd V1CustomerUpdateParamsBillingCurrency = "fjd"
+	V1CustomerUpdateParamsBillingCurrencyGbp V1CustomerUpdateParamsBillingCurrency = "gbp"
+	V1CustomerUpdateParamsBillingCurrencyGel V1CustomerUpdateParamsBillingCurrency = "gel"
+	V1CustomerUpdateParamsBillingCurrencyGip V1CustomerUpdateParamsBillingCurrency = "gip"
+	V1CustomerUpdateParamsBillingCurrencyGmd V1CustomerUpdateParamsBillingCurrency = "gmd"
+	V1CustomerUpdateParamsBillingCurrencyGyd V1CustomerUpdateParamsBillingCurrency = "gyd"
+	V1CustomerUpdateParamsBillingCurrencyHkd V1CustomerUpdateParamsBillingCurrency = "hkd"
+	V1CustomerUpdateParamsBillingCurrencyHrk V1CustomerUpdateParamsBillingCurrency = "hrk"
+	V1CustomerUpdateParamsBillingCurrencyHtg V1CustomerUpdateParamsBillingCurrency = "htg"
+	V1CustomerUpdateParamsBillingCurrencyIdr V1CustomerUpdateParamsBillingCurrency = "idr"
+	V1CustomerUpdateParamsBillingCurrencyIls V1CustomerUpdateParamsBillingCurrency = "ils"
+	V1CustomerUpdateParamsBillingCurrencyInr V1CustomerUpdateParamsBillingCurrency = "inr"
+	V1CustomerUpdateParamsBillingCurrencyIsk V1CustomerUpdateParamsBillingCurrency = "isk"
+	V1CustomerUpdateParamsBillingCurrencyJmd V1CustomerUpdateParamsBillingCurrency = "jmd"
+	V1CustomerUpdateParamsBillingCurrencyJpy V1CustomerUpdateParamsBillingCurrency = "jpy"
+	V1CustomerUpdateParamsBillingCurrencyKes V1CustomerUpdateParamsBillingCurrency = "kes"
+	V1CustomerUpdateParamsBillingCurrencyKgs V1CustomerUpdateParamsBillingCurrency = "kgs"
+	V1CustomerUpdateParamsBillingCurrencyKhr V1CustomerUpdateParamsBillingCurrency = "khr"
+	V1CustomerUpdateParamsBillingCurrencyKmf V1CustomerUpdateParamsBillingCurrency = "kmf"
+	V1CustomerUpdateParamsBillingCurrencyKrw V1CustomerUpdateParamsBillingCurrency = "krw"
+	V1CustomerUpdateParamsBillingCurrencyKyd V1CustomerUpdateParamsBillingCurrency = "kyd"
+	V1CustomerUpdateParamsBillingCurrencyKzt V1CustomerUpdateParamsBillingCurrency = "kzt"
+	V1CustomerUpdateParamsBillingCurrencyLbp V1CustomerUpdateParamsBillingCurrency = "lbp"
+	V1CustomerUpdateParamsBillingCurrencyLkr V1CustomerUpdateParamsBillingCurrency = "lkr"
+	V1CustomerUpdateParamsBillingCurrencyLrd V1CustomerUpdateParamsBillingCurrency = "lrd"
+	V1CustomerUpdateParamsBillingCurrencyLsl V1CustomerUpdateParamsBillingCurrency = "lsl"
+	V1CustomerUpdateParamsBillingCurrencyMad V1CustomerUpdateParamsBillingCurrency = "mad"
+	V1CustomerUpdateParamsBillingCurrencyMdl V1CustomerUpdateParamsBillingCurrency = "mdl"
+	V1CustomerUpdateParamsBillingCurrencyMga V1CustomerUpdateParamsBillingCurrency = "mga"
+	V1CustomerUpdateParamsBillingCurrencyMkd V1CustomerUpdateParamsBillingCurrency = "mkd"
+	V1CustomerUpdateParamsBillingCurrencyMmk V1CustomerUpdateParamsBillingCurrency = "mmk"
+	V1CustomerUpdateParamsBillingCurrencyMnt V1CustomerUpdateParamsBillingCurrency = "mnt"
+	V1CustomerUpdateParamsBillingCurrencyMop V1CustomerUpdateParamsBillingCurrency = "mop"
+	V1CustomerUpdateParamsBillingCurrencyMro V1CustomerUpdateParamsBillingCurrency = "mro"
+	V1CustomerUpdateParamsBillingCurrencyMvr V1CustomerUpdateParamsBillingCurrency = "mvr"
+	V1CustomerUpdateParamsBillingCurrencyMwk V1CustomerUpdateParamsBillingCurrency = "mwk"
+	V1CustomerUpdateParamsBillingCurrencyMxn V1CustomerUpdateParamsBillingCurrency = "mxn"
+	V1CustomerUpdateParamsBillingCurrencyMyr V1CustomerUpdateParamsBillingCurrency = "myr"
+	V1CustomerUpdateParamsBillingCurrencyMzn V1CustomerUpdateParamsBillingCurrency = "mzn"
+	V1CustomerUpdateParamsBillingCurrencyNad V1CustomerUpdateParamsBillingCurrency = "nad"
+	V1CustomerUpdateParamsBillingCurrencyNgn V1CustomerUpdateParamsBillingCurrency = "ngn"
+	V1CustomerUpdateParamsBillingCurrencyNok V1CustomerUpdateParamsBillingCurrency = "nok"
+	V1CustomerUpdateParamsBillingCurrencyNpr V1CustomerUpdateParamsBillingCurrency = "npr"
+	V1CustomerUpdateParamsBillingCurrencyNzd V1CustomerUpdateParamsBillingCurrency = "nzd"
+	V1CustomerUpdateParamsBillingCurrencyPgk V1CustomerUpdateParamsBillingCurrency = "pgk"
+	V1CustomerUpdateParamsBillingCurrencyPhp V1CustomerUpdateParamsBillingCurrency = "php"
+	V1CustomerUpdateParamsBillingCurrencyPkr V1CustomerUpdateParamsBillingCurrency = "pkr"
+	V1CustomerUpdateParamsBillingCurrencyPln V1CustomerUpdateParamsBillingCurrency = "pln"
+	V1CustomerUpdateParamsBillingCurrencyQar V1CustomerUpdateParamsBillingCurrency = "qar"
+	V1CustomerUpdateParamsBillingCurrencyRon V1CustomerUpdateParamsBillingCurrency = "ron"
+	V1CustomerUpdateParamsBillingCurrencyRsd V1CustomerUpdateParamsBillingCurrency = "rsd"
+	V1CustomerUpdateParamsBillingCurrencyRub V1CustomerUpdateParamsBillingCurrency = "rub"
+	V1CustomerUpdateParamsBillingCurrencyRwf V1CustomerUpdateParamsBillingCurrency = "rwf"
+	V1CustomerUpdateParamsBillingCurrencySar V1CustomerUpdateParamsBillingCurrency = "sar"
+	V1CustomerUpdateParamsBillingCurrencySbd V1CustomerUpdateParamsBillingCurrency = "sbd"
+	V1CustomerUpdateParamsBillingCurrencyScr V1CustomerUpdateParamsBillingCurrency = "scr"
+	V1CustomerUpdateParamsBillingCurrencySek V1CustomerUpdateParamsBillingCurrency = "sek"
+	V1CustomerUpdateParamsBillingCurrencySgd V1CustomerUpdateParamsBillingCurrency = "sgd"
+	V1CustomerUpdateParamsBillingCurrencySle V1CustomerUpdateParamsBillingCurrency = "sle"
+	V1CustomerUpdateParamsBillingCurrencySll V1CustomerUpdateParamsBillingCurrency = "sll"
+	V1CustomerUpdateParamsBillingCurrencySos V1CustomerUpdateParamsBillingCurrency = "sos"
+	V1CustomerUpdateParamsBillingCurrencySzl V1CustomerUpdateParamsBillingCurrency = "szl"
+	V1CustomerUpdateParamsBillingCurrencyThb V1CustomerUpdateParamsBillingCurrency = "thb"
+	V1CustomerUpdateParamsBillingCurrencyTjs V1CustomerUpdateParamsBillingCurrency = "tjs"
+	V1CustomerUpdateParamsBillingCurrencyTop V1CustomerUpdateParamsBillingCurrency = "top"
+	V1CustomerUpdateParamsBillingCurrencyTry V1CustomerUpdateParamsBillingCurrency = "try"
+	V1CustomerUpdateParamsBillingCurrencyTtd V1CustomerUpdateParamsBillingCurrency = "ttd"
+	V1CustomerUpdateParamsBillingCurrencyTzs V1CustomerUpdateParamsBillingCurrency = "tzs"
+	V1CustomerUpdateParamsBillingCurrencyUah V1CustomerUpdateParamsBillingCurrency = "uah"
+	V1CustomerUpdateParamsBillingCurrencyUzs V1CustomerUpdateParamsBillingCurrency = "uzs"
+	V1CustomerUpdateParamsBillingCurrencyVnd V1CustomerUpdateParamsBillingCurrency = "vnd"
+	V1CustomerUpdateParamsBillingCurrencyVuv V1CustomerUpdateParamsBillingCurrency = "vuv"
+	V1CustomerUpdateParamsBillingCurrencyWst V1CustomerUpdateParamsBillingCurrency = "wst"
+	V1CustomerUpdateParamsBillingCurrencyXaf V1CustomerUpdateParamsBillingCurrency = "xaf"
+	V1CustomerUpdateParamsBillingCurrencyXcd V1CustomerUpdateParamsBillingCurrency = "xcd"
+	V1CustomerUpdateParamsBillingCurrencyYer V1CustomerUpdateParamsBillingCurrency = "yer"
+	V1CustomerUpdateParamsBillingCurrencyZar V1CustomerUpdateParamsBillingCurrency = "zar"
+	V1CustomerUpdateParamsBillingCurrencyZmw V1CustomerUpdateParamsBillingCurrency = "zmw"
+	V1CustomerUpdateParamsBillingCurrencyClp V1CustomerUpdateParamsBillingCurrency = "clp"
+	V1CustomerUpdateParamsBillingCurrencyDjf V1CustomerUpdateParamsBillingCurrency = "djf"
+	V1CustomerUpdateParamsBillingCurrencyGnf V1CustomerUpdateParamsBillingCurrency = "gnf"
+	V1CustomerUpdateParamsBillingCurrencyUgx V1CustomerUpdateParamsBillingCurrency = "ugx"
+	V1CustomerUpdateParamsBillingCurrencyPyg V1CustomerUpdateParamsBillingCurrency = "pyg"
+	V1CustomerUpdateParamsBillingCurrencyXof V1CustomerUpdateParamsBillingCurrency = "xof"
+	V1CustomerUpdateParamsBillingCurrencyXpf V1CustomerUpdateParamsBillingCurrency = "xpf"
+)
 
 // External billing or CRM integration link
 //
@@ -631,6 +919,20 @@ type V1CustomerProvisionParams struct {
 	Email param.Opt[string] `json:"email,omitzero" format:"email"`
 	// The name of the customer
 	Name param.Opt[string] `json:"name,omitzero"`
+	// The billing currency of the customer
+	//
+	// Any of "usd", "aed", "all", "amd", "ang", "aud", "awg", "azn", "bam", "bbd",
+	// "bdt", "bgn", "bif", "bmd", "bnd", "bsd", "bwp", "byn", "bzd", "brl", "cad",
+	// "cdf", "chf", "cny", "czk", "dkk", "dop", "dzd", "egp", "etb", "eur", "fjd",
+	// "gbp", "gel", "gip", "gmd", "gyd", "hkd", "hrk", "htg", "idr", "ils", "inr",
+	// "isk", "jmd", "jpy", "kes", "kgs", "khr", "kmf", "krw", "kyd", "kzt", "lbp",
+	// "lkr", "lrd", "lsl", "mad", "mdl", "mga", "mkd", "mmk", "mnt", "mop", "mro",
+	// "mvr", "mwk", "mxn", "myr", "mzn", "nad", "ngn", "nok", "npr", "nzd", "pgk",
+	// "php", "pkr", "pln", "qar", "ron", "rsd", "rub", "rwf", "sar", "sbd", "scr",
+	// "sek", "sgd", "sle", "sll", "sos", "szl", "thb", "tjs", "top", "try", "ttd",
+	// "tzs", "uah", "uzs", "vnd", "vuv", "wst", "xaf", "xcd", "yer", "zar", "zmw",
+	// "clp", "djf", "gnf", "ugx", "pyg", "xof", "xpf".
+	BillingCurrency V1CustomerProvisionParamsBillingCurrency `json:"billingCurrency,omitzero"`
 	// The default payment method details
 	DefaultPaymentMethod V1CustomerProvisionParamsDefaultPaymentMethod `json:"defaultPaymentMethod,omitzero"`
 	// List of integrations
@@ -647,6 +949,128 @@ func (r V1CustomerProvisionParams) MarshalJSON() (data []byte, err error) {
 func (r *V1CustomerProvisionParams) UnmarshalJSON(data []byte) error {
 	return apijson.UnmarshalRoot(data, r)
 }
+
+// The billing currency of the customer
+type V1CustomerProvisionParamsBillingCurrency string
+
+const (
+	V1CustomerProvisionParamsBillingCurrencyUsd V1CustomerProvisionParamsBillingCurrency = "usd"
+	V1CustomerProvisionParamsBillingCurrencyAed V1CustomerProvisionParamsBillingCurrency = "aed"
+	V1CustomerProvisionParamsBillingCurrencyAll V1CustomerProvisionParamsBillingCurrency = "all"
+	V1CustomerProvisionParamsBillingCurrencyAmd V1CustomerProvisionParamsBillingCurrency = "amd"
+	V1CustomerProvisionParamsBillingCurrencyAng V1CustomerProvisionParamsBillingCurrency = "ang"
+	V1CustomerProvisionParamsBillingCurrencyAud V1CustomerProvisionParamsBillingCurrency = "aud"
+	V1CustomerProvisionParamsBillingCurrencyAwg V1CustomerProvisionParamsBillingCurrency = "awg"
+	V1CustomerProvisionParamsBillingCurrencyAzn V1CustomerProvisionParamsBillingCurrency = "azn"
+	V1CustomerProvisionParamsBillingCurrencyBam V1CustomerProvisionParamsBillingCurrency = "bam"
+	V1CustomerProvisionParamsBillingCurrencyBbd V1CustomerProvisionParamsBillingCurrency = "bbd"
+	V1CustomerProvisionParamsBillingCurrencyBdt V1CustomerProvisionParamsBillingCurrency = "bdt"
+	V1CustomerProvisionParamsBillingCurrencyBgn V1CustomerProvisionParamsBillingCurrency = "bgn"
+	V1CustomerProvisionParamsBillingCurrencyBif V1CustomerProvisionParamsBillingCurrency = "bif"
+	V1CustomerProvisionParamsBillingCurrencyBmd V1CustomerProvisionParamsBillingCurrency = "bmd"
+	V1CustomerProvisionParamsBillingCurrencyBnd V1CustomerProvisionParamsBillingCurrency = "bnd"
+	V1CustomerProvisionParamsBillingCurrencyBsd V1CustomerProvisionParamsBillingCurrency = "bsd"
+	V1CustomerProvisionParamsBillingCurrencyBwp V1CustomerProvisionParamsBillingCurrency = "bwp"
+	V1CustomerProvisionParamsBillingCurrencyByn V1CustomerProvisionParamsBillingCurrency = "byn"
+	V1CustomerProvisionParamsBillingCurrencyBzd V1CustomerProvisionParamsBillingCurrency = "bzd"
+	V1CustomerProvisionParamsBillingCurrencyBrl V1CustomerProvisionParamsBillingCurrency = "brl"
+	V1CustomerProvisionParamsBillingCurrencyCad V1CustomerProvisionParamsBillingCurrency = "cad"
+	V1CustomerProvisionParamsBillingCurrencyCdf V1CustomerProvisionParamsBillingCurrency = "cdf"
+	V1CustomerProvisionParamsBillingCurrencyChf V1CustomerProvisionParamsBillingCurrency = "chf"
+	V1CustomerProvisionParamsBillingCurrencyCny V1CustomerProvisionParamsBillingCurrency = "cny"
+	V1CustomerProvisionParamsBillingCurrencyCzk V1CustomerProvisionParamsBillingCurrency = "czk"
+	V1CustomerProvisionParamsBillingCurrencyDkk V1CustomerProvisionParamsBillingCurrency = "dkk"
+	V1CustomerProvisionParamsBillingCurrencyDop V1CustomerProvisionParamsBillingCurrency = "dop"
+	V1CustomerProvisionParamsBillingCurrencyDzd V1CustomerProvisionParamsBillingCurrency = "dzd"
+	V1CustomerProvisionParamsBillingCurrencyEgp V1CustomerProvisionParamsBillingCurrency = "egp"
+	V1CustomerProvisionParamsBillingCurrencyEtb V1CustomerProvisionParamsBillingCurrency = "etb"
+	V1CustomerProvisionParamsBillingCurrencyEur V1CustomerProvisionParamsBillingCurrency = "eur"
+	V1CustomerProvisionParamsBillingCurrencyFjd V1CustomerProvisionParamsBillingCurrency = "fjd"
+	V1CustomerProvisionParamsBillingCurrencyGbp V1CustomerProvisionParamsBillingCurrency = "gbp"
+	V1CustomerProvisionParamsBillingCurrencyGel V1CustomerProvisionParamsBillingCurrency = "gel"
+	V1CustomerProvisionParamsBillingCurrencyGip V1CustomerProvisionParamsBillingCurrency = "gip"
+	V1CustomerProvisionParamsBillingCurrencyGmd V1CustomerProvisionParamsBillingCurrency = "gmd"
+	V1CustomerProvisionParamsBillingCurrencyGyd V1CustomerProvisionParamsBillingCurrency = "gyd"
+	V1CustomerProvisionParamsBillingCurrencyHkd V1CustomerProvisionParamsBillingCurrency = "hkd"
+	V1CustomerProvisionParamsBillingCurrencyHrk V1CustomerProvisionParamsBillingCurrency = "hrk"
+	V1CustomerProvisionParamsBillingCurrencyHtg V1CustomerProvisionParamsBillingCurrency = "htg"
+	V1CustomerProvisionParamsBillingCurrencyIdr V1CustomerProvisionParamsBillingCurrency = "idr"
+	V1CustomerProvisionParamsBillingCurrencyIls V1CustomerProvisionParamsBillingCurrency = "ils"
+	V1CustomerProvisionParamsBillingCurrencyInr V1CustomerProvisionParamsBillingCurrency = "inr"
+	V1CustomerProvisionParamsBillingCurrencyIsk V1CustomerProvisionParamsBillingCurrency = "isk"
+	V1CustomerProvisionParamsBillingCurrencyJmd V1CustomerProvisionParamsBillingCurrency = "jmd"
+	V1CustomerProvisionParamsBillingCurrencyJpy V1CustomerProvisionParamsBillingCurrency = "jpy"
+	V1CustomerProvisionParamsBillingCurrencyKes V1CustomerProvisionParamsBillingCurrency = "kes"
+	V1CustomerProvisionParamsBillingCurrencyKgs V1CustomerProvisionParamsBillingCurrency = "kgs"
+	V1CustomerProvisionParamsBillingCurrencyKhr V1CustomerProvisionParamsBillingCurrency = "khr"
+	V1CustomerProvisionParamsBillingCurrencyKmf V1CustomerProvisionParamsBillingCurrency = "kmf"
+	V1CustomerProvisionParamsBillingCurrencyKrw V1CustomerProvisionParamsBillingCurrency = "krw"
+	V1CustomerProvisionParamsBillingCurrencyKyd V1CustomerProvisionParamsBillingCurrency = "kyd"
+	V1CustomerProvisionParamsBillingCurrencyKzt V1CustomerProvisionParamsBillingCurrency = "kzt"
+	V1CustomerProvisionParamsBillingCurrencyLbp V1CustomerProvisionParamsBillingCurrency = "lbp"
+	V1CustomerProvisionParamsBillingCurrencyLkr V1CustomerProvisionParamsBillingCurrency = "lkr"
+	V1CustomerProvisionParamsBillingCurrencyLrd V1CustomerProvisionParamsBillingCurrency = "lrd"
+	V1CustomerProvisionParamsBillingCurrencyLsl V1CustomerProvisionParamsBillingCurrency = "lsl"
+	V1CustomerProvisionParamsBillingCurrencyMad V1CustomerProvisionParamsBillingCurrency = "mad"
+	V1CustomerProvisionParamsBillingCurrencyMdl V1CustomerProvisionParamsBillingCurrency = "mdl"
+	V1CustomerProvisionParamsBillingCurrencyMga V1CustomerProvisionParamsBillingCurrency = "mga"
+	V1CustomerProvisionParamsBillingCurrencyMkd V1CustomerProvisionParamsBillingCurrency = "mkd"
+	V1CustomerProvisionParamsBillingCurrencyMmk V1CustomerProvisionParamsBillingCurrency = "mmk"
+	V1CustomerProvisionParamsBillingCurrencyMnt V1CustomerProvisionParamsBillingCurrency = "mnt"
+	V1CustomerProvisionParamsBillingCurrencyMop V1CustomerProvisionParamsBillingCurrency = "mop"
+	V1CustomerProvisionParamsBillingCurrencyMro V1CustomerProvisionParamsBillingCurrency = "mro"
+	V1CustomerProvisionParamsBillingCurrencyMvr V1CustomerProvisionParamsBillingCurrency = "mvr"
+	V1CustomerProvisionParamsBillingCurrencyMwk V1CustomerProvisionParamsBillingCurrency = "mwk"
+	V1CustomerProvisionParamsBillingCurrencyMxn V1CustomerProvisionParamsBillingCurrency = "mxn"
+	V1CustomerProvisionParamsBillingCurrencyMyr V1CustomerProvisionParamsBillingCurrency = "myr"
+	V1CustomerProvisionParamsBillingCurrencyMzn V1CustomerProvisionParamsBillingCurrency = "mzn"
+	V1CustomerProvisionParamsBillingCurrencyNad V1CustomerProvisionParamsBillingCurrency = "nad"
+	V1CustomerProvisionParamsBillingCurrencyNgn V1CustomerProvisionParamsBillingCurrency = "ngn"
+	V1CustomerProvisionParamsBillingCurrencyNok V1CustomerProvisionParamsBillingCurrency = "nok"
+	V1CustomerProvisionParamsBillingCurrencyNpr V1CustomerProvisionParamsBillingCurrency = "npr"
+	V1CustomerProvisionParamsBillingCurrencyNzd V1CustomerProvisionParamsBillingCurrency = "nzd"
+	V1CustomerProvisionParamsBillingCurrencyPgk V1CustomerProvisionParamsBillingCurrency = "pgk"
+	V1CustomerProvisionParamsBillingCurrencyPhp V1CustomerProvisionParamsBillingCurrency = "php"
+	V1CustomerProvisionParamsBillingCurrencyPkr V1CustomerProvisionParamsBillingCurrency = "pkr"
+	V1CustomerProvisionParamsBillingCurrencyPln V1CustomerProvisionParamsBillingCurrency = "pln"
+	V1CustomerProvisionParamsBillingCurrencyQar V1CustomerProvisionParamsBillingCurrency = "qar"
+	V1CustomerProvisionParamsBillingCurrencyRon V1CustomerProvisionParamsBillingCurrency = "ron"
+	V1CustomerProvisionParamsBillingCurrencyRsd V1CustomerProvisionParamsBillingCurrency = "rsd"
+	V1CustomerProvisionParamsBillingCurrencyRub V1CustomerProvisionParamsBillingCurrency = "rub"
+	V1CustomerProvisionParamsBillingCurrencyRwf V1CustomerProvisionParamsBillingCurrency = "rwf"
+	V1CustomerProvisionParamsBillingCurrencySar V1CustomerProvisionParamsBillingCurrency = "sar"
+	V1CustomerProvisionParamsBillingCurrencySbd V1CustomerProvisionParamsBillingCurrency = "sbd"
+	V1CustomerProvisionParamsBillingCurrencyScr V1CustomerProvisionParamsBillingCurrency = "scr"
+	V1CustomerProvisionParamsBillingCurrencySek V1CustomerProvisionParamsBillingCurrency = "sek"
+	V1CustomerProvisionParamsBillingCurrencySgd V1CustomerProvisionParamsBillingCurrency = "sgd"
+	V1CustomerProvisionParamsBillingCurrencySle V1CustomerProvisionParamsBillingCurrency = "sle"
+	V1CustomerProvisionParamsBillingCurrencySll V1CustomerProvisionParamsBillingCurrency = "sll"
+	V1CustomerProvisionParamsBillingCurrencySos V1CustomerProvisionParamsBillingCurrency = "sos"
+	V1CustomerProvisionParamsBillingCurrencySzl V1CustomerProvisionParamsBillingCurrency = "szl"
+	V1CustomerProvisionParamsBillingCurrencyThb V1CustomerProvisionParamsBillingCurrency = "thb"
+	V1CustomerProvisionParamsBillingCurrencyTjs V1CustomerProvisionParamsBillingCurrency = "tjs"
+	V1CustomerProvisionParamsBillingCurrencyTop V1CustomerProvisionParamsBillingCurrency = "top"
+	V1CustomerProvisionParamsBillingCurrencyTry V1CustomerProvisionParamsBillingCurrency = "try"
+	V1CustomerProvisionParamsBillingCurrencyTtd V1CustomerProvisionParamsBillingCurrency = "ttd"
+	V1CustomerProvisionParamsBillingCurrencyTzs V1CustomerProvisionParamsBillingCurrency = "tzs"
+	V1CustomerProvisionParamsBillingCurrencyUah V1CustomerProvisionParamsBillingCurrency = "uah"
+	V1CustomerProvisionParamsBillingCurrencyUzs V1CustomerProvisionParamsBillingCurrency = "uzs"
+	V1CustomerProvisionParamsBillingCurrencyVnd V1CustomerProvisionParamsBillingCurrency = "vnd"
+	V1CustomerProvisionParamsBillingCurrencyVuv V1CustomerProvisionParamsBillingCurrency = "vuv"
+	V1CustomerProvisionParamsBillingCurrencyWst V1CustomerProvisionParamsBillingCurrency = "wst"
+	V1CustomerProvisionParamsBillingCurrencyXaf V1CustomerProvisionParamsBillingCurrency = "xaf"
+	V1CustomerProvisionParamsBillingCurrencyXcd V1CustomerProvisionParamsBillingCurrency = "xcd"
+	V1CustomerProvisionParamsBillingCurrencyYer V1CustomerProvisionParamsBillingCurrency = "yer"
+	V1CustomerProvisionParamsBillingCurrencyZar V1CustomerProvisionParamsBillingCurrency = "zar"
+	V1CustomerProvisionParamsBillingCurrencyZmw V1CustomerProvisionParamsBillingCurrency = "zmw"
+	V1CustomerProvisionParamsBillingCurrencyClp V1CustomerProvisionParamsBillingCurrency = "clp"
+	V1CustomerProvisionParamsBillingCurrencyDjf V1CustomerProvisionParamsBillingCurrency = "djf"
+	V1CustomerProvisionParamsBillingCurrencyGnf V1CustomerProvisionParamsBillingCurrency = "gnf"
+	V1CustomerProvisionParamsBillingCurrencyUgx V1CustomerProvisionParamsBillingCurrency = "ugx"
+	V1CustomerProvisionParamsBillingCurrencyPyg V1CustomerProvisionParamsBillingCurrency = "pyg"
+	V1CustomerProvisionParamsBillingCurrencyXof V1CustomerProvisionParamsBillingCurrency = "xof"
+	V1CustomerProvisionParamsBillingCurrencyXpf V1CustomerProvisionParamsBillingCurrency = "xpf"
+)
 
 // The default payment method details
 //
