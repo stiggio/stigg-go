@@ -216,10 +216,16 @@ type CustomerResponseData struct {
 	Email string `json:"email" api:"nullable" format:"email"`
 	// List of integrations
 	Integrations []CustomerResponseDataIntegration `json:"integrations"`
+	// Language to use for this customer
+	Language string `json:"language" api:"nullable"`
 	// Additional metadata
 	Metadata map[string]string `json:"metadata"`
 	// The name of the customer
 	Name string `json:"name" api:"nullable"`
+	// Vendor-specific billing passthrough fields.
+	Passthrough CustomerResponseDataPassthrough `json:"passthrough"`
+	// Timezone to use for this customer
+	Timezone string `json:"timezone" api:"nullable"`
 	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
 	JSON struct {
 		ID                   respjson.Field
@@ -232,8 +238,11 @@ type CustomerResponseData struct {
 		DefaultPaymentMethod respjson.Field
 		Email                respjson.Field
 		Integrations         respjson.Field
+		Language             respjson.Field
 		Metadata             respjson.Field
 		Name                 respjson.Field
+		Passthrough          respjson.Field
+		Timezone             respjson.Field
 		ExtraFields          map[string]respjson.Field
 		raw                  string
 	} `json:"-"`
@@ -304,6 +313,222 @@ func (r *CustomerResponseDataIntegration) UnmarshalJSON(data []byte) error {
 	return apijson.UnmarshalRoot(data, r)
 }
 
+// Vendor-specific billing passthrough fields.
+type CustomerResponseDataPassthrough struct {
+	// Stripe-specific billing fields for the customer.
+	Stripe CustomerResponseDataPassthroughStripe `json:"stripe"`
+	// Zuora-specific billing fields for the customer.
+	Zuora CustomerResponseDataPassthroughZuora `json:"zuora"`
+	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
+	JSON struct {
+		Stripe      respjson.Field
+		Zuora       respjson.Field
+		ExtraFields map[string]respjson.Field
+		raw         string
+	} `json:"-"`
+}
+
+// Returns the unmodified JSON received from the API
+func (r CustomerResponseDataPassthrough) RawJSON() string { return r.JSON.raw }
+func (r *CustomerResponseDataPassthrough) UnmarshalJSON(data []byte) error {
+	return apijson.UnmarshalRoot(data, r)
+}
+
+// Stripe-specific billing fields for the customer.
+type CustomerResponseDataPassthroughStripe struct {
+	// Physical address
+	BillingAddress CustomerResponseDataPassthroughStripeBillingAddress `json:"billingAddress"`
+	// Customer name
+	CustomerName string `json:"customerName"`
+	// Invoice custom fields
+	InvoiceCustomFields map[string]string `json:"invoiceCustomFields"`
+	// Additional metadata
+	Metadata map[string]string `json:"metadata"`
+	// Billing provider payment method id, attached to this customer
+	PaymentMethodID string `json:"paymentMethodId"`
+	// Physical address
+	ShippingAddress CustomerResponseDataPassthroughStripeShippingAddress `json:"shippingAddress"`
+	// Tax IDs
+	TaxIDs []CustomerResponseDataPassthroughStripeTaxID `json:"taxIds"`
+	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
+	JSON struct {
+		BillingAddress      respjson.Field
+		CustomerName        respjson.Field
+		InvoiceCustomFields respjson.Field
+		Metadata            respjson.Field
+		PaymentMethodID     respjson.Field
+		ShippingAddress     respjson.Field
+		TaxIDs              respjson.Field
+		ExtraFields         map[string]respjson.Field
+		raw                 string
+	} `json:"-"`
+}
+
+// Returns the unmodified JSON received from the API
+func (r CustomerResponseDataPassthroughStripe) RawJSON() string { return r.JSON.raw }
+func (r *CustomerResponseDataPassthroughStripe) UnmarshalJSON(data []byte) error {
+	return apijson.UnmarshalRoot(data, r)
+}
+
+// Physical address
+type CustomerResponseDataPassthroughStripeBillingAddress struct {
+	// City name
+	City string `json:"city"`
+	// Country code or name
+	Country string `json:"country"`
+	// Street address line 1
+	Line1 string `json:"line1"`
+	// Street address line 2
+	Line2 string `json:"line2"`
+	// Postal or ZIP code
+	PostalCode string `json:"postalCode"`
+	// State or province
+	State string `json:"state"`
+	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
+	JSON struct {
+		City        respjson.Field
+		Country     respjson.Field
+		Line1       respjson.Field
+		Line2       respjson.Field
+		PostalCode  respjson.Field
+		State       respjson.Field
+		ExtraFields map[string]respjson.Field
+		raw         string
+	} `json:"-"`
+}
+
+// Returns the unmodified JSON received from the API
+func (r CustomerResponseDataPassthroughStripeBillingAddress) RawJSON() string { return r.JSON.raw }
+func (r *CustomerResponseDataPassthroughStripeBillingAddress) UnmarshalJSON(data []byte) error {
+	return apijson.UnmarshalRoot(data, r)
+}
+
+// Physical address
+type CustomerResponseDataPassthroughStripeShippingAddress struct {
+	// City name
+	City string `json:"city"`
+	// Country code or name
+	Country string `json:"country"`
+	// Street address line 1
+	Line1 string `json:"line1"`
+	// Street address line 2
+	Line2 string `json:"line2"`
+	// Postal or ZIP code
+	PostalCode string `json:"postalCode"`
+	// State or province
+	State string `json:"state"`
+	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
+	JSON struct {
+		City        respjson.Field
+		Country     respjson.Field
+		Line1       respjson.Field
+		Line2       respjson.Field
+		PostalCode  respjson.Field
+		State       respjson.Field
+		ExtraFields map[string]respjson.Field
+		raw         string
+	} `json:"-"`
+}
+
+// Returns the unmodified JSON received from the API
+func (r CustomerResponseDataPassthroughStripeShippingAddress) RawJSON() string { return r.JSON.raw }
+func (r *CustomerResponseDataPassthroughStripeShippingAddress) UnmarshalJSON(data []byte) error {
+	return apijson.UnmarshalRoot(data, r)
+}
+
+// Tax identifier with type and value for customer tax exemptions.
+type CustomerResponseDataPassthroughStripeTaxID struct {
+	// The type of tax exemption identifier, such as VAT.
+	Type string `json:"type" api:"required"`
+	// The actual tax identifier value
+	Value string `json:"value" api:"required"`
+	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
+	JSON struct {
+		Type        respjson.Field
+		Value       respjson.Field
+		ExtraFields map[string]respjson.Field
+		raw         string
+	} `json:"-"`
+}
+
+// Returns the unmodified JSON received from the API
+func (r CustomerResponseDataPassthroughStripeTaxID) RawJSON() string { return r.JSON.raw }
+func (r *CustomerResponseDataPassthroughStripeTaxID) UnmarshalJSON(data []byte) error {
+	return apijson.UnmarshalRoot(data, r)
+}
+
+// Zuora-specific billing fields for the customer.
+type CustomerResponseDataPassthroughZuora struct {
+	// Physical address
+	BillingAddress CustomerResponseDataPassthroughZuoraBillingAddress `json:"billingAddress"`
+	// Customers selected currency
+	//
+	// Any of "usd", "aed", "all", "amd", "ang", "aud", "awg", "azn", "bam", "bbd",
+	// "bdt", "bgn", "bif", "bmd", "bnd", "bsd", "bwp", "byn", "bzd", "brl", "cad",
+	// "cdf", "chf", "cny", "czk", "dkk", "dop", "dzd", "egp", "etb", "eur", "fjd",
+	// "gbp", "gel", "gip", "gmd", "gyd", "hkd", "hrk", "htg", "idr", "ils", "inr",
+	// "isk", "jmd", "jpy", "kes", "kgs", "khr", "kmf", "krw", "kyd", "kzt", "lbp",
+	// "lkr", "lrd", "lsl", "mad", "mdl", "mga", "mkd", "mmk", "mnt", "mop", "mro",
+	// "mvr", "mwk", "mxn", "myr", "mzn", "nad", "ngn", "nok", "npr", "nzd", "pgk",
+	// "php", "pkr", "pln", "qar", "ron", "rsd", "rub", "rwf", "sar", "sbd", "scr",
+	// "sek", "sgd", "sle", "sll", "sos", "szl", "thb", "tjs", "top", "try", "ttd",
+	// "tzs", "uah", "uzs", "vnd", "vuv", "wst", "xaf", "xcd", "yer", "zar", "zmw",
+	// "clp", "djf", "gnf", "ugx", "pyg", "xof", "xpf".
+	Currency string `json:"currency"`
+	// Additional metadata
+	Metadata map[string]string `json:"metadata"`
+	// Billing provider payment method id, attached to this customer
+	PaymentMethodID string `json:"paymentMethodId"`
+	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
+	JSON struct {
+		BillingAddress  respjson.Field
+		Currency        respjson.Field
+		Metadata        respjson.Field
+		PaymentMethodID respjson.Field
+		ExtraFields     map[string]respjson.Field
+		raw             string
+	} `json:"-"`
+}
+
+// Returns the unmodified JSON received from the API
+func (r CustomerResponseDataPassthroughZuora) RawJSON() string { return r.JSON.raw }
+func (r *CustomerResponseDataPassthroughZuora) UnmarshalJSON(data []byte) error {
+	return apijson.UnmarshalRoot(data, r)
+}
+
+// Physical address
+type CustomerResponseDataPassthroughZuoraBillingAddress struct {
+	// City name
+	City string `json:"city"`
+	// Country code or name
+	Country string `json:"country"`
+	// Street address line 1
+	Line1 string `json:"line1"`
+	// Street address line 2
+	Line2 string `json:"line2"`
+	// Postal or ZIP code
+	PostalCode string `json:"postalCode"`
+	// State or province
+	State string `json:"state"`
+	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
+	JSON struct {
+		City        respjson.Field
+		Country     respjson.Field
+		Line1       respjson.Field
+		Line2       respjson.Field
+		PostalCode  respjson.Field
+		State       respjson.Field
+		ExtraFields map[string]respjson.Field
+		raw         string
+	} `json:"-"`
+}
+
+// Returns the unmodified JSON received from the API
+func (r CustomerResponseDataPassthroughZuoraBillingAddress) RawJSON() string { return r.JSON.raw }
+func (r *CustomerResponseDataPassthroughZuoraBillingAddress) UnmarshalJSON(data []byte) error {
+	return apijson.UnmarshalRoot(data, r)
+}
+
 // A customer can be either an organization or an individual
 type V1CustomerListResponse struct {
 	// Customer slug
@@ -338,10 +563,16 @@ type V1CustomerListResponse struct {
 	Email string `json:"email" api:"nullable" format:"email"`
 	// List of integrations
 	Integrations []V1CustomerListResponseIntegration `json:"integrations"`
+	// Language to use for this customer
+	Language string `json:"language" api:"nullable"`
 	// Additional metadata
 	Metadata map[string]string `json:"metadata"`
 	// The name of the customer
 	Name string `json:"name" api:"nullable"`
+	// Vendor-specific billing passthrough fields.
+	Passthrough V1CustomerListResponsePassthrough `json:"passthrough"`
+	// Timezone to use for this customer
+	Timezone string `json:"timezone" api:"nullable"`
 	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
 	JSON struct {
 		ID                   respjson.Field
@@ -354,8 +585,11 @@ type V1CustomerListResponse struct {
 		DefaultPaymentMethod respjson.Field
 		Email                respjson.Field
 		Integrations         respjson.Field
+		Language             respjson.Field
 		Metadata             respjson.Field
 		Name                 respjson.Field
+		Passthrough          respjson.Field
+		Timezone             respjson.Field
 		ExtraFields          map[string]respjson.Field
 		raw                  string
 	} `json:"-"`
@@ -548,6 +782,222 @@ func (r *V1CustomerListResponseIntegration) UnmarshalJSON(data []byte) error {
 	return apijson.UnmarshalRoot(data, r)
 }
 
+// Vendor-specific billing passthrough fields.
+type V1CustomerListResponsePassthrough struct {
+	// Stripe-specific billing fields for the customer.
+	Stripe V1CustomerListResponsePassthroughStripe `json:"stripe"`
+	// Zuora-specific billing fields for the customer.
+	Zuora V1CustomerListResponsePassthroughZuora `json:"zuora"`
+	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
+	JSON struct {
+		Stripe      respjson.Field
+		Zuora       respjson.Field
+		ExtraFields map[string]respjson.Field
+		raw         string
+	} `json:"-"`
+}
+
+// Returns the unmodified JSON received from the API
+func (r V1CustomerListResponsePassthrough) RawJSON() string { return r.JSON.raw }
+func (r *V1CustomerListResponsePassthrough) UnmarshalJSON(data []byte) error {
+	return apijson.UnmarshalRoot(data, r)
+}
+
+// Stripe-specific billing fields for the customer.
+type V1CustomerListResponsePassthroughStripe struct {
+	// Physical address
+	BillingAddress V1CustomerListResponsePassthroughStripeBillingAddress `json:"billingAddress"`
+	// Customer name
+	CustomerName string `json:"customerName"`
+	// Invoice custom fields
+	InvoiceCustomFields map[string]string `json:"invoiceCustomFields"`
+	// Additional metadata
+	Metadata map[string]string `json:"metadata"`
+	// Billing provider payment method id, attached to this customer
+	PaymentMethodID string `json:"paymentMethodId"`
+	// Physical address
+	ShippingAddress V1CustomerListResponsePassthroughStripeShippingAddress `json:"shippingAddress"`
+	// Tax IDs
+	TaxIDs []V1CustomerListResponsePassthroughStripeTaxID `json:"taxIds"`
+	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
+	JSON struct {
+		BillingAddress      respjson.Field
+		CustomerName        respjson.Field
+		InvoiceCustomFields respjson.Field
+		Metadata            respjson.Field
+		PaymentMethodID     respjson.Field
+		ShippingAddress     respjson.Field
+		TaxIDs              respjson.Field
+		ExtraFields         map[string]respjson.Field
+		raw                 string
+	} `json:"-"`
+}
+
+// Returns the unmodified JSON received from the API
+func (r V1CustomerListResponsePassthroughStripe) RawJSON() string { return r.JSON.raw }
+func (r *V1CustomerListResponsePassthroughStripe) UnmarshalJSON(data []byte) error {
+	return apijson.UnmarshalRoot(data, r)
+}
+
+// Physical address
+type V1CustomerListResponsePassthroughStripeBillingAddress struct {
+	// City name
+	City string `json:"city"`
+	// Country code or name
+	Country string `json:"country"`
+	// Street address line 1
+	Line1 string `json:"line1"`
+	// Street address line 2
+	Line2 string `json:"line2"`
+	// Postal or ZIP code
+	PostalCode string `json:"postalCode"`
+	// State or province
+	State string `json:"state"`
+	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
+	JSON struct {
+		City        respjson.Field
+		Country     respjson.Field
+		Line1       respjson.Field
+		Line2       respjson.Field
+		PostalCode  respjson.Field
+		State       respjson.Field
+		ExtraFields map[string]respjson.Field
+		raw         string
+	} `json:"-"`
+}
+
+// Returns the unmodified JSON received from the API
+func (r V1CustomerListResponsePassthroughStripeBillingAddress) RawJSON() string { return r.JSON.raw }
+func (r *V1CustomerListResponsePassthroughStripeBillingAddress) UnmarshalJSON(data []byte) error {
+	return apijson.UnmarshalRoot(data, r)
+}
+
+// Physical address
+type V1CustomerListResponsePassthroughStripeShippingAddress struct {
+	// City name
+	City string `json:"city"`
+	// Country code or name
+	Country string `json:"country"`
+	// Street address line 1
+	Line1 string `json:"line1"`
+	// Street address line 2
+	Line2 string `json:"line2"`
+	// Postal or ZIP code
+	PostalCode string `json:"postalCode"`
+	// State or province
+	State string `json:"state"`
+	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
+	JSON struct {
+		City        respjson.Field
+		Country     respjson.Field
+		Line1       respjson.Field
+		Line2       respjson.Field
+		PostalCode  respjson.Field
+		State       respjson.Field
+		ExtraFields map[string]respjson.Field
+		raw         string
+	} `json:"-"`
+}
+
+// Returns the unmodified JSON received from the API
+func (r V1CustomerListResponsePassthroughStripeShippingAddress) RawJSON() string { return r.JSON.raw }
+func (r *V1CustomerListResponsePassthroughStripeShippingAddress) UnmarshalJSON(data []byte) error {
+	return apijson.UnmarshalRoot(data, r)
+}
+
+// Tax identifier with type and value for customer tax exemptions.
+type V1CustomerListResponsePassthroughStripeTaxID struct {
+	// The type of tax exemption identifier, such as VAT.
+	Type string `json:"type" api:"required"`
+	// The actual tax identifier value
+	Value string `json:"value" api:"required"`
+	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
+	JSON struct {
+		Type        respjson.Field
+		Value       respjson.Field
+		ExtraFields map[string]respjson.Field
+		raw         string
+	} `json:"-"`
+}
+
+// Returns the unmodified JSON received from the API
+func (r V1CustomerListResponsePassthroughStripeTaxID) RawJSON() string { return r.JSON.raw }
+func (r *V1CustomerListResponsePassthroughStripeTaxID) UnmarshalJSON(data []byte) error {
+	return apijson.UnmarshalRoot(data, r)
+}
+
+// Zuora-specific billing fields for the customer.
+type V1CustomerListResponsePassthroughZuora struct {
+	// Physical address
+	BillingAddress V1CustomerListResponsePassthroughZuoraBillingAddress `json:"billingAddress"`
+	// Customers selected currency
+	//
+	// Any of "usd", "aed", "all", "amd", "ang", "aud", "awg", "azn", "bam", "bbd",
+	// "bdt", "bgn", "bif", "bmd", "bnd", "bsd", "bwp", "byn", "bzd", "brl", "cad",
+	// "cdf", "chf", "cny", "czk", "dkk", "dop", "dzd", "egp", "etb", "eur", "fjd",
+	// "gbp", "gel", "gip", "gmd", "gyd", "hkd", "hrk", "htg", "idr", "ils", "inr",
+	// "isk", "jmd", "jpy", "kes", "kgs", "khr", "kmf", "krw", "kyd", "kzt", "lbp",
+	// "lkr", "lrd", "lsl", "mad", "mdl", "mga", "mkd", "mmk", "mnt", "mop", "mro",
+	// "mvr", "mwk", "mxn", "myr", "mzn", "nad", "ngn", "nok", "npr", "nzd", "pgk",
+	// "php", "pkr", "pln", "qar", "ron", "rsd", "rub", "rwf", "sar", "sbd", "scr",
+	// "sek", "sgd", "sle", "sll", "sos", "szl", "thb", "tjs", "top", "try", "ttd",
+	// "tzs", "uah", "uzs", "vnd", "vuv", "wst", "xaf", "xcd", "yer", "zar", "zmw",
+	// "clp", "djf", "gnf", "ugx", "pyg", "xof", "xpf".
+	Currency string `json:"currency"`
+	// Additional metadata
+	Metadata map[string]string `json:"metadata"`
+	// Billing provider payment method id, attached to this customer
+	PaymentMethodID string `json:"paymentMethodId"`
+	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
+	JSON struct {
+		BillingAddress  respjson.Field
+		Currency        respjson.Field
+		Metadata        respjson.Field
+		PaymentMethodID respjson.Field
+		ExtraFields     map[string]respjson.Field
+		raw             string
+	} `json:"-"`
+}
+
+// Returns the unmodified JSON received from the API
+func (r V1CustomerListResponsePassthroughZuora) RawJSON() string { return r.JSON.raw }
+func (r *V1CustomerListResponsePassthroughZuora) UnmarshalJSON(data []byte) error {
+	return apijson.UnmarshalRoot(data, r)
+}
+
+// Physical address
+type V1CustomerListResponsePassthroughZuoraBillingAddress struct {
+	// City name
+	City string `json:"city"`
+	// Country code or name
+	Country string `json:"country"`
+	// Street address line 1
+	Line1 string `json:"line1"`
+	// Street address line 2
+	Line2 string `json:"line2"`
+	// Postal or ZIP code
+	PostalCode string `json:"postalCode"`
+	// State or province
+	State string `json:"state"`
+	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
+	JSON struct {
+		City        respjson.Field
+		Country     respjson.Field
+		Line1       respjson.Field
+		Line2       respjson.Field
+		PostalCode  respjson.Field
+		State       respjson.Field
+		ExtraFields map[string]respjson.Field
+		raw         string
+	} `json:"-"`
+}
+
+// Returns the unmodified JSON received from the API
+func (r V1CustomerListResponsePassthroughZuoraBillingAddress) RawJSON() string { return r.JSON.raw }
+func (r *V1CustomerListResponsePassthroughZuoraBillingAddress) UnmarshalJSON(data []byte) error {
+	return apijson.UnmarshalRoot(data, r)
+}
+
 // Response object
 type V1CustomerImportResponse struct {
 	// List of newly created customer IDs from the import operation.
@@ -615,8 +1065,12 @@ type V1CustomerUpdateParams struct {
 	CouponID param.Opt[string] `json:"couponId,omitzero"`
 	// The email of the customer
 	Email param.Opt[string] `json:"email,omitzero" format:"email"`
+	// Language to use for this customer
+	Language param.Opt[string] `json:"language,omitzero"`
 	// The name of the customer
 	Name param.Opt[string] `json:"name,omitzero"`
+	// Timezone to use for this customer
+	Timezone param.Opt[string] `json:"timezone,omitzero"`
 	// The billing currency of the customer
 	//
 	// Any of "usd", "aed", "all", "amd", "ang", "aud", "awg", "azn", "bam", "bbd",
@@ -635,6 +1089,8 @@ type V1CustomerUpdateParams struct {
 	Integrations []V1CustomerUpdateParamsIntegration `json:"integrations,omitzero"`
 	// Additional metadata
 	Metadata map[string]string `json:"metadata,omitzero"`
+	// Vendor-specific billing passthrough fields.
+	Passthrough V1CustomerUpdateParamsPassthrough `json:"passthrough,omitzero"`
 	paramObj
 }
 
@@ -798,6 +1254,183 @@ func init() {
 	)
 }
 
+// Vendor-specific billing passthrough fields.
+type V1CustomerUpdateParamsPassthrough struct {
+	// Stripe-specific billing fields for the customer.
+	Stripe V1CustomerUpdateParamsPassthroughStripe `json:"stripe,omitzero"`
+	// Zuora-specific billing fields for the customer.
+	Zuora V1CustomerUpdateParamsPassthroughZuora `json:"zuora,omitzero"`
+	paramObj
+}
+
+func (r V1CustomerUpdateParamsPassthrough) MarshalJSON() (data []byte, err error) {
+	type shadow V1CustomerUpdateParamsPassthrough
+	return param.MarshalObject(r, (*shadow)(&r))
+}
+func (r *V1CustomerUpdateParamsPassthrough) UnmarshalJSON(data []byte) error {
+	return apijson.UnmarshalRoot(data, r)
+}
+
+// Stripe-specific billing fields for the customer.
+type V1CustomerUpdateParamsPassthroughStripe struct {
+	// Customer name
+	CustomerName param.Opt[string] `json:"customerName,omitzero"`
+	// Billing provider payment method id, attached to this customer
+	PaymentMethodID param.Opt[string] `json:"paymentMethodId,omitzero"`
+	// Physical address
+	BillingAddress V1CustomerUpdateParamsPassthroughStripeBillingAddress `json:"billingAddress,omitzero"`
+	// Invoice custom fields
+	InvoiceCustomFields map[string]string `json:"invoiceCustomFields,omitzero"`
+	// Additional metadata
+	Metadata map[string]string `json:"metadata,omitzero"`
+	// Physical address
+	ShippingAddress V1CustomerUpdateParamsPassthroughStripeShippingAddress `json:"shippingAddress,omitzero"`
+	// Tax IDs
+	TaxIDs []V1CustomerUpdateParamsPassthroughStripeTaxID `json:"taxIds,omitzero"`
+	paramObj
+}
+
+func (r V1CustomerUpdateParamsPassthroughStripe) MarshalJSON() (data []byte, err error) {
+	type shadow V1CustomerUpdateParamsPassthroughStripe
+	return param.MarshalObject(r, (*shadow)(&r))
+}
+func (r *V1CustomerUpdateParamsPassthroughStripe) UnmarshalJSON(data []byte) error {
+	return apijson.UnmarshalRoot(data, r)
+}
+
+// Physical address
+type V1CustomerUpdateParamsPassthroughStripeBillingAddress struct {
+	// City name
+	City param.Opt[string] `json:"city,omitzero"`
+	// Country code or name
+	Country param.Opt[string] `json:"country,omitzero"`
+	// Street address line 1
+	Line1 param.Opt[string] `json:"line1,omitzero"`
+	// Street address line 2
+	Line2 param.Opt[string] `json:"line2,omitzero"`
+	// Postal or ZIP code
+	PostalCode param.Opt[string] `json:"postalCode,omitzero"`
+	// State or province
+	State param.Opt[string] `json:"state,omitzero"`
+	paramObj
+}
+
+func (r V1CustomerUpdateParamsPassthroughStripeBillingAddress) MarshalJSON() (data []byte, err error) {
+	type shadow V1CustomerUpdateParamsPassthroughStripeBillingAddress
+	return param.MarshalObject(r, (*shadow)(&r))
+}
+func (r *V1CustomerUpdateParamsPassthroughStripeBillingAddress) UnmarshalJSON(data []byte) error {
+	return apijson.UnmarshalRoot(data, r)
+}
+
+// Physical address
+type V1CustomerUpdateParamsPassthroughStripeShippingAddress struct {
+	// City name
+	City param.Opt[string] `json:"city,omitzero"`
+	// Country code or name
+	Country param.Opt[string] `json:"country,omitzero"`
+	// Street address line 1
+	Line1 param.Opt[string] `json:"line1,omitzero"`
+	// Street address line 2
+	Line2 param.Opt[string] `json:"line2,omitzero"`
+	// Postal or ZIP code
+	PostalCode param.Opt[string] `json:"postalCode,omitzero"`
+	// State or province
+	State param.Opt[string] `json:"state,omitzero"`
+	paramObj
+}
+
+func (r V1CustomerUpdateParamsPassthroughStripeShippingAddress) MarshalJSON() (data []byte, err error) {
+	type shadow V1CustomerUpdateParamsPassthroughStripeShippingAddress
+	return param.MarshalObject(r, (*shadow)(&r))
+}
+func (r *V1CustomerUpdateParamsPassthroughStripeShippingAddress) UnmarshalJSON(data []byte) error {
+	return apijson.UnmarshalRoot(data, r)
+}
+
+// Tax identifier with type and value for customer tax exemptions.
+//
+// The properties Type, Value are required.
+type V1CustomerUpdateParamsPassthroughStripeTaxID struct {
+	// The type of tax exemption identifier, such as VAT.
+	Type string `json:"type" api:"required"`
+	// The actual tax identifier value
+	Value string `json:"value" api:"required"`
+	paramObj
+}
+
+func (r V1CustomerUpdateParamsPassthroughStripeTaxID) MarshalJSON() (data []byte, err error) {
+	type shadow V1CustomerUpdateParamsPassthroughStripeTaxID
+	return param.MarshalObject(r, (*shadow)(&r))
+}
+func (r *V1CustomerUpdateParamsPassthroughStripeTaxID) UnmarshalJSON(data []byte) error {
+	return apijson.UnmarshalRoot(data, r)
+}
+
+// Zuora-specific billing fields for the customer.
+type V1CustomerUpdateParamsPassthroughZuora struct {
+	// Billing provider payment method id, attached to this customer
+	PaymentMethodID param.Opt[string] `json:"paymentMethodId,omitzero"`
+	// Physical address
+	BillingAddress V1CustomerUpdateParamsPassthroughZuoraBillingAddress `json:"billingAddress,omitzero"`
+	// Customers selected currency
+	//
+	// Any of "usd", "aed", "all", "amd", "ang", "aud", "awg", "azn", "bam", "bbd",
+	// "bdt", "bgn", "bif", "bmd", "bnd", "bsd", "bwp", "byn", "bzd", "brl", "cad",
+	// "cdf", "chf", "cny", "czk", "dkk", "dop", "dzd", "egp", "etb", "eur", "fjd",
+	// "gbp", "gel", "gip", "gmd", "gyd", "hkd", "hrk", "htg", "idr", "ils", "inr",
+	// "isk", "jmd", "jpy", "kes", "kgs", "khr", "kmf", "krw", "kyd", "kzt", "lbp",
+	// "lkr", "lrd", "lsl", "mad", "mdl", "mga", "mkd", "mmk", "mnt", "mop", "mro",
+	// "mvr", "mwk", "mxn", "myr", "mzn", "nad", "ngn", "nok", "npr", "nzd", "pgk",
+	// "php", "pkr", "pln", "qar", "ron", "rsd", "rub", "rwf", "sar", "sbd", "scr",
+	// "sek", "sgd", "sle", "sll", "sos", "szl", "thb", "tjs", "top", "try", "ttd",
+	// "tzs", "uah", "uzs", "vnd", "vuv", "wst", "xaf", "xcd", "yer", "zar", "zmw",
+	// "clp", "djf", "gnf", "ugx", "pyg", "xof", "xpf".
+	Currency string `json:"currency,omitzero"`
+	// Additional metadata
+	Metadata map[string]string `json:"metadata,omitzero"`
+	paramObj
+}
+
+func (r V1CustomerUpdateParamsPassthroughZuora) MarshalJSON() (data []byte, err error) {
+	type shadow V1CustomerUpdateParamsPassthroughZuora
+	return param.MarshalObject(r, (*shadow)(&r))
+}
+func (r *V1CustomerUpdateParamsPassthroughZuora) UnmarshalJSON(data []byte) error {
+	return apijson.UnmarshalRoot(data, r)
+}
+
+func init() {
+	apijson.RegisterFieldValidator[V1CustomerUpdateParamsPassthroughZuora](
+		"currency", "usd", "aed", "all", "amd", "ang", "aud", "awg", "azn", "bam", "bbd", "bdt", "bgn", "bif", "bmd", "bnd", "bsd", "bwp", "byn", "bzd", "brl", "cad", "cdf", "chf", "cny", "czk", "dkk", "dop", "dzd", "egp", "etb", "eur", "fjd", "gbp", "gel", "gip", "gmd", "gyd", "hkd", "hrk", "htg", "idr", "ils", "inr", "isk", "jmd", "jpy", "kes", "kgs", "khr", "kmf", "krw", "kyd", "kzt", "lbp", "lkr", "lrd", "lsl", "mad", "mdl", "mga", "mkd", "mmk", "mnt", "mop", "mro", "mvr", "mwk", "mxn", "myr", "mzn", "nad", "ngn", "nok", "npr", "nzd", "pgk", "php", "pkr", "pln", "qar", "ron", "rsd", "rub", "rwf", "sar", "sbd", "scr", "sek", "sgd", "sle", "sll", "sos", "szl", "thb", "tjs", "top", "try", "ttd", "tzs", "uah", "uzs", "vnd", "vuv", "wst", "xaf", "xcd", "yer", "zar", "zmw", "clp", "djf", "gnf", "ugx", "pyg", "xof", "xpf",
+	)
+}
+
+// Physical address
+type V1CustomerUpdateParamsPassthroughZuoraBillingAddress struct {
+	// City name
+	City param.Opt[string] `json:"city,omitzero"`
+	// Country code or name
+	Country param.Opt[string] `json:"country,omitzero"`
+	// Street address line 1
+	Line1 param.Opt[string] `json:"line1,omitzero"`
+	// Street address line 2
+	Line2 param.Opt[string] `json:"line2,omitzero"`
+	// Postal or ZIP code
+	PostalCode param.Opt[string] `json:"postalCode,omitzero"`
+	// State or province
+	State param.Opt[string] `json:"state,omitzero"`
+	paramObj
+}
+
+func (r V1CustomerUpdateParamsPassthroughZuoraBillingAddress) MarshalJSON() (data []byte, err error) {
+	type shadow V1CustomerUpdateParamsPassthroughZuoraBillingAddress
+	return param.MarshalObject(r, (*shadow)(&r))
+}
+func (r *V1CustomerUpdateParamsPassthroughZuoraBillingAddress) UnmarshalJSON(data []byte) error {
+	return apijson.UnmarshalRoot(data, r)
+}
+
 type V1CustomerListParams struct {
 	// Return items that come after this cursor
 	After param.Opt[string] `query:"after,omitzero" format:"uuid" json:"-"`
@@ -917,8 +1550,12 @@ type V1CustomerProvisionParams struct {
 	CouponID param.Opt[string] `json:"couponId,omitzero"`
 	// The email of the customer
 	Email param.Opt[string] `json:"email,omitzero" format:"email"`
+	// Language to use for this customer
+	Language param.Opt[string] `json:"language,omitzero"`
 	// The name of the customer
 	Name param.Opt[string] `json:"name,omitzero"`
+	// Timezone to use for this customer
+	Timezone param.Opt[string] `json:"timezone,omitzero"`
 	// The billing currency of the customer
 	//
 	// Any of "usd", "aed", "all", "amd", "ang", "aud", "awg", "azn", "bam", "bbd",
@@ -939,6 +1576,8 @@ type V1CustomerProvisionParams struct {
 	Integrations []V1CustomerProvisionParamsIntegration `json:"integrations,omitzero"`
 	// Additional metadata
 	Metadata map[string]string `json:"metadata,omitzero"`
+	// Vendor-specific billing passthrough fields.
+	Passthrough V1CustomerProvisionParamsPassthrough `json:"passthrough,omitzero"`
 	paramObj
 }
 
@@ -1134,4 +1773,181 @@ func init() {
 	apijson.RegisterFieldValidator[V1CustomerProvisionParamsIntegration](
 		"vendorIdentifier", "AUTH0", "ZUORA", "STRIPE", "HUBSPOT", "AWS_MARKETPLACE", "SNOWFLAKE", "SALESFORCE", "BIG_QUERY", "OPEN_FGA", "APP_STORE",
 	)
+}
+
+// Vendor-specific billing passthrough fields.
+type V1CustomerProvisionParamsPassthrough struct {
+	// Stripe-specific billing fields for the customer.
+	Stripe V1CustomerProvisionParamsPassthroughStripe `json:"stripe,omitzero"`
+	// Zuora-specific billing fields for the customer.
+	Zuora V1CustomerProvisionParamsPassthroughZuora `json:"zuora,omitzero"`
+	paramObj
+}
+
+func (r V1CustomerProvisionParamsPassthrough) MarshalJSON() (data []byte, err error) {
+	type shadow V1CustomerProvisionParamsPassthrough
+	return param.MarshalObject(r, (*shadow)(&r))
+}
+func (r *V1CustomerProvisionParamsPassthrough) UnmarshalJSON(data []byte) error {
+	return apijson.UnmarshalRoot(data, r)
+}
+
+// Stripe-specific billing fields for the customer.
+type V1CustomerProvisionParamsPassthroughStripe struct {
+	// Customer name
+	CustomerName param.Opt[string] `json:"customerName,omitzero"`
+	// Billing provider payment method id, attached to this customer
+	PaymentMethodID param.Opt[string] `json:"paymentMethodId,omitzero"`
+	// Physical address
+	BillingAddress V1CustomerProvisionParamsPassthroughStripeBillingAddress `json:"billingAddress,omitzero"`
+	// Invoice custom fields
+	InvoiceCustomFields map[string]string `json:"invoiceCustomFields,omitzero"`
+	// Additional metadata
+	Metadata map[string]string `json:"metadata,omitzero"`
+	// Physical address
+	ShippingAddress V1CustomerProvisionParamsPassthroughStripeShippingAddress `json:"shippingAddress,omitzero"`
+	// Tax IDs
+	TaxIDs []V1CustomerProvisionParamsPassthroughStripeTaxID `json:"taxIds,omitzero"`
+	paramObj
+}
+
+func (r V1CustomerProvisionParamsPassthroughStripe) MarshalJSON() (data []byte, err error) {
+	type shadow V1CustomerProvisionParamsPassthroughStripe
+	return param.MarshalObject(r, (*shadow)(&r))
+}
+func (r *V1CustomerProvisionParamsPassthroughStripe) UnmarshalJSON(data []byte) error {
+	return apijson.UnmarshalRoot(data, r)
+}
+
+// Physical address
+type V1CustomerProvisionParamsPassthroughStripeBillingAddress struct {
+	// City name
+	City param.Opt[string] `json:"city,omitzero"`
+	// Country code or name
+	Country param.Opt[string] `json:"country,omitzero"`
+	// Street address line 1
+	Line1 param.Opt[string] `json:"line1,omitzero"`
+	// Street address line 2
+	Line2 param.Opt[string] `json:"line2,omitzero"`
+	// Postal or ZIP code
+	PostalCode param.Opt[string] `json:"postalCode,omitzero"`
+	// State or province
+	State param.Opt[string] `json:"state,omitzero"`
+	paramObj
+}
+
+func (r V1CustomerProvisionParamsPassthroughStripeBillingAddress) MarshalJSON() (data []byte, err error) {
+	type shadow V1CustomerProvisionParamsPassthroughStripeBillingAddress
+	return param.MarshalObject(r, (*shadow)(&r))
+}
+func (r *V1CustomerProvisionParamsPassthroughStripeBillingAddress) UnmarshalJSON(data []byte) error {
+	return apijson.UnmarshalRoot(data, r)
+}
+
+// Physical address
+type V1CustomerProvisionParamsPassthroughStripeShippingAddress struct {
+	// City name
+	City param.Opt[string] `json:"city,omitzero"`
+	// Country code or name
+	Country param.Opt[string] `json:"country,omitzero"`
+	// Street address line 1
+	Line1 param.Opt[string] `json:"line1,omitzero"`
+	// Street address line 2
+	Line2 param.Opt[string] `json:"line2,omitzero"`
+	// Postal or ZIP code
+	PostalCode param.Opt[string] `json:"postalCode,omitzero"`
+	// State or province
+	State param.Opt[string] `json:"state,omitzero"`
+	paramObj
+}
+
+func (r V1CustomerProvisionParamsPassthroughStripeShippingAddress) MarshalJSON() (data []byte, err error) {
+	type shadow V1CustomerProvisionParamsPassthroughStripeShippingAddress
+	return param.MarshalObject(r, (*shadow)(&r))
+}
+func (r *V1CustomerProvisionParamsPassthroughStripeShippingAddress) UnmarshalJSON(data []byte) error {
+	return apijson.UnmarshalRoot(data, r)
+}
+
+// Tax identifier with type and value for customer tax exemptions.
+//
+// The properties Type, Value are required.
+type V1CustomerProvisionParamsPassthroughStripeTaxID struct {
+	// The type of tax exemption identifier, such as VAT.
+	Type string `json:"type" api:"required"`
+	// The actual tax identifier value
+	Value string `json:"value" api:"required"`
+	paramObj
+}
+
+func (r V1CustomerProvisionParamsPassthroughStripeTaxID) MarshalJSON() (data []byte, err error) {
+	type shadow V1CustomerProvisionParamsPassthroughStripeTaxID
+	return param.MarshalObject(r, (*shadow)(&r))
+}
+func (r *V1CustomerProvisionParamsPassthroughStripeTaxID) UnmarshalJSON(data []byte) error {
+	return apijson.UnmarshalRoot(data, r)
+}
+
+// Zuora-specific billing fields for the customer.
+type V1CustomerProvisionParamsPassthroughZuora struct {
+	// Billing provider payment method id, attached to this customer
+	PaymentMethodID param.Opt[string] `json:"paymentMethodId,omitzero"`
+	// Physical address
+	BillingAddress V1CustomerProvisionParamsPassthroughZuoraBillingAddress `json:"billingAddress,omitzero"`
+	// Customers selected currency
+	//
+	// Any of "usd", "aed", "all", "amd", "ang", "aud", "awg", "azn", "bam", "bbd",
+	// "bdt", "bgn", "bif", "bmd", "bnd", "bsd", "bwp", "byn", "bzd", "brl", "cad",
+	// "cdf", "chf", "cny", "czk", "dkk", "dop", "dzd", "egp", "etb", "eur", "fjd",
+	// "gbp", "gel", "gip", "gmd", "gyd", "hkd", "hrk", "htg", "idr", "ils", "inr",
+	// "isk", "jmd", "jpy", "kes", "kgs", "khr", "kmf", "krw", "kyd", "kzt", "lbp",
+	// "lkr", "lrd", "lsl", "mad", "mdl", "mga", "mkd", "mmk", "mnt", "mop", "mro",
+	// "mvr", "mwk", "mxn", "myr", "mzn", "nad", "ngn", "nok", "npr", "nzd", "pgk",
+	// "php", "pkr", "pln", "qar", "ron", "rsd", "rub", "rwf", "sar", "sbd", "scr",
+	// "sek", "sgd", "sle", "sll", "sos", "szl", "thb", "tjs", "top", "try", "ttd",
+	// "tzs", "uah", "uzs", "vnd", "vuv", "wst", "xaf", "xcd", "yer", "zar", "zmw",
+	// "clp", "djf", "gnf", "ugx", "pyg", "xof", "xpf".
+	Currency string `json:"currency,omitzero"`
+	// Additional metadata
+	Metadata map[string]string `json:"metadata,omitzero"`
+	paramObj
+}
+
+func (r V1CustomerProvisionParamsPassthroughZuora) MarshalJSON() (data []byte, err error) {
+	type shadow V1CustomerProvisionParamsPassthroughZuora
+	return param.MarshalObject(r, (*shadow)(&r))
+}
+func (r *V1CustomerProvisionParamsPassthroughZuora) UnmarshalJSON(data []byte) error {
+	return apijson.UnmarshalRoot(data, r)
+}
+
+func init() {
+	apijson.RegisterFieldValidator[V1CustomerProvisionParamsPassthroughZuora](
+		"currency", "usd", "aed", "all", "amd", "ang", "aud", "awg", "azn", "bam", "bbd", "bdt", "bgn", "bif", "bmd", "bnd", "bsd", "bwp", "byn", "bzd", "brl", "cad", "cdf", "chf", "cny", "czk", "dkk", "dop", "dzd", "egp", "etb", "eur", "fjd", "gbp", "gel", "gip", "gmd", "gyd", "hkd", "hrk", "htg", "idr", "ils", "inr", "isk", "jmd", "jpy", "kes", "kgs", "khr", "kmf", "krw", "kyd", "kzt", "lbp", "lkr", "lrd", "lsl", "mad", "mdl", "mga", "mkd", "mmk", "mnt", "mop", "mro", "mvr", "mwk", "mxn", "myr", "mzn", "nad", "ngn", "nok", "npr", "nzd", "pgk", "php", "pkr", "pln", "qar", "ron", "rsd", "rub", "rwf", "sar", "sbd", "scr", "sek", "sgd", "sle", "sll", "sos", "szl", "thb", "tjs", "top", "try", "ttd", "tzs", "uah", "uzs", "vnd", "vuv", "wst", "xaf", "xcd", "yer", "zar", "zmw", "clp", "djf", "gnf", "ugx", "pyg", "xof", "xpf",
+	)
+}
+
+// Physical address
+type V1CustomerProvisionParamsPassthroughZuoraBillingAddress struct {
+	// City name
+	City param.Opt[string] `json:"city,omitzero"`
+	// Country code or name
+	Country param.Opt[string] `json:"country,omitzero"`
+	// Street address line 1
+	Line1 param.Opt[string] `json:"line1,omitzero"`
+	// Street address line 2
+	Line2 param.Opt[string] `json:"line2,omitzero"`
+	// Postal or ZIP code
+	PostalCode param.Opt[string] `json:"postalCode,omitzero"`
+	// State or province
+	State param.Opt[string] `json:"state,omitzero"`
+	paramObj
+}
+
+func (r V1CustomerProvisionParamsPassthroughZuoraBillingAddress) MarshalJSON() (data []byte, err error) {
+	type shadow V1CustomerProvisionParamsPassthroughZuoraBillingAddress
+	return param.MarshalObject(r, (*shadow)(&r))
+}
+func (r *V1CustomerProvisionParamsPassthroughZuoraBillingAddress) UnmarshalJSON(data []byte) error {
+	return apijson.UnmarshalRoot(data, r)
 }
