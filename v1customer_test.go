@@ -63,10 +63,59 @@ func TestV1CustomerUpdateWithOptionalParams(t *testing.T) {
 				SyncedEntityID:   stigg.String("syncedEntityId"),
 				VendorIdentifier: "AUTH0",
 			}},
+			Language: stigg.String("language"),
 			Metadata: map[string]string{
 				"foo": "string",
 			},
 			Name: stigg.String("name"),
+			Passthrough: stigg.V1CustomerUpdateParamsPassthrough{
+				Stripe: stigg.V1CustomerUpdateParamsPassthroughStripe{
+					BillingAddress: stigg.V1CustomerUpdateParamsPassthroughStripeBillingAddress{
+						City:       stigg.String("city"),
+						Country:    stigg.String("country"),
+						Line1:      stigg.String("line1"),
+						Line2:      stigg.String("line2"),
+						PostalCode: stigg.String("postalCode"),
+						State:      stigg.String("state"),
+					},
+					CustomerName: stigg.String("customerName"),
+					InvoiceCustomFields: map[string]string{
+						"foo": "string",
+					},
+					Metadata: map[string]string{
+						"foo": "string",
+					},
+					PaymentMethodID: stigg.String("paymentMethodId"),
+					ShippingAddress: stigg.V1CustomerUpdateParamsPassthroughStripeShippingAddress{
+						City:       stigg.String("city"),
+						Country:    stigg.String("country"),
+						Line1:      stigg.String("line1"),
+						Line2:      stigg.String("line2"),
+						PostalCode: stigg.String("postalCode"),
+						State:      stigg.String("state"),
+					},
+					TaxIDs: []stigg.V1CustomerUpdateParamsPassthroughStripeTaxID{{
+						Type:  "type",
+						Value: "value",
+					}},
+				},
+				Zuora: stigg.V1CustomerUpdateParamsPassthroughZuora{
+					BillingAddress: stigg.V1CustomerUpdateParamsPassthroughZuoraBillingAddress{
+						City:       stigg.String("city"),
+						Country:    stigg.String("country"),
+						Line1:      stigg.String("line1"),
+						Line2:      stigg.String("line2"),
+						PostalCode: stigg.String("postalCode"),
+						State:      stigg.String("state"),
+					},
+					Currency: "usd",
+					Metadata: map[string]string{
+						"foo": "string",
+					},
+					PaymentMethodID: stigg.String("paymentMethodId"),
+				},
+			},
+			Timezone: stigg.String("timezone"),
 		},
 	)
 	if err != nil {
@@ -235,10 +284,59 @@ func TestV1CustomerProvisionWithOptionalParams(t *testing.T) {
 			SyncedEntityID:   stigg.String("syncedEntityId"),
 			VendorIdentifier: "AUTH0",
 		}},
+		Language: stigg.String("language"),
 		Metadata: map[string]string{
 			"foo": "string",
 		},
 		Name: stigg.String("name"),
+		Passthrough: stigg.V1CustomerProvisionParamsPassthrough{
+			Stripe: stigg.V1CustomerProvisionParamsPassthroughStripe{
+				BillingAddress: stigg.V1CustomerProvisionParamsPassthroughStripeBillingAddress{
+					City:       stigg.String("city"),
+					Country:    stigg.String("country"),
+					Line1:      stigg.String("line1"),
+					Line2:      stigg.String("line2"),
+					PostalCode: stigg.String("postalCode"),
+					State:      stigg.String("state"),
+				},
+				CustomerName: stigg.String("customerName"),
+				InvoiceCustomFields: map[string]string{
+					"foo": "string",
+				},
+				Metadata: map[string]string{
+					"foo": "string",
+				},
+				PaymentMethodID: stigg.String("paymentMethodId"),
+				ShippingAddress: stigg.V1CustomerProvisionParamsPassthroughStripeShippingAddress{
+					City:       stigg.String("city"),
+					Country:    stigg.String("country"),
+					Line1:      stigg.String("line1"),
+					Line2:      stigg.String("line2"),
+					PostalCode: stigg.String("postalCode"),
+					State:      stigg.String("state"),
+				},
+				TaxIDs: []stigg.V1CustomerProvisionParamsPassthroughStripeTaxID{{
+					Type:  "type",
+					Value: "value",
+				}},
+			},
+			Zuora: stigg.V1CustomerProvisionParamsPassthroughZuora{
+				BillingAddress: stigg.V1CustomerProvisionParamsPassthroughZuoraBillingAddress{
+					City:       stigg.String("city"),
+					Country:    stigg.String("country"),
+					Line1:      stigg.String("line1"),
+					Line2:      stigg.String("line2"),
+					PostalCode: stigg.String("postalCode"),
+					State:      stigg.String("state"),
+				},
+				Currency: "usd",
+				Metadata: map[string]string{
+					"foo": "string",
+				},
+				PaymentMethodID: stigg.String("paymentMethodId"),
+			},
+		},
+		Timezone: stigg.String("timezone"),
 	})
 	if err != nil {
 		var apierr *stigg.Error

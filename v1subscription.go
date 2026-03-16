@@ -4063,6 +4063,8 @@ func (r *V1SubscriptionProvisionParamsBillingInformationBillingAddress) Unmarsha
 	return apijson.UnmarshalRoot(data, r)
 }
 
+// Tax identifier with type and value for customer tax exemptions.
+//
 // The properties Type, Value are required.
 type V1SubscriptionProvisionParamsBillingInformationTaxID struct {
 	// The type of tax exemption identifier, such as VAT.
