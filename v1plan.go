@@ -4,7 +4,6 @@ package stigg
 
 import (
 	"context"
-	"encoding/json"
 	"errors"
 	"fmt"
 	"net/http"
@@ -14,7 +13,6 @@ import (
 
 	"github.com/stiggio/stigg-go/internal/apijson"
 	"github.com/stiggio/stigg-go/internal/apiquery"
-	shimjson "github.com/stiggio/stigg-go/internal/encoding/json"
 	"github.com/stiggio/stigg-go/internal/requestconfig"
 	"github.com/stiggio/stigg-go/option"
 	"github.com/stiggio/stigg-go/packages/pagination"
@@ -147,19 +145,6 @@ func (r *V1PlanService) RemoveDraft(ctx context.Context, id string, opts ...opti
 	}
 	path := fmt.Sprintf("api/v1/plans/%s/draft", id)
 	err = requestconfig.ExecuteNewRequest(ctx, http.MethodDelete, path, nil, &res, opts...)
-	return res, err
-}
-
-// Sets the pricing configuration for a plan, including pricing models, overage
-// pricing, and minimum spend.
-func (r *V1PlanService) SetPricing(ctx context.Context, id string, body V1PlanSetPricingParams, opts ...option.RequestOption) (res *SetPackagePricingResponse, err error) {
-	opts = slices.Concat(r.Options, opts)
-	if id == "" {
-		err = errors.New("missing required id parameter")
-		return nil, err
-	}
-	path := fmt.Sprintf("api/v1/plans/%s/charges", id)
-	err = requestconfig.ExecuteNewRequest(ctx, http.MethodPut, path, body, &res, opts...)
 	return res, err
 }
 
@@ -666,6 +651,8 @@ type V1PlanUpdateParams struct {
 	CompatibleAddonIDs []string          `json:"compatibleAddonIds,omitzero"`
 	// Default trial configuration for the plan
 	DefaultTrialConfig V1PlanUpdateParamsDefaultTrialConfig `json:"defaultTrialConfig,omitzero"`
+	// Pricing configuration to set on the plan draft
+	Charges V1PlanUpdateParamsCharges `json:"charges,omitzero"`
 	// Metadata associated with the entity
 	Metadata map[string]string `json:"metadata,omitzero"`
 	paramObj
@@ -677,6 +664,789 @@ func (r V1PlanUpdateParams) MarshalJSON() (data []byte, err error) {
 }
 func (r *V1PlanUpdateParams) UnmarshalJSON(data []byte) error {
 	return apijson.UnmarshalRoot(data, r)
+}
+
+// Pricing configuration to set on the plan draft
+//
+// The property PricingType is required.
+type V1PlanUpdateParamsCharges struct {
+	// The pricing type (FREE, PAID, or CUSTOM)
+	//
+	// Any of "FREE", "PAID", "CUSTOM".
+	PricingType string `json:"pricingType,omitzero" api:"required"`
+	// Deprecated: billing integration ID
+	BillingID param.Opt[string] `json:"billingId,omitzero"`
+	// Minimum spend configuration per billing period
+	MinimumSpend []V1PlanUpdateParamsChargesMinimumSpend `json:"minimumSpend,omitzero"`
+	// When overage charges are billed
+	//
+	// Any of "ON_SUBSCRIPTION_RENEWAL", "MONTHLY".
+	OverageBillingPeriod string `json:"overageBillingPeriod,omitzero"`
+	// Array of overage pricing model configurations
+	OveragePricingModels []V1PlanUpdateParamsChargesOveragePricingModel `json:"overagePricingModels,omitzero"`
+	// Array of pricing model configurations
+	PricingModels []V1PlanUpdateParamsChargesPricingModel `json:"pricingModels,omitzero"`
+	paramObj
+}
+
+func (r V1PlanUpdateParamsCharges) MarshalJSON() (data []byte, err error) {
+	type shadow V1PlanUpdateParamsCharges
+	return param.MarshalObject(r, (*shadow)(&r))
+}
+func (r *V1PlanUpdateParamsCharges) UnmarshalJSON(data []byte) error {
+	return apijson.UnmarshalRoot(data, r)
+}
+
+func init() {
+	apijson.RegisterFieldValidator[V1PlanUpdateParamsCharges](
+		"pricingType", "FREE", "PAID", "CUSTOM",
+	)
+	apijson.RegisterFieldValidator[V1PlanUpdateParamsCharges](
+		"overageBillingPeriod", "ON_SUBSCRIPTION_RENEWAL", "MONTHLY",
+	)
+}
+
+// Minimum spend configuration for a billing period.
+//
+// The properties BillingPeriod, Minimum are required.
+type V1PlanUpdateParamsChargesMinimumSpend struct {
+	// The billing period
+	//
+	// Any of "MONTHLY", "ANNUALLY".
+	BillingPeriod string `json:"billingPeriod,omitzero" api:"required"`
+	// The minimum spend amount
+	Minimum V1PlanUpdateParamsChargesMinimumSpendMinimum `json:"minimum,omitzero" api:"required"`
+	paramObj
+}
+
+func (r V1PlanUpdateParamsChargesMinimumSpend) MarshalJSON() (data []byte, err error) {
+	type shadow V1PlanUpdateParamsChargesMinimumSpend
+	return param.MarshalObject(r, (*shadow)(&r))
+}
+func (r *V1PlanUpdateParamsChargesMinimumSpend) UnmarshalJSON(data []byte) error {
+	return apijson.UnmarshalRoot(data, r)
+}
+
+func init() {
+	apijson.RegisterFieldValidator[V1PlanUpdateParamsChargesMinimumSpend](
+		"billingPeriod", "MONTHLY", "ANNUALLY",
+	)
+}
+
+// The minimum spend amount
+//
+// The property Amount is required.
+type V1PlanUpdateParamsChargesMinimumSpendMinimum struct {
+	// The price amount
+	Amount float64 `json:"amount" api:"required"`
+	// The price currency
+	//
+	// Any of "usd", "aed", "all", "amd", "ang", "aud", "awg", "azn", "bam", "bbd",
+	// "bdt", "bgn", "bif", "bmd", "bnd", "bsd", "bwp", "byn", "bzd", "brl", "cad",
+	// "cdf", "chf", "cny", "czk", "dkk", "dop", "dzd", "egp", "etb", "eur", "fjd",
+	// "gbp", "gel", "gip", "gmd", "gyd", "hkd", "hrk", "htg", "idr", "ils", "inr",
+	// "isk", "jmd", "jpy", "kes", "kgs", "khr", "kmf", "krw", "kyd", "kzt", "lbp",
+	// "lkr", "lrd", "lsl", "mad", "mdl", "mga", "mkd", "mmk", "mnt", "mop", "mro",
+	// "mvr", "mwk", "mxn", "myr", "mzn", "nad", "ngn", "nok", "npr", "nzd", "pgk",
+	// "php", "pkr", "pln", "qar", "ron", "rsd", "rub", "rwf", "sar", "sbd", "scr",
+	// "sek", "sgd", "sle", "sll", "sos", "szl", "thb", "tjs", "top", "try", "ttd",
+	// "tzs", "uah", "uzs", "vnd", "vuv", "wst", "xaf", "xcd", "yer", "zar", "zmw",
+	// "clp", "djf", "gnf", "ugx", "pyg", "xof", "xpf".
+	Currency string `json:"currency,omitzero"`
+	paramObj
+}
+
+func (r V1PlanUpdateParamsChargesMinimumSpendMinimum) MarshalJSON() (data []byte, err error) {
+	type shadow V1PlanUpdateParamsChargesMinimumSpendMinimum
+	return param.MarshalObject(r, (*shadow)(&r))
+}
+func (r *V1PlanUpdateParamsChargesMinimumSpendMinimum) UnmarshalJSON(data []byte) error {
+	return apijson.UnmarshalRoot(data, r)
+}
+
+func init() {
+	apijson.RegisterFieldValidator[V1PlanUpdateParamsChargesMinimumSpendMinimum](
+		"currency", "usd", "aed", "all", "amd", "ang", "aud", "awg", "azn", "bam", "bbd", "bdt", "bgn", "bif", "bmd", "bnd", "bsd", "bwp", "byn", "bzd", "brl", "cad", "cdf", "chf", "cny", "czk", "dkk", "dop", "dzd", "egp", "etb", "eur", "fjd", "gbp", "gel", "gip", "gmd", "gyd", "hkd", "hrk", "htg", "idr", "ils", "inr", "isk", "jmd", "jpy", "kes", "kgs", "khr", "kmf", "krw", "kyd", "kzt", "lbp", "lkr", "lrd", "lsl", "mad", "mdl", "mga", "mkd", "mmk", "mnt", "mop", "mro", "mvr", "mwk", "mxn", "myr", "mzn", "nad", "ngn", "nok", "npr", "nzd", "pgk", "php", "pkr", "pln", "qar", "ron", "rsd", "rub", "rwf", "sar", "sbd", "scr", "sek", "sgd", "sle", "sll", "sos", "szl", "thb", "tjs", "top", "try", "ttd", "tzs", "uah", "uzs", "vnd", "vuv", "wst", "xaf", "xcd", "yer", "zar", "zmw", "clp", "djf", "gnf", "ugx", "pyg", "xof", "xpf",
+	)
+}
+
+// Overage pricing model configuration.
+//
+// The properties BillingModel, PricePeriods are required.
+type V1PlanUpdateParamsChargesOveragePricingModel struct {
+	// The billing model for overages
+	//
+	// Any of "FLAT_FEE", "MINIMUM_SPEND", "PER_UNIT", "USAGE_BASED", "CREDIT_BASED".
+	BillingModel string `json:"billingModel,omitzero" api:"required"`
+	// Price periods for overage pricing
+	PricePeriods []V1PlanUpdateParamsChargesOveragePricingModelPricePeriod `json:"pricePeriods,omitzero" api:"required"`
+	// The feature ID for overage pricing
+	FeatureID param.Opt[string] `json:"featureId,omitzero"`
+	// Custom currency ID for overage top-up
+	TopUpCustomCurrencyID param.Opt[string] `json:"topUpCustomCurrencyId,omitzero"`
+	// The billing cadence for overages
+	//
+	// Any of "RECURRING", "ONE_OFF".
+	BillingCadence string `json:"billingCadence,omitzero"`
+	// Entitlement configuration for the overage feature
+	Entitlement V1PlanUpdateParamsChargesOveragePricingModelEntitlement `json:"entitlement,omitzero"`
+	paramObj
+}
+
+func (r V1PlanUpdateParamsChargesOveragePricingModel) MarshalJSON() (data []byte, err error) {
+	type shadow V1PlanUpdateParamsChargesOveragePricingModel
+	return param.MarshalObject(r, (*shadow)(&r))
+}
+func (r *V1PlanUpdateParamsChargesOveragePricingModel) UnmarshalJSON(data []byte) error {
+	return apijson.UnmarshalRoot(data, r)
+}
+
+func init() {
+	apijson.RegisterFieldValidator[V1PlanUpdateParamsChargesOveragePricingModel](
+		"billingModel", "FLAT_FEE", "MINIMUM_SPEND", "PER_UNIT", "USAGE_BASED", "CREDIT_BASED",
+	)
+	apijson.RegisterFieldValidator[V1PlanUpdateParamsChargesOveragePricingModel](
+		"billingCadence", "RECURRING", "ONE_OFF",
+	)
+}
+
+// Price configuration for a specific billing period.
+//
+// The property BillingPeriod is required.
+type V1PlanUpdateParamsChargesOveragePricingModelPricePeriod struct {
+	// The billing period (MONTHLY or ANNUALLY)
+	//
+	// Any of "MONTHLY", "ANNUALLY".
+	BillingPeriod string `json:"billingPeriod,omitzero" api:"required"`
+	// ISO country code for localized pricing
+	BillingCountryCode param.Opt[string] `json:"billingCountryCode,omitzero"`
+	// Block size for usage-based pricing
+	BlockSize param.Opt[float64] `json:"blockSize,omitzero"`
+	// When credits are granted
+	//
+	// Any of "BEGINNING_OF_BILLING_PERIOD", "MONTHLY".
+	CreditGrantCadence string `json:"creditGrantCadence,omitzero"`
+	// Credit rate configuration for credit-based pricing
+	CreditRate V1PlanUpdateParamsChargesOveragePricingModelPricePeriodCreditRate `json:"creditRate,omitzero"`
+	// The price amount and currency
+	Price V1PlanUpdateParamsChargesOveragePricingModelPricePeriodPrice `json:"price,omitzero"`
+	// Tiered pricing configuration
+	Tiers []V1PlanUpdateParamsChargesOveragePricingModelPricePeriodTier `json:"tiers,omitzero"`
+	paramObj
+}
+
+func (r V1PlanUpdateParamsChargesOveragePricingModelPricePeriod) MarshalJSON() (data []byte, err error) {
+	type shadow V1PlanUpdateParamsChargesOveragePricingModelPricePeriod
+	return param.MarshalObject(r, (*shadow)(&r))
+}
+func (r *V1PlanUpdateParamsChargesOveragePricingModelPricePeriod) UnmarshalJSON(data []byte) error {
+	return apijson.UnmarshalRoot(data, r)
+}
+
+func init() {
+	apijson.RegisterFieldValidator[V1PlanUpdateParamsChargesOveragePricingModelPricePeriod](
+		"billingPeriod", "MONTHLY", "ANNUALLY",
+	)
+	apijson.RegisterFieldValidator[V1PlanUpdateParamsChargesOveragePricingModelPricePeriod](
+		"creditGrantCadence", "BEGINNING_OF_BILLING_PERIOD", "MONTHLY",
+	)
+}
+
+// Credit rate configuration for credit-based pricing
+//
+// The properties Amount, CurrencyID are required.
+type V1PlanUpdateParamsChargesOveragePricingModelPricePeriodCreditRate struct {
+	// The credit rate amount
+	Amount float64 `json:"amount" api:"required"`
+	// The custom currency ID
+	CurrencyID string `json:"currencyId" api:"required"`
+	// Optional cost formula expression
+	CostFormula param.Opt[string] `json:"costFormula,omitzero"`
+	paramObj
+}
+
+func (r V1PlanUpdateParamsChargesOveragePricingModelPricePeriodCreditRate) MarshalJSON() (data []byte, err error) {
+	type shadow V1PlanUpdateParamsChargesOveragePricingModelPricePeriodCreditRate
+	return param.MarshalObject(r, (*shadow)(&r))
+}
+func (r *V1PlanUpdateParamsChargesOveragePricingModelPricePeriodCreditRate) UnmarshalJSON(data []byte) error {
+	return apijson.UnmarshalRoot(data, r)
+}
+
+// The price amount and currency
+//
+// The property Amount is required.
+type V1PlanUpdateParamsChargesOveragePricingModelPricePeriodPrice struct {
+	// The price amount
+	Amount float64 `json:"amount" api:"required"`
+	// The price currency
+	//
+	// Any of "usd", "aed", "all", "amd", "ang", "aud", "awg", "azn", "bam", "bbd",
+	// "bdt", "bgn", "bif", "bmd", "bnd", "bsd", "bwp", "byn", "bzd", "brl", "cad",
+	// "cdf", "chf", "cny", "czk", "dkk", "dop", "dzd", "egp", "etb", "eur", "fjd",
+	// "gbp", "gel", "gip", "gmd", "gyd", "hkd", "hrk", "htg", "idr", "ils", "inr",
+	// "isk", "jmd", "jpy", "kes", "kgs", "khr", "kmf", "krw", "kyd", "kzt", "lbp",
+	// "lkr", "lrd", "lsl", "mad", "mdl", "mga", "mkd", "mmk", "mnt", "mop", "mro",
+	// "mvr", "mwk", "mxn", "myr", "mzn", "nad", "ngn", "nok", "npr", "nzd", "pgk",
+	// "php", "pkr", "pln", "qar", "ron", "rsd", "rub", "rwf", "sar", "sbd", "scr",
+	// "sek", "sgd", "sle", "sll", "sos", "szl", "thb", "tjs", "top", "try", "ttd",
+	// "tzs", "uah", "uzs", "vnd", "vuv", "wst", "xaf", "xcd", "yer", "zar", "zmw",
+	// "clp", "djf", "gnf", "ugx", "pyg", "xof", "xpf".
+	Currency string `json:"currency,omitzero"`
+	paramObj
+}
+
+func (r V1PlanUpdateParamsChargesOveragePricingModelPricePeriodPrice) MarshalJSON() (data []byte, err error) {
+	type shadow V1PlanUpdateParamsChargesOveragePricingModelPricePeriodPrice
+	return param.MarshalObject(r, (*shadow)(&r))
+}
+func (r *V1PlanUpdateParamsChargesOveragePricingModelPricePeriodPrice) UnmarshalJSON(data []byte) error {
+	return apijson.UnmarshalRoot(data, r)
+}
+
+func init() {
+	apijson.RegisterFieldValidator[V1PlanUpdateParamsChargesOveragePricingModelPricePeriodPrice](
+		"currency", "usd", "aed", "all", "amd", "ang", "aud", "awg", "azn", "bam", "bbd", "bdt", "bgn", "bif", "bmd", "bnd", "bsd", "bwp", "byn", "bzd", "brl", "cad", "cdf", "chf", "cny", "czk", "dkk", "dop", "dzd", "egp", "etb", "eur", "fjd", "gbp", "gel", "gip", "gmd", "gyd", "hkd", "hrk", "htg", "idr", "ils", "inr", "isk", "jmd", "jpy", "kes", "kgs", "khr", "kmf", "krw", "kyd", "kzt", "lbp", "lkr", "lrd", "lsl", "mad", "mdl", "mga", "mkd", "mmk", "mnt", "mop", "mro", "mvr", "mwk", "mxn", "myr", "mzn", "nad", "ngn", "nok", "npr", "nzd", "pgk", "php", "pkr", "pln", "qar", "ron", "rsd", "rub", "rwf", "sar", "sbd", "scr", "sek", "sgd", "sle", "sll", "sos", "szl", "thb", "tjs", "top", "try", "ttd", "tzs", "uah", "uzs", "vnd", "vuv", "wst", "xaf", "xcd", "yer", "zar", "zmw", "clp", "djf", "gnf", "ugx", "pyg", "xof", "xpf",
+	)
+}
+
+// A tier in tiered pricing.
+type V1PlanUpdateParamsChargesOveragePricingModelPricePeriodTier struct {
+	// Upper bound of this tier (null for unlimited)
+	UpTo param.Opt[float64] `json:"upTo,omitzero"`
+	// Flat price for this tier
+	FlatPrice V1PlanUpdateParamsChargesOveragePricingModelPricePeriodTierFlatPrice `json:"flatPrice,omitzero"`
+	// Per-unit price in this tier
+	UnitPrice V1PlanUpdateParamsChargesOveragePricingModelPricePeriodTierUnitPrice `json:"unitPrice,omitzero"`
+	paramObj
+}
+
+func (r V1PlanUpdateParamsChargesOveragePricingModelPricePeriodTier) MarshalJSON() (data []byte, err error) {
+	type shadow V1PlanUpdateParamsChargesOveragePricingModelPricePeriodTier
+	return param.MarshalObject(r, (*shadow)(&r))
+}
+func (r *V1PlanUpdateParamsChargesOveragePricingModelPricePeriodTier) UnmarshalJSON(data []byte) error {
+	return apijson.UnmarshalRoot(data, r)
+}
+
+// Flat price for this tier
+//
+// The property Amount is required.
+type V1PlanUpdateParamsChargesOveragePricingModelPricePeriodTierFlatPrice struct {
+	// The price amount
+	Amount float64 `json:"amount" api:"required"`
+	// The price currency
+	//
+	// Any of "usd", "aed", "all", "amd", "ang", "aud", "awg", "azn", "bam", "bbd",
+	// "bdt", "bgn", "bif", "bmd", "bnd", "bsd", "bwp", "byn", "bzd", "brl", "cad",
+	// "cdf", "chf", "cny", "czk", "dkk", "dop", "dzd", "egp", "etb", "eur", "fjd",
+	// "gbp", "gel", "gip", "gmd", "gyd", "hkd", "hrk", "htg", "idr", "ils", "inr",
+	// "isk", "jmd", "jpy", "kes", "kgs", "khr", "kmf", "krw", "kyd", "kzt", "lbp",
+	// "lkr", "lrd", "lsl", "mad", "mdl", "mga", "mkd", "mmk", "mnt", "mop", "mro",
+	// "mvr", "mwk", "mxn", "myr", "mzn", "nad", "ngn", "nok", "npr", "nzd", "pgk",
+	// "php", "pkr", "pln", "qar", "ron", "rsd", "rub", "rwf", "sar", "sbd", "scr",
+	// "sek", "sgd", "sle", "sll", "sos", "szl", "thb", "tjs", "top", "try", "ttd",
+	// "tzs", "uah", "uzs", "vnd", "vuv", "wst", "xaf", "xcd", "yer", "zar", "zmw",
+	// "clp", "djf", "gnf", "ugx", "pyg", "xof", "xpf".
+	Currency string `json:"currency,omitzero"`
+	paramObj
+}
+
+func (r V1PlanUpdateParamsChargesOveragePricingModelPricePeriodTierFlatPrice) MarshalJSON() (data []byte, err error) {
+	type shadow V1PlanUpdateParamsChargesOveragePricingModelPricePeriodTierFlatPrice
+	return param.MarshalObject(r, (*shadow)(&r))
+}
+func (r *V1PlanUpdateParamsChargesOveragePricingModelPricePeriodTierFlatPrice) UnmarshalJSON(data []byte) error {
+	return apijson.UnmarshalRoot(data, r)
+}
+
+func init() {
+	apijson.RegisterFieldValidator[V1PlanUpdateParamsChargesOveragePricingModelPricePeriodTierFlatPrice](
+		"currency", "usd", "aed", "all", "amd", "ang", "aud", "awg", "azn", "bam", "bbd", "bdt", "bgn", "bif", "bmd", "bnd", "bsd", "bwp", "byn", "bzd", "brl", "cad", "cdf", "chf", "cny", "czk", "dkk", "dop", "dzd", "egp", "etb", "eur", "fjd", "gbp", "gel", "gip", "gmd", "gyd", "hkd", "hrk", "htg", "idr", "ils", "inr", "isk", "jmd", "jpy", "kes", "kgs", "khr", "kmf", "krw", "kyd", "kzt", "lbp", "lkr", "lrd", "lsl", "mad", "mdl", "mga", "mkd", "mmk", "mnt", "mop", "mro", "mvr", "mwk", "mxn", "myr", "mzn", "nad", "ngn", "nok", "npr", "nzd", "pgk", "php", "pkr", "pln", "qar", "ron", "rsd", "rub", "rwf", "sar", "sbd", "scr", "sek", "sgd", "sle", "sll", "sos", "szl", "thb", "tjs", "top", "try", "ttd", "tzs", "uah", "uzs", "vnd", "vuv", "wst", "xaf", "xcd", "yer", "zar", "zmw", "clp", "djf", "gnf", "ugx", "pyg", "xof", "xpf",
+	)
+}
+
+// Per-unit price in this tier
+//
+// The property Amount is required.
+type V1PlanUpdateParamsChargesOveragePricingModelPricePeriodTierUnitPrice struct {
+	// The price amount
+	Amount float64 `json:"amount" api:"required"`
+	// The price currency
+	//
+	// Any of "usd", "aed", "all", "amd", "ang", "aud", "awg", "azn", "bam", "bbd",
+	// "bdt", "bgn", "bif", "bmd", "bnd", "bsd", "bwp", "byn", "bzd", "brl", "cad",
+	// "cdf", "chf", "cny", "czk", "dkk", "dop", "dzd", "egp", "etb", "eur", "fjd",
+	// "gbp", "gel", "gip", "gmd", "gyd", "hkd", "hrk", "htg", "idr", "ils", "inr",
+	// "isk", "jmd", "jpy", "kes", "kgs", "khr", "kmf", "krw", "kyd", "kzt", "lbp",
+	// "lkr", "lrd", "lsl", "mad", "mdl", "mga", "mkd", "mmk", "mnt", "mop", "mro",
+	// "mvr", "mwk", "mxn", "myr", "mzn", "nad", "ngn", "nok", "npr", "nzd", "pgk",
+	// "php", "pkr", "pln", "qar", "ron", "rsd", "rub", "rwf", "sar", "sbd", "scr",
+	// "sek", "sgd", "sle", "sll", "sos", "szl", "thb", "tjs", "top", "try", "ttd",
+	// "tzs", "uah", "uzs", "vnd", "vuv", "wst", "xaf", "xcd", "yer", "zar", "zmw",
+	// "clp", "djf", "gnf", "ugx", "pyg", "xof", "xpf".
+	Currency string `json:"currency,omitzero"`
+	paramObj
+}
+
+func (r V1PlanUpdateParamsChargesOveragePricingModelPricePeriodTierUnitPrice) MarshalJSON() (data []byte, err error) {
+	type shadow V1PlanUpdateParamsChargesOveragePricingModelPricePeriodTierUnitPrice
+	return param.MarshalObject(r, (*shadow)(&r))
+}
+func (r *V1PlanUpdateParamsChargesOveragePricingModelPricePeriodTierUnitPrice) UnmarshalJSON(data []byte) error {
+	return apijson.UnmarshalRoot(data, r)
+}
+
+func init() {
+	apijson.RegisterFieldValidator[V1PlanUpdateParamsChargesOveragePricingModelPricePeriodTierUnitPrice](
+		"currency", "usd", "aed", "all", "amd", "ang", "aud", "awg", "azn", "bam", "bbd", "bdt", "bgn", "bif", "bmd", "bnd", "bsd", "bwp", "byn", "bzd", "brl", "cad", "cdf", "chf", "cny", "czk", "dkk", "dop", "dzd", "egp", "etb", "eur", "fjd", "gbp", "gel", "gip", "gmd", "gyd", "hkd", "hrk", "htg", "idr", "ils", "inr", "isk", "jmd", "jpy", "kes", "kgs", "khr", "kmf", "krw", "kyd", "kzt", "lbp", "lkr", "lrd", "lsl", "mad", "mdl", "mga", "mkd", "mmk", "mnt", "mop", "mro", "mvr", "mwk", "mxn", "myr", "mzn", "nad", "ngn", "nok", "npr", "nzd", "pgk", "php", "pkr", "pln", "qar", "ron", "rsd", "rub", "rwf", "sar", "sbd", "scr", "sek", "sgd", "sle", "sll", "sos", "szl", "thb", "tjs", "top", "try", "ttd", "tzs", "uah", "uzs", "vnd", "vuv", "wst", "xaf", "xcd", "yer", "zar", "zmw", "clp", "djf", "gnf", "ugx", "pyg", "xof", "xpf",
+	)
+}
+
+// Entitlement configuration for the overage feature
+//
+// The property FeatureID is required.
+type V1PlanUpdateParamsChargesOveragePricingModelEntitlement struct {
+	// The feature ID for the entitlement
+	FeatureID string `json:"featureId" api:"required"`
+	// Whether the limit is soft (allows overage)
+	HasSoftLimit param.Opt[bool] `json:"hasSoftLimit,omitzero"`
+	// Whether usage is unlimited
+	HasUnlimitedUsage param.Opt[bool] `json:"hasUnlimitedUsage,omitzero"`
+	// The usage limit before overage kicks in
+	UsageLimit param.Opt[float64] `json:"usageLimit,omitzero"`
+	// Monthly reset configuration
+	MonthlyResetPeriodConfiguration V1PlanUpdateParamsChargesOveragePricingModelEntitlementMonthlyResetPeriodConfiguration `json:"monthlyResetPeriodConfiguration,omitzero"`
+	// The usage reset period
+	//
+	// Any of "YEAR", "MONTH", "WEEK", "DAY", "HOUR".
+	ResetPeriod string `json:"resetPeriod,omitzero"`
+	// Weekly reset configuration
+	WeeklyResetPeriodConfiguration V1PlanUpdateParamsChargesOveragePricingModelEntitlementWeeklyResetPeriodConfiguration `json:"weeklyResetPeriodConfiguration,omitzero"`
+	// Yearly reset configuration
+	YearlyResetPeriodConfiguration V1PlanUpdateParamsChargesOveragePricingModelEntitlementYearlyResetPeriodConfiguration `json:"yearlyResetPeriodConfiguration,omitzero"`
+	paramObj
+}
+
+func (r V1PlanUpdateParamsChargesOveragePricingModelEntitlement) MarshalJSON() (data []byte, err error) {
+	type shadow V1PlanUpdateParamsChargesOveragePricingModelEntitlement
+	return param.MarshalObject(r, (*shadow)(&r))
+}
+func (r *V1PlanUpdateParamsChargesOveragePricingModelEntitlement) UnmarshalJSON(data []byte) error {
+	return apijson.UnmarshalRoot(data, r)
+}
+
+func init() {
+	apijson.RegisterFieldValidator[V1PlanUpdateParamsChargesOveragePricingModelEntitlement](
+		"resetPeriod", "YEAR", "MONTH", "WEEK", "DAY", "HOUR",
+	)
+}
+
+// Monthly reset configuration
+//
+// The property AccordingTo is required.
+type V1PlanUpdateParamsChargesOveragePricingModelEntitlementMonthlyResetPeriodConfiguration struct {
+	// Reset anchor (SubscriptionStart or StartOfTheMonth)
+	//
+	// Any of "SubscriptionStart", "StartOfTheMonth".
+	AccordingTo string `json:"accordingTo,omitzero" api:"required"`
+	paramObj
+}
+
+func (r V1PlanUpdateParamsChargesOveragePricingModelEntitlementMonthlyResetPeriodConfiguration) MarshalJSON() (data []byte, err error) {
+	type shadow V1PlanUpdateParamsChargesOveragePricingModelEntitlementMonthlyResetPeriodConfiguration
+	return param.MarshalObject(r, (*shadow)(&r))
+}
+func (r *V1PlanUpdateParamsChargesOveragePricingModelEntitlementMonthlyResetPeriodConfiguration) UnmarshalJSON(data []byte) error {
+	return apijson.UnmarshalRoot(data, r)
+}
+
+func init() {
+	apijson.RegisterFieldValidator[V1PlanUpdateParamsChargesOveragePricingModelEntitlementMonthlyResetPeriodConfiguration](
+		"accordingTo", "SubscriptionStart", "StartOfTheMonth",
+	)
+}
+
+// Weekly reset configuration
+//
+// The property AccordingTo is required.
+type V1PlanUpdateParamsChargesOveragePricingModelEntitlementWeeklyResetPeriodConfiguration struct {
+	// Reset anchor (SubscriptionStart or specific day)
+	//
+	// Any of "SubscriptionStart", "EverySunday", "EveryMonday", "EveryTuesday",
+	// "EveryWednesday", "EveryThursday", "EveryFriday", "EverySaturday".
+	AccordingTo string `json:"accordingTo,omitzero" api:"required"`
+	paramObj
+}
+
+func (r V1PlanUpdateParamsChargesOveragePricingModelEntitlementWeeklyResetPeriodConfiguration) MarshalJSON() (data []byte, err error) {
+	type shadow V1PlanUpdateParamsChargesOveragePricingModelEntitlementWeeklyResetPeriodConfiguration
+	return param.MarshalObject(r, (*shadow)(&r))
+}
+func (r *V1PlanUpdateParamsChargesOveragePricingModelEntitlementWeeklyResetPeriodConfiguration) UnmarshalJSON(data []byte) error {
+	return apijson.UnmarshalRoot(data, r)
+}
+
+func init() {
+	apijson.RegisterFieldValidator[V1PlanUpdateParamsChargesOveragePricingModelEntitlementWeeklyResetPeriodConfiguration](
+		"accordingTo", "SubscriptionStart", "EverySunday", "EveryMonday", "EveryTuesday", "EveryWednesday", "EveryThursday", "EveryFriday", "EverySaturday",
+	)
+}
+
+// Yearly reset configuration
+//
+// The property AccordingTo is required.
+type V1PlanUpdateParamsChargesOveragePricingModelEntitlementYearlyResetPeriodConfiguration struct {
+	// Reset anchor (SubscriptionStart)
+	//
+	// Any of "SubscriptionStart".
+	AccordingTo string `json:"accordingTo,omitzero" api:"required"`
+	paramObj
+}
+
+func (r V1PlanUpdateParamsChargesOveragePricingModelEntitlementYearlyResetPeriodConfiguration) MarshalJSON() (data []byte, err error) {
+	type shadow V1PlanUpdateParamsChargesOveragePricingModelEntitlementYearlyResetPeriodConfiguration
+	return param.MarshalObject(r, (*shadow)(&r))
+}
+func (r *V1PlanUpdateParamsChargesOveragePricingModelEntitlementYearlyResetPeriodConfiguration) UnmarshalJSON(data []byte) error {
+	return apijson.UnmarshalRoot(data, r)
+}
+
+func init() {
+	apijson.RegisterFieldValidator[V1PlanUpdateParamsChargesOveragePricingModelEntitlementYearlyResetPeriodConfiguration](
+		"accordingTo", "SubscriptionStart",
+	)
+}
+
+// A pricing model configuration with billing details and price periods.
+//
+// The properties BillingModel, PricePeriods are required.
+type V1PlanUpdateParamsChargesPricingModel struct {
+	// The billing model (FLAT_FEE, PER_UNIT, USAGE_BASED, CREDIT_BASED)
+	//
+	// Any of "FLAT_FEE", "MINIMUM_SPEND", "PER_UNIT", "USAGE_BASED", "CREDIT_BASED".
+	BillingModel string `json:"billingModel,omitzero" api:"required"`
+	// Array of price period configurations (at least one required)
+	PricePeriods []V1PlanUpdateParamsChargesPricingModelPricePeriod `json:"pricePeriods,omitzero" api:"required"`
+	// The feature ID this pricing model is associated with
+	FeatureID param.Opt[string] `json:"featureId,omitzero"`
+	// Maximum number of units (max 999999)
+	MaxUnitQuantity param.Opt[int64] `json:"maxUnitQuantity,omitzero"`
+	// Minimum number of units
+	MinUnitQuantity param.Opt[int64] `json:"minUnitQuantity,omitzero"`
+	// The custom currency ID for top-up pricing
+	TopUpCustomCurrencyID param.Opt[string] `json:"topUpCustomCurrencyId,omitzero"`
+	// The billing cadence (RECURRING or ONE_OFF)
+	//
+	// Any of "RECURRING", "ONE_OFF".
+	BillingCadence string `json:"billingCadence,omitzero"`
+	// Monthly reset period configuration
+	MonthlyResetPeriodConfiguration V1PlanUpdateParamsChargesPricingModelMonthlyResetPeriodConfiguration `json:"monthlyResetPeriodConfiguration,omitzero"`
+	// The usage reset period
+	//
+	// Any of "YEAR", "MONTH", "WEEK", "DAY", "HOUR".
+	ResetPeriod string `json:"resetPeriod,omitzero"`
+	// The tiered pricing mode (VOLUME or GRADUATED)
+	//
+	// Any of "VOLUME", "GRADUATED".
+	TiersMode string `json:"tiersMode,omitzero"`
+	// Weekly reset period configuration
+	WeeklyResetPeriodConfiguration V1PlanUpdateParamsChargesPricingModelWeeklyResetPeriodConfiguration `json:"weeklyResetPeriodConfiguration,omitzero"`
+	// Yearly reset period configuration
+	YearlyResetPeriodConfiguration V1PlanUpdateParamsChargesPricingModelYearlyResetPeriodConfiguration `json:"yearlyResetPeriodConfiguration,omitzero"`
+	paramObj
+}
+
+func (r V1PlanUpdateParamsChargesPricingModel) MarshalJSON() (data []byte, err error) {
+	type shadow V1PlanUpdateParamsChargesPricingModel
+	return param.MarshalObject(r, (*shadow)(&r))
+}
+func (r *V1PlanUpdateParamsChargesPricingModel) UnmarshalJSON(data []byte) error {
+	return apijson.UnmarshalRoot(data, r)
+}
+
+func init() {
+	apijson.RegisterFieldValidator[V1PlanUpdateParamsChargesPricingModel](
+		"billingModel", "FLAT_FEE", "MINIMUM_SPEND", "PER_UNIT", "USAGE_BASED", "CREDIT_BASED",
+	)
+	apijson.RegisterFieldValidator[V1PlanUpdateParamsChargesPricingModel](
+		"billingCadence", "RECURRING", "ONE_OFF",
+	)
+	apijson.RegisterFieldValidator[V1PlanUpdateParamsChargesPricingModel](
+		"resetPeriod", "YEAR", "MONTH", "WEEK", "DAY", "HOUR",
+	)
+	apijson.RegisterFieldValidator[V1PlanUpdateParamsChargesPricingModel](
+		"tiersMode", "VOLUME", "GRADUATED",
+	)
+}
+
+// Price configuration for a specific billing period.
+//
+// The property BillingPeriod is required.
+type V1PlanUpdateParamsChargesPricingModelPricePeriod struct {
+	// The billing period (MONTHLY or ANNUALLY)
+	//
+	// Any of "MONTHLY", "ANNUALLY".
+	BillingPeriod string `json:"billingPeriod,omitzero" api:"required"`
+	// ISO country code for localized pricing
+	BillingCountryCode param.Opt[string] `json:"billingCountryCode,omitzero"`
+	// Block size for usage-based pricing
+	BlockSize param.Opt[float64] `json:"blockSize,omitzero"`
+	// When credits are granted
+	//
+	// Any of "BEGINNING_OF_BILLING_PERIOD", "MONTHLY".
+	CreditGrantCadence string `json:"creditGrantCadence,omitzero"`
+	// Credit rate configuration for credit-based pricing
+	CreditRate V1PlanUpdateParamsChargesPricingModelPricePeriodCreditRate `json:"creditRate,omitzero"`
+	// The price amount and currency
+	Price V1PlanUpdateParamsChargesPricingModelPricePeriodPrice `json:"price,omitzero"`
+	// Tiered pricing configuration
+	Tiers []V1PlanUpdateParamsChargesPricingModelPricePeriodTier `json:"tiers,omitzero"`
+	paramObj
+}
+
+func (r V1PlanUpdateParamsChargesPricingModelPricePeriod) MarshalJSON() (data []byte, err error) {
+	type shadow V1PlanUpdateParamsChargesPricingModelPricePeriod
+	return param.MarshalObject(r, (*shadow)(&r))
+}
+func (r *V1PlanUpdateParamsChargesPricingModelPricePeriod) UnmarshalJSON(data []byte) error {
+	return apijson.UnmarshalRoot(data, r)
+}
+
+func init() {
+	apijson.RegisterFieldValidator[V1PlanUpdateParamsChargesPricingModelPricePeriod](
+		"billingPeriod", "MONTHLY", "ANNUALLY",
+	)
+	apijson.RegisterFieldValidator[V1PlanUpdateParamsChargesPricingModelPricePeriod](
+		"creditGrantCadence", "BEGINNING_OF_BILLING_PERIOD", "MONTHLY",
+	)
+}
+
+// Credit rate configuration for credit-based pricing
+//
+// The properties Amount, CurrencyID are required.
+type V1PlanUpdateParamsChargesPricingModelPricePeriodCreditRate struct {
+	// The credit rate amount
+	Amount float64 `json:"amount" api:"required"`
+	// The custom currency ID
+	CurrencyID string `json:"currencyId" api:"required"`
+	// Optional cost formula expression
+	CostFormula param.Opt[string] `json:"costFormula,omitzero"`
+	paramObj
+}
+
+func (r V1PlanUpdateParamsChargesPricingModelPricePeriodCreditRate) MarshalJSON() (data []byte, err error) {
+	type shadow V1PlanUpdateParamsChargesPricingModelPricePeriodCreditRate
+	return param.MarshalObject(r, (*shadow)(&r))
+}
+func (r *V1PlanUpdateParamsChargesPricingModelPricePeriodCreditRate) UnmarshalJSON(data []byte) error {
+	return apijson.UnmarshalRoot(data, r)
+}
+
+// The price amount and currency
+//
+// The property Amount is required.
+type V1PlanUpdateParamsChargesPricingModelPricePeriodPrice struct {
+	// The price amount
+	Amount float64 `json:"amount" api:"required"`
+	// The price currency
+	//
+	// Any of "usd", "aed", "all", "amd", "ang", "aud", "awg", "azn", "bam", "bbd",
+	// "bdt", "bgn", "bif", "bmd", "bnd", "bsd", "bwp", "byn", "bzd", "brl", "cad",
+	// "cdf", "chf", "cny", "czk", "dkk", "dop", "dzd", "egp", "etb", "eur", "fjd",
+	// "gbp", "gel", "gip", "gmd", "gyd", "hkd", "hrk", "htg", "idr", "ils", "inr",
+	// "isk", "jmd", "jpy", "kes", "kgs", "khr", "kmf", "krw", "kyd", "kzt", "lbp",
+	// "lkr", "lrd", "lsl", "mad", "mdl", "mga", "mkd", "mmk", "mnt", "mop", "mro",
+	// "mvr", "mwk", "mxn", "myr", "mzn", "nad", "ngn", "nok", "npr", "nzd", "pgk",
+	// "php", "pkr", "pln", "qar", "ron", "rsd", "rub", "rwf", "sar", "sbd", "scr",
+	// "sek", "sgd", "sle", "sll", "sos", "szl", "thb", "tjs", "top", "try", "ttd",
+	// "tzs", "uah", "uzs", "vnd", "vuv", "wst", "xaf", "xcd", "yer", "zar", "zmw",
+	// "clp", "djf", "gnf", "ugx", "pyg", "xof", "xpf".
+	Currency string `json:"currency,omitzero"`
+	paramObj
+}
+
+func (r V1PlanUpdateParamsChargesPricingModelPricePeriodPrice) MarshalJSON() (data []byte, err error) {
+	type shadow V1PlanUpdateParamsChargesPricingModelPricePeriodPrice
+	return param.MarshalObject(r, (*shadow)(&r))
+}
+func (r *V1PlanUpdateParamsChargesPricingModelPricePeriodPrice) UnmarshalJSON(data []byte) error {
+	return apijson.UnmarshalRoot(data, r)
+}
+
+func init() {
+	apijson.RegisterFieldValidator[V1PlanUpdateParamsChargesPricingModelPricePeriodPrice](
+		"currency", "usd", "aed", "all", "amd", "ang", "aud", "awg", "azn", "bam", "bbd", "bdt", "bgn", "bif", "bmd", "bnd", "bsd", "bwp", "byn", "bzd", "brl", "cad", "cdf", "chf", "cny", "czk", "dkk", "dop", "dzd", "egp", "etb", "eur", "fjd", "gbp", "gel", "gip", "gmd", "gyd", "hkd", "hrk", "htg", "idr", "ils", "inr", "isk", "jmd", "jpy", "kes", "kgs", "khr", "kmf", "krw", "kyd", "kzt", "lbp", "lkr", "lrd", "lsl", "mad", "mdl", "mga", "mkd", "mmk", "mnt", "mop", "mro", "mvr", "mwk", "mxn", "myr", "mzn", "nad", "ngn", "nok", "npr", "nzd", "pgk", "php", "pkr", "pln", "qar", "ron", "rsd", "rub", "rwf", "sar", "sbd", "scr", "sek", "sgd", "sle", "sll", "sos", "szl", "thb", "tjs", "top", "try", "ttd", "tzs", "uah", "uzs", "vnd", "vuv", "wst", "xaf", "xcd", "yer", "zar", "zmw", "clp", "djf", "gnf", "ugx", "pyg", "xof", "xpf",
+	)
+}
+
+// A tier in tiered pricing.
+type V1PlanUpdateParamsChargesPricingModelPricePeriodTier struct {
+	// Upper bound of this tier (null for unlimited)
+	UpTo param.Opt[float64] `json:"upTo,omitzero"`
+	// Flat price for this tier
+	FlatPrice V1PlanUpdateParamsChargesPricingModelPricePeriodTierFlatPrice `json:"flatPrice,omitzero"`
+	// Per-unit price in this tier
+	UnitPrice V1PlanUpdateParamsChargesPricingModelPricePeriodTierUnitPrice `json:"unitPrice,omitzero"`
+	paramObj
+}
+
+func (r V1PlanUpdateParamsChargesPricingModelPricePeriodTier) MarshalJSON() (data []byte, err error) {
+	type shadow V1PlanUpdateParamsChargesPricingModelPricePeriodTier
+	return param.MarshalObject(r, (*shadow)(&r))
+}
+func (r *V1PlanUpdateParamsChargesPricingModelPricePeriodTier) UnmarshalJSON(data []byte) error {
+	return apijson.UnmarshalRoot(data, r)
+}
+
+// Flat price for this tier
+//
+// The property Amount is required.
+type V1PlanUpdateParamsChargesPricingModelPricePeriodTierFlatPrice struct {
+	// The price amount
+	Amount float64 `json:"amount" api:"required"`
+	// The price currency
+	//
+	// Any of "usd", "aed", "all", "amd", "ang", "aud", "awg", "azn", "bam", "bbd",
+	// "bdt", "bgn", "bif", "bmd", "bnd", "bsd", "bwp", "byn", "bzd", "brl", "cad",
+	// "cdf", "chf", "cny", "czk", "dkk", "dop", "dzd", "egp", "etb", "eur", "fjd",
+	// "gbp", "gel", "gip", "gmd", "gyd", "hkd", "hrk", "htg", "idr", "ils", "inr",
+	// "isk", "jmd", "jpy", "kes", "kgs", "khr", "kmf", "krw", "kyd", "kzt", "lbp",
+	// "lkr", "lrd", "lsl", "mad", "mdl", "mga", "mkd", "mmk", "mnt", "mop", "mro",
+	// "mvr", "mwk", "mxn", "myr", "mzn", "nad", "ngn", "nok", "npr", "nzd", "pgk",
+	// "php", "pkr", "pln", "qar", "ron", "rsd", "rub", "rwf", "sar", "sbd", "scr",
+	// "sek", "sgd", "sle", "sll", "sos", "szl", "thb", "tjs", "top", "try", "ttd",
+	// "tzs", "uah", "uzs", "vnd", "vuv", "wst", "xaf", "xcd", "yer", "zar", "zmw",
+	// "clp", "djf", "gnf", "ugx", "pyg", "xof", "xpf".
+	Currency string `json:"currency,omitzero"`
+	paramObj
+}
+
+func (r V1PlanUpdateParamsChargesPricingModelPricePeriodTierFlatPrice) MarshalJSON() (data []byte, err error) {
+	type shadow V1PlanUpdateParamsChargesPricingModelPricePeriodTierFlatPrice
+	return param.MarshalObject(r, (*shadow)(&r))
+}
+func (r *V1PlanUpdateParamsChargesPricingModelPricePeriodTierFlatPrice) UnmarshalJSON(data []byte) error {
+	return apijson.UnmarshalRoot(data, r)
+}
+
+func init() {
+	apijson.RegisterFieldValidator[V1PlanUpdateParamsChargesPricingModelPricePeriodTierFlatPrice](
+		"currency", "usd", "aed", "all", "amd", "ang", "aud", "awg", "azn", "bam", "bbd", "bdt", "bgn", "bif", "bmd", "bnd", "bsd", "bwp", "byn", "bzd", "brl", "cad", "cdf", "chf", "cny", "czk", "dkk", "dop", "dzd", "egp", "etb", "eur", "fjd", "gbp", "gel", "gip", "gmd", "gyd", "hkd", "hrk", "htg", "idr", "ils", "inr", "isk", "jmd", "jpy", "kes", "kgs", "khr", "kmf", "krw", "kyd", "kzt", "lbp", "lkr", "lrd", "lsl", "mad", "mdl", "mga", "mkd", "mmk", "mnt", "mop", "mro", "mvr", "mwk", "mxn", "myr", "mzn", "nad", "ngn", "nok", "npr", "nzd", "pgk", "php", "pkr", "pln", "qar", "ron", "rsd", "rub", "rwf", "sar", "sbd", "scr", "sek", "sgd", "sle", "sll", "sos", "szl", "thb", "tjs", "top", "try", "ttd", "tzs", "uah", "uzs", "vnd", "vuv", "wst", "xaf", "xcd", "yer", "zar", "zmw", "clp", "djf", "gnf", "ugx", "pyg", "xof", "xpf",
+	)
+}
+
+// Per-unit price in this tier
+//
+// The property Amount is required.
+type V1PlanUpdateParamsChargesPricingModelPricePeriodTierUnitPrice struct {
+	// The price amount
+	Amount float64 `json:"amount" api:"required"`
+	// The price currency
+	//
+	// Any of "usd", "aed", "all", "amd", "ang", "aud", "awg", "azn", "bam", "bbd",
+	// "bdt", "bgn", "bif", "bmd", "bnd", "bsd", "bwp", "byn", "bzd", "brl", "cad",
+	// "cdf", "chf", "cny", "czk", "dkk", "dop", "dzd", "egp", "etb", "eur", "fjd",
+	// "gbp", "gel", "gip", "gmd", "gyd", "hkd", "hrk", "htg", "idr", "ils", "inr",
+	// "isk", "jmd", "jpy", "kes", "kgs", "khr", "kmf", "krw", "kyd", "kzt", "lbp",
+	// "lkr", "lrd", "lsl", "mad", "mdl", "mga", "mkd", "mmk", "mnt", "mop", "mro",
+	// "mvr", "mwk", "mxn", "myr", "mzn", "nad", "ngn", "nok", "npr", "nzd", "pgk",
+	// "php", "pkr", "pln", "qar", "ron", "rsd", "rub", "rwf", "sar", "sbd", "scr",
+	// "sek", "sgd", "sle", "sll", "sos", "szl", "thb", "tjs", "top", "try", "ttd",
+	// "tzs", "uah", "uzs", "vnd", "vuv", "wst", "xaf", "xcd", "yer", "zar", "zmw",
+	// "clp", "djf", "gnf", "ugx", "pyg", "xof", "xpf".
+	Currency string `json:"currency,omitzero"`
+	paramObj
+}
+
+func (r V1PlanUpdateParamsChargesPricingModelPricePeriodTierUnitPrice) MarshalJSON() (data []byte, err error) {
+	type shadow V1PlanUpdateParamsChargesPricingModelPricePeriodTierUnitPrice
+	return param.MarshalObject(r, (*shadow)(&r))
+}
+func (r *V1PlanUpdateParamsChargesPricingModelPricePeriodTierUnitPrice) UnmarshalJSON(data []byte) error {
+	return apijson.UnmarshalRoot(data, r)
+}
+
+func init() {
+	apijson.RegisterFieldValidator[V1PlanUpdateParamsChargesPricingModelPricePeriodTierUnitPrice](
+		"currency", "usd", "aed", "all", "amd", "ang", "aud", "awg", "azn", "bam", "bbd", "bdt", "bgn", "bif", "bmd", "bnd", "bsd", "bwp", "byn", "bzd", "brl", "cad", "cdf", "chf", "cny", "czk", "dkk", "dop", "dzd", "egp", "etb", "eur", "fjd", "gbp", "gel", "gip", "gmd", "gyd", "hkd", "hrk", "htg", "idr", "ils", "inr", "isk", "jmd", "jpy", "kes", "kgs", "khr", "kmf", "krw", "kyd", "kzt", "lbp", "lkr", "lrd", "lsl", "mad", "mdl", "mga", "mkd", "mmk", "mnt", "mop", "mro", "mvr", "mwk", "mxn", "myr", "mzn", "nad", "ngn", "nok", "npr", "nzd", "pgk", "php", "pkr", "pln", "qar", "ron", "rsd", "rub", "rwf", "sar", "sbd", "scr", "sek", "sgd", "sle", "sll", "sos", "szl", "thb", "tjs", "top", "try", "ttd", "tzs", "uah", "uzs", "vnd", "vuv", "wst", "xaf", "xcd", "yer", "zar", "zmw", "clp", "djf", "gnf", "ugx", "pyg", "xof", "xpf",
+	)
+}
+
+// Monthly reset period configuration
+//
+// The property AccordingTo is required.
+type V1PlanUpdateParamsChargesPricingModelMonthlyResetPeriodConfiguration struct {
+	// Reset anchor (SubscriptionStart or StartOfTheMonth)
+	//
+	// Any of "SubscriptionStart", "StartOfTheMonth".
+	AccordingTo string `json:"accordingTo,omitzero" api:"required"`
+	paramObj
+}
+
+func (r V1PlanUpdateParamsChargesPricingModelMonthlyResetPeriodConfiguration) MarshalJSON() (data []byte, err error) {
+	type shadow V1PlanUpdateParamsChargesPricingModelMonthlyResetPeriodConfiguration
+	return param.MarshalObject(r, (*shadow)(&r))
+}
+func (r *V1PlanUpdateParamsChargesPricingModelMonthlyResetPeriodConfiguration) UnmarshalJSON(data []byte) error {
+	return apijson.UnmarshalRoot(data, r)
+}
+
+func init() {
+	apijson.RegisterFieldValidator[V1PlanUpdateParamsChargesPricingModelMonthlyResetPeriodConfiguration](
+		"accordingTo", "SubscriptionStart", "StartOfTheMonth",
+	)
+}
+
+// Weekly reset period configuration
+//
+// The property AccordingTo is required.
+type V1PlanUpdateParamsChargesPricingModelWeeklyResetPeriodConfiguration struct {
+	// Reset anchor (SubscriptionStart or specific day)
+	//
+	// Any of "SubscriptionStart", "EverySunday", "EveryMonday", "EveryTuesday",
+	// "EveryWednesday", "EveryThursday", "EveryFriday", "EverySaturday".
+	AccordingTo string `json:"accordingTo,omitzero" api:"required"`
+	paramObj
+}
+
+func (r V1PlanUpdateParamsChargesPricingModelWeeklyResetPeriodConfiguration) MarshalJSON() (data []byte, err error) {
+	type shadow V1PlanUpdateParamsChargesPricingModelWeeklyResetPeriodConfiguration
+	return param.MarshalObject(r, (*shadow)(&r))
+}
+func (r *V1PlanUpdateParamsChargesPricingModelWeeklyResetPeriodConfiguration) UnmarshalJSON(data []byte) error {
+	return apijson.UnmarshalRoot(data, r)
+}
+
+func init() {
+	apijson.RegisterFieldValidator[V1PlanUpdateParamsChargesPricingModelWeeklyResetPeriodConfiguration](
+		"accordingTo", "SubscriptionStart", "EverySunday", "EveryMonday", "EveryTuesday", "EveryWednesday", "EveryThursday", "EveryFriday", "EverySaturday",
+	)
+}
+
+// Yearly reset period configuration
+//
+// The property AccordingTo is required.
+type V1PlanUpdateParamsChargesPricingModelYearlyResetPeriodConfiguration struct {
+	// Reset anchor (SubscriptionStart)
+	//
+	// Any of "SubscriptionStart".
+	AccordingTo string `json:"accordingTo,omitzero" api:"required"`
+	paramObj
+}
+
+func (r V1PlanUpdateParamsChargesPricingModelYearlyResetPeriodConfiguration) MarshalJSON() (data []byte, err error) {
+	type shadow V1PlanUpdateParamsChargesPricingModelYearlyResetPeriodConfiguration
+	return param.MarshalObject(r, (*shadow)(&r))
+}
+func (r *V1PlanUpdateParamsChargesPricingModelYearlyResetPeriodConfiguration) UnmarshalJSON(data []byte) error {
+	return apijson.UnmarshalRoot(data, r)
+}
+
+func init() {
+	apijson.RegisterFieldValidator[V1PlanUpdateParamsChargesPricingModelYearlyResetPeriodConfiguration](
+		"accordingTo", "SubscriptionStart",
+	)
 }
 
 // Default trial configuration for the plan
@@ -803,16 +1573,3 @@ const (
 	V1PlanPublishParamsMigrationTypeNewCustomers V1PlanPublishParamsMigrationType = "NEW_CUSTOMERS"
 	V1PlanPublishParamsMigrationTypeAllCustomers V1PlanPublishParamsMigrationType = "ALL_CUSTOMERS"
 )
-
-type V1PlanSetPricingParams struct {
-	// Request to set the pricing configuration for a plan or addon.
-	SetPackagePricing SetPackagePricingParam
-	paramObj
-}
-
-func (r V1PlanSetPricingParams) MarshalJSON() (data []byte, err error) {
-	return shimjson.Marshal(r.SetPackagePricing)
-}
-func (r *V1PlanSetPricingParams) UnmarshalJSON(data []byte) error {
-	return json.Unmarshal(data, &r.SetPackagePricing)
-}

@@ -98,7 +98,112 @@ func TestV1PlanUpdateWithOptionalParams(t *testing.T) {
 		context.TODO(),
 		"x",
 		stigg.V1PlanUpdateParams{
-			BillingID:          stigg.String("billingId"),
+			BillingID: stigg.String("billingId"),
+			Charges: stigg.V1PlanUpdateParamsCharges{
+				PricingType: "FREE",
+				BillingID:   stigg.String("billingId"),
+				MinimumSpend: []stigg.V1PlanUpdateParamsChargesMinimumSpend{{
+					BillingPeriod: "MONTHLY",
+					Minimum: stigg.V1PlanUpdateParamsChargesMinimumSpendMinimum{
+						Amount:   0,
+						Currency: "usd",
+					},
+				}},
+				OverageBillingPeriod: "ON_SUBSCRIPTION_RENEWAL",
+				OveragePricingModels: []stigg.V1PlanUpdateParamsChargesOveragePricingModel{{
+					BillingModel: "FLAT_FEE",
+					PricePeriods: []stigg.V1PlanUpdateParamsChargesOveragePricingModelPricePeriod{{
+						BillingPeriod:      "MONTHLY",
+						BillingCountryCode: stigg.String("billingCountryCode"),
+						BlockSize:          stigg.Float(0),
+						CreditGrantCadence: "BEGINNING_OF_BILLING_PERIOD",
+						CreditRate: stigg.V1PlanUpdateParamsChargesOveragePricingModelPricePeriodCreditRate{
+							Amount:      1,
+							CurrencyID:  "currencyId",
+							CostFormula: stigg.String("costFormula"),
+						},
+						Price: stigg.V1PlanUpdateParamsChargesOveragePricingModelPricePeriodPrice{
+							Amount:   0,
+							Currency: "usd",
+						},
+						Tiers: []stigg.V1PlanUpdateParamsChargesOveragePricingModelPricePeriodTier{{
+							FlatPrice: stigg.V1PlanUpdateParamsChargesOveragePricingModelPricePeriodTierFlatPrice{
+								Amount:   0,
+								Currency: "usd",
+							},
+							UnitPrice: stigg.V1PlanUpdateParamsChargesOveragePricingModelPricePeriodTierUnitPrice{
+								Amount:   0,
+								Currency: "usd",
+							},
+							UpTo: stigg.Float(0),
+						}},
+					}},
+					BillingCadence: "RECURRING",
+					Entitlement: stigg.V1PlanUpdateParamsChargesOveragePricingModelEntitlement{
+						FeatureID:         "featureId",
+						HasSoftLimit:      stigg.Bool(true),
+						HasUnlimitedUsage: stigg.Bool(true),
+						MonthlyResetPeriodConfiguration: stigg.V1PlanUpdateParamsChargesOveragePricingModelEntitlementMonthlyResetPeriodConfiguration{
+							AccordingTo: "SubscriptionStart",
+						},
+						ResetPeriod: "YEAR",
+						UsageLimit:  stigg.Float(0),
+						WeeklyResetPeriodConfiguration: stigg.V1PlanUpdateParamsChargesOveragePricingModelEntitlementWeeklyResetPeriodConfiguration{
+							AccordingTo: "SubscriptionStart",
+						},
+						YearlyResetPeriodConfiguration: stigg.V1PlanUpdateParamsChargesOveragePricingModelEntitlementYearlyResetPeriodConfiguration{
+							AccordingTo: "SubscriptionStart",
+						},
+					},
+					FeatureID:             stigg.String("featureId"),
+					TopUpCustomCurrencyID: stigg.String("topUpCustomCurrencyId"),
+				}},
+				PricingModels: []stigg.V1PlanUpdateParamsChargesPricingModel{{
+					BillingModel: "FLAT_FEE",
+					PricePeriods: []stigg.V1PlanUpdateParamsChargesPricingModelPricePeriod{{
+						BillingPeriod:      "MONTHLY",
+						BillingCountryCode: stigg.String("billingCountryCode"),
+						BlockSize:          stigg.Float(0),
+						CreditGrantCadence: "BEGINNING_OF_BILLING_PERIOD",
+						CreditRate: stigg.V1PlanUpdateParamsChargesPricingModelPricePeriodCreditRate{
+							Amount:      1,
+							CurrencyID:  "currencyId",
+							CostFormula: stigg.String("costFormula"),
+						},
+						Price: stigg.V1PlanUpdateParamsChargesPricingModelPricePeriodPrice{
+							Amount:   0,
+							Currency: "usd",
+						},
+						Tiers: []stigg.V1PlanUpdateParamsChargesPricingModelPricePeriodTier{{
+							FlatPrice: stigg.V1PlanUpdateParamsChargesPricingModelPricePeriodTierFlatPrice{
+								Amount:   0,
+								Currency: "usd",
+							},
+							UnitPrice: stigg.V1PlanUpdateParamsChargesPricingModelPricePeriodTierUnitPrice{
+								Amount:   0,
+								Currency: "usd",
+							},
+							UpTo: stigg.Float(0),
+						}},
+					}},
+					BillingCadence:  "RECURRING",
+					FeatureID:       stigg.String("featureId"),
+					MaxUnitQuantity: stigg.Int(1),
+					MinUnitQuantity: stigg.Int(1),
+					MonthlyResetPeriodConfiguration: stigg.V1PlanUpdateParamsChargesPricingModelMonthlyResetPeriodConfiguration{
+						AccordingTo: "SubscriptionStart",
+					},
+					ResetPeriod:           "YEAR",
+					TiersMode:             "VOLUME",
+					TopUpCustomCurrencyID: stigg.String("topUpCustomCurrencyId"),
+					WeeklyResetPeriodConfiguration: stigg.V1PlanUpdateParamsChargesPricingModelWeeklyResetPeriodConfiguration{
+						AccordingTo: "SubscriptionStart",
+					},
+					YearlyResetPeriodConfiguration: stigg.V1PlanUpdateParamsChargesPricingModelYearlyResetPeriodConfiguration{
+						AccordingTo: "SubscriptionStart",
+					},
+				}},
+			},
 			CompatibleAddonIDs: []string{"string"},
 			DefaultTrialConfig: stigg.V1PlanUpdateParamsDefaultTrialConfig{
 				Duration: 0,
@@ -250,139 +355,6 @@ func TestV1PlanRemoveDraft(t *testing.T) {
 		option.WithAPIKey("My API Key"),
 	)
 	_, err := client.V1.Plans.RemoveDraft(context.TODO(), "x")
-	if err != nil {
-		var apierr *stigg.Error
-		if errors.As(err, &apierr) {
-			t.Log(string(apierr.DumpRequest(true)))
-		}
-		t.Fatalf("err should be nil: %s", err.Error())
-	}
-}
-
-func TestV1PlanSetPricingWithOptionalParams(t *testing.T) {
-	t.Skip("Mock server tests are disabled")
-	baseURL := "http://localhost:4010"
-	if envURL, ok := os.LookupEnv("TEST_API_BASE_URL"); ok {
-		baseURL = envURL
-	}
-	if !testutil.CheckTestServer(t, baseURL) {
-		return
-	}
-	client := stigg.NewClient(
-		option.WithBaseURL(baseURL),
-		option.WithAPIKey("My API Key"),
-	)
-	_, err := client.V1.Plans.SetPricing(
-		context.TODO(),
-		"x",
-		stigg.V1PlanSetPricingParams{
-			SetPackagePricing: stigg.SetPackagePricingParam{
-				PricingType: stigg.SetPackagePricingPricingTypeFree,
-				BillingID:   stigg.String("billingId"),
-				MinimumSpend: []stigg.SetPackagePricingMinimumSpendParam{{
-					BillingPeriod: "MONTHLY",
-					Minimum: stigg.SetPackagePricingMinimumSpendMinimumParam{
-						Amount:   0,
-						Currency: "usd",
-					},
-				}},
-				OverageBillingPeriod: stigg.SetPackagePricingOverageBillingPeriodOnSubscriptionRenewal,
-				OveragePricingModels: []stigg.SetPackagePricingOveragePricingModelParam{{
-					BillingModel: "FLAT_FEE",
-					PricePeriods: []stigg.SetPackagePricingOveragePricingModelPricePeriodParam{{
-						BillingPeriod:      "MONTHLY",
-						BillingCountryCode: stigg.String("billingCountryCode"),
-						BlockSize:          stigg.Float(0),
-						CreditGrantCadence: "BEGINNING_OF_BILLING_PERIOD",
-						CreditRate: stigg.SetPackagePricingOveragePricingModelPricePeriodCreditRateParam{
-							Amount:      1,
-							CurrencyID:  "currencyId",
-							CostFormula: stigg.String("costFormula"),
-						},
-						Price: stigg.SetPackagePricingOveragePricingModelPricePeriodPriceParam{
-							Amount:   0,
-							Currency: "usd",
-						},
-						Tiers: []stigg.SetPackagePricingOveragePricingModelPricePeriodTierParam{{
-							FlatPrice: stigg.SetPackagePricingOveragePricingModelPricePeriodTierFlatPriceParam{
-								Amount:   0,
-								Currency: "usd",
-							},
-							UnitPrice: stigg.SetPackagePricingOveragePricingModelPricePeriodTierUnitPriceParam{
-								Amount:   0,
-								Currency: "usd",
-							},
-							UpTo: stigg.Float(0),
-						}},
-					}},
-					BillingCadence: "RECURRING",
-					Entitlement: stigg.SetPackagePricingOveragePricingModelEntitlementParam{
-						FeatureID:         "featureId",
-						HasSoftLimit:      stigg.Bool(true),
-						HasUnlimitedUsage: stigg.Bool(true),
-						MonthlyResetPeriodConfiguration: stigg.SetPackagePricingOveragePricingModelEntitlementMonthlyResetPeriodConfigurationParam{
-							AccordingTo: "SubscriptionStart",
-						},
-						ResetPeriod: "YEAR",
-						UsageLimit:  stigg.Float(0),
-						WeeklyResetPeriodConfiguration: stigg.SetPackagePricingOveragePricingModelEntitlementWeeklyResetPeriodConfigurationParam{
-							AccordingTo: "SubscriptionStart",
-						},
-						YearlyResetPeriodConfiguration: stigg.SetPackagePricingOveragePricingModelEntitlementYearlyResetPeriodConfigurationParam{
-							AccordingTo: "SubscriptionStart",
-						},
-					},
-					FeatureID:             stigg.String("featureId"),
-					TopUpCustomCurrencyID: stigg.String("topUpCustomCurrencyId"),
-				}},
-				PricingModels: []stigg.SetPackagePricingPricingModelParam{{
-					BillingModel: "FLAT_FEE",
-					PricePeriods: []stigg.SetPackagePricingPricingModelPricePeriodParam{{
-						BillingPeriod:      "MONTHLY",
-						BillingCountryCode: stigg.String("billingCountryCode"),
-						BlockSize:          stigg.Float(0),
-						CreditGrantCadence: "BEGINNING_OF_BILLING_PERIOD",
-						CreditRate: stigg.SetPackagePricingPricingModelPricePeriodCreditRateParam{
-							Amount:      1,
-							CurrencyID:  "currencyId",
-							CostFormula: stigg.String("costFormula"),
-						},
-						Price: stigg.SetPackagePricingPricingModelPricePeriodPriceParam{
-							Amount:   0,
-							Currency: "usd",
-						},
-						Tiers: []stigg.SetPackagePricingPricingModelPricePeriodTierParam{{
-							FlatPrice: stigg.SetPackagePricingPricingModelPricePeriodTierFlatPriceParam{
-								Amount:   0,
-								Currency: "usd",
-							},
-							UnitPrice: stigg.SetPackagePricingPricingModelPricePeriodTierUnitPriceParam{
-								Amount:   0,
-								Currency: "usd",
-							},
-							UpTo: stigg.Float(0),
-						}},
-					}},
-					BillingCadence:  "RECURRING",
-					FeatureID:       stigg.String("featureId"),
-					MaxUnitQuantity: stigg.Int(1),
-					MinUnitQuantity: stigg.Int(1),
-					MonthlyResetPeriodConfiguration: stigg.SetPackagePricingPricingModelMonthlyResetPeriodConfigurationParam{
-						AccordingTo: "SubscriptionStart",
-					},
-					ResetPeriod:           "YEAR",
-					TiersMode:             "VOLUME",
-					TopUpCustomCurrencyID: stigg.String("topUpCustomCurrencyId"),
-					WeeklyResetPeriodConfiguration: stigg.SetPackagePricingPricingModelWeeklyResetPeriodConfigurationParam{
-						AccordingTo: "SubscriptionStart",
-					},
-					YearlyResetPeriodConfiguration: stigg.SetPackagePricingPricingModelYearlyResetPeriodConfigurationParam{
-						AccordingTo: "SubscriptionStart",
-					},
-				}},
-			},
-		},
-	)
 	if err != nil {
 		var apierr *stigg.Error
 		if errors.As(err, &apierr) {
