@@ -52,8 +52,8 @@ func TestV1ProductNewProductWithOptionalParams(t *testing.T) {
 	)
 	_, err := client.V1.Products.NewProduct(context.TODO(), stigg.V1ProductNewProductParams{
 		ID:          "id",
+		DisplayName: "displayName",
 		Description: stigg.String("description"),
-		DisplayName: stigg.String("displayName"),
 		Metadata: map[string]string{
 			"foo": "string",
 		},
