@@ -147,7 +147,9 @@ type PlanEntitlementDataUnion struct {
 	Amount float64 `json:"amount"`
 	// This field is from variant [PlanEntitlementDataCredit].
 	Cadence string `json:"cadence"`
-	JSON    struct {
+	// This field is from variant [PlanEntitlementDataCredit].
+	DependencyFeatureID string `json:"dependencyFeatureId"`
+	JSON                struct {
 		ID                       respjson.Field
 		Behavior                 respjson.Field
 		CreatedAt                respjson.Field
@@ -167,6 +169,7 @@ type PlanEntitlementDataUnion struct {
 		UsageLimit               respjson.Field
 		Amount                   respjson.Field
 		Cadence                  respjson.Field
+		DependencyFeatureID      respjson.Field
 		raw                      string
 	} `json:"-"`
 }
@@ -426,6 +429,10 @@ type PlanEntitlementDataCredit struct {
 	Type constant.Credit `json:"type" api:"required"`
 	// Timestamp of when the record was last updated
 	UpdatedAt time.Time `json:"updatedAt" api:"required" format:"date-time"`
+	// The feature ID this entitlement depends on (for credit entitlements). The
+	// entitlement value will be calculated as: base amount × dependency feature usage
+	// limit
+	DependencyFeatureID string `json:"dependencyFeatureId" api:"nullable"`
 	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
 	JSON struct {
 		ID                  respjson.Field
@@ -441,6 +448,7 @@ type PlanEntitlementDataCredit struct {
 		Order               respjson.Field
 		Type                respjson.Field
 		UpdatedAt           respjson.Field
+		DependencyFeatureID respjson.Field
 		ExtraFields         map[string]respjson.Field
 		raw                 string
 	} `json:"-"`
@@ -506,7 +514,9 @@ type V1PlanEntitlementNewResponseDataUnion struct {
 	Amount float64 `json:"amount"`
 	// This field is from variant [V1PlanEntitlementNewResponseDataCredit].
 	Cadence string `json:"cadence"`
-	JSON    struct {
+	// This field is from variant [V1PlanEntitlementNewResponseDataCredit].
+	DependencyFeatureID string `json:"dependencyFeatureId"`
+	JSON                struct {
 		ID                       respjson.Field
 		Behavior                 respjson.Field
 		CreatedAt                respjson.Field
@@ -526,6 +536,7 @@ type V1PlanEntitlementNewResponseDataUnion struct {
 		UsageLimit               respjson.Field
 		Amount                   respjson.Field
 		Cadence                  respjson.Field
+		DependencyFeatureID      respjson.Field
 		raw                      string
 	} `json:"-"`
 }
@@ -787,6 +798,10 @@ type V1PlanEntitlementNewResponseDataCredit struct {
 	Type constant.Credit `json:"type" api:"required"`
 	// Timestamp of when the record was last updated
 	UpdatedAt time.Time `json:"updatedAt" api:"required" format:"date-time"`
+	// The feature ID this entitlement depends on (for credit entitlements). The
+	// entitlement value will be calculated as: base amount × dependency feature usage
+	// limit
+	DependencyFeatureID string `json:"dependencyFeatureId" api:"nullable"`
 	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
 	JSON struct {
 		ID                  respjson.Field
@@ -802,6 +817,7 @@ type V1PlanEntitlementNewResponseDataCredit struct {
 		Order               respjson.Field
 		Type                respjson.Field
 		UpdatedAt           respjson.Field
+		DependencyFeatureID respjson.Field
 		ExtraFields         map[string]respjson.Field
 		raw                 string
 	} `json:"-"`
@@ -870,7 +886,9 @@ type V1PlanEntitlementListResponseDataUnion struct {
 	Amount float64 `json:"amount"`
 	// This field is from variant [V1PlanEntitlementListResponseDataCredit].
 	Cadence string `json:"cadence"`
-	JSON    struct {
+	// This field is from variant [V1PlanEntitlementListResponseDataCredit].
+	DependencyFeatureID string `json:"dependencyFeatureId"`
+	JSON                struct {
 		ID                       respjson.Field
 		Behavior                 respjson.Field
 		CreatedAt                respjson.Field
@@ -890,6 +908,7 @@ type V1PlanEntitlementListResponseDataUnion struct {
 		UsageLimit               respjson.Field
 		Amount                   respjson.Field
 		Cadence                  respjson.Field
+		DependencyFeatureID      respjson.Field
 		raw                      string
 	} `json:"-"`
 }
@@ -1151,6 +1170,10 @@ type V1PlanEntitlementListResponseDataCredit struct {
 	Type constant.Credit `json:"type" api:"required"`
 	// Timestamp of when the record was last updated
 	UpdatedAt time.Time `json:"updatedAt" api:"required" format:"date-time"`
+	// The feature ID this entitlement depends on (for credit entitlements). The
+	// entitlement value will be calculated as: base amount × dependency feature usage
+	// limit
+	DependencyFeatureID string `json:"dependencyFeatureId" api:"nullable"`
 	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
 	JSON struct {
 		ID                  respjson.Field
@@ -1166,6 +1189,7 @@ type V1PlanEntitlementListResponseDataCredit struct {
 		Order               respjson.Field
 		Type                respjson.Field
 		UpdatedAt           respjson.Field
+		DependencyFeatureID respjson.Field
 		ExtraFields         map[string]respjson.Field
 		raw                 string
 	} `json:"-"`
@@ -1314,6 +1338,14 @@ func (u V1PlanEntitlementNewParamsEntitlementUnion) GetAmount() *float64 {
 func (u V1PlanEntitlementNewParamsEntitlementUnion) GetCadence() *string {
 	if vt := u.OfCredit; vt != nil {
 		return &vt.Cadence
+	}
+	return nil
+}
+
+// Returns a pointer to the underlying variant's property, if present.
+func (u V1PlanEntitlementNewParamsEntitlementUnion) GetDependencyFeatureID() *string {
+	if vt := u.OfCredit; vt != nil && vt.DependencyFeatureID.Valid() {
+		return &vt.DependencyFeatureID.Value
 	}
 	return nil
 }
@@ -1571,6 +1603,9 @@ type V1PlanEntitlementNewParamsEntitlementCredit struct {
 	//
 	// Any of "MONTH", "YEAR".
 	Cadence string `json:"cadence,omitzero" api:"required"`
+	// The feature ID this entitlement depends on. The entitlement value will be
+	// calculated as: base amount × dependency feature usage limit
+	DependencyFeatureID param.Opt[string] `json:"dependencyFeatureId,omitzero"`
 	// Description of the entitlement
 	Description param.Opt[string] `json:"description,omitzero"`
 	// Override display name for the entitlement
@@ -1781,6 +1816,9 @@ func init() {
 //
 // The property Type is required.
 type V1PlanEntitlementUpdateParamsBodyCredit struct {
+	// The feature ID this entitlement depends on. The entitlement value will be
+	// calculated as: base amount × dependency feature usage limit
+	DependencyFeatureID param.Opt[string] `json:"dependencyFeatureId,omitzero"`
 	// Credit grant amount
 	Amount param.Opt[float64] `json:"amount,omitzero"`
 	// Description of the entitlement
