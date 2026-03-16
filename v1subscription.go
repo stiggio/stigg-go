@@ -2652,11 +2652,12 @@ func (r *V1SubscriptionUpdateParamsAddon) UnmarshalJSON(data []byte) error {
 }
 
 type V1SubscriptionUpdateParamsAppliedCoupon struct {
-	PromotionCode   param.Opt[string]                                    `json:"promotionCode,omitzero"`
-	BillingCouponID param.Opt[string]                                    `json:"billingCouponId,omitzero"`
-	CouponID        param.Opt[string]                                    `json:"couponId,omitzero"`
-	Configuration   V1SubscriptionUpdateParamsAppliedCouponConfiguration `json:"configuration,omitzero"`
-	Discount        V1SubscriptionUpdateParamsAppliedCouponDiscount      `json:"discount,omitzero"`
+	PromotionCode   param.Opt[string] `json:"promotionCode,omitzero"`
+	BillingCouponID param.Opt[string] `json:"billingCouponId,omitzero"`
+	// Stigg coupon ID
+	CouponID      param.Opt[string]                                    `json:"couponId,omitzero"`
+	Configuration V1SubscriptionUpdateParamsAppliedCouponConfiguration `json:"configuration,omitzero"`
+	Discount      V1SubscriptionUpdateParamsAppliedCouponDiscount      `json:"discount,omitzero"`
 	paramObj
 }
 
