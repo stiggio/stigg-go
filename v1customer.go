@@ -556,7 +556,7 @@ type V1CustomerListResponse struct {
 	// The unique identifier for the entity in the billing provider
 	BillingID string `json:"billingId" api:"nullable"`
 	// Customer level coupon
-	CouponID string `json:"couponId" api:"nullable"`
+	CouponID V1CustomerListResponseCouponID `json:"couponId" api:"nullable"`
 	// The default payment method details
 	DefaultPaymentMethod V1CustomerListResponseDefaultPaymentMethod `json:"defaultPaymentMethod" api:"nullable"`
 	// The email of the customer
@@ -721,6 +721,13 @@ const (
 	V1CustomerListResponseBillingCurrencyPyg V1CustomerListResponseBillingCurrency = "pyg"
 	V1CustomerListResponseBillingCurrencyXof V1CustomerListResponseBillingCurrency = "xof"
 	V1CustomerListResponseBillingCurrencyXpf V1CustomerListResponseBillingCurrency = "xpf"
+)
+
+// Customer level coupon
+type V1CustomerListResponseCouponID string
+
+const (
+	V1CustomerListResponseCouponIDEmpty V1CustomerListResponseCouponID = ""
 )
 
 // The default payment method details
@@ -1061,8 +1068,6 @@ func (r *V1CustomerListResourcesResponse) UnmarshalJSON(data []byte) error {
 type V1CustomerUpdateParams struct {
 	// The unique identifier for the entity in the billing provider
 	BillingID param.Opt[string] `json:"billingId,omitzero"`
-	// Customer level coupon
-	CouponID param.Opt[string] `json:"couponId,omitzero"`
 	// The email of the customer
 	Email param.Opt[string] `json:"email,omitzero" format:"email"`
 	// Language to use for this customer
@@ -1085,6 +1090,8 @@ type V1CustomerUpdateParams struct {
 	// "tzs", "uah", "uzs", "vnd", "vuv", "wst", "xaf", "xcd", "yer", "zar", "zmw",
 	// "clp", "djf", "gnf", "ugx", "pyg", "xof", "xpf".
 	BillingCurrency V1CustomerUpdateParamsBillingCurrency `json:"billingCurrency,omitzero"`
+	// Customer level coupon
+	CouponID V1CustomerUpdateParamsCouponID `json:"couponId,omitzero"`
 	// List of integrations
 	Integrations []V1CustomerUpdateParamsIntegration `json:"integrations,omitzero"`
 	// Additional metadata
@@ -1222,6 +1229,13 @@ const (
 	V1CustomerUpdateParamsBillingCurrencyPyg V1CustomerUpdateParamsBillingCurrency = "pyg"
 	V1CustomerUpdateParamsBillingCurrencyXof V1CustomerUpdateParamsBillingCurrency = "xof"
 	V1CustomerUpdateParamsBillingCurrencyXpf V1CustomerUpdateParamsBillingCurrency = "xpf"
+)
+
+// Customer level coupon
+type V1CustomerUpdateParamsCouponID string
+
+const (
+	V1CustomerUpdateParamsCouponIDEmpty V1CustomerUpdateParamsCouponID = ""
 )
 
 // External billing or CRM integration link
@@ -1546,8 +1560,6 @@ type V1CustomerProvisionParams struct {
 	ID string `json:"id" api:"required"`
 	// The unique identifier for the entity in the billing provider
 	BillingID param.Opt[string] `json:"billingId,omitzero"`
-	// Customer level coupon
-	CouponID param.Opt[string] `json:"couponId,omitzero"`
 	// The email of the customer
 	Email param.Opt[string] `json:"email,omitzero" format:"email"`
 	// Language to use for this customer
@@ -1570,6 +1582,8 @@ type V1CustomerProvisionParams struct {
 	// "tzs", "uah", "uzs", "vnd", "vuv", "wst", "xaf", "xcd", "yer", "zar", "zmw",
 	// "clp", "djf", "gnf", "ugx", "pyg", "xof", "xpf".
 	BillingCurrency V1CustomerProvisionParamsBillingCurrency `json:"billingCurrency,omitzero"`
+	// Customer level coupon
+	CouponID V1CustomerProvisionParamsCouponID `json:"couponId,omitzero"`
 	// The default payment method details
 	DefaultPaymentMethod V1CustomerProvisionParamsDefaultPaymentMethod `json:"defaultPaymentMethod,omitzero"`
 	// List of integrations
@@ -1709,6 +1723,13 @@ const (
 	V1CustomerProvisionParamsBillingCurrencyPyg V1CustomerProvisionParamsBillingCurrency = "pyg"
 	V1CustomerProvisionParamsBillingCurrencyXof V1CustomerProvisionParamsBillingCurrency = "xof"
 	V1CustomerProvisionParamsBillingCurrencyXpf V1CustomerProvisionParamsBillingCurrency = "xpf"
+)
+
+// Customer level coupon
+type V1CustomerProvisionParamsCouponID string
+
+const (
+	V1CustomerProvisionParamsCouponIDEmpty V1CustomerProvisionParamsCouponID = ""
 )
 
 // The default payment method details
