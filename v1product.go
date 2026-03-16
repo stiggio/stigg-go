@@ -319,10 +319,10 @@ func (r *V1ProductListProductsResponseProductSettings) UnmarshalJSON(data []byte
 type V1ProductNewProductParams struct {
 	// The unique identifier for the entity
 	ID string `json:"id" api:"required"`
+	// Display name of the product
+	DisplayName string `json:"displayName" api:"required"`
 	// Description of the product
 	Description param.Opt[string] `json:"description,omitzero"`
-	// Display name of the product
-	DisplayName param.Opt[string] `json:"displayName,omitzero"`
 	// Indicates if multiple subscriptions to this product are allowed
 	MultipleSubscriptions param.Opt[bool] `json:"multipleSubscriptions,omitzero"`
 	// Additional metadata for the product
