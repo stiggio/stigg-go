@@ -1,5 +1,15 @@
 # Changelog
 
+## 0.1.0-alpha.21 (2026-03-17)
+
+Full Changelog: [v0.1.0-alpha.20...v0.1.0-alpha.21](https://github.com/stiggio/stigg-go/compare/v0.1.0-alpha.20...v0.1.0-alpha.21)
+
+### Features
+
+* **api:** api update ([c11adee](https://github.com/stiggio/stigg-go/commit/c11adee2d440aca786ffdf72660dee054f72bdb9))
+* **api:** api update ([a127b7c](https://github.com/stiggio/stigg-go/commit/a127b7c972d9ca4c6c8257e84594373e3fe7bf78))
+* **api:** updated stainless config with new endpoint ([a95bf2d](https://github.com/stiggio/stigg-go/commit/a95bf2d4c359832cb2cbfac0ca1455826ea99dfc))
+
 ## 0.1.0-alpha.20 (2026-03-17)
 
 Full Changelog: [v0.1.0-alpha.19...v0.1.0-alpha.20](https://github.com/stiggio/stigg-go/compare/v0.1.0-alpha.19...v0.1.0-alpha.20)
