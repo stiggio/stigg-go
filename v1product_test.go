@@ -85,7 +85,7 @@ func TestV1ProductDuplicateProductWithOptionalParams(t *testing.T) {
 		context.TODO(),
 		"x",
 		stigg.V1ProductDuplicateProductParams{
-			ID:          "id",
+			TargetID:    "targetId",
 			Description: stigg.String("description"),
 			DisplayName: stigg.String("displayName"),
 		},

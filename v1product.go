@@ -340,7 +340,7 @@ func (r *V1ProductNewProductParams) UnmarshalJSON(data []byte) error {
 
 type V1ProductDuplicateProductParams struct {
 	// The unique identifier for the entity
-	ID string `json:"id" api:"required"`
+	TargetID string `json:"targetId" api:"required"`
 	// Description of the product
 	Description param.Opt[string] `json:"description,omitzero"`
 	// Display name of the product
