@@ -1,5 +1,19 @@
 # Changelog
 
+## 0.1.0-alpha.20 (2026-03-17)
+
+Full Changelog: [v0.1.0-alpha.19...v0.1.0-alpha.20](https://github.com/stiggio/stigg-go/compare/v0.1.0-alpha.19...v0.1.0-alpha.20)
+
+### Features
+
+* **api:** api update ([9d0d3a0](https://github.com/stiggio/stigg-go/commit/9d0d3a09b1f91f37924c6ccfde2e8fd9a80c5b24))
+* **api:** api update ([28ed5f2](https://github.com/stiggio/stigg-go/commit/28ed5f20fbce2109b18751cc7ddaea9273997644))
+
+
+### Chores
+
+* **internal:** tweak CI branches ([0d2ba59](https://github.com/stiggio/stigg-go/commit/0d2ba598eb2a914a94719011a97cfbe65b324c9d))
+
 ## 0.1.0-alpha.19 (2026-03-16)
 
 Full Changelog: [v0.1.0-alpha.18...v0.1.0-alpha.19](https://github.com/stiggio/stigg-go/compare/v0.1.0-alpha.18...v0.1.0-alpha.19)
