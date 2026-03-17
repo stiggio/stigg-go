@@ -442,8 +442,10 @@ type V1ProductUpdateProductParamsProductSettings struct {
 	// Any of "PLAN_SELECTION", "TRIAL_PERIOD", "FREE_PLAN".
 	SubscriptionStartSetup string `json:"subscriptionStartSetup,omitzero" api:"required"`
 	// ID of the plan to downgrade to at the end of the billing period
-	DowngradePlanID             param.Opt[string] `json:"downgradePlanId,omitzero"`
-	ProrateAtEndOfBillingPeriod param.Opt[bool]   `json:"prorateAtEndOfBillingPeriod,omitzero"`
+	DowngradePlanID param.Opt[string] `json:"downgradePlanId,omitzero"`
+	// Indicates if the subscription should be prorated at the end of the billing
+	// period
+	ProrateAtEndOfBillingPeriod param.Opt[bool] `json:"prorateAtEndOfBillingPeriod,omitzero"`
 	// ID of the plan to start the subscription with
 	SubscriptionStartPlanID param.Opt[string] `json:"subscriptionStartPlanId,omitzero"`
 	paramObj
