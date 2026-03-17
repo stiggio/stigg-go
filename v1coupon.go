@@ -350,7 +350,7 @@ type V1CouponNewParams struct {
 	// Duration of the coupon validity in months
 	DurationInMonths param.Opt[int64] `json:"durationInMonths,omitzero" api:"required"`
 	// Percentage discount off the original price
-	PercentOff param.Opt[int64] `json:"percentOff,omitzero" api:"required"`
+	PercentOff param.Opt[float64] `json:"percentOff,omitzero" api:"required"`
 	// Fixed amount discounts in different currencies
 	AmountsOff []V1CouponNewParamsAmountsOff `json:"amountsOff,omitzero" api:"required"`
 	// Metadata associated with the entity

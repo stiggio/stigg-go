@@ -225,7 +225,7 @@ type V1UsageReportResponseData struct {
 	// Timestamp
 	Timestamp time.Time `json:"timestamp" api:"required" format:"date-time"`
 	// The usage measurement record
-	Value float64 `json:"value" api:"required"`
+	Value int64 `json:"value" api:"required"`
 	// The current measured usage value
 	CurrentUsage float64 `json:"currentUsage" api:"nullable"`
 	// The date when the next usage reset will occur
@@ -270,7 +270,8 @@ type V1UsageHistoryParams struct {
 	ResourceID param.Opt[string] `query:"resourceId,omitzero" json:"-"`
 	// The end date of the range
 	EndDate param.Opt[time.Time] `query:"endDate,omitzero" format:"date-time" json:"-"`
-	GroupBy param.Opt[string]    `query:"groupBy,omitzero" json:"-"`
+	// Criteria by which to group the usage history
+	GroupBy param.Opt[string] `query:"groupBy,omitzero" json:"-"`
 	// When true, includes usage data from the most recent cancelled or expired
 	// subscription
 	IncludeInactiveSubscriptions param.Opt[bool] `query:"includeInactiveSubscriptions,omitzero" json:"-"`
