@@ -283,7 +283,8 @@ type V1EventCreditListLedgerResponse struct {
 	// The type of credit event
 	//
 	// Any of "CREDITS_GRANTED", "CREDITS_EXPIRED", "CREDITS_CONSUMED",
-	// "CREDITS_VOIDED", "CREDITS_UPDATED".
+	// "CREDITS_VOIDED", "CREDITS_UPDATED", "CREDITS_CONSUMPTION_TRANSFER_SOURCE",
+	// "CREDITS_CONSUMPTION_TRANSFER_TARGET".
 	EventType V1EventCreditListLedgerResponseEventType `json:"eventType" api:"required"`
 	// The feature ID associated with this event
 	FeatureID string `json:"featureId" api:"required"`
@@ -317,11 +318,13 @@ func (r *V1EventCreditListLedgerResponse) UnmarshalJSON(data []byte) error {
 type V1EventCreditListLedgerResponseEventType string
 
 const (
-	V1EventCreditListLedgerResponseEventTypeCreditsGranted  V1EventCreditListLedgerResponseEventType = "CREDITS_GRANTED"
-	V1EventCreditListLedgerResponseEventTypeCreditsExpired  V1EventCreditListLedgerResponseEventType = "CREDITS_EXPIRED"
-	V1EventCreditListLedgerResponseEventTypeCreditsConsumed V1EventCreditListLedgerResponseEventType = "CREDITS_CONSUMED"
-	V1EventCreditListLedgerResponseEventTypeCreditsVoided   V1EventCreditListLedgerResponseEventType = "CREDITS_VOIDED"
-	V1EventCreditListLedgerResponseEventTypeCreditsUpdated  V1EventCreditListLedgerResponseEventType = "CREDITS_UPDATED"
+	V1EventCreditListLedgerResponseEventTypeCreditsGranted                   V1EventCreditListLedgerResponseEventType = "CREDITS_GRANTED"
+	V1EventCreditListLedgerResponseEventTypeCreditsExpired                   V1EventCreditListLedgerResponseEventType = "CREDITS_EXPIRED"
+	V1EventCreditListLedgerResponseEventTypeCreditsConsumed                  V1EventCreditListLedgerResponseEventType = "CREDITS_CONSUMED"
+	V1EventCreditListLedgerResponseEventTypeCreditsVoided                    V1EventCreditListLedgerResponseEventType = "CREDITS_VOIDED"
+	V1EventCreditListLedgerResponseEventTypeCreditsUpdated                   V1EventCreditListLedgerResponseEventType = "CREDITS_UPDATED"
+	V1EventCreditListLedgerResponseEventTypeCreditsConsumptionTransferSource V1EventCreditListLedgerResponseEventType = "CREDITS_CONSUMPTION_TRANSFER_SOURCE"
+	V1EventCreditListLedgerResponseEventTypeCreditsConsumptionTransferTarget V1EventCreditListLedgerResponseEventType = "CREDITS_CONSUMPTION_TRANSFER_TARGET"
 )
 
 type V1EventCreditGetAutoRechargeParams struct {
