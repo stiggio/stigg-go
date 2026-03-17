@@ -612,8 +612,9 @@ func (r *V1FeatureUpdateFeatureParamsMeter) UnmarshalJSON(data []byte) error {
 // The property Function is required.
 type V1FeatureUpdateFeatureParamsMeterAggregation struct {
 	// Any of "SUM", "MAX", "MIN", "AVG", "COUNT", "UNIQUE".
-	Function string            `json:"function,omitzero" api:"required"`
-	Field    param.Opt[string] `json:"field,omitzero"`
+	Function string `json:"function,omitzero" api:"required"`
+	// Aggregation field name
+	Field param.Opt[string] `json:"field,omitzero"`
 	paramObj
 }
 
@@ -647,13 +648,15 @@ func (r *V1FeatureUpdateFeatureParamsMeterFilter) UnmarshalJSON(data []byte) err
 
 // The properties Field, Operation are required.
 type V1FeatureUpdateFeatureParamsMeterFilterCondition struct {
+	// Condition field name
 	Field string `json:"field" api:"required"`
 	// Any of "EQUALS", "NOT_EQUALS", "GREATER_THAN", "GREATER_THAN_OR_EQUAL",
 	// "LESS_THAN", "LESS_THAN_OR_EQUAL", "IS_NULL", "IS_NOT_NULL", "CONTAINS",
 	// "STARTS_WITH", "ENDS_WITH", "IN".
-	Operation string            `json:"operation,omitzero" api:"required"`
-	Value     param.Opt[string] `json:"value,omitzero"`
-	Values    []string          `json:"values,omitzero"`
+	Operation string `json:"operation,omitzero" api:"required"`
+	// Condition value
+	Value  param.Opt[string] `json:"value,omitzero"`
+	Values []string          `json:"values,omitzero"`
 	paramObj
 }
 
