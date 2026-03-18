@@ -1365,24 +1365,24 @@ type V1CustomerGetEntitlementsResponseDataEntitlementCreditCurrency struct {
 	CurrencyID string `json:"currencyId" api:"required"`
 	// The display name of the currency.
 	DisplayName string `json:"displayName" api:"required"`
-	// Additional metadata associated with the currency.
-	AdditionalMetaData any `json:"additionalMetaData"`
 	// A description of the currency.
 	Description string `json:"description" api:"nullable"`
+	// Additional metadata associated with the currency.
+	Metadata map[string]string `json:"metadata" api:"nullable"`
 	// The plural form of the currency unit.
 	UnitPlural string `json:"unitPlural" api:"nullable"`
 	// The singular form of the currency unit.
 	UnitSingular string `json:"unitSingular" api:"nullable"`
 	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
 	JSON struct {
-		CurrencyID         respjson.Field
-		DisplayName        respjson.Field
-		AdditionalMetaData respjson.Field
-		Description        respjson.Field
-		UnitPlural         respjson.Field
-		UnitSingular       respjson.Field
-		ExtraFields        map[string]respjson.Field
-		raw                string
+		CurrencyID   respjson.Field
+		DisplayName  respjson.Field
+		Description  respjson.Field
+		Metadata     respjson.Field
+		UnitPlural   respjson.Field
+		UnitSingular respjson.Field
+		ExtraFields  map[string]respjson.Field
+		raw          string
 	} `json:"-"`
 }
 
