@@ -93,8 +93,8 @@ func TestV1SubscriptionUpdateWithOptionalParams(t *testing.T) {
 				InvoiceDaysUntilDue:     stigg.Float(0),
 				IsBackdated:             stigg.Bool(true),
 				IsInvoicePaid:           stigg.Bool(true),
-				Metadata: map[string]any{
-					"foo": "bar",
+				Metadata: map[string]string{
+					"foo": "string",
 				},
 				ProrationBehavior: "INVOICE_IMMEDIATELY",
 				TaxIDs: []stigg.V1SubscriptionUpdateParamsBillingInformationTaxID{{
@@ -394,8 +394,10 @@ func TestV1SubscriptionPreviewWithOptionalParams(t *testing.T) {
 			InvoiceDaysUntilDue:     stigg.Float(0),
 			IsBackdated:             stigg.Bool(true),
 			IsInvoicePaid:           stigg.Bool(true),
-			Metadata:                map[string]any{},
-			ProrationBehavior:       "INVOICE_IMMEDIATELY",
+			Metadata: map[string]string{
+				"foo": "string",
+			},
+			ProrationBehavior: "INVOICE_IMMEDIATELY",
 			TaxIDs: []stigg.V1SubscriptionPreviewParamsBillingInformationTaxID{{
 				Type:  "type",
 				Value: "value",
