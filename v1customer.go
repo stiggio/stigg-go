@@ -1284,6 +1284,8 @@ func (r *V1CustomerGetEntitlementsResponseDataEntitlementFeature) UnmarshalJSON(
 }
 
 type V1CustomerGetEntitlementsResponseDataEntitlementFeatureFeature struct {
+	// The unique reference ID of the entitlement.
+	ID string `json:"id" api:"required"`
 	// The human-readable name of the entitlement, shown in UI elements.
 	DisplayName string `json:"displayName" api:"required"`
 	// The current status of the feature.
@@ -1294,14 +1296,12 @@ type V1CustomerGetEntitlementsResponseDataEntitlementFeatureFeature struct {
 	//
 	// Any of "BOOLEAN", "NUMBER", "ENUM".
 	FeatureType string `json:"featureType" api:"required"`
-	// The unique reference ID of the entitlement.
-	RefID string `json:"refId" api:"required"`
 	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
 	JSON struct {
+		ID            respjson.Field
 		DisplayName   respjson.Field
 		FeatureStatus respjson.Field
 		FeatureType   respjson.Field
-		RefID         respjson.Field
 		ExtraFields   map[string]respjson.Field
 		raw           string
 	} `json:"-"`
