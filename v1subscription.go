@@ -2600,8 +2600,10 @@ func (r *V1SubscriptionProvisionResponseDataSubscriptionTrial) UnmarshalJSON(dat
 }
 
 type V1SubscriptionUpdateParams struct {
-	AwaitPaymentConfirmation param.Opt[bool]   `json:"awaitPaymentConfirmation,omitzero"`
-	PromotionCode            param.Opt[string] `json:"promotionCode,omitzero"`
+	// Await payment confirmation
+	AwaitPaymentConfirmation param.Opt[bool] `json:"awaitPaymentConfirmation,omitzero"`
+	// Promotion code
+	PromotionCode param.Opt[string] `json:"promotionCode,omitzero"`
 	// Subscription trial end date
 	TrialEndDate param.Opt[time.Time]             `json:"trialEndDate,omitzero" format:"date-time"`
 	Budget       V1SubscriptionUpdateParamsBudget `json:"budget,omitzero"`
@@ -3481,7 +3483,7 @@ type V1SubscriptionPreviewParams struct {
 	// Subscription start date
 	StartDate param.Opt[time.Time] `json:"startDate,omitzero" format:"date-time"`
 	// Unit quantity for per-unit pricing
-	UnitQuantity param.Opt[float64] `json:"unitQuantity,omitzero"`
+	UnitQuantity param.Opt[int64] `json:"unitQuantity,omitzero"`
 	// Addons to include
 	Addons []V1SubscriptionPreviewParamsAddon `json:"addons,omitzero"`
 	// Coupon or discount to apply
@@ -3835,8 +3837,9 @@ type V1SubscriptionProvisionParams struct {
 	// Whether to wait for payment confirmation before returning the subscription
 	AwaitPaymentConfirmation param.Opt[bool] `json:"awaitPaymentConfirmation,omitzero"`
 	// Subscription start date
-	StartDate    param.Opt[time.Time]                `json:"startDate,omitzero" format:"date-time"`
-	UnitQuantity param.Opt[float64]                  `json:"unitQuantity,omitzero"`
+	StartDate param.Opt[time.Time] `json:"startDate,omitzero" format:"date-time"`
+	// Unit quantity
+	UnitQuantity param.Opt[int64]                    `json:"unitQuantity,omitzero"`
 	Budget       V1SubscriptionProvisionParamsBudget `json:"budget,omitzero"`
 	// Minimum spend amount
 	MinimumSpend V1SubscriptionProvisionParamsMinimumSpend `json:"minimumSpend,omitzero"`

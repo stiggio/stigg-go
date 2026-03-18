@@ -420,7 +420,7 @@ func TestV1SubscriptionPreviewWithOptionalParams(t *testing.T) {
 			TrialEndBehavior: "CONVERT_TO_PAID",
 			TrialEndDate:     stigg.Time(time.Now()),
 		},
-		UnitQuantity: stigg.Float(1),
+		UnitQuantity: stigg.Int(1),
 	})
 	if err != nil {
 		var apierr *stigg.Error
@@ -580,7 +580,7 @@ func TestV1SubscriptionProvisionWithOptionalParams(t *testing.T) {
 			TrialEndBehavior: "CONVERT_TO_PAID",
 			TrialEndDate:     stigg.Time(time.Now()),
 		},
-		UnitQuantity: stigg.Float(1),
+		UnitQuantity: stigg.Int(1),
 	})
 	if err != nil {
 		var apierr *stigg.Error
