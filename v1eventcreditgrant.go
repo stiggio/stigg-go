@@ -130,7 +130,7 @@ type CreditGrantResponseData struct {
 	ExpireAt time.Time `json:"expireAt" api:"required" format:"date-time"`
 	// The type of credit grant (PAID, PROMOTIONAL, RECURRING)
 	//
-	// Any of "PAID", "PROMOTIONAL", "RECURRING".
+	// Any of "PAID", "PROMOTIONAL", "RECURRING", "OVERDRAFT".
 	GrantType string `json:"grantType" api:"required"`
 	// The billing invoice ID associated with this grant
 	InvoiceID string `json:"invoiceId" api:"required"`
@@ -301,7 +301,7 @@ type V1EventCreditGrantListResponse struct {
 	ExpireAt time.Time `json:"expireAt" api:"required" format:"date-time"`
 	// The type of credit grant (PAID, PROMOTIONAL, RECURRING)
 	//
-	// Any of "PAID", "PROMOTIONAL", "RECURRING".
+	// Any of "PAID", "PROMOTIONAL", "RECURRING", "OVERDRAFT".
 	GrantType V1EventCreditGrantListResponseGrantType `json:"grantType" api:"required"`
 	// The billing invoice ID associated with this grant
 	InvoiceID string `json:"invoiceId" api:"required"`
@@ -392,6 +392,7 @@ const (
 	V1EventCreditGrantListResponseGrantTypePaid        V1EventCreditGrantListResponseGrantType = "PAID"
 	V1EventCreditGrantListResponseGrantTypePromotional V1EventCreditGrantListResponseGrantType = "PROMOTIONAL"
 	V1EventCreditGrantListResponseGrantTypeRecurring   V1EventCreditGrantListResponseGrantType = "RECURRING"
+	V1EventCreditGrantListResponseGrantTypeOverdraft   V1EventCreditGrantListResponseGrantType = "OVERDRAFT"
 )
 
 // The latest invoice details for this grant
@@ -496,7 +497,7 @@ type V1EventCreditGrantNewParams struct {
 	DisplayName string `json:"displayName" api:"required"`
 	// The type of credit grant (PAID, PROMOTIONAL, RECURRING)
 	//
-	// Any of "PAID", "PROMOTIONAL", "RECURRING".
+	// Any of "PAID", "PROMOTIONAL", "RECURRING", "OVERDRAFT".
 	GrantType V1EventCreditGrantNewParamsGrantType `json:"grantType,omitzero" api:"required"`
 	// Whether to wait for payment confirmation before returning (default: true)
 	AwaitPaymentConfirmation param.Opt[bool] `json:"awaitPaymentConfirmation,omitzero"`
@@ -538,6 +539,7 @@ const (
 	V1EventCreditGrantNewParamsGrantTypePaid        V1EventCreditGrantNewParamsGrantType = "PAID"
 	V1EventCreditGrantNewParamsGrantTypePromotional V1EventCreditGrantNewParamsGrantType = "PROMOTIONAL"
 	V1EventCreditGrantNewParamsGrantTypeRecurring   V1EventCreditGrantNewParamsGrantType = "RECURRING"
+	V1EventCreditGrantNewParamsGrantTypeOverdraft   V1EventCreditGrantNewParamsGrantType = "OVERDRAFT"
 )
 
 // Billing information for the credit grant
