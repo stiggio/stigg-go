@@ -2018,24 +2018,24 @@ type V1SubscriptionProvisionResponseDataEntitlementUnionObjectVariant1Currency s
 	CurrencyID string `json:"currencyId" api:"required"`
 	// The display name of the currency.
 	DisplayName string `json:"displayName" api:"required"`
-	// Additional metadata associated with the currency.
-	AdditionalMetaData any `json:"additionalMetaData"`
 	// A description of the currency.
 	Description string `json:"description" api:"nullable"`
+	// Additional metadata associated with the currency.
+	Metadata map[string]string `json:"metadata" api:"nullable"`
 	// The plural form of the currency unit.
 	UnitPlural string `json:"unitPlural" api:"nullable"`
 	// The singular form of the currency unit.
 	UnitSingular string `json:"unitSingular" api:"nullable"`
 	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
 	JSON struct {
-		CurrencyID         respjson.Field
-		DisplayName        respjson.Field
-		AdditionalMetaData respjson.Field
-		Description        respjson.Field
-		UnitPlural         respjson.Field
-		UnitSingular       respjson.Field
-		ExtraFields        map[string]respjson.Field
-		raw                string
+		CurrencyID   respjson.Field
+		DisplayName  respjson.Field
+		Description  respjson.Field
+		Metadata     respjson.Field
+		UnitPlural   respjson.Field
+		UnitSingular respjson.Field
+		ExtraFields  map[string]respjson.Field
+		raw          string
 	} `json:"-"`
 }
 
@@ -2755,7 +2755,7 @@ type V1SubscriptionUpdateParamsBillingInformation struct {
 	// Physical address
 	BillingAddress V1SubscriptionUpdateParamsBillingInformationBillingAddress `json:"billingAddress,omitzero"`
 	// Additional metadata for the subscription
-	Metadata map[string]any `json:"metadata,omitzero"`
+	Metadata map[string]string `json:"metadata,omitzero"`
 	// Any of "INVOICE_IMMEDIATELY", "CREATE_PRORATIONS", "NONE".
 	ProrationBehavior string                                              `json:"prorationBehavior,omitzero"`
 	TaxIDs            []V1SubscriptionUpdateParamsBillingInformationTaxID `json:"taxIds,omitzero"`
@@ -3676,7 +3676,7 @@ type V1SubscriptionPreviewParamsBillingInformation struct {
 	// Billing address
 	BillingAddress V1SubscriptionPreviewParamsBillingInformationBillingAddress `json:"billingAddress,omitzero"`
 	// Additional billing metadata
-	Metadata any `json:"metadata,omitzero"`
+	Metadata map[string]string `json:"metadata,omitzero"`
 	// Proration behavior
 	//
 	// Any of "INVOICE_IMMEDIATELY", "CREATE_PRORATIONS", "NONE".
