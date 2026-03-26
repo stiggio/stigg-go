@@ -3017,7 +3017,7 @@ type V1SubscriptionUpdateParamsEntitlementFeature struct {
 	// SubscriptionFeatureEntitlementRequest
 	//
 	// This field can be elided, and will marshal its zero value as "FEATURE".
-	Type constant.Feature `json:"type" api:"required"`
+	Type constant.Feature `json:"type" default:"FEATURE"`
 	paramObj
 }
 
@@ -3126,7 +3126,7 @@ type V1SubscriptionUpdateParamsEntitlementCredit struct {
 	// SubscriptionCreditEntitlementRequest
 	//
 	// This field can be elided, and will marshal its zero value as "CREDIT".
-	Type constant.Credit `json:"type" api:"required"`
+	Type constant.Credit `json:"type" default:"CREDIT"`
 	paramObj
 }
 
@@ -4319,7 +4319,7 @@ type V1SubscriptionProvisionParamsEntitlementFeature struct {
 	// SubscriptionFeatureEntitlementRequest
 	//
 	// This field can be elided, and will marshal its zero value as "FEATURE".
-	Type constant.Feature `json:"type" api:"required"`
+	Type constant.Feature `json:"type" default:"FEATURE"`
 	paramObj
 }
 
@@ -4428,7 +4428,7 @@ type V1SubscriptionProvisionParamsEntitlementCredit struct {
 	// SubscriptionCreditEntitlementRequest
 	//
 	// This field can be elided, and will marshal its zero value as "CREDIT".
-	Type constant.Credit `json:"type" api:"required"`
+	Type constant.Credit `json:"type" default:"CREDIT"`
 	paramObj
 }
 

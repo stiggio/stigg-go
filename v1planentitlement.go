@@ -256,7 +256,7 @@ type PlanEntitlementDataFeature struct {
 	// Reset period configuration (for feature entitlements)
 	ResetPeriodConfiguration PlanEntitlementDataFeatureResetPeriodConfigurationUnion `json:"resetPeriodConfiguration" api:"required"`
 	// Entitlement type (FEATURE or CREDIT)
-	Type constant.Feature `json:"type" api:"required"`
+	Type constant.Feature `json:"type" default:"FEATURE"`
 	// Timestamp of when the record was last updated
 	UpdatedAt time.Time `json:"updatedAt" api:"required" format:"date-time"`
 	// Usage limit (for feature entitlements)
@@ -426,7 +426,7 @@ type PlanEntitlementDataCredit struct {
 	// Display order of the entitlement
 	Order float64 `json:"order" api:"required"`
 	// Entitlement type (FEATURE or CREDIT)
-	Type constant.Credit `json:"type" api:"required"`
+	Type constant.Credit `json:"type" default:"CREDIT"`
 	// Timestamp of when the record was last updated
 	UpdatedAt time.Time `json:"updatedAt" api:"required" format:"date-time"`
 	// The feature ID this entitlement depends on (for credit entitlements). The
@@ -623,7 +623,7 @@ type V1PlanEntitlementNewResponseDataFeature struct {
 	// Reset period configuration (for feature entitlements)
 	ResetPeriodConfiguration V1PlanEntitlementNewResponseDataFeatureResetPeriodConfigurationUnion `json:"resetPeriodConfiguration" api:"required"`
 	// Entitlement type (FEATURE or CREDIT)
-	Type constant.Feature `json:"type" api:"required"`
+	Type constant.Feature `json:"type" default:"FEATURE"`
 	// Timestamp of when the record was last updated
 	UpdatedAt time.Time `json:"updatedAt" api:"required" format:"date-time"`
 	// Usage limit (for feature entitlements)
@@ -795,7 +795,7 @@ type V1PlanEntitlementNewResponseDataCredit struct {
 	// Display order of the entitlement
 	Order float64 `json:"order" api:"required"`
 	// Entitlement type (FEATURE or CREDIT)
-	Type constant.Credit `json:"type" api:"required"`
+	Type constant.Credit `json:"type" default:"CREDIT"`
 	// Timestamp of when the record was last updated
 	UpdatedAt time.Time `json:"updatedAt" api:"required" format:"date-time"`
 	// The feature ID this entitlement depends on (for credit entitlements). The
@@ -995,7 +995,7 @@ type V1PlanEntitlementListResponseDataFeature struct {
 	// Reset period configuration (for feature entitlements)
 	ResetPeriodConfiguration V1PlanEntitlementListResponseDataFeatureResetPeriodConfigurationUnion `json:"resetPeriodConfiguration" api:"required"`
 	// Entitlement type (FEATURE or CREDIT)
-	Type constant.Feature `json:"type" api:"required"`
+	Type constant.Feature `json:"type" default:"FEATURE"`
 	// Timestamp of when the record was last updated
 	UpdatedAt time.Time `json:"updatedAt" api:"required" format:"date-time"`
 	// Usage limit (for feature entitlements)
@@ -1167,7 +1167,7 @@ type V1PlanEntitlementListResponseDataCredit struct {
 	// Display order of the entitlement
 	Order float64 `json:"order" api:"required"`
 	// Entitlement type (FEATURE or CREDIT)
-	Type constant.Credit `json:"type" api:"required"`
+	Type constant.Credit `json:"type" default:"CREDIT"`
 	// Timestamp of when the record was last updated
 	UpdatedAt time.Time `json:"updatedAt" api:"required" format:"date-time"`
 	// The feature ID this entitlement depends on (for credit entitlements). The
@@ -1494,7 +1494,7 @@ type V1PlanEntitlementNewParamsEntitlementFeature struct {
 	// CreateFeatureEntitlementRequest
 	//
 	// This field can be elided, and will marshal its zero value as "FEATURE".
-	Type constant.Feature `json:"type" api:"required"`
+	Type constant.Feature `json:"type" default:"FEATURE"`
 	paramObj
 }
 
@@ -1627,7 +1627,7 @@ type V1PlanEntitlementNewParamsEntitlementCredit struct {
 	// CreateCreditEntitlementRequest
 	//
 	// This field can be elided, and will marshal its zero value as "CREDIT".
-	Type constant.Credit `json:"type" api:"required"`
+	Type constant.Credit `json:"type" default:"CREDIT"`
 	paramObj
 }
 
@@ -1715,7 +1715,7 @@ type V1PlanEntitlementUpdateParamsBodyFeature struct {
 	// UpdateFeatureEntitlementRequest
 	//
 	// This field can be elided, and will marshal its zero value as "FEATURE".
-	Type constant.Feature `json:"type" api:"required"`
+	Type constant.Feature `json:"type" default:"FEATURE"`
 	paramObj
 }
 
@@ -1846,7 +1846,7 @@ type V1PlanEntitlementUpdateParamsBodyCredit struct {
 	// UpdateCreditEntitlementRequest
 	//
 	// This field can be elided, and will marshal its zero value as "CREDIT".
-	Type constant.Credit `json:"type" api:"required"`
+	Type constant.Credit `json:"type" default:"CREDIT"`
 	paramObj
 }
 
