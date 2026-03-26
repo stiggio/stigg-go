@@ -1237,7 +1237,7 @@ type V1CustomerGetEntitlementsResponseDataEntitlementFeature struct {
 	// "Revoked", "InsufficientCredits", "EntitlementNotFound".
 	AccessDeniedReason string           `json:"accessDeniedReason" api:"required"`
 	IsGranted          bool             `json:"isGranted" api:"required"`
-	Type               constant.Feature `json:"type" api:"required"`
+	Type               constant.Feature `json:"type" default:"FEATURE"`
 	CurrentUsage       float64          `json:"currentUsage"`
 	// Timestamp of the last update to the entitlement grant or configuration.
 	EntitlementUpdatedAt time.Time                                                      `json:"entitlementUpdatedAt" format:"date-time"`
@@ -1326,7 +1326,7 @@ type V1CustomerGetEntitlementsResponseDataEntitlementCredit struct {
 	Currency     V1CustomerGetEntitlementsResponseDataEntitlementCreditCurrency `json:"currency" api:"required"`
 	CurrentUsage float64                                                        `json:"currentUsage" api:"required"`
 	IsGranted    bool                                                           `json:"isGranted" api:"required"`
-	Type         constant.Credit                                                `json:"type" api:"required"`
+	Type         constant.Credit                                                `json:"type" default:"CREDIT"`
 	UsageLimit   float64                                                        `json:"usageLimit" api:"required"`
 	// Timestamp of the last update to the credit usage.
 	UsageUpdatedAt time.Time `json:"usageUpdatedAt" api:"required" format:"date-time"`
