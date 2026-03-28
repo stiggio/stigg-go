@@ -1,5 +1,29 @@
 # Changelog
 
+## 0.1.0-alpha.23 (2026-03-28)
+
+Full Changelog: [v0.1.0-alpha.22...v0.1.0-alpha.23](https://github.com/stiggio/stigg-go/compare/v0.1.0-alpha.22...v0.1.0-alpha.23)
+
+### Features
+
+* **internal:** support comma format in multipart form encoding ([a3da9bb](https://github.com/stiggio/stigg-go/commit/a3da9bb62c698829e1c72abe15079092925f6b2a))
+
+
+### Bug Fixes
+
+* prevent duplicate ? in query params ([1c830f2](https://github.com/stiggio/stigg-go/commit/1c830f20ddef40e71f377dfb45a92ac808f7f1c1))
+
+
+### Chores
+
+* **ci:** skip lint on metadata-only changes ([f91b883](https://github.com/stiggio/stigg-go/commit/f91b8830f6c3d8f90352cabf292e4c49b7abf79f))
+* **ci:** support opting out of skipping builds on metadata-only commits ([b5984a5](https://github.com/stiggio/stigg-go/commit/b5984a599b0d30616745fdfe029bbde29ebc7300))
+* **client:** fix multipart serialisation of Default() fields ([cf4447b](https://github.com/stiggio/stigg-go/commit/cf4447b7b6095cdc47a465ffc66aca4f35e61753))
+* **internal:** support default value struct tag ([af11d33](https://github.com/stiggio/stigg-go/commit/af11d33a9909509941d9c3c50f5b96e259dd446a))
+* **internal:** update gitignore ([9e866ff](https://github.com/stiggio/stigg-go/commit/9e866ff5fa86ae8e69bd6d3734af5aba965e775d))
+* remove unnecessary error check for url parsing ([0dfe9b1](https://github.com/stiggio/stigg-go/commit/0dfe9b111403b683ddf796627c5a42ee468deb8d))
+* update docs for api:"required" ([84c9647](https://github.com/stiggio/stigg-go/commit/84c9647bed8275a0e1245fbbc8dc53b366f116c7))
+
 ## 0.1.0-alpha.22 (2026-03-22)
 
 Full Changelog: [v0.1.0-alpha.21...v0.1.0-alpha.22](https://github.com/stiggio/stigg-go/compare/v0.1.0-alpha.21...v0.1.0-alpha.22)
