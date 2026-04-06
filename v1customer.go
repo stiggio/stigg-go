@@ -34,6 +34,7 @@ type V1CustomerService struct {
 	PaymentMethod V1CustomerPaymentMethodService
 	// Operations related to promotional entitlements
 	PromotionalEntitlements V1CustomerPromotionalEntitlementService
+	Integrations            V1CustomerIntegrationService
 }
 
 // NewV1CustomerService generates a new service that applies the given options to
@@ -44,6 +45,7 @@ func NewV1CustomerService(opts ...option.RequestOption) (r V1CustomerService) {
 	r.Options = opts
 	r.PaymentMethod = NewV1CustomerPaymentMethodService(opts...)
 	r.PromotionalEntitlements = NewV1CustomerPromotionalEntitlementService(opts...)
+	r.Integrations = NewV1CustomerIntegrationService(opts...)
 	return
 }
 
