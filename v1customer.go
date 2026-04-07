@@ -182,6 +182,172 @@ func (r *V1CustomerService) Unarchive(ctx context.Context, id string, opts ...op
 }
 
 // Response object
+type CustomerIntegrationResponse struct {
+	// External billing or CRM integration link
+	Data CustomerIntegrationResponseData `json:"data" api:"required"`
+	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
+	JSON struct {
+		Data        respjson.Field
+		ExtraFields map[string]respjson.Field
+		raw         string
+	} `json:"-"`
+}
+
+// Returns the unmodified JSON received from the API
+func (r CustomerIntegrationResponse) RawJSON() string { return r.JSON.raw }
+func (r *CustomerIntegrationResponse) UnmarshalJSON(data []byte) error {
+	return apijson.UnmarshalRoot(data, r)
+}
+
+// External billing or CRM integration link
+type CustomerIntegrationResponseData struct {
+	// Integration details
+	ID string `json:"id" api:"required"`
+	// Synced entity id
+	SyncedEntityID string `json:"syncedEntityId" api:"required"`
+	// The vendor identifier of integration
+	//
+	// Any of "AUTH0", "ZUORA", "STRIPE", "HUBSPOT", "AWS_MARKETPLACE", "SNOWFLAKE",
+	// "SALESFORCE", "BIG_QUERY", "OPEN_FGA", "APP_STORE".
+	VendorIdentifier string `json:"vendorIdentifier" api:"required"`
+	// Price billing sync revision data containing billing ID, link URL, and price
+	// group package billing ID
+	SyncData CustomerIntegrationResponseDataSyncDataUnion `json:"syncData" api:"nullable"`
+	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
+	JSON struct {
+		ID               respjson.Field
+		SyncedEntityID   respjson.Field
+		VendorIdentifier respjson.Field
+		SyncData         respjson.Field
+		ExtraFields      map[string]respjson.Field
+		raw              string
+	} `json:"-"`
+}
+
+// Returns the unmodified JSON received from the API
+func (r CustomerIntegrationResponseData) RawJSON() string { return r.JSON.raw }
+func (r *CustomerIntegrationResponseData) UnmarshalJSON(data []byte) error {
+	return apijson.UnmarshalRoot(data, r)
+}
+
+// CustomerIntegrationResponseDataSyncDataUnion contains all possible properties
+// and values from
+// [CustomerIntegrationResponseDataSyncDataSyncRevisionPriceBillingData],
+// [CustomerIntegrationResponseDataSyncDataSyncRevisionBillingData],
+// [CustomerIntegrationResponseDataSyncDataSyncRevisionMarketplaceData].
+//
+// Use the methods beginning with 'As' to cast the union to one of its variants.
+type CustomerIntegrationResponseDataSyncDataUnion struct {
+	BillingID      string `json:"billingId"`
+	BillingLinkURL string `json:"billingLinkUrl"`
+	// This field is from variant
+	// [CustomerIntegrationResponseDataSyncDataSyncRevisionPriceBillingData].
+	PriceGroupPackageBillingID string `json:"priceGroupPackageBillingId"`
+	// This field is from variant
+	// [CustomerIntegrationResponseDataSyncDataSyncRevisionMarketplaceData].
+	Dimensions string `json:"dimensions"`
+	JSON       struct {
+		BillingID                  respjson.Field
+		BillingLinkURL             respjson.Field
+		PriceGroupPackageBillingID respjson.Field
+		Dimensions                 respjson.Field
+		raw                        string
+	} `json:"-"`
+}
+
+func (u CustomerIntegrationResponseDataSyncDataUnion) AsSyncRevisionPriceBillingData() (v CustomerIntegrationResponseDataSyncDataSyncRevisionPriceBillingData) {
+	apijson.UnmarshalRoot(json.RawMessage(u.JSON.raw), &v)
+	return
+}
+
+func (u CustomerIntegrationResponseDataSyncDataUnion) AsSyncRevisionBillingData() (v CustomerIntegrationResponseDataSyncDataSyncRevisionBillingData) {
+	apijson.UnmarshalRoot(json.RawMessage(u.JSON.raw), &v)
+	return
+}
+
+func (u CustomerIntegrationResponseDataSyncDataUnion) AsSyncRevisionMarketplaceData() (v CustomerIntegrationResponseDataSyncDataSyncRevisionMarketplaceData) {
+	apijson.UnmarshalRoot(json.RawMessage(u.JSON.raw), &v)
+	return
+}
+
+// Returns the unmodified JSON received from the API
+func (u CustomerIntegrationResponseDataSyncDataUnion) RawJSON() string { return u.JSON.raw }
+
+func (r *CustomerIntegrationResponseDataSyncDataUnion) UnmarshalJSON(data []byte) error {
+	return apijson.UnmarshalRoot(data, r)
+}
+
+// Price billing sync revision data containing billing ID, link URL, and price
+// group package billing ID
+type CustomerIntegrationResponseDataSyncDataSyncRevisionPriceBillingData struct {
+	// Billing integration id
+	BillingID string `json:"billingId" api:"required"`
+	// Billing integration url
+	BillingLinkURL string `json:"billingLinkUrl" api:"required"`
+	// Price group package billing id
+	PriceGroupPackageBillingID string `json:"priceGroupPackageBillingId" api:"required"`
+	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
+	JSON struct {
+		BillingID                  respjson.Field
+		BillingLinkURL             respjson.Field
+		PriceGroupPackageBillingID respjson.Field
+		ExtraFields                map[string]respjson.Field
+		raw                        string
+	} `json:"-"`
+}
+
+// Returns the unmodified JSON received from the API
+func (r CustomerIntegrationResponseDataSyncDataSyncRevisionPriceBillingData) RawJSON() string {
+	return r.JSON.raw
+}
+func (r *CustomerIntegrationResponseDataSyncDataSyncRevisionPriceBillingData) UnmarshalJSON(data []byte) error {
+	return apijson.UnmarshalRoot(data, r)
+}
+
+// Billing sync revision data containing billing ID and link URL
+type CustomerIntegrationResponseDataSyncDataSyncRevisionBillingData struct {
+	// Billing integration id
+	BillingID string `json:"billingId" api:"required"`
+	// Billing integration url
+	BillingLinkURL string `json:"billingLinkUrl" api:"required"`
+	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
+	JSON struct {
+		BillingID      respjson.Field
+		BillingLinkURL respjson.Field
+		ExtraFields    map[string]respjson.Field
+		raw            string
+	} `json:"-"`
+}
+
+// Returns the unmodified JSON received from the API
+func (r CustomerIntegrationResponseDataSyncDataSyncRevisionBillingData) RawJSON() string {
+	return r.JSON.raw
+}
+func (r *CustomerIntegrationResponseDataSyncDataSyncRevisionBillingData) UnmarshalJSON(data []byte) error {
+	return apijson.UnmarshalRoot(data, r)
+}
+
+// Marketplace sync revision data containing dimensions
+type CustomerIntegrationResponseDataSyncDataSyncRevisionMarketplaceData struct {
+	// Dimensions of the marketplace sync revision
+	Dimensions string `json:"dimensions" api:"required"`
+	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
+	JSON struct {
+		Dimensions  respjson.Field
+		ExtraFields map[string]respjson.Field
+		raw         string
+	} `json:"-"`
+}
+
+// Returns the unmodified JSON received from the API
+func (r CustomerIntegrationResponseDataSyncDataSyncRevisionMarketplaceData) RawJSON() string {
+	return r.JSON.raw
+}
+func (r *CustomerIntegrationResponseDataSyncDataSyncRevisionMarketplaceData) UnmarshalJSON(data []byte) error {
+	return apijson.UnmarshalRoot(data, r)
+}
+
+// Response object
 type CustomerResponse struct {
 	// A customer can be either an organization or an individual
 	Data CustomerResponseData `json:"data" api:"required"`

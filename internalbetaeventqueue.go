@@ -37,7 +37,7 @@ func NewInternalBetaEventQueueService(opts ...option.RequestOption) (r InternalB
 }
 
 // Get event queue by queue name
-func (r *InternalBetaEventQueueService) Get(ctx context.Context, queueName string, opts ...option.RequestOption) (res *InternalBetaEventQueueGetResponse, err error) {
+func (r *InternalBetaEventQueueService) Get(ctx context.Context, queueName string, opts ...option.RequestOption) (res *EventQueueResponse, err error) {
 	opts = slices.Concat(r.Options, opts)
 	if queueName == "" {
 		err = errors.New("missing required queueName parameter")
@@ -49,7 +49,7 @@ func (r *InternalBetaEventQueueService) Get(ctx context.Context, queueName strin
 }
 
 // Update event queue configuration
-func (r *InternalBetaEventQueueService) Update(ctx context.Context, queueName string, body InternalBetaEventQueueUpdateParams, opts ...option.RequestOption) (res *InternalBetaEventQueueUpdateResponse, err error) {
+func (r *InternalBetaEventQueueService) Update(ctx context.Context, queueName string, body InternalBetaEventQueueUpdateParams, opts ...option.RequestOption) (res *EventQueueResponse, err error) {
 	opts = slices.Concat(r.Options, opts)
 	if queueName == "" {
 		err = errors.New("missing required queueName parameter")
@@ -69,7 +69,7 @@ func (r *InternalBetaEventQueueService) List(ctx context.Context, opts ...option
 }
 
 // Delete an event queue and tear down its infrastructure
-func (r *InternalBetaEventQueueService) Delete(ctx context.Context, queueName string, opts ...option.RequestOption) (res *InternalBetaEventQueueDeleteResponse, err error) {
+func (r *InternalBetaEventQueueService) Delete(ctx context.Context, queueName string, opts ...option.RequestOption) (res *EventQueueResponse, err error) {
 	opts = slices.Concat(r.Options, opts)
 	if queueName == "" {
 		err = errors.New("missing required queueName parameter")
@@ -81,7 +81,7 @@ func (r *InternalBetaEventQueueService) Delete(ctx context.Context, queueName st
 }
 
 // Provision SQS queue, SNS subscriptions, and IAM role for the current environment
-func (r *InternalBetaEventQueueService) Provision(ctx context.Context, body InternalBetaEventQueueProvisionParams, opts ...option.RequestOption) (res *InternalBetaEventQueueProvisionResponse, err error) {
+func (r *InternalBetaEventQueueService) Provision(ctx context.Context, body InternalBetaEventQueueProvisionParams, opts ...option.RequestOption) (res *EventQueueResponse, err error) {
 	opts = slices.Concat(r.Options, opts)
 	path := "internal/beta/event-queues/provision"
 	err = requestconfig.ExecuteNewRequest(ctx, http.MethodPost, path, body, &res, opts...)
@@ -89,9 +89,9 @@ func (r *InternalBetaEventQueueService) Provision(ctx context.Context, body Inte
 }
 
 // Response object
-type InternalBetaEventQueueGetResponse struct {
+type EventQueueResponse struct {
 	// Event queue provisioning status and details
-	Data InternalBetaEventQueueGetResponseData `json:"data" api:"required"`
+	Data EventQueueResponseData `json:"data" api:"required"`
 	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
 	JSON struct {
 		Data        respjson.Field
@@ -101,13 +101,13 @@ type InternalBetaEventQueueGetResponse struct {
 }
 
 // Returns the unmodified JSON received from the API
-func (r InternalBetaEventQueueGetResponse) RawJSON() string { return r.JSON.raw }
-func (r *InternalBetaEventQueueGetResponse) UnmarshalJSON(data []byte) error {
+func (r EventQueueResponse) RawJSON() string { return r.JSON.raw }
+func (r *EventQueueResponse) UnmarshalJSON(data []byte) error {
 	return apijson.UnmarshalRoot(data, r)
 }
 
 // Event queue provisioning status and details
-type InternalBetaEventQueueGetResponseData struct {
+type EventQueueResponseData struct {
 	// Timestamp of when the record was created
 	CreatedAt time.Time `json:"createdAt" api:"required" format:"date-time"`
 	// Unique queue identifier
@@ -149,74 +149,8 @@ type InternalBetaEventQueueGetResponseData struct {
 }
 
 // Returns the unmodified JSON received from the API
-func (r InternalBetaEventQueueGetResponseData) RawJSON() string { return r.JSON.raw }
-func (r *InternalBetaEventQueueGetResponseData) UnmarshalJSON(data []byte) error {
-	return apijson.UnmarshalRoot(data, r)
-}
-
-// Response object
-type InternalBetaEventQueueUpdateResponse struct {
-	// Event queue provisioning status and details
-	Data InternalBetaEventQueueUpdateResponseData `json:"data" api:"required"`
-	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
-	JSON struct {
-		Data        respjson.Field
-		ExtraFields map[string]respjson.Field
-		raw         string
-	} `json:"-"`
-}
-
-// Returns the unmodified JSON received from the API
-func (r InternalBetaEventQueueUpdateResponse) RawJSON() string { return r.JSON.raw }
-func (r *InternalBetaEventQueueUpdateResponse) UnmarshalJSON(data []byte) error {
-	return apijson.UnmarshalRoot(data, r)
-}
-
-// Event queue provisioning status and details
-type InternalBetaEventQueueUpdateResponseData struct {
-	// Timestamp of when the record was created
-	CreatedAt time.Time `json:"createdAt" api:"required" format:"date-time"`
-	// Unique queue identifier
-	QueueName string `json:"queueName" api:"required"`
-	// AWS region where the queue is deployed
-	//
-	// Any of "us-east-1", "us-east-2", "us-west-1", "us-west-2", "ca-central-1",
-	// "eu-west-1", "eu-west-2", "eu-west-3", "eu-central-1", "eu-central-2",
-	// "eu-north-1", "eu-south-1", "eu-south-2", "ap-southeast-1", "ap-southeast-2",
-	// "ap-southeast-3", "ap-northeast-1", "ap-northeast-2", "ap-northeast-3",
-	// "ap-south-1", "ap-south-2", "ap-east-1", "sa-east-1", "af-south-1",
-	// "me-south-1", "me-central-1", "il-central-1".
-	Region string `json:"region" api:"required"`
-	// Current provisioning status
-	//
-	// Any of "PROVISIONING", "ACTIVE", "FAILED", "DEPROVISIONING".
-	Status string `json:"status" api:"required"`
-	// Timestamp of when the record was last updated
-	UpdatedAt time.Time `json:"updatedAt" api:"required" format:"date-time"`
-	// SQS queue URL
-	QueueURL string `json:"queueUrl" api:"nullable"`
-	// IAM role ARN for queue access
-	RoleArn string `json:"roleArn" api:"nullable"`
-	// Queue suffix for disambiguation
-	Suffix string `json:"suffix" api:"nullable"`
-	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
-	JSON struct {
-		CreatedAt   respjson.Field
-		QueueName   respjson.Field
-		Region      respjson.Field
-		Status      respjson.Field
-		UpdatedAt   respjson.Field
-		QueueURL    respjson.Field
-		RoleArn     respjson.Field
-		Suffix      respjson.Field
-		ExtraFields map[string]respjson.Field
-		raw         string
-	} `json:"-"`
-}
-
-// Returns the unmodified JSON received from the API
-func (r InternalBetaEventQueueUpdateResponseData) RawJSON() string { return r.JSON.raw }
-func (r *InternalBetaEventQueueUpdateResponseData) UnmarshalJSON(data []byte) error {
+func (r EventQueueResponseData) RawJSON() string { return r.JSON.raw }
+func (r *EventQueueResponseData) UnmarshalJSON(data []byte) error {
 	return apijson.UnmarshalRoot(data, r)
 }
 
@@ -307,138 +241,6 @@ type InternalBetaEventQueueListResponsePagination struct {
 // Returns the unmodified JSON received from the API
 func (r InternalBetaEventQueueListResponsePagination) RawJSON() string { return r.JSON.raw }
 func (r *InternalBetaEventQueueListResponsePagination) UnmarshalJSON(data []byte) error {
-	return apijson.UnmarshalRoot(data, r)
-}
-
-// Response object
-type InternalBetaEventQueueDeleteResponse struct {
-	// Event queue provisioning status and details
-	Data InternalBetaEventQueueDeleteResponseData `json:"data" api:"required"`
-	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
-	JSON struct {
-		Data        respjson.Field
-		ExtraFields map[string]respjson.Field
-		raw         string
-	} `json:"-"`
-}
-
-// Returns the unmodified JSON received from the API
-func (r InternalBetaEventQueueDeleteResponse) RawJSON() string { return r.JSON.raw }
-func (r *InternalBetaEventQueueDeleteResponse) UnmarshalJSON(data []byte) error {
-	return apijson.UnmarshalRoot(data, r)
-}
-
-// Event queue provisioning status and details
-type InternalBetaEventQueueDeleteResponseData struct {
-	// Timestamp of when the record was created
-	CreatedAt time.Time `json:"createdAt" api:"required" format:"date-time"`
-	// Unique queue identifier
-	QueueName string `json:"queueName" api:"required"`
-	// AWS region where the queue is deployed
-	//
-	// Any of "us-east-1", "us-east-2", "us-west-1", "us-west-2", "ca-central-1",
-	// "eu-west-1", "eu-west-2", "eu-west-3", "eu-central-1", "eu-central-2",
-	// "eu-north-1", "eu-south-1", "eu-south-2", "ap-southeast-1", "ap-southeast-2",
-	// "ap-southeast-3", "ap-northeast-1", "ap-northeast-2", "ap-northeast-3",
-	// "ap-south-1", "ap-south-2", "ap-east-1", "sa-east-1", "af-south-1",
-	// "me-south-1", "me-central-1", "il-central-1".
-	Region string `json:"region" api:"required"`
-	// Current provisioning status
-	//
-	// Any of "PROVISIONING", "ACTIVE", "FAILED", "DEPROVISIONING".
-	Status string `json:"status" api:"required"`
-	// Timestamp of when the record was last updated
-	UpdatedAt time.Time `json:"updatedAt" api:"required" format:"date-time"`
-	// SQS queue URL
-	QueueURL string `json:"queueUrl" api:"nullable"`
-	// IAM role ARN for queue access
-	RoleArn string `json:"roleArn" api:"nullable"`
-	// Queue suffix for disambiguation
-	Suffix string `json:"suffix" api:"nullable"`
-	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
-	JSON struct {
-		CreatedAt   respjson.Field
-		QueueName   respjson.Field
-		Region      respjson.Field
-		Status      respjson.Field
-		UpdatedAt   respjson.Field
-		QueueURL    respjson.Field
-		RoleArn     respjson.Field
-		Suffix      respjson.Field
-		ExtraFields map[string]respjson.Field
-		raw         string
-	} `json:"-"`
-}
-
-// Returns the unmodified JSON received from the API
-func (r InternalBetaEventQueueDeleteResponseData) RawJSON() string { return r.JSON.raw }
-func (r *InternalBetaEventQueueDeleteResponseData) UnmarshalJSON(data []byte) error {
-	return apijson.UnmarshalRoot(data, r)
-}
-
-// Response object
-type InternalBetaEventQueueProvisionResponse struct {
-	// Event queue provisioning status and details
-	Data InternalBetaEventQueueProvisionResponseData `json:"data" api:"required"`
-	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
-	JSON struct {
-		Data        respjson.Field
-		ExtraFields map[string]respjson.Field
-		raw         string
-	} `json:"-"`
-}
-
-// Returns the unmodified JSON received from the API
-func (r InternalBetaEventQueueProvisionResponse) RawJSON() string { return r.JSON.raw }
-func (r *InternalBetaEventQueueProvisionResponse) UnmarshalJSON(data []byte) error {
-	return apijson.UnmarshalRoot(data, r)
-}
-
-// Event queue provisioning status and details
-type InternalBetaEventQueueProvisionResponseData struct {
-	// Timestamp of when the record was created
-	CreatedAt time.Time `json:"createdAt" api:"required" format:"date-time"`
-	// Unique queue identifier
-	QueueName string `json:"queueName" api:"required"`
-	// AWS region where the queue is deployed
-	//
-	// Any of "us-east-1", "us-east-2", "us-west-1", "us-west-2", "ca-central-1",
-	// "eu-west-1", "eu-west-2", "eu-west-3", "eu-central-1", "eu-central-2",
-	// "eu-north-1", "eu-south-1", "eu-south-2", "ap-southeast-1", "ap-southeast-2",
-	// "ap-southeast-3", "ap-northeast-1", "ap-northeast-2", "ap-northeast-3",
-	// "ap-south-1", "ap-south-2", "ap-east-1", "sa-east-1", "af-south-1",
-	// "me-south-1", "me-central-1", "il-central-1".
-	Region string `json:"region" api:"required"`
-	// Current provisioning status
-	//
-	// Any of "PROVISIONING", "ACTIVE", "FAILED", "DEPROVISIONING".
-	Status string `json:"status" api:"required"`
-	// Timestamp of when the record was last updated
-	UpdatedAt time.Time `json:"updatedAt" api:"required" format:"date-time"`
-	// SQS queue URL
-	QueueURL string `json:"queueUrl" api:"nullable"`
-	// IAM role ARN for queue access
-	RoleArn string `json:"roleArn" api:"nullable"`
-	// Queue suffix for disambiguation
-	Suffix string `json:"suffix" api:"nullable"`
-	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
-	JSON struct {
-		CreatedAt   respjson.Field
-		QueueName   respjson.Field
-		Region      respjson.Field
-		Status      respjson.Field
-		UpdatedAt   respjson.Field
-		QueueURL    respjson.Field
-		RoleArn     respjson.Field
-		Suffix      respjson.Field
-		ExtraFields map[string]respjson.Field
-		raw         string
-	} `json:"-"`
-}
-
-// Returns the unmodified JSON received from the API
-func (r InternalBetaEventQueueProvisionResponseData) RawJSON() string { return r.JSON.raw }
-func (r *InternalBetaEventQueueProvisionResponseData) UnmarshalJSON(data []byte) error {
 	return apijson.UnmarshalRoot(data, r)
 }
 
