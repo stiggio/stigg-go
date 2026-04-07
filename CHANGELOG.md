@@ -1,5 +1,13 @@
 # Changelog
 
+## 0.1.0-alpha.25 (2026-04-07)
+
+Full Changelog: [v0.1.0-alpha.24...v0.1.0-alpha.25](https://github.com/stiggio/stigg-go/compare/v0.1.0-alpha.24...v0.1.0-alpha.25)
+
+### Features
+
+* **api:** stainless.yml ([14f7a2c](https://github.com/stiggio/stigg-go/commit/14f7a2c132ea60e6f58b4e615c10e5b531a3fea0))
+
 ## 0.1.0-alpha.24 (2026-04-06)
 
 Full Changelog: [v0.1.0-alpha.23...v0.1.0-alpha.24](https://github.com/stiggio/stigg-go/compare/v0.1.0-alpha.23...v0.1.0-alpha.24)
