@@ -1,5 +1,13 @@
 # Changelog
 
+## 0.1.0-alpha.24 (2026-04-06)
+
+Full Changelog: [v0.1.0-alpha.23...v0.1.0-alpha.24](https://github.com/stiggio/stigg-go/compare/v0.1.0-alpha.23...v0.1.0-alpha.24)
+
+### Features
+
+* **api:** add customer integrations and event queues endpoints ([7e2261b](https://github.com/stiggio/stigg-go/commit/7e2261b5dd8ba200a2ba25cffc3fd907fd8b3120))
+
 ## 0.1.0-alpha.23 (2026-03-28)
 
 Full Changelog: [v0.1.0-alpha.22...v0.1.0-alpha.23](https://github.com/stiggio/stigg-go/compare/v0.1.0-alpha.22...v0.1.0-alpha.23)
