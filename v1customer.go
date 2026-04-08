@@ -158,11 +158,6 @@ func (r *V1CustomerService) Provision(ctx context.Context, body V1CustomerProvis
 
 // Retrieves the effective entitlements for a customer or resource, including
 // feature and credit entitlements.
-//
-// **Warning:** This REST API endpoint lacks built-in client-side caching, fallback
-// mechanisms, and low-latency guarantees. It is not recommended for hot-path
-// entitlement checks. For production use, consider using the Stigg Node Server SDK
-// with caching or the Sidecar for low-latency cached responses.
 func (r *V1CustomerService) GetEntitlements(ctx context.Context, id string, query V1CustomerGetEntitlementsParams, opts ...option.RequestOption) (res *V1CustomerGetEntitlementsResponse, err error) {
 	opts = slices.Concat(r.Options, opts)
 	if id == "" {
