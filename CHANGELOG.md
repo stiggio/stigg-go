@@ -1,5 +1,14 @@
 # Changelog
 
+## 0.1.0-alpha.26 (2026-04-08)
+
+Full Changelog: [v0.1.0-alpha.25...v0.1.0-alpha.26](https://github.com/stiggio/stigg-go/compare/v0.1.0-alpha.25...v0.1.0-alpha.26)
+
+### Features
+
+* **api:** add event type to event queue, remove param from usage history ([4263500](https://github.com/stiggio/stigg-go/commit/4263500bf2b186bfe1e51f517fc501d09749f8d0))
+* **api:** add include_inactive_subscriptions parameter to usage history method ([e754fb2](https://github.com/stiggio/stigg-go/commit/e754fb216422d52e24358e23bba271763db7dc60))
+
 ## 0.1.0-alpha.25 (2026-04-07)
 
 Full Changelog: [v0.1.0-alpha.24...v0.1.0-alpha.25](https://github.com/stiggio/stigg-go/compare/v0.1.0-alpha.24...v0.1.0-alpha.25)
