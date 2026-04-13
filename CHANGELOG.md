@@ -1,5 +1,13 @@
 # Changelog
 
+## 0.1.0-alpha.27 (2026-04-13)
+
+Full Changelog: [v0.1.0-alpha.26...v0.1.0-alpha.27](https://github.com/stiggio/stigg-go/compare/v0.1.0-alpha.26...v0.1.0-alpha.27)
+
+### Bug Fixes
+
+* **api:** remove includeInactiveSubscriptions from usage history, add event queue enum ([d807b0a](https://github.com/stiggio/stigg-go/commit/d807b0a46a3cabfaba2442cafc2251056a16a3b9))
+
 ## 0.1.0-alpha.26 (2026-04-08)
 
 Full Changelog: [v0.1.0-alpha.25...v0.1.0-alpha.26](https://github.com/stiggio/stigg-go/compare/v0.1.0-alpha.25...v0.1.0-alpha.26)
