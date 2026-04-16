@@ -1,5 +1,18 @@
 # Changelog
 
+## 0.1.0-alpha.28 (2026-04-16)
+
+Full Changelog: [v0.1.0-alpha.27...v0.1.0-alpha.28](https://github.com/stiggio/stigg-go/compare/v0.1.0-alpha.27...v0.1.0-alpha.28)
+
+### Bug Fixes
+
+* **api:** remove includeInactiveSubscriptions from usage.history, add event queue enum values ([8035a8e](https://github.com/stiggio/stigg-go/commit/8035a8ee3f7a32fcfb3a7cd14ec0c1cffee5a6a5))
+
+
+### Documentation
+
+* add custom currency event types to event queue parameters ([1823a17](https://github.com/stiggio/stigg-go/commit/1823a178539dd9a57036b28449ec34a20c30f315))
+
 ## 0.1.0-alpha.27 (2026-04-13)
 
 Full Changelog: [v0.1.0-alpha.26...v0.1.0-alpha.27](https://github.com/stiggio/stigg-go/compare/v0.1.0-alpha.26...v0.1.0-alpha.27)
