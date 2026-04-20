@@ -349,8 +349,14 @@ type V1EventCreditGetUsageParams struct {
 	CustomerID string `query:"customerId" api:"required" json:"-"`
 	// Filter by currency ID
 	CurrencyID param.Opt[string] `query:"currencyId,omitzero" json:"-"`
+	// End date for the credit usage time range (ISO 8601). Defaults to now when
+	// startDate is provided
+	EndDate param.Opt[time.Time] `query:"endDate,omitzero" format:"date-time" json:"-"`
 	// Filter by resource ID
 	ResourceID param.Opt[string] `query:"resourceId,omitzero" json:"-"`
+	// Start date for the credit usage time range (ISO 8601). Takes precedence over
+	// timeRange when provided
+	StartDate param.Opt[time.Time] `query:"startDate,omitzero" format:"date-time" json:"-"`
 	// Time range for usage data (LAST_DAY, LAST_WEEK, LAST_MONTH, LAST_YEAR). Defaults
 	// to LAST_MONTH
 	//

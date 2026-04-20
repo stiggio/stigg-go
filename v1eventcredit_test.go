@@ -7,6 +7,7 @@ import (
 	"errors"
 	"os"
 	"testing"
+	"time"
 
 	"github.com/stiggio/stigg-go"
 	"github.com/stiggio/stigg-go/internal/testutil"
@@ -55,7 +56,9 @@ func TestV1EventCreditGetUsageWithOptionalParams(t *testing.T) {
 	_, err := client.V1.Events.Credits.GetUsage(context.TODO(), stigg.V1EventCreditGetUsageParams{
 		CustomerID: "customerId",
 		CurrencyID: stigg.String("currencyId"),
+		EndDate:    stigg.Time(time.Now()),
 		ResourceID: stigg.String("resourceId"),
+		StartDate:  stigg.Time(time.Now()),
 		TimeRange:  stigg.V1EventCreditGetUsageParamsTimeRangeLastDay,
 	})
 	if err != nil {
