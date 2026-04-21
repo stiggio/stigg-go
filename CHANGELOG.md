@@ -1,5 +1,13 @@
 # Changelog
 
+## 0.1.0-alpha.29 (2026-04-21)
+
+Full Changelog: [v0.1.0-alpha.28...v0.1.0-alpha.29](https://github.com/stiggio/stigg-go/compare/v0.1.0-alpha.28...v0.1.0-alpha.29)
+
+### Features
+
+* **api:** add endDate/startDate parameters to event credits get usage ([30e7c7c](https://github.com/stiggio/stigg-go/commit/30e7c7c15452bfb64810b1495477420ce48dc546))
+
 ## 0.1.0-alpha.28 (2026-04-16)
 
 Full Changelog: [v0.1.0-alpha.27...v0.1.0-alpha.28](https://github.com/stiggio/stigg-go/compare/v0.1.0-alpha.27...v0.1.0-alpha.28)
