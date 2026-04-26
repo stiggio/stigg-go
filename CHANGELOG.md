@@ -1,5 +1,13 @@
 # Changelog
 
+## 0.1.0-alpha.30 (2026-04-26)
+
+Full Changelog: [v0.1.0-alpha.29...v0.1.0-alpha.30](https://github.com/stiggio/stigg-go/compare/v0.1.0-alpha.29...v0.1.0-alpha.30)
+
+### Chores
+
+* **internal:** more robust bootstrap script ([6d3310a](https://github.com/stiggio/stigg-go/commit/6d3310af4166a28cb75a4c9dd79d9608c99f1b31))
+
 ## 0.1.0-alpha.29 (2026-04-21)
 
 Full Changelog: [v0.1.0-alpha.28...v0.1.0-alpha.29](https://github.com/stiggio/stigg-go/compare/v0.1.0-alpha.28...v0.1.0-alpha.29)
