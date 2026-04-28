@@ -17,9 +17,8 @@ import (
 // interacting with the stigg API. You should not instantiate this client directly,
 // and instead use the [NewClient] method instead.
 type Client struct {
-	Options  []option.RequestOption
-	V1       V1Service
-	Internal InternalService
+	Options []option.RequestOption
+	V1      V1Service
 }
 
 // DefaultClientOptions read from the environment (STIGG_API_KEY, STIGG_BASE_URL).
@@ -53,7 +52,6 @@ func NewClient(opts ...option.RequestOption) (r Client) {
 	r = Client{Options: opts}
 
 	r.V1 = NewV1Service(opts...)
-	r.Internal = NewInternalService(opts...)
 
 	return
 }
