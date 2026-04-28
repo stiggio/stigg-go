@@ -1,5 +1,19 @@
 # Changelog
 
+## 0.1.0-alpha.30 (2026-04-28)
+
+Full Changelog: [v0.1.0-alpha.29...v0.1.0-alpha.30](https://github.com/stiggio/stigg-go/compare/v0.1.0-alpha.29...v0.1.0-alpha.30)
+
+### Features
+
+* **go:** add default http client with timeout ([ac51196](https://github.com/stiggio/stigg-go/commit/ac511964474411c4ee6a6ac106049183ef8e5808))
+* support setting headers via env ([d3f4034](https://github.com/stiggio/stigg-go/commit/d3f40349f86d80940fe16f1fcf7d31e9adb317a1))
+
+
+### Chores
+
+* **internal:** more robust bootstrap script ([6d3310a](https://github.com/stiggio/stigg-go/commit/6d3310af4166a28cb75a4c9dd79d9608c99f1b31))
+
 ## 0.1.0-alpha.29 (2026-04-21)
 
 Full Changelog: [v0.1.0-alpha.28...v0.1.0-alpha.29](https://github.com/stiggio/stigg-go/compare/v0.1.0-alpha.28...v0.1.0-alpha.29)
