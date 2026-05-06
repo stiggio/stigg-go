@@ -1,5 +1,20 @@
 # Changelog
 
+## 0.1.0-alpha.31 (2026-05-06)
+
+Full Changelog: [v0.1.0-alpha.30...v0.1.0-alpha.31](https://github.com/stiggio/stigg-go/compare/v0.1.0-alpha.30...v0.1.0-alpha.31)
+
+### Features
+
+* **api:** add CheckEntitlement method to customers ([6aee1b7](https://github.com/stiggio/stigg-go/commit/6aee1b710e1a9734f4bd1e4d64b5ae6977a5b38f))
+
+
+### Chores
+
+* **api:** remove event queues methods from internal beta ([bee3075](https://github.com/stiggio/stigg-go/commit/bee3075277e73d06fd89a8cc23e7dda50c8fbfc6))
+* avoid embedding reflect.Type for dead code elimination ([4600355](https://github.com/stiggio/stigg-go/commit/4600355463950d07af08a5e62b0c70f852750366))
+* **internal:** regenerate SDK with no functional changes ([5a4e037](https://github.com/stiggio/stigg-go/commit/5a4e03798b5661d2d90ad84923e53b6abf763c11))
+
 ## 0.1.0-alpha.30 (2026-04-28)
 
 Full Changelog: [v0.1.0-alpha.29...v0.1.0-alpha.30](https://github.com/stiggio/stigg-go/compare/v0.1.0-alpha.29...v0.1.0-alpha.30)
