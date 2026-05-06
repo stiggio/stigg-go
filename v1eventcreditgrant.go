@@ -495,9 +495,9 @@ type V1EventCreditGrantNewParams struct {
 	CustomerID string `json:"customerId" api:"required"`
 	// The display name for the credit grant
 	DisplayName string `json:"displayName" api:"required"`
-	// The type of credit grant (PAID, PROMOTIONAL, RECURRING)
+	// The type of credit grant (PAID, PROMOTIONAL)
 	//
-	// Any of "PAID", "PROMOTIONAL", "RECURRING", "OVERDRAFT".
+	// Any of "PAID", "PROMOTIONAL".
 	GrantType V1EventCreditGrantNewParamsGrantType `json:"grantType,omitzero" api:"required"`
 	// Whether to wait for payment confirmation before returning (default: true)
 	AwaitPaymentConfirmation param.Opt[bool] `json:"awaitPaymentConfirmation,omitzero"`
@@ -532,14 +532,12 @@ func (r *V1EventCreditGrantNewParams) UnmarshalJSON(data []byte) error {
 	return apijson.UnmarshalRoot(data, r)
 }
 
-// The type of credit grant (PAID, PROMOTIONAL, RECURRING)
+// The type of credit grant (PAID, PROMOTIONAL)
 type V1EventCreditGrantNewParamsGrantType string
 
 const (
 	V1EventCreditGrantNewParamsGrantTypePaid        V1EventCreditGrantNewParamsGrantType = "PAID"
 	V1EventCreditGrantNewParamsGrantTypePromotional V1EventCreditGrantNewParamsGrantType = "PROMOTIONAL"
-	V1EventCreditGrantNewParamsGrantTypeRecurring   V1EventCreditGrantNewParamsGrantType = "RECURRING"
-	V1EventCreditGrantNewParamsGrantTypeOverdraft   V1EventCreditGrantNewParamsGrantType = "OVERDRAFT"
 )
 
 // Billing information for the credit grant
