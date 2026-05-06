@@ -1,5 +1,18 @@
 # Changelog
 
+## 0.1.0-alpha.32 (2026-05-06)
+
+Full Changelog: [v0.1.0-alpha.31...v0.1.0-alpha.32](https://github.com/stiggio/stigg-go/compare/v0.1.0-alpha.31...v0.1.0-alpha.32)
+
+### Bug Fixes
+
+* **types:** remove RECURRING value from credit grant GrantType enum ([a6a4322](https://github.com/stiggio/stigg-go/commit/a6a4322392174da85a050ba97fffb0c3bc8a7fe7))
+
+
+### Chores
+
+* **internal:** regenerate SDK with no functional changes ([cd21cc4](https://github.com/stiggio/stigg-go/commit/cd21cc432bd84eacf36c3e018fedfb4b4d191622))
+
 ## 0.1.0-alpha.31 (2026-05-06)
 
 Full Changelog: [v0.1.0-alpha.30...v0.1.0-alpha.31](https://github.com/stiggio/stigg-go/compare/v0.1.0-alpha.30...v0.1.0-alpha.31)
