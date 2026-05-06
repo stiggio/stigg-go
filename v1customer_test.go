@@ -185,6 +185,39 @@ func TestV1CustomerArchive(t *testing.T) {
 	}
 }
 
+func TestV1CustomerCheckEntitlementWithOptionalParams(t *testing.T) {
+	t.Skip("Mock server tests are disabled")
+	baseURL := "http://localhost:4010"
+	if envURL, ok := os.LookupEnv("TEST_API_BASE_URL"); ok {
+		baseURL = envURL
+	}
+	if !testutil.CheckTestServer(t, baseURL) {
+		return
+	}
+	client := stigg.NewClient(
+		option.WithBaseURL(baseURL),
+		option.WithAPIKey("My API Key"),
+	)
+	_, err := client.V1.Customers.CheckEntitlement(
+		context.TODO(),
+		"x",
+		stigg.V1CustomerCheckEntitlementParams{
+			CurrencyID:      stigg.String("currencyId"),
+			FeatureID:       stigg.String("featureId"),
+			RequestedUsage:  stigg.Int(0),
+			RequestedValues: []string{"string"},
+			ResourceID:      stigg.String("resourceId"),
+		},
+	)
+	if err != nil {
+		var apierr *stigg.Error
+		if errors.As(err, &apierr) {
+			t.Log(string(apierr.DumpRequest(true)))
+		}
+		t.Fatalf("err should be nil: %s", err.Error())
+	}
+}
+
 func TestV1CustomerImportWithOptionalParams(t *testing.T) {
 	t.Skip("Mock server tests are disabled")
 	baseURL := "http://localhost:4010"
