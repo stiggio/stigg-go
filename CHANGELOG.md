@@ -1,5 +1,18 @@
 # Changelog
 
+## 0.1.0-alpha.33 (2026-05-08)
+
+Full Changelog: [v0.1.0-alpha.32...v0.1.0-alpha.33](https://github.com/stiggio/stigg-go/compare/v0.1.0-alpha.32...v0.1.0-alpha.33)
+
+### Bug Fixes
+
+* **go:** avoid panic when http.DefaultTransport is wrapped ([f8de638](https://github.com/stiggio/stigg-go/commit/f8de6384859dc9fab52f802ed5b7115a33a6d8c4))
+
+
+### Chores
+
+* redact api-key headers in debug logs ([17bec32](https://github.com/stiggio/stigg-go/commit/17bec3216d425de68b14bee3b62eecddea844cef))
+
 ## 0.1.0-alpha.32 (2026-05-06)
 
 Full Changelog: [v0.1.0-alpha.31...v0.1.0-alpha.32](https://github.com/stiggio/stigg-go/compare/v0.1.0-alpha.31...v0.1.0-alpha.32)
