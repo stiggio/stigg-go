@@ -1,5 +1,13 @@
 # Changelog
 
+## 0.1.0-alpha.34 (2026-05-11)
+
+Full Changelog: [v0.1.0-alpha.33...v0.1.0-alpha.34](https://github.com/stiggio/stigg-go/compare/v0.1.0-alpha.33...v0.1.0-alpha.34)
+
+### Features
+
+* **api:** manual updates ([ac61088](https://github.com/stiggio/stigg-go/commit/ac610887cb5840a6544c4cd4ed6b11a232bc6fa4))
+
 ## 0.1.0-alpha.33 (2026-05-08)
 
 Full Changelog: [v0.1.0-alpha.32...v0.1.0-alpha.33](https://github.com/stiggio/stigg-go/compare/v0.1.0-alpha.32...v0.1.0-alpha.33)
