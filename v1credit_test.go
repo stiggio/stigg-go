@@ -14,7 +14,7 @@ import (
 	"github.com/stiggio/stigg-go/option"
 )
 
-func TestV1EventCreditGetAutoRecharge(t *testing.T) {
+func TestV1CreditGetUsageWithOptionalParams(t *testing.T) {
 	t.Skip("Mock server tests are disabled")
 	baseURL := "http://localhost:4010"
 	if envURL, ok := os.LookupEnv("TEST_API_BASE_URL"); ok {
@@ -27,39 +27,13 @@ func TestV1EventCreditGetAutoRecharge(t *testing.T) {
 		option.WithBaseURL(baseURL),
 		option.WithAPIKey("My API Key"),
 	)
-	_, err := client.V1.Events.Credits.GetAutoRecharge(context.TODO(), stigg.V1EventCreditGetAutoRechargeParams{
-		CurrencyID: "currencyId",
-		CustomerID: "customerId",
-	})
-	if err != nil {
-		var apierr *stigg.Error
-		if errors.As(err, &apierr) {
-			t.Log(string(apierr.DumpRequest(true)))
-		}
-		t.Fatalf("err should be nil: %s", err.Error())
-	}
-}
-
-func TestV1EventCreditGetUsageWithOptionalParams(t *testing.T) {
-	t.Skip("Mock server tests are disabled")
-	baseURL := "http://localhost:4010"
-	if envURL, ok := os.LookupEnv("TEST_API_BASE_URL"); ok {
-		baseURL = envURL
-	}
-	if !testutil.CheckTestServer(t, baseURL) {
-		return
-	}
-	client := stigg.NewClient(
-		option.WithBaseURL(baseURL),
-		option.WithAPIKey("My API Key"),
-	)
-	_, err := client.V1.Events.Credits.GetUsage(context.TODO(), stigg.V1EventCreditGetUsageParams{
+	_, err := client.V1.Credits.GetUsage(context.TODO(), stigg.V1CreditGetUsageParams{
 		CustomerID: "customerId",
 		CurrencyID: stigg.String("currencyId"),
 		EndDate:    stigg.Time(time.Now()),
 		ResourceID: stigg.String("resourceId"),
 		StartDate:  stigg.Time(time.Now()),
-		TimeRange:  stigg.V1EventCreditGetUsageParamsTimeRangeLastDay,
+		TimeRange:  stigg.V1CreditGetUsageParamsTimeRangeLastDay,
 	})
 	if err != nil {
 		var apierr *stigg.Error
@@ -70,7 +44,7 @@ func TestV1EventCreditGetUsageWithOptionalParams(t *testing.T) {
 	}
 }
 
-func TestV1EventCreditListLedgerWithOptionalParams(t *testing.T) {
+func TestV1CreditListLedgerWithOptionalParams(t *testing.T) {
 	t.Skip("Mock server tests are disabled")
 	baseURL := "http://localhost:4010"
 	if envURL, ok := os.LookupEnv("TEST_API_BASE_URL"); ok {
@@ -83,7 +57,7 @@ func TestV1EventCreditListLedgerWithOptionalParams(t *testing.T) {
 		option.WithBaseURL(baseURL),
 		option.WithAPIKey("My API Key"),
 	)
-	_, err := client.V1.Events.Credits.ListLedger(context.TODO(), stigg.V1EventCreditListLedgerParams{
+	_, err := client.V1.Credits.ListLedger(context.TODO(), stigg.V1CreditListLedgerParams{
 		CustomerID: "customerId",
 		After:      stigg.String("after"),
 		Before:     stigg.String("before"),
