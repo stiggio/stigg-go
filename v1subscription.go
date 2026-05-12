@@ -3240,15 +3240,20 @@ type V1SubscriptionListParams struct {
 	Limit param.Opt[int64] `query:"limit,omitzero" json:"-"`
 	// Filter by plan ID
 	PlanID param.Opt[string] `query:"planId,omitzero" json:"-"`
-	// Filter by pricing type. Supports comma-separated values for multiple types
-	PricingType param.Opt[string] `query:"pricingType,omitzero" json:"-"`
 	// Filter by resource ID
 	ResourceID param.Opt[string] `query:"resourceId,omitzero" json:"-"`
-	// Filter by subscription status. Supports comma-separated values for multiple
-	// statuses
-	Status param.Opt[string] `query:"status,omitzero" json:"-"`
 	// Filter by creation date using range operators: gt, gte, lt, lte
 	CreatedAt V1SubscriptionListParamsCreatedAt `query:"createdAt,omitzero" json:"-"`
+	// Filter by pricing type. Supports comma-separated values for multiple types
+	//
+	// Any of "FREE", "PAID", "CUSTOM".
+	PricingType []string `query:"pricingType,omitzero" json:"-"`
+	// Filter by subscription status. Supports comma-separated values for multiple
+	// statuses
+	//
+	// Any of "PAYMENT_PENDING", "ACTIVE", "EXPIRED", "IN_TRIAL", "CANCELED",
+	// "NOT_STARTED".
+	Status []string `query:"status,omitzero" json:"-"`
 	paramObj
 }
 

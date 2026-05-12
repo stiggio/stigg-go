@@ -97,7 +97,7 @@ func TestV1CouponListWithOptionalParams(t *testing.T) {
 			Lte: stigg.Time(time.Now()),
 		},
 		Limit:  stigg.Int(1),
-		Status: stigg.String("status"),
+		Status: []string{"ACTIVE"},
 		Type:   stigg.V1CouponListParamsTypeFixed,
 	})
 	if err != nil {

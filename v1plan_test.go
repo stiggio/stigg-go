@@ -255,7 +255,7 @@ func TestV1PlanListWithOptionalParams(t *testing.T) {
 		},
 		Limit:     stigg.Int(1),
 		ProductID: stigg.String("productId"),
-		Status:    stigg.String("status"),
+		Status:    []string{"DRAFT"},
 	})
 	if err != nil {
 		var apierr *stigg.Error
