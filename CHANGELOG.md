@@ -1,5 +1,18 @@
 # Changelog
 
+## 0.1.0-beta.1 (2026-05-12)
+
+Full Changelog: [v0.1.0-alpha.34...v0.1.0-beta.1](https://github.com/stiggio/stigg-go/compare/v0.1.0-alpha.34...v0.1.0-beta.1)
+
+### Features
+
+* **api:** add custom_currencies resource to credits ([f12f440](https://github.com/stiggio/stigg-go/commit/f12f440986275255c28746d2725eb4ebc9fc1c54))
+
+
+### Chores
+
+* **internal:** regenerate SDK with no functional changes ([ebd1f7b](https://github.com/stiggio/stigg-go/commit/ebd1f7b68e94399f6e1a97dba3b8875ae43c5112))
+
 ## 0.1.0-alpha.34 (2026-05-11)
 
 Full Changelog: [v0.1.0-alpha.33...v0.1.0-alpha.34](https://github.com/stiggio/stigg-go/compare/v0.1.0-alpha.33...v0.1.0-alpha.34)
