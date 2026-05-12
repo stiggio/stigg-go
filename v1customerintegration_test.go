@@ -92,7 +92,7 @@ func TestV1CustomerIntegrationListWithOptionalParams(t *testing.T) {
 			After:            stigg.String("182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e"),
 			Before:           stigg.String("182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e"),
 			Limit:            stigg.Int(1),
-			VendorIdentifier: stigg.String("vendorIdentifier"),
+			VendorIdentifier: []string{"AUTH0"},
 		},
 	)
 	if err != nil {

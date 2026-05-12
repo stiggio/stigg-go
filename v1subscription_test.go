@@ -186,9 +186,9 @@ func TestV1SubscriptionListWithOptionalParams(t *testing.T) {
 		CustomerID:  stigg.String("customerId"),
 		Limit:       stigg.Int(1),
 		PlanID:      stigg.String("planId"),
-		PricingType: stigg.String("pricingType"),
+		PricingType: []string{"FREE"},
 		ResourceID:  stigg.String("resourceId"),
-		Status:      stigg.String("status"),
+		Status:      []string{"PAYMENT_PENDING"},
 	})
 	if err != nil {
 		var apierr *stigg.Error

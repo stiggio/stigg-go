@@ -88,7 +88,7 @@ func TestV1CustomerPromotionalEntitlementListWithOptionalParams(t *testing.T) {
 				Lte: stigg.Time(time.Now()),
 			},
 			Limit:  stigg.Int(1),
-			Status: stigg.String("status"),
+			Status: []string{"Active"},
 		},
 	)
 	if err != nil {

@@ -506,16 +506,22 @@ type V1FeatureListFeaturesParams struct {
 	After param.Opt[string] `query:"after,omitzero" format:"uuid" json:"-"`
 	// Return items that come before this cursor
 	Before param.Opt[string] `query:"before,omitzero" format:"uuid" json:"-"`
-	// Filter by feature type. Supports comma-separated values for multiple types
-	FeatureType param.Opt[string] `query:"featureType,omitzero" json:"-"`
 	// Maximum number of items to return
 	Limit param.Opt[int64] `query:"limit,omitzero" json:"-"`
-	// Filter by meter type. Supports comma-separated values for multiple types
-	MeterType param.Opt[string] `query:"meterType,omitzero" json:"-"`
-	// Filter by feature status. Supports comma-separated values for multiple statuses
-	Status param.Opt[string] `query:"status,omitzero" json:"-"`
 	// Filter by creation date using range operators: gt, gte, lt, lte
 	CreatedAt V1FeatureListFeaturesParamsCreatedAt `query:"createdAt,omitzero" json:"-"`
+	// Filter by feature type. Supports comma-separated values for multiple types
+	//
+	// Any of "BOOLEAN", "NUMBER", "ENUM".
+	FeatureType []string `query:"featureType,omitzero" json:"-"`
+	// Filter by meter type. Supports comma-separated values for multiple types
+	//
+	// Any of "None", "FLUCTUATING", "INCREMENTAL".
+	MeterType []string `query:"meterType,omitzero" json:"-"`
+	// Filter by feature status. Supports comma-separated values for multiple statuses
+	//
+	// Any of "NEW", "SUSPENDED", "ACTIVE".
+	Status []string `query:"status,omitzero" json:"-"`
 	paramObj
 }
 

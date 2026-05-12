@@ -28,6 +28,8 @@ type V1EventCreditService struct {
 	Options []option.RequestOption
 	// Operations related to credit grants
 	Grants V1EventCreditGrantService
+	// Operations related to custom currencies
+	CustomCurrencies V1EventCreditCustomCurrencyService
 }
 
 // NewV1EventCreditService generates a new service that applies the given options
@@ -37,6 +39,7 @@ func NewV1EventCreditService(opts ...option.RequestOption) (r V1EventCreditServi
 	r = V1EventCreditService{}
 	r.Options = opts
 	r.Grants = NewV1EventCreditGrantService(opts...)
+	r.CustomCurrencies = NewV1EventCreditCustomCurrencyService(opts...)
 	return
 }
 

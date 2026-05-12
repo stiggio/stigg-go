@@ -123,7 +123,7 @@ func TestV1ProductListProductsWithOptionalParams(t *testing.T) {
 			Lte: stigg.Time(time.Now()),
 		},
 		Limit:  stigg.Int(1),
-		Status: stigg.String("status"),
+		Status: []string{"PUBLISHED"},
 	})
 	if err != nil {
 		var apierr *stigg.Error
