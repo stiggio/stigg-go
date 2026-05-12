@@ -1513,10 +1513,12 @@ type V1PlanListParams struct {
 	Limit param.Opt[int64] `query:"limit,omitzero" json:"-"`
 	// Filter by product ID
 	ProductID param.Opt[string] `query:"productId,omitzero" json:"-"`
-	// Filter by status. Supports comma-separated values for multiple statuses
-	Status param.Opt[string] `query:"status,omitzero" json:"-"`
 	// Filter by creation date using range operators: gt, gte, lt, lte
 	CreatedAt V1PlanListParamsCreatedAt `query:"createdAt,omitzero" json:"-"`
+	// Filter by status. Supports comma-separated values for multiple statuses
+	//
+	// Any of "DRAFT", "PUBLISHED", "ARCHIVED".
+	Status []string `query:"status,omitzero" json:"-"`
 	paramObj
 }
 

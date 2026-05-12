@@ -365,10 +365,12 @@ type V1ProductListProductsParams struct {
 	Before param.Opt[string] `query:"before,omitzero" format:"uuid" json:"-"`
 	// Maximum number of items to return
 	Limit param.Opt[int64] `query:"limit,omitzero" json:"-"`
-	// Filter by product status. Supports comma-separated values for multiple statuses
-	Status param.Opt[string] `query:"status,omitzero" json:"-"`
 	// Filter by creation date using range operators: gt, gte, lt, lte
 	CreatedAt V1ProductListProductsParamsCreatedAt `query:"createdAt,omitzero" json:"-"`
+	// Filter by product status. Supports comma-separated values for multiple statuses
+	//
+	// Any of "PUBLISHED", "ARCHIVED".
+	Status []string `query:"status,omitzero" json:"-"`
 	paramObj
 }
 

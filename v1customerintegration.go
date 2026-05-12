@@ -323,7 +323,10 @@ type V1CustomerIntegrationListParams struct {
 	Limit param.Opt[int64] `query:"limit,omitzero" json:"-"`
 	// Filter by vendor identifier. Supports comma-separated values for multiple
 	// vendors (e.g., STRIPE,HUBSPOT)
-	VendorIdentifier param.Opt[string] `query:"vendorIdentifier,omitzero" json:"-"`
+	//
+	// Any of "AUTH0", "ZUORA", "STRIPE", "HUBSPOT", "AWS_MARKETPLACE", "SNOWFLAKE",
+	// "SALESFORCE", "BIG_QUERY", "OPEN_FGA", "APP_STORE".
+	VendorIdentifier []string `query:"vendorIdentifier,omitzero" json:"-"`
 	paramObj
 }
 
