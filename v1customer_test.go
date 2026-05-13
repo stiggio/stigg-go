@@ -202,11 +202,11 @@ func TestV1CustomerCheckEntitlementWithOptionalParams(t *testing.T) {
 		context.TODO(),
 		"x",
 		stigg.V1CustomerCheckEntitlementParams{
-			CurrencyID:      stigg.String("currencyId"),
-			FeatureID:       stigg.String("featureId"),
+			CurrencyID:      stigg.String("x"),
+			FeatureID:       stigg.String("x"),
 			RequestedUsage:  stigg.Int(0),
 			RequestedValues: []string{"string"},
-			ResourceID:      stigg.String("resourceId"),
+			ResourceID:      stigg.String("x"),
 		},
 	)
 	if err != nil {
