@@ -111,7 +111,7 @@ func TestV1SubscriptionUpdateWithOptionalParams(t *testing.T) {
 			},
 			Charges: []stigg.V1SubscriptionUpdateParamsCharge{{
 				ID:       "id",
-				Quantity: 1,
+				Quantity: 0,
 				Type:     "FEATURE",
 			}},
 			Entitlements: []stigg.V1SubscriptionUpdateParamsEntitlementUnion{{
@@ -286,7 +286,7 @@ func TestV1SubscriptionImportWithOptionalParams(t *testing.T) {
 			BillingPeriod: "MONTHLY",
 			Charges: []stigg.V1SubscriptionImportParamsSubscriptionCharge{{
 				ID:       "id",
-				Quantity: 1,
+				Quantity: 0,
 				Type:     "FEATURE",
 			}},
 			EndDate: stigg.Time(time.Now()),
@@ -376,7 +376,7 @@ func TestV1SubscriptionPreviewWithOptionalParams(t *testing.T) {
 		},
 		BillableFeatures: []stigg.V1SubscriptionPreviewParamsBillableFeature{{
 			FeatureID: "featureId",
-			Quantity:  1,
+			Quantity:  0,
 		}},
 		BillingCountryCode: stigg.String("billingCountryCode"),
 		BillingCycleAnchor: stigg.V1SubscriptionPreviewParamsBillingCycleAnchorUnchanged,
@@ -408,7 +408,7 @@ func TestV1SubscriptionPreviewWithOptionalParams(t *testing.T) {
 		BillingPeriod: stigg.V1SubscriptionPreviewParamsBillingPeriodMonthly,
 		Charges: []stigg.V1SubscriptionPreviewParamsCharge{{
 			ID:       "id",
-			Quantity: 1,
+			Quantity: 0,
 			Type:     "FEATURE",
 		}},
 		PayingCustomerID: stigg.String("payingCustomerId"),
@@ -420,7 +420,7 @@ func TestV1SubscriptionPreviewWithOptionalParams(t *testing.T) {
 			TrialEndBehavior: "CONVERT_TO_PAID",
 			TrialEndDate:     stigg.Time(time.Now()),
 		},
-		UnitQuantity: stigg.Int(1),
+		UnitQuantity: stigg.Int(0),
 	})
 	if err != nil {
 		var apierr *stigg.Error
@@ -506,7 +506,7 @@ func TestV1SubscriptionProvisionWithOptionalParams(t *testing.T) {
 		},
 		Charges: []stigg.V1SubscriptionProvisionParamsCharge{{
 			ID:       "id",
-			Quantity: 1,
+			Quantity: 0,
 			Type:     "FEATURE",
 		}},
 		CheckoutOptions: stigg.V1SubscriptionProvisionParamsCheckoutOptions{
@@ -580,7 +580,7 @@ func TestV1SubscriptionProvisionWithOptionalParams(t *testing.T) {
 			TrialEndBehavior: "CONVERT_TO_PAID",
 			TrialEndDate:     stigg.Time(time.Now()),
 		},
-		UnitQuantity: stigg.Int(1),
+		UnitQuantity: stigg.Int(0),
 	})
 	if err != nil {
 		var apierr *stigg.Error

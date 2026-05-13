@@ -3427,7 +3427,7 @@ func (r *V1SubscriptionImportParamsSubscriptionAddon) UnmarshalJSON(data []byte)
 type V1SubscriptionImportParamsSubscriptionCharge struct {
 	// Charge ID
 	ID string `json:"id" api:"required"`
-	// Charge quantity
+	// Charge quantity. Minimum is 0 (zero is allowed).
 	Quantity float64 `json:"quantity" api:"required"`
 	// Charge type
 	//
@@ -3487,7 +3487,7 @@ type V1SubscriptionPreviewParams struct {
 	ResourceID param.Opt[string] `json:"resourceId,omitzero"`
 	// Subscription start date
 	StartDate param.Opt[time.Time] `json:"startDate,omitzero" format:"date-time"`
-	// Unit quantity for per-unit pricing
+	// Unit quantity for per-unit pricing. Minimum is 0 (zero is allowed).
 	UnitQuantity param.Opt[int64] `json:"unitQuantity,omitzero"`
 	// Addons to include
 	Addons []V1SubscriptionPreviewParamsAddon `json:"addons,omitzero"`
@@ -3645,7 +3645,7 @@ func init() {
 type V1SubscriptionPreviewParamsBillableFeature struct {
 	// Feature ID
 	FeatureID string `json:"featureId" api:"required"`
-	// Quantity of feature units
+	// Quantity of feature units. Minimum is 0 (zero is allowed).
 	Quantity float64 `json:"quantity" api:"required"`
 	paramObj
 }
@@ -3761,7 +3761,7 @@ const (
 type V1SubscriptionPreviewParamsCharge struct {
 	// Charge ID
 	ID string `json:"id" api:"required"`
-	// Charge quantity
+	// Charge quantity. Minimum is 0 (zero is allowed).
 	Quantity float64 `json:"quantity" api:"required"`
 	// Charge type
 	//
@@ -3843,7 +3843,7 @@ type V1SubscriptionProvisionParams struct {
 	AwaitPaymentConfirmation param.Opt[bool] `json:"awaitPaymentConfirmation,omitzero"`
 	// Subscription start date
 	StartDate param.Opt[time.Time] `json:"startDate,omitzero" format:"date-time"`
-	// Unit quantity
+	// Unit quantity for per-unit pricing. Minimum is 0 (zero is allowed).
 	UnitQuantity param.Opt[int64]                    `json:"unitQuantity,omitzero"`
 	Budget       V1SubscriptionProvisionParamsBudget `json:"budget,omitzero"`
 	// Minimum spend amount
@@ -4122,7 +4122,7 @@ func (r *V1SubscriptionProvisionParamsBudget) UnmarshalJSON(data []byte) error {
 type V1SubscriptionProvisionParamsCharge struct {
 	// Charge ID
 	ID string `json:"id" api:"required"`
-	// Charge quantity
+	// Charge quantity. Minimum is 0 (zero is allowed).
 	Quantity float64 `json:"quantity" api:"required"`
 	// Charge type
 	//
