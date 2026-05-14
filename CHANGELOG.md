@@ -1,5 +1,19 @@
 # Changelog
 
+## 0.1.0-beta.3 (2026-05-14)
+
+Full Changelog: [v0.1.0-beta.2...v0.1.0-beta.3](https://github.com/stiggio/stigg-go/compare/v0.1.0-beta.2...v0.1.0-beta.3)
+
+### Features
+
+* **client:** optimize json encoder for internal types ([68daf84](https://github.com/stiggio/stigg-go/commit/68daf843fe0fee4a9e9005f2ff4caa1a28bcd36a))
+
+
+### Chores
+
+* **internal:** regenerate SDK with no functional changes ([a992a7b](https://github.com/stiggio/stigg-go/commit/a992a7b33bf24ff104eb21d9595b87c29d6857cc))
+* **tests:** update fixture values in v1customer check entitlement test ([385995f](https://github.com/stiggio/stigg-go/commit/385995f161a92e207c1bc141c63696461b2cfbc5))
+
 ## 0.1.0-beta.2 (2026-05-12)
 
 Full Changelog: [v0.1.0-beta.1...v0.1.0-beta.2](https://github.com/stiggio/stigg-go/compare/v0.1.0-beta.1...v0.1.0-beta.2)
