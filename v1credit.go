@@ -18,34 +18,34 @@ import (
 	"github.com/stiggio/stigg-go/packages/respjson"
 )
 
-// V1EventCreditService contains methods and other services that help with
-// interacting with the stigg API.
+// V1CreditService contains methods and other services that help with interacting
+// with the stigg API.
 //
 // Note, unlike clients, this service does not read variables from the environment
 // automatically. You should not instantiate this service directly, and instead use
-// the [NewV1EventCreditService] method instead.
-type V1EventCreditService struct {
+// the [NewV1CreditService] method instead.
+type V1CreditService struct {
 	Options []option.RequestOption
 	// Operations related to credit grants
-	Grants V1EventCreditGrantService
+	Grants V1CreditGrantService
 	// Operations related to custom currencies
-	CustomCurrencies V1EventCreditCustomCurrencyService
+	CustomCurrencies V1CreditCustomCurrencyService
 }
 
-// NewV1EventCreditService generates a new service that applies the given options
-// to each request. These options are applied after the parent client's options (if
+// NewV1CreditService generates a new service that applies the given options to
+// each request. These options are applied after the parent client's options (if
 // there is one), and before any request-specific options.
-func NewV1EventCreditService(opts ...option.RequestOption) (r V1EventCreditService) {
-	r = V1EventCreditService{}
+func NewV1CreditService(opts ...option.RequestOption) (r V1CreditService) {
+	r = V1CreditService{}
 	r.Options = opts
-	r.Grants = NewV1EventCreditGrantService(opts...)
-	r.CustomCurrencies = NewV1EventCreditCustomCurrencyService(opts...)
+	r.Grants = NewV1CreditGrantService(opts...)
+	r.CustomCurrencies = NewV1CreditCustomCurrencyService(opts...)
 	return
 }
 
 // Retrieves the automatic recharge configuration for a customer and currency.
 // Returns default settings if no configuration exists.
-func (r *V1EventCreditService) GetAutoRecharge(ctx context.Context, query V1EventCreditGetAutoRechargeParams, opts ...option.RequestOption) (res *V1EventCreditGetAutoRechargeResponse, err error) {
+func (r *V1CreditService) GetAutoRecharge(ctx context.Context, query V1CreditGetAutoRechargeParams, opts ...option.RequestOption) (res *V1CreditGetAutoRechargeResponse, err error) {
 	opts = slices.Concat(r.Options, opts)
 	path := "api/v1/credits/auto-recharge"
 	err = requestconfig.ExecuteNewRequest(ctx, http.MethodGet, path, query, &res, opts...)
@@ -54,7 +54,7 @@ func (r *V1EventCreditService) GetAutoRecharge(ctx context.Context, query V1Even
 
 // Retrieves credit usage time-series data for a customer, grouped by feature, over
 // a specified time range.
-func (r *V1EventCreditService) GetUsage(ctx context.Context, query V1EventCreditGetUsageParams, opts ...option.RequestOption) (res *V1EventCreditGetUsageResponse, err error) {
+func (r *V1CreditService) GetUsage(ctx context.Context, query V1CreditGetUsageParams, opts ...option.RequestOption) (res *V1CreditGetUsageResponse, err error) {
 	opts = slices.Concat(r.Options, opts)
 	path := "api/v1/credits/usage"
 	err = requestconfig.ExecuteNewRequest(ctx, http.MethodGet, path, query, &res, opts...)
@@ -62,7 +62,7 @@ func (r *V1EventCreditService) GetUsage(ctx context.Context, query V1EventCredit
 }
 
 // Retrieves a paginated list of credit ledger events for a customer.
-func (r *V1EventCreditService) ListLedger(ctx context.Context, query V1EventCreditListLedgerParams, opts ...option.RequestOption) (res *pagination.MyCursorIDPage[V1EventCreditListLedgerResponse], err error) {
+func (r *V1CreditService) ListLedger(ctx context.Context, query V1CreditListLedgerParams, opts ...option.RequestOption) (res *pagination.MyCursorIDPage[V1CreditListLedgerResponse], err error) {
 	var raw *http.Response
 	opts = slices.Concat(r.Options, opts)
 	opts = append([]option.RequestOption{option.WithResponseInto(&raw)}, opts...)
@@ -80,14 +80,14 @@ func (r *V1EventCreditService) ListLedger(ctx context.Context, query V1EventCred
 }
 
 // Retrieves a paginated list of credit ledger events for a customer.
-func (r *V1EventCreditService) ListLedgerAutoPaging(ctx context.Context, query V1EventCreditListLedgerParams, opts ...option.RequestOption) *pagination.MyCursorIDPageAutoPager[V1EventCreditListLedgerResponse] {
+func (r *V1CreditService) ListLedgerAutoPaging(ctx context.Context, query V1CreditListLedgerParams, opts ...option.RequestOption) *pagination.MyCursorIDPageAutoPager[V1CreditListLedgerResponse] {
 	return pagination.NewMyCursorIDPageAutoPager(r.ListLedger(ctx, query, opts...))
 }
 
 // Response object
-type V1EventCreditGetAutoRechargeResponse struct {
+type V1CreditGetAutoRechargeResponse struct {
 	// Automatic recharge configuration for a customer and currency
-	Data V1EventCreditGetAutoRechargeResponseData `json:"data" api:"required"`
+	Data V1CreditGetAutoRechargeResponseData `json:"data" api:"required"`
 	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
 	JSON struct {
 		Data        respjson.Field
@@ -97,13 +97,13 @@ type V1EventCreditGetAutoRechargeResponse struct {
 }
 
 // Returns the unmodified JSON received from the API
-func (r V1EventCreditGetAutoRechargeResponse) RawJSON() string { return r.JSON.raw }
-func (r *V1EventCreditGetAutoRechargeResponse) UnmarshalJSON(data []byte) error {
+func (r V1CreditGetAutoRechargeResponse) RawJSON() string { return r.JSON.raw }
+func (r *V1CreditGetAutoRechargeResponse) UnmarshalJSON(data []byte) error {
 	return apijson.UnmarshalRoot(data, r)
 }
 
 // Automatic recharge configuration for a customer and currency
-type V1EventCreditGetAutoRechargeResponseData struct {
+type V1CreditGetAutoRechargeResponseData struct {
 	// The unique configuration ID
 	ID string `json:"id" api:"required"`
 	// Timestamp of when the record was created
@@ -149,15 +149,15 @@ type V1EventCreditGetAutoRechargeResponseData struct {
 }
 
 // Returns the unmodified JSON received from the API
-func (r V1EventCreditGetAutoRechargeResponseData) RawJSON() string { return r.JSON.raw }
-func (r *V1EventCreditGetAutoRechargeResponseData) UnmarshalJSON(data []byte) error {
+func (r V1CreditGetAutoRechargeResponseData) RawJSON() string { return r.JSON.raw }
+func (r *V1CreditGetAutoRechargeResponseData) UnmarshalJSON(data []byte) error {
 	return apijson.UnmarshalRoot(data, r)
 }
 
 // Response object
-type V1EventCreditGetUsageResponse struct {
+type V1CreditGetUsageResponse struct {
 	// Credit usage data grouped by feature with time-series points
-	Data V1EventCreditGetUsageResponseData `json:"data" api:"required"`
+	Data V1CreditGetUsageResponseData `json:"data" api:"required"`
 	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
 	JSON struct {
 		Data        respjson.Field
@@ -167,17 +167,17 @@ type V1EventCreditGetUsageResponse struct {
 }
 
 // Returns the unmodified JSON received from the API
-func (r V1EventCreditGetUsageResponse) RawJSON() string { return r.JSON.raw }
-func (r *V1EventCreditGetUsageResponse) UnmarshalJSON(data []byte) error {
+func (r V1CreditGetUsageResponse) RawJSON() string { return r.JSON.raw }
+func (r *V1CreditGetUsageResponse) UnmarshalJSON(data []byte) error {
 	return apijson.UnmarshalRoot(data, r)
 }
 
 // Credit usage data grouped by feature with time-series points
-type V1EventCreditGetUsageResponseData struct {
+type V1CreditGetUsageResponseData struct {
 	// The custom currency used for credit measurement
-	Currency V1EventCreditGetUsageResponseDataCurrency `json:"currency" api:"required"`
+	Currency V1CreditGetUsageResponseDataCurrency `json:"currency" api:"required"`
 	// Credit usage series grouped by feature
-	Series []V1EventCreditGetUsageResponseDataSeries `json:"series" api:"required"`
+	Series []V1CreditGetUsageResponseDataSeries `json:"series" api:"required"`
 	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
 	JSON struct {
 		Currency    respjson.Field
@@ -188,13 +188,13 @@ type V1EventCreditGetUsageResponseData struct {
 }
 
 // Returns the unmodified JSON received from the API
-func (r V1EventCreditGetUsageResponseData) RawJSON() string { return r.JSON.raw }
-func (r *V1EventCreditGetUsageResponseData) UnmarshalJSON(data []byte) error {
+func (r V1CreditGetUsageResponseData) RawJSON() string { return r.JSON.raw }
+func (r *V1CreditGetUsageResponseData) UnmarshalJSON(data []byte) error {
 	return apijson.UnmarshalRoot(data, r)
 }
 
 // The custom currency used for credit measurement
-type V1EventCreditGetUsageResponseDataCurrency struct {
+type V1CreditGetUsageResponseDataCurrency struct {
 	// The currency identifier
 	CurrencyID string `json:"currencyId" api:"required"`
 	// The display name of the currency
@@ -218,19 +218,19 @@ type V1EventCreditGetUsageResponseDataCurrency struct {
 }
 
 // Returns the unmodified JSON received from the API
-func (r V1EventCreditGetUsageResponseDataCurrency) RawJSON() string { return r.JSON.raw }
-func (r *V1EventCreditGetUsageResponseDataCurrency) UnmarshalJSON(data []byte) error {
+func (r V1CreditGetUsageResponseDataCurrency) RawJSON() string { return r.JSON.raw }
+func (r *V1CreditGetUsageResponseDataCurrency) UnmarshalJSON(data []byte) error {
 	return apijson.UnmarshalRoot(data, r)
 }
 
 // Credit usage data for a single feature
-type V1EventCreditGetUsageResponseDataSeries struct {
+type V1CreditGetUsageResponseDataSeries struct {
 	// The feature ID
 	FeatureID string `json:"featureId" api:"required"`
 	// The display name of the feature
 	FeatureName string `json:"featureName" api:"required"`
 	// Time-series data points for this feature
-	Points []V1EventCreditGetUsageResponseDataSeriesPoint `json:"points" api:"required"`
+	Points []V1CreditGetUsageResponseDataSeriesPoint `json:"points" api:"required"`
 	// Total credits consumed by this feature in the time range
 	TotalCredits float64 `json:"totalCredits" api:"required"`
 	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
@@ -245,13 +245,13 @@ type V1EventCreditGetUsageResponseDataSeries struct {
 }
 
 // Returns the unmodified JSON received from the API
-func (r V1EventCreditGetUsageResponseDataSeries) RawJSON() string { return r.JSON.raw }
-func (r *V1EventCreditGetUsageResponseDataSeries) UnmarshalJSON(data []byte) error {
+func (r V1CreditGetUsageResponseDataSeries) RawJSON() string { return r.JSON.raw }
+func (r *V1CreditGetUsageResponseDataSeries) UnmarshalJSON(data []byte) error {
 	return apijson.UnmarshalRoot(data, r)
 }
 
 // A single data point in the credit usage time series
-type V1EventCreditGetUsageResponseDataSeriesPoint struct {
+type V1CreditGetUsageResponseDataSeriesPoint struct {
 	// The timestamp of the data point
 	Timestamp time.Time `json:"timestamp" api:"required" format:"date-time"`
 	// The credit usage value at this point
@@ -266,13 +266,13 @@ type V1EventCreditGetUsageResponseDataSeriesPoint struct {
 }
 
 // Returns the unmodified JSON received from the API
-func (r V1EventCreditGetUsageResponseDataSeriesPoint) RawJSON() string { return r.JSON.raw }
-func (r *V1EventCreditGetUsageResponseDataSeriesPoint) UnmarshalJSON(data []byte) error {
+func (r V1CreditGetUsageResponseDataSeriesPoint) RawJSON() string { return r.JSON.raw }
+func (r *V1CreditGetUsageResponseDataSeriesPoint) UnmarshalJSON(data []byte) error {
 	return apijson.UnmarshalRoot(data, r)
 }
 
 // A credit ledger event representing a change to credit balance
-type V1EventCreditListLedgerResponse struct {
+type V1CreditListLedgerResponse struct {
 	// The credit amount for this event
 	Amount float64 `json:"amount" api:"required"`
 	// The credit currency ID
@@ -288,7 +288,7 @@ type V1EventCreditListLedgerResponse struct {
 	// Any of "CREDITS_GRANTED", "CREDITS_EXPIRED", "CREDITS_CONSUMED",
 	// "CREDITS_VOIDED", "CREDITS_UPDATED", "CREDITS_CONSUMPTION_TRANSFER_SOURCE",
 	// "CREDITS_CONSUMPTION_TRANSFER_TARGET".
-	EventType V1EventCreditListLedgerResponseEventType `json:"eventType" api:"required"`
+	EventType V1CreditListLedgerResponseEventType `json:"eventType" api:"required"`
 	// The feature ID associated with this event
 	FeatureID string `json:"featureId" api:"required"`
 	// The resource ID this event is scoped to
@@ -312,25 +312,25 @@ type V1EventCreditListLedgerResponse struct {
 }
 
 // Returns the unmodified JSON received from the API
-func (r V1EventCreditListLedgerResponse) RawJSON() string { return r.JSON.raw }
-func (r *V1EventCreditListLedgerResponse) UnmarshalJSON(data []byte) error {
+func (r V1CreditListLedgerResponse) RawJSON() string { return r.JSON.raw }
+func (r *V1CreditListLedgerResponse) UnmarshalJSON(data []byte) error {
 	return apijson.UnmarshalRoot(data, r)
 }
 
 // The type of credit event
-type V1EventCreditListLedgerResponseEventType string
+type V1CreditListLedgerResponseEventType string
 
 const (
-	V1EventCreditListLedgerResponseEventTypeCreditsGranted                   V1EventCreditListLedgerResponseEventType = "CREDITS_GRANTED"
-	V1EventCreditListLedgerResponseEventTypeCreditsExpired                   V1EventCreditListLedgerResponseEventType = "CREDITS_EXPIRED"
-	V1EventCreditListLedgerResponseEventTypeCreditsConsumed                  V1EventCreditListLedgerResponseEventType = "CREDITS_CONSUMED"
-	V1EventCreditListLedgerResponseEventTypeCreditsVoided                    V1EventCreditListLedgerResponseEventType = "CREDITS_VOIDED"
-	V1EventCreditListLedgerResponseEventTypeCreditsUpdated                   V1EventCreditListLedgerResponseEventType = "CREDITS_UPDATED"
-	V1EventCreditListLedgerResponseEventTypeCreditsConsumptionTransferSource V1EventCreditListLedgerResponseEventType = "CREDITS_CONSUMPTION_TRANSFER_SOURCE"
-	V1EventCreditListLedgerResponseEventTypeCreditsConsumptionTransferTarget V1EventCreditListLedgerResponseEventType = "CREDITS_CONSUMPTION_TRANSFER_TARGET"
+	V1CreditListLedgerResponseEventTypeCreditsGranted                   V1CreditListLedgerResponseEventType = "CREDITS_GRANTED"
+	V1CreditListLedgerResponseEventTypeCreditsExpired                   V1CreditListLedgerResponseEventType = "CREDITS_EXPIRED"
+	V1CreditListLedgerResponseEventTypeCreditsConsumed                  V1CreditListLedgerResponseEventType = "CREDITS_CONSUMED"
+	V1CreditListLedgerResponseEventTypeCreditsVoided                    V1CreditListLedgerResponseEventType = "CREDITS_VOIDED"
+	V1CreditListLedgerResponseEventTypeCreditsUpdated                   V1CreditListLedgerResponseEventType = "CREDITS_UPDATED"
+	V1CreditListLedgerResponseEventTypeCreditsConsumptionTransferSource V1CreditListLedgerResponseEventType = "CREDITS_CONSUMPTION_TRANSFER_SOURCE"
+	V1CreditListLedgerResponseEventTypeCreditsConsumptionTransferTarget V1CreditListLedgerResponseEventType = "CREDITS_CONSUMPTION_TRANSFER_TARGET"
 )
 
-type V1EventCreditGetAutoRechargeParams struct {
+type V1CreditGetAutoRechargeParams struct {
 	// Filter by currency ID (required)
 	CurrencyID string `query:"currencyId" api:"required" json:"-"`
 	// Filter by customer ID (required)
@@ -338,16 +338,16 @@ type V1EventCreditGetAutoRechargeParams struct {
 	paramObj
 }
 
-// URLQuery serializes [V1EventCreditGetAutoRechargeParams]'s query parameters as
+// URLQuery serializes [V1CreditGetAutoRechargeParams]'s query parameters as
 // `url.Values`.
-func (r V1EventCreditGetAutoRechargeParams) URLQuery() (v url.Values, err error) {
+func (r V1CreditGetAutoRechargeParams) URLQuery() (v url.Values, err error) {
 	return apiquery.MarshalWithSettings(r, apiquery.QuerySettings{
 		ArrayFormat:  apiquery.ArrayQueryFormatComma,
 		NestedFormat: apiquery.NestedQueryFormatBrackets,
 	})
 }
 
-type V1EventCreditGetUsageParams struct {
+type V1CreditGetUsageParams struct {
 	// Filter by customer ID (required)
 	CustomerID string `query:"customerId" api:"required" json:"-"`
 	// Filter by currency ID
@@ -364,13 +364,12 @@ type V1EventCreditGetUsageParams struct {
 	// to LAST_MONTH
 	//
 	// Any of "LAST_DAY", "LAST_WEEK", "LAST_MONTH", "LAST_YEAR".
-	TimeRange V1EventCreditGetUsageParamsTimeRange `query:"timeRange,omitzero" json:"-"`
+	TimeRange V1CreditGetUsageParamsTimeRange `query:"timeRange,omitzero" json:"-"`
 	paramObj
 }
 
-// URLQuery serializes [V1EventCreditGetUsageParams]'s query parameters as
-// `url.Values`.
-func (r V1EventCreditGetUsageParams) URLQuery() (v url.Values, err error) {
+// URLQuery serializes [V1CreditGetUsageParams]'s query parameters as `url.Values`.
+func (r V1CreditGetUsageParams) URLQuery() (v url.Values, err error) {
 	return apiquery.MarshalWithSettings(r, apiquery.QuerySettings{
 		ArrayFormat:  apiquery.ArrayQueryFormatComma,
 		NestedFormat: apiquery.NestedQueryFormatBrackets,
@@ -379,16 +378,16 @@ func (r V1EventCreditGetUsageParams) URLQuery() (v url.Values, err error) {
 
 // Time range for usage data (LAST_DAY, LAST_WEEK, LAST_MONTH, LAST_YEAR). Defaults
 // to LAST_MONTH
-type V1EventCreditGetUsageParamsTimeRange string
+type V1CreditGetUsageParamsTimeRange string
 
 const (
-	V1EventCreditGetUsageParamsTimeRangeLastDay   V1EventCreditGetUsageParamsTimeRange = "LAST_DAY"
-	V1EventCreditGetUsageParamsTimeRangeLastWeek  V1EventCreditGetUsageParamsTimeRange = "LAST_WEEK"
-	V1EventCreditGetUsageParamsTimeRangeLastMonth V1EventCreditGetUsageParamsTimeRange = "LAST_MONTH"
-	V1EventCreditGetUsageParamsTimeRangeLastYear  V1EventCreditGetUsageParamsTimeRange = "LAST_YEAR"
+	V1CreditGetUsageParamsTimeRangeLastDay   V1CreditGetUsageParamsTimeRange = "LAST_DAY"
+	V1CreditGetUsageParamsTimeRangeLastWeek  V1CreditGetUsageParamsTimeRange = "LAST_WEEK"
+	V1CreditGetUsageParamsTimeRangeLastMonth V1CreditGetUsageParamsTimeRange = "LAST_MONTH"
+	V1CreditGetUsageParamsTimeRangeLastYear  V1CreditGetUsageParamsTimeRange = "LAST_YEAR"
 )
 
-type V1EventCreditListLedgerParams struct {
+type V1CreditListLedgerParams struct {
 	// Filter by customer ID (required)
 	CustomerID string `query:"customerId" api:"required" json:"-"`
 	// Return items that come after this cursor
@@ -404,9 +403,9 @@ type V1EventCreditListLedgerParams struct {
 	paramObj
 }
 
-// URLQuery serializes [V1EventCreditListLedgerParams]'s query parameters as
+// URLQuery serializes [V1CreditListLedgerParams]'s query parameters as
 // `url.Values`.
-func (r V1EventCreditListLedgerParams) URLQuery() (v url.Values, err error) {
+func (r V1CreditListLedgerParams) URLQuery() (v url.Values, err error) {
 	return apiquery.MarshalWithSettings(r, apiquery.QuerySettings{
 		ArrayFormat:  apiquery.ArrayQueryFormatComma,
 		NestedFormat: apiquery.NestedQueryFormatBrackets,
