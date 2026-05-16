@@ -1,5 +1,13 @@
 # Changelog
 
+## 0.1.0-beta.4 (2026-05-16)
+
+Full Changelog: [v0.1.0-beta.3...v0.1.0-beta.4](https://github.com/stiggio/stigg-go/compare/v0.1.0-beta.3...v0.1.0-beta.4)
+
+### Features
+
+* **api:** fix credits resource ([b70b308](https://github.com/stiggio/stigg-go/commit/b70b308a9a7fcbebdcc5f1c9f77f09552ba8abb7))
+
 ## 0.1.0-beta.3 (2026-05-14)
 
 Full Changelog: [v0.1.0-beta.2...v0.1.0-beta.3](https://github.com/stiggio/stigg-go/compare/v0.1.0-beta.2...v0.1.0-beta.3)
