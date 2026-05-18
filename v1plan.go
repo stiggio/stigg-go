@@ -124,6 +124,60 @@ func (r *V1PlanService) NewDraft(ctx context.Context, id string, opts ...option.
 	return res, err
 }
 
+// Retrieves the list of charges configured on a plan.
+func (r *V1PlanService) ListCharges(ctx context.Context, id string, query V1PlanListChargesParams, opts ...option.RequestOption) (res *pagination.MyCursorIDPage[V1PlanListChargesResponse], err error) {
+	var raw *http.Response
+	opts = slices.Concat(r.Options, opts)
+	opts = append([]option.RequestOption{option.WithResponseInto(&raw)}, opts...)
+	if id == "" {
+		err = errors.New("missing required id parameter")
+		return nil, err
+	}
+	path := fmt.Sprintf("api/v1/plans/%s/charges", id)
+	cfg, err := requestconfig.NewRequestConfig(ctx, http.MethodGet, path, query, &res, opts...)
+	if err != nil {
+		return nil, err
+	}
+	err = cfg.Execute()
+	if err != nil {
+		return nil, err
+	}
+	res.SetPageConfig(cfg, raw)
+	return res, nil
+}
+
+// Retrieves the list of charges configured on a plan.
+func (r *V1PlanService) ListChargesAutoPaging(ctx context.Context, id string, query V1PlanListChargesParams, opts ...option.RequestOption) *pagination.MyCursorIDPageAutoPager[V1PlanListChargesResponse] {
+	return pagination.NewMyCursorIDPageAutoPager(r.ListCharges(ctx, id, query, opts...))
+}
+
+// Retrieves the list of overage charges configured on a plan.
+func (r *V1PlanService) ListOverageCharges(ctx context.Context, id string, query V1PlanListOverageChargesParams, opts ...option.RequestOption) (res *pagination.MyCursorIDPage[V1PlanListOverageChargesResponse], err error) {
+	var raw *http.Response
+	opts = slices.Concat(r.Options, opts)
+	opts = append([]option.RequestOption{option.WithResponseInto(&raw)}, opts...)
+	if id == "" {
+		err = errors.New("missing required id parameter")
+		return nil, err
+	}
+	path := fmt.Sprintf("api/v1/plans/%s/overage-charges", id)
+	cfg, err := requestconfig.NewRequestConfig(ctx, http.MethodGet, path, query, &res, opts...)
+	if err != nil {
+		return nil, err
+	}
+	err = cfg.Execute()
+	if err != nil {
+		return nil, err
+	}
+	res.SetPageConfig(cfg, raw)
+	return res, nil
+}
+
+// Retrieves the list of overage charges configured on a plan.
+func (r *V1PlanService) ListOverageChargesAutoPaging(ctx context.Context, id string, query V1PlanListOverageChargesParams, opts ...option.RequestOption) *pagination.MyCursorIDPageAutoPager[V1PlanListOverageChargesResponse] {
+	return pagination.NewMyCursorIDPageAutoPager(r.ListOverageCharges(ctx, id, query, opts...))
+}
+
 // Publishes a draft plan, making it available for use in subscriptions.
 func (r *V1PlanService) Publish(ctx context.Context, id string, body V1PlanPublishParams, opts ...option.RequestOption) (res *V1PlanPublishResponse, err error) {
 	opts = slices.Concat(r.Options, opts)
@@ -460,6 +514,560 @@ const (
 	V1PlanListResponseStatusDraft     V1PlanListResponseStatus = "DRAFT"
 	V1PlanListResponseStatusPublished V1PlanListResponseStatus = "PUBLISHED"
 	V1PlanListResponseStatusArchived  V1PlanListResponseStatus = "ARCHIVED"
+)
+
+// A single pricing row on a plan or addon. Each charge encodes one (billingPeriod,
+// billingModel, billingCadence, billingCountryCode) combination. Plans and addons
+// own many of these — one per currency / billing period / feature.
+type V1PlanListChargesResponse struct {
+	// Unique identifier of the charge
+	ID string `json:"id" api:"required" format:"uuid"`
+	// The billing cadence (RECURRING or ONE_OFF)
+	//
+	// Any of "RECURRING", "ONE_OFF".
+	BillingCadence V1PlanListChargesResponseBillingCadence `json:"billingCadence" api:"required"`
+	// The billing model (FLAT_FEE, PER_UNIT, USAGE_BASED, CREDIT_BASED, MINIMUM_SPEND)
+	//
+	// Any of "FLAT_FEE", "MINIMUM_SPEND", "PER_UNIT", "USAGE_BASED", "CREDIT_BASED".
+	BillingModel V1PlanListChargesResponseBillingModel `json:"billingModel" api:"required"`
+	// The billing period (MONTHLY or ANNUALLY)
+	//
+	// Any of "MONTHLY", "ANNUALLY".
+	BillingPeriod V1PlanListChargesResponseBillingPeriod `json:"billingPeriod" api:"required"`
+	// Timestamp when the charge was created
+	CreatedAt time.Time `json:"createdAt" api:"required" format:"date-time"`
+	// ISO country code for localized pricing, if any
+	BillingCountryCode string `json:"billingCountryCode" api:"nullable"`
+	// Identifier in the external billing integration (e.g. Stripe price id), if any
+	BillingID string `json:"billingId" api:"nullable"`
+	// Block size for usage-based pricing
+	BlockSize float64 `json:"blockSize" api:"nullable"`
+	// When credits are granted (for credit-based pricing)
+	//
+	// Any of "BEGINNING_OF_BILLING_PERIOD", "MONTHLY".
+	CreditGrantCadence V1PlanListChargesResponseCreditGrantCadence `json:"creditGrantCadence" api:"nullable"`
+	// Credit rate configuration for credit-based pricing
+	CreditRate V1PlanListChargesResponseCreditRate `json:"creditRate" api:"nullable"`
+	// Identifier in the linked CRM, if any
+	CRMID string `json:"crmId" api:"nullable"`
+	// Deep link to the charge in the linked CRM, if any
+	CRMLinkURL string `json:"crmLinkUrl" api:"nullable"`
+	// The feature this charge meters, if metered
+	FeatureID string `json:"featureId" api:"nullable"`
+	// Maximum unit quantity that can be purchased
+	MaxUnitQuantity float64 `json:"maxUnitQuantity" api:"nullable"`
+	// Minimum unit quantity that can be purchased
+	MinUnitQuantity float64 `json:"minUnitQuantity" api:"nullable"`
+	// The flat price amount and currency, when applicable
+	Price V1PlanListChargesResponsePrice `json:"price" api:"nullable"`
+	// Tiered pricing rows when the charge is tiered
+	Tiers []V1PlanListChargesResponseTier `json:"tiers" api:"nullable"`
+	// Tiered pricing mode (VOLUME or GRADUATED) when the charge is tiered
+	//
+	// Any of "VOLUME", "GRADUATED".
+	TiersMode V1PlanListChargesResponseTiersMode `json:"tiersMode" api:"nullable"`
+	// Custom currency identifier for top-up pricing, if any
+	TopUpCustomCurrencyID string `json:"topUpCustomCurrencyId" api:"nullable"`
+	// True if this charge is referenced by at least one subscription
+	UsedInSubscriptions bool `json:"usedInSubscriptions" api:"nullable"`
+	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
+	JSON struct {
+		ID                    respjson.Field
+		BillingCadence        respjson.Field
+		BillingModel          respjson.Field
+		BillingPeriod         respjson.Field
+		CreatedAt             respjson.Field
+		BillingCountryCode    respjson.Field
+		BillingID             respjson.Field
+		BlockSize             respjson.Field
+		CreditGrantCadence    respjson.Field
+		CreditRate            respjson.Field
+		CRMID                 respjson.Field
+		CRMLinkURL            respjson.Field
+		FeatureID             respjson.Field
+		MaxUnitQuantity       respjson.Field
+		MinUnitQuantity       respjson.Field
+		Price                 respjson.Field
+		Tiers                 respjson.Field
+		TiersMode             respjson.Field
+		TopUpCustomCurrencyID respjson.Field
+		UsedInSubscriptions   respjson.Field
+		ExtraFields           map[string]respjson.Field
+		raw                   string
+	} `json:"-"`
+}
+
+// Returns the unmodified JSON received from the API
+func (r V1PlanListChargesResponse) RawJSON() string { return r.JSON.raw }
+func (r *V1PlanListChargesResponse) UnmarshalJSON(data []byte) error {
+	return apijson.UnmarshalRoot(data, r)
+}
+
+// The billing cadence (RECURRING or ONE_OFF)
+type V1PlanListChargesResponseBillingCadence string
+
+const (
+	V1PlanListChargesResponseBillingCadenceRecurring V1PlanListChargesResponseBillingCadence = "RECURRING"
+	V1PlanListChargesResponseBillingCadenceOneOff    V1PlanListChargesResponseBillingCadence = "ONE_OFF"
+)
+
+// The billing model (FLAT_FEE, PER_UNIT, USAGE_BASED, CREDIT_BASED, MINIMUM_SPEND)
+type V1PlanListChargesResponseBillingModel string
+
+const (
+	V1PlanListChargesResponseBillingModelFlatFee      V1PlanListChargesResponseBillingModel = "FLAT_FEE"
+	V1PlanListChargesResponseBillingModelMinimumSpend V1PlanListChargesResponseBillingModel = "MINIMUM_SPEND"
+	V1PlanListChargesResponseBillingModelPerUnit      V1PlanListChargesResponseBillingModel = "PER_UNIT"
+	V1PlanListChargesResponseBillingModelUsageBased   V1PlanListChargesResponseBillingModel = "USAGE_BASED"
+	V1PlanListChargesResponseBillingModelCreditBased  V1PlanListChargesResponseBillingModel = "CREDIT_BASED"
+)
+
+// The billing period (MONTHLY or ANNUALLY)
+type V1PlanListChargesResponseBillingPeriod string
+
+const (
+	V1PlanListChargesResponseBillingPeriodMonthly  V1PlanListChargesResponseBillingPeriod = "MONTHLY"
+	V1PlanListChargesResponseBillingPeriodAnnually V1PlanListChargesResponseBillingPeriod = "ANNUALLY"
+)
+
+// When credits are granted (for credit-based pricing)
+type V1PlanListChargesResponseCreditGrantCadence string
+
+const (
+	V1PlanListChargesResponseCreditGrantCadenceBeginningOfBillingPeriod V1PlanListChargesResponseCreditGrantCadence = "BEGINNING_OF_BILLING_PERIOD"
+	V1PlanListChargesResponseCreditGrantCadenceMonthly                  V1PlanListChargesResponseCreditGrantCadence = "MONTHLY"
+)
+
+// Credit rate configuration for credit-based pricing
+type V1PlanListChargesResponseCreditRate struct {
+	// Credit rate amount
+	Amount float64 `json:"amount" api:"required"`
+	// Custom currency identifier
+	CurrencyID string `json:"currencyId" api:"required"`
+	// Optional cost formula expression
+	CostFormula string `json:"costFormula" api:"nullable"`
+	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
+	JSON struct {
+		Amount      respjson.Field
+		CurrencyID  respjson.Field
+		CostFormula respjson.Field
+		ExtraFields map[string]respjson.Field
+		raw         string
+	} `json:"-"`
+}
+
+// Returns the unmodified JSON received from the API
+func (r V1PlanListChargesResponseCreditRate) RawJSON() string { return r.JSON.raw }
+func (r *V1PlanListChargesResponseCreditRate) UnmarshalJSON(data []byte) error {
+	return apijson.UnmarshalRoot(data, r)
+}
+
+// The flat price amount and currency, when applicable
+type V1PlanListChargesResponsePrice struct {
+	// The price amount
+	Amount float64 `json:"amount" api:"required"`
+	// ISO 4217 currency code
+	//
+	// Any of "usd", "aed", "all", "amd", "ang", "aud", "awg", "azn", "bam", "bbd",
+	// "bdt", "bgn", "bif", "bmd", "bnd", "bsd", "bwp", "byn", "bzd", "brl", "cad",
+	// "cdf", "chf", "cny", "czk", "dkk", "dop", "dzd", "egp", "etb", "eur", "fjd",
+	// "gbp", "gel", "gip", "gmd", "gyd", "hkd", "hrk", "htg", "idr", "ils", "inr",
+	// "isk", "jmd", "jpy", "kes", "kgs", "khr", "kmf", "krw", "kyd", "kzt", "lbp",
+	// "lkr", "lrd", "lsl", "mad", "mdl", "mga", "mkd", "mmk", "mnt", "mop", "mro",
+	// "mvr", "mwk", "mxn", "myr", "mzn", "nad", "ngn", "nok", "npr", "nzd", "pgk",
+	// "php", "pkr", "pln", "qar", "ron", "rsd", "rub", "rwf", "sar", "sbd", "scr",
+	// "sek", "sgd", "sle", "sll", "sos", "szl", "thb", "tjs", "top", "try", "ttd",
+	// "tzs", "uah", "uzs", "vnd", "vuv", "wst", "xaf", "xcd", "yer", "zar", "zmw",
+	// "clp", "djf", "gnf", "ugx", "pyg", "xof", "xpf".
+	Currency string `json:"currency" api:"required"`
+	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
+	JSON struct {
+		Amount      respjson.Field
+		Currency    respjson.Field
+		ExtraFields map[string]respjson.Field
+		raw         string
+	} `json:"-"`
+}
+
+// Returns the unmodified JSON received from the API
+func (r V1PlanListChargesResponsePrice) RawJSON() string { return r.JSON.raw }
+func (r *V1PlanListChargesResponsePrice) UnmarshalJSON(data []byte) error {
+	return apijson.UnmarshalRoot(data, r)
+}
+
+// A single tier within a tiered charge
+type V1PlanListChargesResponseTier struct {
+	// Flat price for this tier
+	FlatPrice V1PlanListChargesResponseTierFlatPrice `json:"flatPrice" api:"nullable"`
+	// Per-unit price in this tier
+	UnitPrice V1PlanListChargesResponseTierUnitPrice `json:"unitPrice" api:"nullable"`
+	// Upper bound of this tier (null for unlimited)
+	UpTo float64 `json:"upTo" api:"nullable"`
+	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
+	JSON struct {
+		FlatPrice   respjson.Field
+		UnitPrice   respjson.Field
+		UpTo        respjson.Field
+		ExtraFields map[string]respjson.Field
+		raw         string
+	} `json:"-"`
+}
+
+// Returns the unmodified JSON received from the API
+func (r V1PlanListChargesResponseTier) RawJSON() string { return r.JSON.raw }
+func (r *V1PlanListChargesResponseTier) UnmarshalJSON(data []byte) error {
+	return apijson.UnmarshalRoot(data, r)
+}
+
+// Flat price for this tier
+type V1PlanListChargesResponseTierFlatPrice struct {
+	// The price amount
+	Amount float64 `json:"amount" api:"required"`
+	// ISO 4217 currency code
+	//
+	// Any of "usd", "aed", "all", "amd", "ang", "aud", "awg", "azn", "bam", "bbd",
+	// "bdt", "bgn", "bif", "bmd", "bnd", "bsd", "bwp", "byn", "bzd", "brl", "cad",
+	// "cdf", "chf", "cny", "czk", "dkk", "dop", "dzd", "egp", "etb", "eur", "fjd",
+	// "gbp", "gel", "gip", "gmd", "gyd", "hkd", "hrk", "htg", "idr", "ils", "inr",
+	// "isk", "jmd", "jpy", "kes", "kgs", "khr", "kmf", "krw", "kyd", "kzt", "lbp",
+	// "lkr", "lrd", "lsl", "mad", "mdl", "mga", "mkd", "mmk", "mnt", "mop", "mro",
+	// "mvr", "mwk", "mxn", "myr", "mzn", "nad", "ngn", "nok", "npr", "nzd", "pgk",
+	// "php", "pkr", "pln", "qar", "ron", "rsd", "rub", "rwf", "sar", "sbd", "scr",
+	// "sek", "sgd", "sle", "sll", "sos", "szl", "thb", "tjs", "top", "try", "ttd",
+	// "tzs", "uah", "uzs", "vnd", "vuv", "wst", "xaf", "xcd", "yer", "zar", "zmw",
+	// "clp", "djf", "gnf", "ugx", "pyg", "xof", "xpf".
+	Currency string `json:"currency" api:"required"`
+	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
+	JSON struct {
+		Amount      respjson.Field
+		Currency    respjson.Field
+		ExtraFields map[string]respjson.Field
+		raw         string
+	} `json:"-"`
+}
+
+// Returns the unmodified JSON received from the API
+func (r V1PlanListChargesResponseTierFlatPrice) RawJSON() string { return r.JSON.raw }
+func (r *V1PlanListChargesResponseTierFlatPrice) UnmarshalJSON(data []byte) error {
+	return apijson.UnmarshalRoot(data, r)
+}
+
+// Per-unit price in this tier
+type V1PlanListChargesResponseTierUnitPrice struct {
+	// The price amount
+	Amount float64 `json:"amount" api:"required"`
+	// ISO 4217 currency code
+	//
+	// Any of "usd", "aed", "all", "amd", "ang", "aud", "awg", "azn", "bam", "bbd",
+	// "bdt", "bgn", "bif", "bmd", "bnd", "bsd", "bwp", "byn", "bzd", "brl", "cad",
+	// "cdf", "chf", "cny", "czk", "dkk", "dop", "dzd", "egp", "etb", "eur", "fjd",
+	// "gbp", "gel", "gip", "gmd", "gyd", "hkd", "hrk", "htg", "idr", "ils", "inr",
+	// "isk", "jmd", "jpy", "kes", "kgs", "khr", "kmf", "krw", "kyd", "kzt", "lbp",
+	// "lkr", "lrd", "lsl", "mad", "mdl", "mga", "mkd", "mmk", "mnt", "mop", "mro",
+	// "mvr", "mwk", "mxn", "myr", "mzn", "nad", "ngn", "nok", "npr", "nzd", "pgk",
+	// "php", "pkr", "pln", "qar", "ron", "rsd", "rub", "rwf", "sar", "sbd", "scr",
+	// "sek", "sgd", "sle", "sll", "sos", "szl", "thb", "tjs", "top", "try", "ttd",
+	// "tzs", "uah", "uzs", "vnd", "vuv", "wst", "xaf", "xcd", "yer", "zar", "zmw",
+	// "clp", "djf", "gnf", "ugx", "pyg", "xof", "xpf".
+	Currency string `json:"currency" api:"required"`
+	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
+	JSON struct {
+		Amount      respjson.Field
+		Currency    respjson.Field
+		ExtraFields map[string]respjson.Field
+		raw         string
+	} `json:"-"`
+}
+
+// Returns the unmodified JSON received from the API
+func (r V1PlanListChargesResponseTierUnitPrice) RawJSON() string { return r.JSON.raw }
+func (r *V1PlanListChargesResponseTierUnitPrice) UnmarshalJSON(data []byte) error {
+	return apijson.UnmarshalRoot(data, r)
+}
+
+// Tiered pricing mode (VOLUME or GRADUATED) when the charge is tiered
+type V1PlanListChargesResponseTiersMode string
+
+const (
+	V1PlanListChargesResponseTiersModeVolume    V1PlanListChargesResponseTiersMode = "VOLUME"
+	V1PlanListChargesResponseTiersModeGraduated V1PlanListChargesResponseTiersMode = "GRADUATED"
+)
+
+// A single pricing row on a plan or addon. Each charge encodes one (billingPeriod,
+// billingModel, billingCadence, billingCountryCode) combination. Plans and addons
+// own many of these — one per currency / billing period / feature.
+type V1PlanListOverageChargesResponse struct {
+	// Unique identifier of the charge
+	ID string `json:"id" api:"required" format:"uuid"`
+	// The billing cadence (RECURRING or ONE_OFF)
+	//
+	// Any of "RECURRING", "ONE_OFF".
+	BillingCadence V1PlanListOverageChargesResponseBillingCadence `json:"billingCadence" api:"required"`
+	// The billing model (FLAT_FEE, PER_UNIT, USAGE_BASED, CREDIT_BASED, MINIMUM_SPEND)
+	//
+	// Any of "FLAT_FEE", "MINIMUM_SPEND", "PER_UNIT", "USAGE_BASED", "CREDIT_BASED".
+	BillingModel V1PlanListOverageChargesResponseBillingModel `json:"billingModel" api:"required"`
+	// The billing period (MONTHLY or ANNUALLY)
+	//
+	// Any of "MONTHLY", "ANNUALLY".
+	BillingPeriod V1PlanListOverageChargesResponseBillingPeriod `json:"billingPeriod" api:"required"`
+	// Timestamp when the charge was created
+	CreatedAt time.Time `json:"createdAt" api:"required" format:"date-time"`
+	// ISO country code for localized pricing, if any
+	BillingCountryCode string `json:"billingCountryCode" api:"nullable"`
+	// Identifier in the external billing integration (e.g. Stripe price id), if any
+	BillingID string `json:"billingId" api:"nullable"`
+	// Block size for usage-based pricing
+	BlockSize float64 `json:"blockSize" api:"nullable"`
+	// When credits are granted (for credit-based pricing)
+	//
+	// Any of "BEGINNING_OF_BILLING_PERIOD", "MONTHLY".
+	CreditGrantCadence V1PlanListOverageChargesResponseCreditGrantCadence `json:"creditGrantCadence" api:"nullable"`
+	// Credit rate configuration for credit-based pricing
+	CreditRate V1PlanListOverageChargesResponseCreditRate `json:"creditRate" api:"nullable"`
+	// Identifier in the linked CRM, if any
+	CRMID string `json:"crmId" api:"nullable"`
+	// Deep link to the charge in the linked CRM, if any
+	CRMLinkURL string `json:"crmLinkUrl" api:"nullable"`
+	// The feature this charge meters, if metered
+	FeatureID string `json:"featureId" api:"nullable"`
+	// Maximum unit quantity that can be purchased
+	MaxUnitQuantity float64 `json:"maxUnitQuantity" api:"nullable"`
+	// Minimum unit quantity that can be purchased
+	MinUnitQuantity float64 `json:"minUnitQuantity" api:"nullable"`
+	// The flat price amount and currency, when applicable
+	Price V1PlanListOverageChargesResponsePrice `json:"price" api:"nullable"`
+	// Tiered pricing rows when the charge is tiered
+	Tiers []V1PlanListOverageChargesResponseTier `json:"tiers" api:"nullable"`
+	// Tiered pricing mode (VOLUME or GRADUATED) when the charge is tiered
+	//
+	// Any of "VOLUME", "GRADUATED".
+	TiersMode V1PlanListOverageChargesResponseTiersMode `json:"tiersMode" api:"nullable"`
+	// Custom currency identifier for top-up pricing, if any
+	TopUpCustomCurrencyID string `json:"topUpCustomCurrencyId" api:"nullable"`
+	// True if this charge is referenced by at least one subscription
+	UsedInSubscriptions bool `json:"usedInSubscriptions" api:"nullable"`
+	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
+	JSON struct {
+		ID                    respjson.Field
+		BillingCadence        respjson.Field
+		BillingModel          respjson.Field
+		BillingPeriod         respjson.Field
+		CreatedAt             respjson.Field
+		BillingCountryCode    respjson.Field
+		BillingID             respjson.Field
+		BlockSize             respjson.Field
+		CreditGrantCadence    respjson.Field
+		CreditRate            respjson.Field
+		CRMID                 respjson.Field
+		CRMLinkURL            respjson.Field
+		FeatureID             respjson.Field
+		MaxUnitQuantity       respjson.Field
+		MinUnitQuantity       respjson.Field
+		Price                 respjson.Field
+		Tiers                 respjson.Field
+		TiersMode             respjson.Field
+		TopUpCustomCurrencyID respjson.Field
+		UsedInSubscriptions   respjson.Field
+		ExtraFields           map[string]respjson.Field
+		raw                   string
+	} `json:"-"`
+}
+
+// Returns the unmodified JSON received from the API
+func (r V1PlanListOverageChargesResponse) RawJSON() string { return r.JSON.raw }
+func (r *V1PlanListOverageChargesResponse) UnmarshalJSON(data []byte) error {
+	return apijson.UnmarshalRoot(data, r)
+}
+
+// The billing cadence (RECURRING or ONE_OFF)
+type V1PlanListOverageChargesResponseBillingCadence string
+
+const (
+	V1PlanListOverageChargesResponseBillingCadenceRecurring V1PlanListOverageChargesResponseBillingCadence = "RECURRING"
+	V1PlanListOverageChargesResponseBillingCadenceOneOff    V1PlanListOverageChargesResponseBillingCadence = "ONE_OFF"
+)
+
+// The billing model (FLAT_FEE, PER_UNIT, USAGE_BASED, CREDIT_BASED, MINIMUM_SPEND)
+type V1PlanListOverageChargesResponseBillingModel string
+
+const (
+	V1PlanListOverageChargesResponseBillingModelFlatFee      V1PlanListOverageChargesResponseBillingModel = "FLAT_FEE"
+	V1PlanListOverageChargesResponseBillingModelMinimumSpend V1PlanListOverageChargesResponseBillingModel = "MINIMUM_SPEND"
+	V1PlanListOverageChargesResponseBillingModelPerUnit      V1PlanListOverageChargesResponseBillingModel = "PER_UNIT"
+	V1PlanListOverageChargesResponseBillingModelUsageBased   V1PlanListOverageChargesResponseBillingModel = "USAGE_BASED"
+	V1PlanListOverageChargesResponseBillingModelCreditBased  V1PlanListOverageChargesResponseBillingModel = "CREDIT_BASED"
+)
+
+// The billing period (MONTHLY or ANNUALLY)
+type V1PlanListOverageChargesResponseBillingPeriod string
+
+const (
+	V1PlanListOverageChargesResponseBillingPeriodMonthly  V1PlanListOverageChargesResponseBillingPeriod = "MONTHLY"
+	V1PlanListOverageChargesResponseBillingPeriodAnnually V1PlanListOverageChargesResponseBillingPeriod = "ANNUALLY"
+)
+
+// When credits are granted (for credit-based pricing)
+type V1PlanListOverageChargesResponseCreditGrantCadence string
+
+const (
+	V1PlanListOverageChargesResponseCreditGrantCadenceBeginningOfBillingPeriod V1PlanListOverageChargesResponseCreditGrantCadence = "BEGINNING_OF_BILLING_PERIOD"
+	V1PlanListOverageChargesResponseCreditGrantCadenceMonthly                  V1PlanListOverageChargesResponseCreditGrantCadence = "MONTHLY"
+)
+
+// Credit rate configuration for credit-based pricing
+type V1PlanListOverageChargesResponseCreditRate struct {
+	// Credit rate amount
+	Amount float64 `json:"amount" api:"required"`
+	// Custom currency identifier
+	CurrencyID string `json:"currencyId" api:"required"`
+	// Optional cost formula expression
+	CostFormula string `json:"costFormula" api:"nullable"`
+	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
+	JSON struct {
+		Amount      respjson.Field
+		CurrencyID  respjson.Field
+		CostFormula respjson.Field
+		ExtraFields map[string]respjson.Field
+		raw         string
+	} `json:"-"`
+}
+
+// Returns the unmodified JSON received from the API
+func (r V1PlanListOverageChargesResponseCreditRate) RawJSON() string { return r.JSON.raw }
+func (r *V1PlanListOverageChargesResponseCreditRate) UnmarshalJSON(data []byte) error {
+	return apijson.UnmarshalRoot(data, r)
+}
+
+// The flat price amount and currency, when applicable
+type V1PlanListOverageChargesResponsePrice struct {
+	// The price amount
+	Amount float64 `json:"amount" api:"required"`
+	// ISO 4217 currency code
+	//
+	// Any of "usd", "aed", "all", "amd", "ang", "aud", "awg", "azn", "bam", "bbd",
+	// "bdt", "bgn", "bif", "bmd", "bnd", "bsd", "bwp", "byn", "bzd", "brl", "cad",
+	// "cdf", "chf", "cny", "czk", "dkk", "dop", "dzd", "egp", "etb", "eur", "fjd",
+	// "gbp", "gel", "gip", "gmd", "gyd", "hkd", "hrk", "htg", "idr", "ils", "inr",
+	// "isk", "jmd", "jpy", "kes", "kgs", "khr", "kmf", "krw", "kyd", "kzt", "lbp",
+	// "lkr", "lrd", "lsl", "mad", "mdl", "mga", "mkd", "mmk", "mnt", "mop", "mro",
+	// "mvr", "mwk", "mxn", "myr", "mzn", "nad", "ngn", "nok", "npr", "nzd", "pgk",
+	// "php", "pkr", "pln", "qar", "ron", "rsd", "rub", "rwf", "sar", "sbd", "scr",
+	// "sek", "sgd", "sle", "sll", "sos", "szl", "thb", "tjs", "top", "try", "ttd",
+	// "tzs", "uah", "uzs", "vnd", "vuv", "wst", "xaf", "xcd", "yer", "zar", "zmw",
+	// "clp", "djf", "gnf", "ugx", "pyg", "xof", "xpf".
+	Currency string `json:"currency" api:"required"`
+	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
+	JSON struct {
+		Amount      respjson.Field
+		Currency    respjson.Field
+		ExtraFields map[string]respjson.Field
+		raw         string
+	} `json:"-"`
+}
+
+// Returns the unmodified JSON received from the API
+func (r V1PlanListOverageChargesResponsePrice) RawJSON() string { return r.JSON.raw }
+func (r *V1PlanListOverageChargesResponsePrice) UnmarshalJSON(data []byte) error {
+	return apijson.UnmarshalRoot(data, r)
+}
+
+// A single tier within a tiered charge
+type V1PlanListOverageChargesResponseTier struct {
+	// Flat price for this tier
+	FlatPrice V1PlanListOverageChargesResponseTierFlatPrice `json:"flatPrice" api:"nullable"`
+	// Per-unit price in this tier
+	UnitPrice V1PlanListOverageChargesResponseTierUnitPrice `json:"unitPrice" api:"nullable"`
+	// Upper bound of this tier (null for unlimited)
+	UpTo float64 `json:"upTo" api:"nullable"`
+	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
+	JSON struct {
+		FlatPrice   respjson.Field
+		UnitPrice   respjson.Field
+		UpTo        respjson.Field
+		ExtraFields map[string]respjson.Field
+		raw         string
+	} `json:"-"`
+}
+
+// Returns the unmodified JSON received from the API
+func (r V1PlanListOverageChargesResponseTier) RawJSON() string { return r.JSON.raw }
+func (r *V1PlanListOverageChargesResponseTier) UnmarshalJSON(data []byte) error {
+	return apijson.UnmarshalRoot(data, r)
+}
+
+// Flat price for this tier
+type V1PlanListOverageChargesResponseTierFlatPrice struct {
+	// The price amount
+	Amount float64 `json:"amount" api:"required"`
+	// ISO 4217 currency code
+	//
+	// Any of "usd", "aed", "all", "amd", "ang", "aud", "awg", "azn", "bam", "bbd",
+	// "bdt", "bgn", "bif", "bmd", "bnd", "bsd", "bwp", "byn", "bzd", "brl", "cad",
+	// "cdf", "chf", "cny", "czk", "dkk", "dop", "dzd", "egp", "etb", "eur", "fjd",
+	// "gbp", "gel", "gip", "gmd", "gyd", "hkd", "hrk", "htg", "idr", "ils", "inr",
+	// "isk", "jmd", "jpy", "kes", "kgs", "khr", "kmf", "krw", "kyd", "kzt", "lbp",
+	// "lkr", "lrd", "lsl", "mad", "mdl", "mga", "mkd", "mmk", "mnt", "mop", "mro",
+	// "mvr", "mwk", "mxn", "myr", "mzn", "nad", "ngn", "nok", "npr", "nzd", "pgk",
+	// "php", "pkr", "pln", "qar", "ron", "rsd", "rub", "rwf", "sar", "sbd", "scr",
+	// "sek", "sgd", "sle", "sll", "sos", "szl", "thb", "tjs", "top", "try", "ttd",
+	// "tzs", "uah", "uzs", "vnd", "vuv", "wst", "xaf", "xcd", "yer", "zar", "zmw",
+	// "clp", "djf", "gnf", "ugx", "pyg", "xof", "xpf".
+	Currency string `json:"currency" api:"required"`
+	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
+	JSON struct {
+		Amount      respjson.Field
+		Currency    respjson.Field
+		ExtraFields map[string]respjson.Field
+		raw         string
+	} `json:"-"`
+}
+
+// Returns the unmodified JSON received from the API
+func (r V1PlanListOverageChargesResponseTierFlatPrice) RawJSON() string { return r.JSON.raw }
+func (r *V1PlanListOverageChargesResponseTierFlatPrice) UnmarshalJSON(data []byte) error {
+	return apijson.UnmarshalRoot(data, r)
+}
+
+// Per-unit price in this tier
+type V1PlanListOverageChargesResponseTierUnitPrice struct {
+	// The price amount
+	Amount float64 `json:"amount" api:"required"`
+	// ISO 4217 currency code
+	//
+	// Any of "usd", "aed", "all", "amd", "ang", "aud", "awg", "azn", "bam", "bbd",
+	// "bdt", "bgn", "bif", "bmd", "bnd", "bsd", "bwp", "byn", "bzd", "brl", "cad",
+	// "cdf", "chf", "cny", "czk", "dkk", "dop", "dzd", "egp", "etb", "eur", "fjd",
+	// "gbp", "gel", "gip", "gmd", "gyd", "hkd", "hrk", "htg", "idr", "ils", "inr",
+	// "isk", "jmd", "jpy", "kes", "kgs", "khr", "kmf", "krw", "kyd", "kzt", "lbp",
+	// "lkr", "lrd", "lsl", "mad", "mdl", "mga", "mkd", "mmk", "mnt", "mop", "mro",
+	// "mvr", "mwk", "mxn", "myr", "mzn", "nad", "ngn", "nok", "npr", "nzd", "pgk",
+	// "php", "pkr", "pln", "qar", "ron", "rsd", "rub", "rwf", "sar", "sbd", "scr",
+	// "sek", "sgd", "sle", "sll", "sos", "szl", "thb", "tjs", "top", "try", "ttd",
+	// "tzs", "uah", "uzs", "vnd", "vuv", "wst", "xaf", "xcd", "yer", "zar", "zmw",
+	// "clp", "djf", "gnf", "ugx", "pyg", "xof", "xpf".
+	Currency string `json:"currency" api:"required"`
+	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
+	JSON struct {
+		Amount      respjson.Field
+		Currency    respjson.Field
+		ExtraFields map[string]respjson.Field
+		raw         string
+	} `json:"-"`
+}
+
+// Returns the unmodified JSON received from the API
+func (r V1PlanListOverageChargesResponseTierUnitPrice) RawJSON() string { return r.JSON.raw }
+func (r *V1PlanListOverageChargesResponseTierUnitPrice) UnmarshalJSON(data []byte) error {
+	return apijson.UnmarshalRoot(data, r)
+}
+
+// Tiered pricing mode (VOLUME or GRADUATED) when the charge is tiered
+type V1PlanListOverageChargesResponseTiersMode string
+
+const (
+	V1PlanListOverageChargesResponseTiersModeVolume    V1PlanListOverageChargesResponseTiersMode = "VOLUME"
+	V1PlanListOverageChargesResponseTiersModeGraduated V1PlanListOverageChargesResponseTiersMode = "GRADUATED"
 )
 
 // Response containing task ID for publish operation
@@ -1546,6 +2154,44 @@ type V1PlanListParamsCreatedAt struct {
 // URLQuery serializes [V1PlanListParamsCreatedAt]'s query parameters as
 // `url.Values`.
 func (r V1PlanListParamsCreatedAt) URLQuery() (v url.Values, err error) {
+	return apiquery.MarshalWithSettings(r, apiquery.QuerySettings{
+		ArrayFormat:  apiquery.ArrayQueryFormatComma,
+		NestedFormat: apiquery.NestedQueryFormatBrackets,
+	})
+}
+
+type V1PlanListChargesParams struct {
+	// Return items that come after this cursor
+	After param.Opt[string] `query:"after,omitzero" format:"uuid" json:"-"`
+	// Return items that come before this cursor
+	Before param.Opt[string] `query:"before,omitzero" format:"uuid" json:"-"`
+	// Maximum number of items to return
+	Limit param.Opt[int64] `query:"limit,omitzero" json:"-"`
+	paramObj
+}
+
+// URLQuery serializes [V1PlanListChargesParams]'s query parameters as
+// `url.Values`.
+func (r V1PlanListChargesParams) URLQuery() (v url.Values, err error) {
+	return apiquery.MarshalWithSettings(r, apiquery.QuerySettings{
+		ArrayFormat:  apiquery.ArrayQueryFormatComma,
+		NestedFormat: apiquery.NestedQueryFormatBrackets,
+	})
+}
+
+type V1PlanListOverageChargesParams struct {
+	// Return items that come after this cursor
+	After param.Opt[string] `query:"after,omitzero" format:"uuid" json:"-"`
+	// Return items that come before this cursor
+	Before param.Opt[string] `query:"before,omitzero" format:"uuid" json:"-"`
+	// Maximum number of items to return
+	Limit param.Opt[int64] `query:"limit,omitzero" json:"-"`
+	paramObj
+}
+
+// URLQuery serializes [V1PlanListOverageChargesParams]'s query parameters as
+// `url.Values`.
+func (r V1PlanListOverageChargesParams) URLQuery() (v url.Values, err error) {
 	return apiquery.MarshalWithSettings(r, apiquery.QuerySettings{
 		ArrayFormat:  apiquery.ArrayQueryFormatComma,
 		NestedFormat: apiquery.NestedQueryFormatBrackets,
