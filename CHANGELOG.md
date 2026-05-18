@@ -1,5 +1,13 @@
 # Changelog
 
+## 0.1.0-beta.5 (2026-05-18)
+
+Full Changelog: [v0.1.0-beta.4...v0.1.0-beta.5](https://github.com/stiggio/stigg-go/compare/v0.1.0-beta.4...v0.1.0-beta.5)
+
+### Features
+
+* **api:** add ListCharges to addons/plans, ListOverageCharges to plans ([f18374e](https://github.com/stiggio/stigg-go/commit/f18374e75693a09122e014eb32a5865b16d02450))
+
 ## 0.1.0-beta.4 (2026-05-16)
 
 Full Changelog: [v0.1.0-beta.3...v0.1.0-beta.4](https://github.com/stiggio/stigg-go/compare/v0.1.0-beta.3...v0.1.0-beta.4)
