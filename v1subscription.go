@@ -3421,7 +3421,8 @@ func (r *V1SubscriptionImportParamsSubscriptionAddon) UnmarshalJSON(data []byte)
 	return apijson.UnmarshalRoot(data, r)
 }
 
-// Charge item
+// A charge selection for a subscription (references a catalog charge with a
+// quantity).
 //
 // The properties ID, Quantity, Type are required.
 type V1SubscriptionImportParamsSubscriptionCharge struct {
@@ -3755,7 +3756,8 @@ const (
 	V1SubscriptionPreviewParamsBillingPeriodAnnually V1SubscriptionPreviewParamsBillingPeriod = "ANNUALLY"
 )
 
-// Charge item
+// A charge selection for a subscription (references a catalog charge with a
+// quantity).
 //
 // The properties ID, Quantity, Type are required.
 type V1SubscriptionPreviewParamsCharge struct {
@@ -4116,7 +4118,8 @@ func (r *V1SubscriptionProvisionParamsBudget) UnmarshalJSON(data []byte) error {
 	return apijson.UnmarshalRoot(data, r)
 }
 
-// Charge item
+// A charge selection for a subscription (references a catalog charge with a
+// quantity).
 //
 // The properties ID, Quantity, Type are required.
 type V1SubscriptionProvisionParamsCharge struct {
