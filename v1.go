@@ -19,8 +19,7 @@ type V1Service struct {
 	// Operations related to coupons
 	Coupons V1CouponService
 	// Operations related to usage & metering
-	Events  V1EventService
-	Credits V1CreditService
+	Events V1EventService
 	// Operations related to features
 	Features V1FeatureService
 	// Operations related to addons
@@ -43,7 +42,6 @@ func NewV1Service(opts ...option.RequestOption) (r V1Service) {
 	r.Subscriptions = NewV1SubscriptionService(opts...)
 	r.Coupons = NewV1CouponService(opts...)
 	r.Events = NewV1EventService(opts...)
-	r.Credits = NewV1CreditService(opts...)
 	r.Features = NewV1FeatureService(opts...)
 	r.Addons = NewV1AddonService(opts...)
 	r.Plans = NewV1PlanService(opts...)

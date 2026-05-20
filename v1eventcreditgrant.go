@@ -22,28 +22,28 @@ import (
 
 // Operations related to credit grants
 //
-// V1CreditGrantService contains methods and other services that help with
+// V1EventCreditGrantService contains methods and other services that help with
 // interacting with the stigg API.
 //
 // Note, unlike clients, this service does not read variables from the environment
 // automatically. You should not instantiate this service directly, and instead use
-// the [NewV1CreditGrantService] method instead.
-type V1CreditGrantService struct {
+// the [NewV1EventCreditGrantService] method instead.
+type V1EventCreditGrantService struct {
 	Options []option.RequestOption
 }
 
-// NewV1CreditGrantService generates a new service that applies the given options
-// to each request. These options are applied after the parent client's options (if
-// there is one), and before any request-specific options.
-func NewV1CreditGrantService(opts ...option.RequestOption) (r V1CreditGrantService) {
-	r = V1CreditGrantService{}
+// NewV1EventCreditGrantService generates a new service that applies the given
+// options to each request. These options are applied after the parent client's
+// options (if there is one), and before any request-specific options.
+func NewV1EventCreditGrantService(opts ...option.RequestOption) (r V1EventCreditGrantService) {
+	r = V1EventCreditGrantService{}
 	r.Options = opts
 	return
 }
 
 // Creates a new credit grant for a customer with specified amount, type, and
 // optional billing configuration.
-func (r *V1CreditGrantService) New(ctx context.Context, body V1CreditGrantNewParams, opts ...option.RequestOption) (res *CreditGrantResponse, err error) {
+func (r *V1EventCreditGrantService) New(ctx context.Context, body V1EventCreditGrantNewParams, opts ...option.RequestOption) (res *CreditGrantResponse, err error) {
 	opts = slices.Concat(r.Options, opts)
 	path := "api/v1/credits/grants"
 	err = requestconfig.ExecuteNewRequest(ctx, http.MethodPost, path, body, &res, opts...)
@@ -51,7 +51,7 @@ func (r *V1CreditGrantService) New(ctx context.Context, body V1CreditGrantNewPar
 }
 
 // Retrieves a paginated list of credit grants for a customer.
-func (r *V1CreditGrantService) List(ctx context.Context, query V1CreditGrantListParams, opts ...option.RequestOption) (res *pagination.MyCursorIDPage[V1CreditGrantListResponse], err error) {
+func (r *V1EventCreditGrantService) List(ctx context.Context, query V1EventCreditGrantListParams, opts ...option.RequestOption) (res *pagination.MyCursorIDPage[V1EventCreditGrantListResponse], err error) {
 	var raw *http.Response
 	opts = slices.Concat(r.Options, opts)
 	opts = append([]option.RequestOption{option.WithResponseInto(&raw)}, opts...)
@@ -69,13 +69,13 @@ func (r *V1CreditGrantService) List(ctx context.Context, query V1CreditGrantList
 }
 
 // Retrieves a paginated list of credit grants for a customer.
-func (r *V1CreditGrantService) ListAutoPaging(ctx context.Context, query V1CreditGrantListParams, opts ...option.RequestOption) *pagination.MyCursorIDPageAutoPager[V1CreditGrantListResponse] {
+func (r *V1EventCreditGrantService) ListAutoPaging(ctx context.Context, query V1EventCreditGrantListParams, opts ...option.RequestOption) *pagination.MyCursorIDPageAutoPager[V1EventCreditGrantListResponse] {
 	return pagination.NewMyCursorIDPageAutoPager(r.List(ctx, query, opts...))
 }
 
 // Voids an existing credit grant, preventing further consumption of the remaining
 // credits.
-func (r *V1CreditGrantService) Void(ctx context.Context, id string, opts ...option.RequestOption) (res *CreditGrantResponse, err error) {
+func (r *V1EventCreditGrantService) Void(ctx context.Context, id string, opts ...option.RequestOption) (res *CreditGrantResponse, err error) {
 	opts = slices.Concat(r.Options, opts)
 	if id == "" {
 		err = errors.New("missing required id parameter")
@@ -276,7 +276,7 @@ func (r *CreditGrantResponseDataLatestInvoice) UnmarshalJSON(data []byte) error 
 }
 
 // Credit grant object representing allocated credits for a customer
-type V1CreditGrantListResponse struct {
+type V1EventCreditGrantListResponse struct {
 	// The unique readable identifier of the credit grant
 	ID string `json:"id" api:"required"`
 	// The total credits granted
@@ -286,7 +286,7 @@ type V1CreditGrantListResponse struct {
 	// The total credits consumed from this grant
 	ConsumedAmount float64 `json:"consumedAmount" api:"required"`
 	// The monetary cost of the credit grant
-	Cost V1CreditGrantListResponseCost `json:"cost" api:"required"`
+	Cost V1EventCreditGrantListResponseCost `json:"cost" api:"required"`
 	// Timestamp of when the record was created
 	CreatedAt time.Time `json:"createdAt" api:"required" format:"date-time"`
 	// The currency identifier for this grant
@@ -302,17 +302,17 @@ type V1CreditGrantListResponse struct {
 	// The type of credit grant (PAID, PROMOTIONAL, RECURRING)
 	//
 	// Any of "PAID", "PROMOTIONAL", "RECURRING", "OVERDRAFT".
-	GrantType V1CreditGrantListResponseGrantType `json:"grantType" api:"required"`
+	GrantType V1EventCreditGrantListResponseGrantType `json:"grantType" api:"required"`
 	// The billing invoice ID associated with this grant
 	InvoiceID string `json:"invoiceId" api:"required"`
 	// The latest invoice details for this grant
-	LatestInvoice V1CreditGrantListResponseLatestInvoice `json:"latestInvoice" api:"required"`
+	LatestInvoice V1EventCreditGrantListResponseLatestInvoice `json:"latestInvoice" api:"required"`
 	// Metadata associated with the entity
 	Metadata map[string]string `json:"metadata" api:"required"`
 	// The payment collection status
 	//
 	// Any of "NOT_REQUIRED", "PROCESSING", "FAILED", "ACTION_REQUIRED".
-	PaymentCollection V1CreditGrantListResponsePaymentCollection `json:"paymentCollection" api:"required"`
+	PaymentCollection V1EventCreditGrantListResponsePaymentCollection `json:"paymentCollection" api:"required"`
 	// The priority of the credit grant (lower number = higher priority)
 	Priority float64 `json:"priority" api:"required"`
 	// The resource ID this grant is scoped to
@@ -320,11 +320,11 @@ type V1CreditGrantListResponse struct {
 	// The source type of the grant (PRICE, PLAN_ENTITLEMENT, ADDON_ENTITLEMENT)
 	//
 	// Any of "PRICE", "PLAN_ENTITLEMENT", "ADDON_ENTITLEMENT".
-	SourceType V1CreditGrantListResponseSourceType `json:"sourceType" api:"required"`
+	SourceType V1EventCreditGrantListResponseSourceType `json:"sourceType" api:"required"`
 	// The effective status of the credit grant
 	//
 	// Any of "PAYMENT_PENDING", "ACTIVE", "EXPIRED", "VOIDED", "SCHEDULED".
-	Status V1CreditGrantListResponseStatus `json:"status" api:"required"`
+	Status V1EventCreditGrantListResponseStatus `json:"status" api:"required"`
 	// Timestamp of when the record was last updated
 	UpdatedAt time.Time `json:"updatedAt" api:"required" format:"date-time"`
 	// The date when the credit grant was voided
@@ -359,13 +359,13 @@ type V1CreditGrantListResponse struct {
 }
 
 // Returns the unmodified JSON received from the API
-func (r V1CreditGrantListResponse) RawJSON() string { return r.JSON.raw }
-func (r *V1CreditGrantListResponse) UnmarshalJSON(data []byte) error {
+func (r V1EventCreditGrantListResponse) RawJSON() string { return r.JSON.raw }
+func (r *V1EventCreditGrantListResponse) UnmarshalJSON(data []byte) error {
 	return apijson.UnmarshalRoot(data, r)
 }
 
 // The monetary cost of the credit grant
-type V1CreditGrantListResponseCost struct {
+type V1EventCreditGrantListResponseCost struct {
 	// The cost amount
 	Amount float64 `json:"amount" api:"required"`
 	// The currency code
@@ -380,23 +380,23 @@ type V1CreditGrantListResponseCost struct {
 }
 
 // Returns the unmodified JSON received from the API
-func (r V1CreditGrantListResponseCost) RawJSON() string { return r.JSON.raw }
-func (r *V1CreditGrantListResponseCost) UnmarshalJSON(data []byte) error {
+func (r V1EventCreditGrantListResponseCost) RawJSON() string { return r.JSON.raw }
+func (r *V1EventCreditGrantListResponseCost) UnmarshalJSON(data []byte) error {
 	return apijson.UnmarshalRoot(data, r)
 }
 
 // The type of credit grant (PAID, PROMOTIONAL, RECURRING)
-type V1CreditGrantListResponseGrantType string
+type V1EventCreditGrantListResponseGrantType string
 
 const (
-	V1CreditGrantListResponseGrantTypePaid        V1CreditGrantListResponseGrantType = "PAID"
-	V1CreditGrantListResponseGrantTypePromotional V1CreditGrantListResponseGrantType = "PROMOTIONAL"
-	V1CreditGrantListResponseGrantTypeRecurring   V1CreditGrantListResponseGrantType = "RECURRING"
-	V1CreditGrantListResponseGrantTypeOverdraft   V1CreditGrantListResponseGrantType = "OVERDRAFT"
+	V1EventCreditGrantListResponseGrantTypePaid        V1EventCreditGrantListResponseGrantType = "PAID"
+	V1EventCreditGrantListResponseGrantTypePromotional V1EventCreditGrantListResponseGrantType = "PROMOTIONAL"
+	V1EventCreditGrantListResponseGrantTypeRecurring   V1EventCreditGrantListResponseGrantType = "RECURRING"
+	V1EventCreditGrantListResponseGrantTypeOverdraft   V1EventCreditGrantListResponseGrantType = "OVERDRAFT"
 )
 
 // The latest invoice details for this grant
-type V1CreditGrantListResponseLatestInvoice struct {
+type V1EventCreditGrantListResponseLatestInvoice struct {
 	// The billing provider invoice ID
 	BillingID string `json:"billingId" api:"required"`
 	// The billing reason for the invoice
@@ -451,42 +451,42 @@ type V1CreditGrantListResponseLatestInvoice struct {
 }
 
 // Returns the unmodified JSON received from the API
-func (r V1CreditGrantListResponseLatestInvoice) RawJSON() string { return r.JSON.raw }
-func (r *V1CreditGrantListResponseLatestInvoice) UnmarshalJSON(data []byte) error {
+func (r V1EventCreditGrantListResponseLatestInvoice) RawJSON() string { return r.JSON.raw }
+func (r *V1EventCreditGrantListResponseLatestInvoice) UnmarshalJSON(data []byte) error {
 	return apijson.UnmarshalRoot(data, r)
 }
 
 // The payment collection status
-type V1CreditGrantListResponsePaymentCollection string
+type V1EventCreditGrantListResponsePaymentCollection string
 
 const (
-	V1CreditGrantListResponsePaymentCollectionNotRequired    V1CreditGrantListResponsePaymentCollection = "NOT_REQUIRED"
-	V1CreditGrantListResponsePaymentCollectionProcessing     V1CreditGrantListResponsePaymentCollection = "PROCESSING"
-	V1CreditGrantListResponsePaymentCollectionFailed         V1CreditGrantListResponsePaymentCollection = "FAILED"
-	V1CreditGrantListResponsePaymentCollectionActionRequired V1CreditGrantListResponsePaymentCollection = "ACTION_REQUIRED"
+	V1EventCreditGrantListResponsePaymentCollectionNotRequired    V1EventCreditGrantListResponsePaymentCollection = "NOT_REQUIRED"
+	V1EventCreditGrantListResponsePaymentCollectionProcessing     V1EventCreditGrantListResponsePaymentCollection = "PROCESSING"
+	V1EventCreditGrantListResponsePaymentCollectionFailed         V1EventCreditGrantListResponsePaymentCollection = "FAILED"
+	V1EventCreditGrantListResponsePaymentCollectionActionRequired V1EventCreditGrantListResponsePaymentCollection = "ACTION_REQUIRED"
 )
 
 // The source type of the grant (PRICE, PLAN_ENTITLEMENT, ADDON_ENTITLEMENT)
-type V1CreditGrantListResponseSourceType string
+type V1EventCreditGrantListResponseSourceType string
 
 const (
-	V1CreditGrantListResponseSourceTypePrice            V1CreditGrantListResponseSourceType = "PRICE"
-	V1CreditGrantListResponseSourceTypePlanEntitlement  V1CreditGrantListResponseSourceType = "PLAN_ENTITLEMENT"
-	V1CreditGrantListResponseSourceTypeAddonEntitlement V1CreditGrantListResponseSourceType = "ADDON_ENTITLEMENT"
+	V1EventCreditGrantListResponseSourceTypePrice            V1EventCreditGrantListResponseSourceType = "PRICE"
+	V1EventCreditGrantListResponseSourceTypePlanEntitlement  V1EventCreditGrantListResponseSourceType = "PLAN_ENTITLEMENT"
+	V1EventCreditGrantListResponseSourceTypeAddonEntitlement V1EventCreditGrantListResponseSourceType = "ADDON_ENTITLEMENT"
 )
 
 // The effective status of the credit grant
-type V1CreditGrantListResponseStatus string
+type V1EventCreditGrantListResponseStatus string
 
 const (
-	V1CreditGrantListResponseStatusPaymentPending V1CreditGrantListResponseStatus = "PAYMENT_PENDING"
-	V1CreditGrantListResponseStatusActive         V1CreditGrantListResponseStatus = "ACTIVE"
-	V1CreditGrantListResponseStatusExpired        V1CreditGrantListResponseStatus = "EXPIRED"
-	V1CreditGrantListResponseStatusVoided         V1CreditGrantListResponseStatus = "VOIDED"
-	V1CreditGrantListResponseStatusScheduled      V1CreditGrantListResponseStatus = "SCHEDULED"
+	V1EventCreditGrantListResponseStatusPaymentPending V1EventCreditGrantListResponseStatus = "PAYMENT_PENDING"
+	V1EventCreditGrantListResponseStatusActive         V1EventCreditGrantListResponseStatus = "ACTIVE"
+	V1EventCreditGrantListResponseStatusExpired        V1EventCreditGrantListResponseStatus = "EXPIRED"
+	V1EventCreditGrantListResponseStatusVoided         V1EventCreditGrantListResponseStatus = "VOIDED"
+	V1EventCreditGrantListResponseStatusScheduled      V1EventCreditGrantListResponseStatus = "SCHEDULED"
 )
 
-type V1CreditGrantNewParams struct {
+type V1EventCreditGrantNewParams struct {
 	// The credit amount to grant
 	Amount float64 `json:"amount" api:"required"`
 	// The credit currency ID (required)
@@ -498,7 +498,7 @@ type V1CreditGrantNewParams struct {
 	// The type of credit grant (PAID, PROMOTIONAL)
 	//
 	// Any of "PAID", "PROMOTIONAL".
-	GrantType V1CreditGrantNewParamsGrantType `json:"grantType,omitzero" api:"required"`
+	GrantType V1EventCreditGrantNewParamsGrantType `json:"grantType,omitzero" api:"required"`
 	// Whether to wait for payment confirmation before returning (default: true)
 	AwaitPaymentConfirmation param.Opt[bool] `json:"awaitPaymentConfirmation,omitzero"`
 	// An optional comment on the credit grant
@@ -512,55 +512,55 @@ type V1CreditGrantNewParams struct {
 	// The resource ID to scope the grant to
 	ResourceID param.Opt[string] `json:"resourceId,omitzero"`
 	// Billing information for the credit grant
-	BillingInformation V1CreditGrantNewParamsBillingInformation `json:"billingInformation,omitzero"`
+	BillingInformation V1EventCreditGrantNewParamsBillingInformation `json:"billingInformation,omitzero"`
 	// The monetary cost of the credit grant
-	Cost V1CreditGrantNewParamsCost `json:"cost,omitzero"`
+	Cost V1EventCreditGrantNewParamsCost `json:"cost,omitzero"`
 	// Additional metadata for the credit grant
 	Metadata map[string]string `json:"metadata,omitzero"`
 	// The payment collection method (CHARGE, INVOICE, NONE)
 	//
 	// Any of "CHARGE", "INVOICE", "NONE".
-	PaymentCollectionMethod V1CreditGrantNewParamsPaymentCollectionMethod `json:"paymentCollectionMethod,omitzero"`
+	PaymentCollectionMethod V1EventCreditGrantNewParamsPaymentCollectionMethod `json:"paymentCollectionMethod,omitzero"`
 	paramObj
 }
 
-func (r V1CreditGrantNewParams) MarshalJSON() (data []byte, err error) {
-	type shadow V1CreditGrantNewParams
+func (r V1EventCreditGrantNewParams) MarshalJSON() (data []byte, err error) {
+	type shadow V1EventCreditGrantNewParams
 	return param.MarshalObject(r, (*shadow)(&r))
 }
-func (r *V1CreditGrantNewParams) UnmarshalJSON(data []byte) error {
+func (r *V1EventCreditGrantNewParams) UnmarshalJSON(data []byte) error {
 	return apijson.UnmarshalRoot(data, r)
 }
 
 // The type of credit grant (PAID, PROMOTIONAL)
-type V1CreditGrantNewParamsGrantType string
+type V1EventCreditGrantNewParamsGrantType string
 
 const (
-	V1CreditGrantNewParamsGrantTypePaid        V1CreditGrantNewParamsGrantType = "PAID"
-	V1CreditGrantNewParamsGrantTypePromotional V1CreditGrantNewParamsGrantType = "PROMOTIONAL"
+	V1EventCreditGrantNewParamsGrantTypePaid        V1EventCreditGrantNewParamsGrantType = "PAID"
+	V1EventCreditGrantNewParamsGrantTypePromotional V1EventCreditGrantNewParamsGrantType = "PROMOTIONAL"
 )
 
 // Billing information for the credit grant
-type V1CreditGrantNewParamsBillingInformation struct {
+type V1EventCreditGrantNewParamsBillingInformation struct {
 	// Days until the invoice is due
 	InvoiceDaysUntilDue param.Opt[float64] `json:"invoiceDaysUntilDue,omitzero"`
 	// Whether the invoice is already paid
 	IsInvoicePaid param.Opt[bool] `json:"isInvoicePaid,omitzero"`
 	// The billing address
-	BillingAddress V1CreditGrantNewParamsBillingInformationBillingAddress `json:"billingAddress,omitzero"`
+	BillingAddress V1EventCreditGrantNewParamsBillingInformationBillingAddress `json:"billingAddress,omitzero"`
 	paramObj
 }
 
-func (r V1CreditGrantNewParamsBillingInformation) MarshalJSON() (data []byte, err error) {
-	type shadow V1CreditGrantNewParamsBillingInformation
+func (r V1EventCreditGrantNewParamsBillingInformation) MarshalJSON() (data []byte, err error) {
+	type shadow V1EventCreditGrantNewParamsBillingInformation
 	return param.MarshalObject(r, (*shadow)(&r))
 }
-func (r *V1CreditGrantNewParamsBillingInformation) UnmarshalJSON(data []byte) error {
+func (r *V1EventCreditGrantNewParamsBillingInformation) UnmarshalJSON(data []byte) error {
 	return apijson.UnmarshalRoot(data, r)
 }
 
 // The billing address
-type V1CreditGrantNewParamsBillingInformationBillingAddress struct {
+type V1EventCreditGrantNewParamsBillingInformationBillingAddress struct {
 	// City name
 	City param.Opt[string] `json:"city,omitzero"`
 	// Country code or name
@@ -576,18 +576,18 @@ type V1CreditGrantNewParamsBillingInformationBillingAddress struct {
 	paramObj
 }
 
-func (r V1CreditGrantNewParamsBillingInformationBillingAddress) MarshalJSON() (data []byte, err error) {
-	type shadow V1CreditGrantNewParamsBillingInformationBillingAddress
+func (r V1EventCreditGrantNewParamsBillingInformationBillingAddress) MarshalJSON() (data []byte, err error) {
+	type shadow V1EventCreditGrantNewParamsBillingInformationBillingAddress
 	return param.MarshalObject(r, (*shadow)(&r))
 }
-func (r *V1CreditGrantNewParamsBillingInformationBillingAddress) UnmarshalJSON(data []byte) error {
+func (r *V1EventCreditGrantNewParamsBillingInformationBillingAddress) UnmarshalJSON(data []byte) error {
 	return apijson.UnmarshalRoot(data, r)
 }
 
 // The monetary cost of the credit grant
 //
 // The properties Amount, Currency are required.
-type V1CreditGrantNewParamsCost struct {
+type V1EventCreditGrantNewParamsCost struct {
 	// The price amount
 	Amount float64 `json:"amount" api:"required"`
 	// ISO 4217 currency code
@@ -607,30 +607,30 @@ type V1CreditGrantNewParamsCost struct {
 	paramObj
 }
 
-func (r V1CreditGrantNewParamsCost) MarshalJSON() (data []byte, err error) {
-	type shadow V1CreditGrantNewParamsCost
+func (r V1EventCreditGrantNewParamsCost) MarshalJSON() (data []byte, err error) {
+	type shadow V1EventCreditGrantNewParamsCost
 	return param.MarshalObject(r, (*shadow)(&r))
 }
-func (r *V1CreditGrantNewParamsCost) UnmarshalJSON(data []byte) error {
+func (r *V1EventCreditGrantNewParamsCost) UnmarshalJSON(data []byte) error {
 	return apijson.UnmarshalRoot(data, r)
 }
 
 func init() {
-	apijson.RegisterFieldValidator[V1CreditGrantNewParamsCost](
+	apijson.RegisterFieldValidator[V1EventCreditGrantNewParamsCost](
 		"currency", "usd", "aed", "all", "amd", "ang", "aud", "awg", "azn", "bam", "bbd", "bdt", "bgn", "bif", "bmd", "bnd", "bsd", "bwp", "byn", "bzd", "brl", "cad", "cdf", "chf", "cny", "czk", "dkk", "dop", "dzd", "egp", "etb", "eur", "fjd", "gbp", "gel", "gip", "gmd", "gyd", "hkd", "hrk", "htg", "idr", "ils", "inr", "isk", "jmd", "jpy", "kes", "kgs", "khr", "kmf", "krw", "kyd", "kzt", "lbp", "lkr", "lrd", "lsl", "mad", "mdl", "mga", "mkd", "mmk", "mnt", "mop", "mro", "mvr", "mwk", "mxn", "myr", "mzn", "nad", "ngn", "nok", "npr", "nzd", "pgk", "php", "pkr", "pln", "qar", "ron", "rsd", "rub", "rwf", "sar", "sbd", "scr", "sek", "sgd", "sle", "sll", "sos", "szl", "thb", "tjs", "top", "try", "ttd", "tzs", "uah", "uzs", "vnd", "vuv", "wst", "xaf", "xcd", "yer", "zar", "zmw", "clp", "djf", "gnf", "ugx", "pyg", "xof", "xpf",
 	)
 }
 
 // The payment collection method (CHARGE, INVOICE, NONE)
-type V1CreditGrantNewParamsPaymentCollectionMethod string
+type V1EventCreditGrantNewParamsPaymentCollectionMethod string
 
 const (
-	V1CreditGrantNewParamsPaymentCollectionMethodCharge  V1CreditGrantNewParamsPaymentCollectionMethod = "CHARGE"
-	V1CreditGrantNewParamsPaymentCollectionMethodInvoice V1CreditGrantNewParamsPaymentCollectionMethod = "INVOICE"
-	V1CreditGrantNewParamsPaymentCollectionMethodNone    V1CreditGrantNewParamsPaymentCollectionMethod = "NONE"
+	V1EventCreditGrantNewParamsPaymentCollectionMethodCharge  V1EventCreditGrantNewParamsPaymentCollectionMethod = "CHARGE"
+	V1EventCreditGrantNewParamsPaymentCollectionMethodInvoice V1EventCreditGrantNewParamsPaymentCollectionMethod = "INVOICE"
+	V1EventCreditGrantNewParamsPaymentCollectionMethodNone    V1EventCreditGrantNewParamsPaymentCollectionMethod = "NONE"
 )
 
-type V1CreditGrantListParams struct {
+type V1EventCreditGrantListParams struct {
 	// Filter by customer ID (required)
 	CustomerID string `query:"customerId" api:"required" json:"-"`
 	// Return items that come after this cursor
@@ -644,13 +644,13 @@ type V1CreditGrantListParams struct {
 	// Filter by resource ID. When omitted, only grants without a resource are returned
 	ResourceID param.Opt[string] `query:"resourceId,omitzero" json:"-"`
 	// Filter by creation date using range operators: gt, gte, lt, lte
-	CreatedAt V1CreditGrantListParamsCreatedAt `query:"createdAt,omitzero" json:"-"`
+	CreatedAt V1EventCreditGrantListParamsCreatedAt `query:"createdAt,omitzero" json:"-"`
 	paramObj
 }
 
-// URLQuery serializes [V1CreditGrantListParams]'s query parameters as
+// URLQuery serializes [V1EventCreditGrantListParams]'s query parameters as
 // `url.Values`.
-func (r V1CreditGrantListParams) URLQuery() (v url.Values, err error) {
+func (r V1EventCreditGrantListParams) URLQuery() (v url.Values, err error) {
 	return apiquery.MarshalWithSettings(r, apiquery.QuerySettings{
 		ArrayFormat:  apiquery.ArrayQueryFormatComma,
 		NestedFormat: apiquery.NestedQueryFormatBrackets,
@@ -658,7 +658,7 @@ func (r V1CreditGrantListParams) URLQuery() (v url.Values, err error) {
 }
 
 // Filter by creation date using range operators: gt, gte, lt, lte
-type V1CreditGrantListParamsCreatedAt struct {
+type V1EventCreditGrantListParamsCreatedAt struct {
 	// Greater than the specified createdAt value
 	Gt param.Opt[time.Time] `query:"gt,omitzero" format:"date-time" json:"-"`
 	// Greater than or equal to the specified createdAt value
@@ -670,9 +670,9 @@ type V1CreditGrantListParamsCreatedAt struct {
 	paramObj
 }
 
-// URLQuery serializes [V1CreditGrantListParamsCreatedAt]'s query parameters as
-// `url.Values`.
-func (r V1CreditGrantListParamsCreatedAt) URLQuery() (v url.Values, err error) {
+// URLQuery serializes [V1EventCreditGrantListParamsCreatedAt]'s query parameters
+// as `url.Values`.
+func (r V1EventCreditGrantListParamsCreatedAt) URLQuery() (v url.Values, err error) {
 	return apiquery.MarshalWithSettings(r, apiquery.QuerySettings{
 		ArrayFormat:  apiquery.ArrayQueryFormatComma,
 		NestedFormat: apiquery.NestedQueryFormatBrackets,
