@@ -13,7 +13,7 @@ import (
 	"github.com/stiggio/stigg-go/option"
 )
 
-func TestV1EventCreditCustomCurrencyNewWithOptionalParams(t *testing.T) {
+func TestV1CreditCustomCurrencyNewWithOptionalParams(t *testing.T) {
 	t.Skip("Mock server tests are disabled")
 	baseURL := "http://localhost:4010"
 	if envURL, ok := os.LookupEnv("TEST_API_BASE_URL"); ok {
@@ -26,7 +26,7 @@ func TestV1EventCreditCustomCurrencyNewWithOptionalParams(t *testing.T) {
 		option.WithBaseURL(baseURL),
 		option.WithAPIKey("My API Key"),
 	)
-	_, err := client.V1.Events.Credits.CustomCurrencies.New(context.TODO(), stigg.V1EventCreditCustomCurrencyNewParams{
+	_, err := client.V1.Credits.CustomCurrencies.New(context.TODO(), stigg.V1CreditCustomCurrencyNewParams{
 		ID:          "id",
 		DisplayName: "displayName",
 		Description: stigg.String("description"),
@@ -34,7 +34,7 @@ func TestV1EventCreditCustomCurrencyNewWithOptionalParams(t *testing.T) {
 			"foo": "string",
 		},
 		Symbol: stigg.String("symbol"),
-		Units: stigg.V1EventCreditCustomCurrencyNewParamsUnits{
+		Units: stigg.V1CreditCustomCurrencyNewParamsUnits{
 			Plural:   "plural",
 			Singular: "singular",
 		},
@@ -48,7 +48,7 @@ func TestV1EventCreditCustomCurrencyNewWithOptionalParams(t *testing.T) {
 	}
 }
 
-func TestV1EventCreditCustomCurrencyUpdateWithOptionalParams(t *testing.T) {
+func TestV1CreditCustomCurrencyUpdateWithOptionalParams(t *testing.T) {
 	t.Skip("Mock server tests are disabled")
 	baseURL := "http://localhost:4010"
 	if envURL, ok := os.LookupEnv("TEST_API_BASE_URL"); ok {
@@ -61,17 +61,17 @@ func TestV1EventCreditCustomCurrencyUpdateWithOptionalParams(t *testing.T) {
 		option.WithBaseURL(baseURL),
 		option.WithAPIKey("My API Key"),
 	)
-	_, err := client.V1.Events.Credits.CustomCurrencies.Update(
+	_, err := client.V1.Credits.CustomCurrencies.Update(
 		context.TODO(),
 		"currencyId",
-		stigg.V1EventCreditCustomCurrencyUpdateParams{
+		stigg.V1CreditCustomCurrencyUpdateParams{
 			Description: stigg.String("description"),
 			DisplayName: stigg.String("displayName"),
 			Metadata: map[string]string{
 				"foo": "string",
 			},
 			Symbol: stigg.String("symbol"),
-			Units: stigg.V1EventCreditCustomCurrencyUpdateParamsUnits{
+			Units: stigg.V1CreditCustomCurrencyUpdateParamsUnits{
 				Plural:   "plural",
 				Singular: "singular",
 			},
@@ -86,7 +86,7 @@ func TestV1EventCreditCustomCurrencyUpdateWithOptionalParams(t *testing.T) {
 	}
 }
 
-func TestV1EventCreditCustomCurrencyListWithOptionalParams(t *testing.T) {
+func TestV1CreditCustomCurrencyListWithOptionalParams(t *testing.T) {
 	t.Skip("Mock server tests are disabled")
 	baseURL := "http://localhost:4010"
 	if envURL, ok := os.LookupEnv("TEST_API_BASE_URL"); ok {
@@ -99,7 +99,7 @@ func TestV1EventCreditCustomCurrencyListWithOptionalParams(t *testing.T) {
 		option.WithBaseURL(baseURL),
 		option.WithAPIKey("My API Key"),
 	)
-	_, err := client.V1.Events.Credits.CustomCurrencies.List(context.TODO(), stigg.V1EventCreditCustomCurrencyListParams{
+	_, err := client.V1.Credits.CustomCurrencies.List(context.TODO(), stigg.V1CreditCustomCurrencyListParams{
 		After:  stigg.String("182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e"),
 		Before: stigg.String("182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e"),
 		Limit:  stigg.Int(1),
@@ -114,7 +114,7 @@ func TestV1EventCreditCustomCurrencyListWithOptionalParams(t *testing.T) {
 	}
 }
 
-func TestV1EventCreditCustomCurrencyArchive(t *testing.T) {
+func TestV1CreditCustomCurrencyArchive(t *testing.T) {
 	t.Skip("Mock server tests are disabled")
 	baseURL := "http://localhost:4010"
 	if envURL, ok := os.LookupEnv("TEST_API_BASE_URL"); ok {
@@ -127,7 +127,7 @@ func TestV1EventCreditCustomCurrencyArchive(t *testing.T) {
 		option.WithBaseURL(baseURL),
 		option.WithAPIKey("My API Key"),
 	)
-	_, err := client.V1.Events.Credits.CustomCurrencies.Archive(context.TODO(), "currencyId")
+	_, err := client.V1.Credits.CustomCurrencies.Archive(context.TODO(), "currencyId")
 	if err != nil {
 		var apierr *stigg.Error
 		if errors.As(err, &apierr) {
@@ -137,7 +137,7 @@ func TestV1EventCreditCustomCurrencyArchive(t *testing.T) {
 	}
 }
 
-func TestV1EventCreditCustomCurrencyListAssociatedEntities(t *testing.T) {
+func TestV1CreditCustomCurrencyListAssociatedEntities(t *testing.T) {
 	t.Skip("Mock server tests are disabled")
 	baseURL := "http://localhost:4010"
 	if envURL, ok := os.LookupEnv("TEST_API_BASE_URL"); ok {
@@ -150,7 +150,7 @@ func TestV1EventCreditCustomCurrencyListAssociatedEntities(t *testing.T) {
 		option.WithBaseURL(baseURL),
 		option.WithAPIKey("My API Key"),
 	)
-	_, err := client.V1.Events.Credits.CustomCurrencies.ListAssociatedEntities(context.TODO(), "currencyId")
+	_, err := client.V1.Credits.CustomCurrencies.ListAssociatedEntities(context.TODO(), "currencyId")
 	if err != nil {
 		var apierr *stigg.Error
 		if errors.As(err, &apierr) {
@@ -160,7 +160,7 @@ func TestV1EventCreditCustomCurrencyListAssociatedEntities(t *testing.T) {
 	}
 }
 
-func TestV1EventCreditCustomCurrencyUnarchive(t *testing.T) {
+func TestV1CreditCustomCurrencyUnarchive(t *testing.T) {
 	t.Skip("Mock server tests are disabled")
 	baseURL := "http://localhost:4010"
 	if envURL, ok := os.LookupEnv("TEST_API_BASE_URL"); ok {
@@ -173,7 +173,7 @@ func TestV1EventCreditCustomCurrencyUnarchive(t *testing.T) {
 		option.WithBaseURL(baseURL),
 		option.WithAPIKey("My API Key"),
 	)
-	_, err := client.V1.Events.Credits.CustomCurrencies.Unarchive(context.TODO(), "currencyId")
+	_, err := client.V1.Credits.CustomCurrencies.Unarchive(context.TODO(), "currencyId")
 	if err != nil {
 		var apierr *stigg.Error
 		if errors.As(err, &apierr) {
