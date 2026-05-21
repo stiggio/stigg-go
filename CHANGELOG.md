@@ -1,5 +1,19 @@
 # Changelog
 
+## 0.1.0-beta.6 (2026-05-21)
+
+Full Changelog: [v0.1.0-beta.5...v0.1.0-beta.6](https://github.com/stiggio/stigg-go/compare/v0.1.0-beta.5...v0.1.0-beta.6)
+
+### Features
+
+* **api:** add check method to beta customers entitlements ([0cd5ab9](https://github.com/stiggio/stigg-go/commit/0cd5ab9ef1edff778f5cde51693e6e2e32d3c355))
+
+
+### Chores
+
+* **internal:** regenerate SDK with no functional changes ([bba0fb1](https://github.com/stiggio/stigg-go/commit/bba0fb12aed51842c8659798f402a96072007630))
+* **internal:** regenerate SDK with no functional changes ([c89ee75](https://github.com/stiggio/stigg-go/commit/c89ee755bd48473bd31919fb3488584c6051d4ea))
+
 ## 0.1.0-beta.5 (2026-05-18)
 
 Full Changelog: [v0.1.0-beta.4...v0.1.0-beta.5](https://github.com/stiggio/stigg-go/compare/v0.1.0-beta.4...v0.1.0-beta.5)
