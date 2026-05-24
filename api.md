@@ -141,20 +141,6 @@ Methods:
 
 - <code title="post /api/v1/events">client.V1.Events.<a href="https://pkg.go.dev/github.com/stiggio/stigg-go#V1EventService.Report">Report</a>(ctx <a href="https://pkg.go.dev/context">context</a>.<a href="https://pkg.go.dev/context#Context">Context</a>, body <a href="https://pkg.go.dev/github.com/stiggio/stigg-go">stigg</a>.<a href="https://pkg.go.dev/github.com/stiggio/stigg-go#V1EventReportParams">V1EventReportParams</a>) (\*<a href="https://pkg.go.dev/github.com/stiggio/stigg-go">stigg</a>.<a href="https://pkg.go.dev/github.com/stiggio/stigg-go#V1EventReportResponse">V1EventReportResponse</a>, <a href="https://pkg.go.dev/builtin#error">error</a>)</code>
 
-### Beta
-
-#### Customers
-
-##### Entitlements
-
-Response Types:
-
-- <a href="https://pkg.go.dev/github.com/stiggio/stigg-go">stigg</a>.<a href="https://pkg.go.dev/github.com/stiggio/stigg-go#V1EventBetaCustomerEntitlementCheckResponse">V1EventBetaCustomerEntitlementCheckResponse</a>
-
-Methods:
-
-- <code title="get /api/v1-beta/customers/{id}/entitlements/check">client.V1.Events.Beta.Customers.Entitlements.<a href="https://pkg.go.dev/github.com/stiggio/stigg-go#V1EventBetaCustomerEntitlementService.Check">Check</a>(ctx <a href="https://pkg.go.dev/context">context</a>.<a href="https://pkg.go.dev/context#Context">Context</a>, id <a href="https://pkg.go.dev/builtin#string">string</a>, query <a href="https://pkg.go.dev/github.com/stiggio/stigg-go">stigg</a>.<a href="https://pkg.go.dev/github.com/stiggio/stigg-go#V1EventBetaCustomerEntitlementCheckParams">V1EventBetaCustomerEntitlementCheckParams</a>) (\*<a href="https://pkg.go.dev/github.com/stiggio/stigg-go">stigg</a>.<a href="https://pkg.go.dev/github.com/stiggio/stigg-go#V1EventBetaCustomerEntitlementCheckResponse">V1EventBetaCustomerEntitlementCheckResponse</a>, <a href="https://pkg.go.dev/builtin#error">error</a>)</code>
-
 ## Credits
 
 Response Types:
@@ -318,3 +304,29 @@ Methods:
 - <code title="get /api/v1/products">client.V1.Products.<a href="https://pkg.go.dev/github.com/stiggio/stigg-go#V1ProductService.ListProducts">ListProducts</a>(ctx <a href="https://pkg.go.dev/context">context</a>.<a href="https://pkg.go.dev/context#Context">Context</a>, query <a href="https://pkg.go.dev/github.com/stiggio/stigg-go">stigg</a>.<a href="https://pkg.go.dev/github.com/stiggio/stigg-go#V1ProductListProductsParams">V1ProductListProductsParams</a>) (\*<a href="https://pkg.go.dev/github.com/stiggio/stigg-go/packages/pagination">pagination</a>.<a href="https://pkg.go.dev/github.com/stiggio/stigg-go/packages/pagination#MyCursorIDPage">MyCursorIDPage</a>[<a href="https://pkg.go.dev/github.com/stiggio/stigg-go">stigg</a>.<a href="https://pkg.go.dev/github.com/stiggio/stigg-go#V1ProductListProductsResponse">V1ProductListProductsResponse</a>], <a href="https://pkg.go.dev/builtin#error">error</a>)</code>
 - <code title="post /api/v1/products/{id}/unarchive">client.V1.Products.<a href="https://pkg.go.dev/github.com/stiggio/stigg-go#V1ProductService.UnarchiveProduct">UnarchiveProduct</a>(ctx <a href="https://pkg.go.dev/context">context</a>.<a href="https://pkg.go.dev/context#Context">Context</a>, id <a href="https://pkg.go.dev/builtin#string">string</a>) (\*<a href="https://pkg.go.dev/github.com/stiggio/stigg-go">stigg</a>.<a href="https://pkg.go.dev/github.com/stiggio/stigg-go#Product">Product</a>, <a href="https://pkg.go.dev/builtin#error">error</a>)</code>
 - <code title="patch /api/v1/products/{id}">client.V1.Products.<a href="https://pkg.go.dev/github.com/stiggio/stigg-go#V1ProductService.UpdateProduct">UpdateProduct</a>(ctx <a href="https://pkg.go.dev/context">context</a>.<a href="https://pkg.go.dev/context#Context">Context</a>, id <a href="https://pkg.go.dev/builtin#string">string</a>, body <a href="https://pkg.go.dev/github.com/stiggio/stigg-go">stigg</a>.<a href="https://pkg.go.dev/github.com/stiggio/stigg-go#V1ProductUpdateProductParams">V1ProductUpdateProductParams</a>) (\*<a href="https://pkg.go.dev/github.com/stiggio/stigg-go">stigg</a>.<a href="https://pkg.go.dev/github.com/stiggio/stigg-go#Product">Product</a>, <a href="https://pkg.go.dev/builtin#error">error</a>)</code>
+
+# V1Beta
+
+## Customers
+
+### Entitlements
+
+Response Types:
+
+- <a href="https://pkg.go.dev/github.com/stiggio/stigg-go">stigg</a>.<a href="https://pkg.go.dev/github.com/stiggio/stigg-go#V1BetaCustomerEntitlementCheckResponse">V1BetaCustomerEntitlementCheckResponse</a>
+
+Methods:
+
+- <code title="get /api/v1-beta/customers/{id}/entitlements/check">client.V1Beta.Customers.Entitlements.<a href="https://pkg.go.dev/github.com/stiggio/stigg-go#V1BetaCustomerEntitlementService.Check">Check</a>(ctx <a href="https://pkg.go.dev/context">context</a>.<a href="https://pkg.go.dev/context#Context">Context</a>, id <a href="https://pkg.go.dev/builtin#string">string</a>, query <a href="https://pkg.go.dev/github.com/stiggio/stigg-go">stigg</a>.<a href="https://pkg.go.dev/github.com/stiggio/stigg-go#V1BetaCustomerEntitlementCheckParams">V1BetaCustomerEntitlementCheckParams</a>) (\*<a href="https://pkg.go.dev/github.com/stiggio/stigg-go">stigg</a>.<a href="https://pkg.go.dev/github.com/stiggio/stigg-go#V1BetaCustomerEntitlementCheckResponse">V1BetaCustomerEntitlementCheckResponse</a>, <a href="https://pkg.go.dev/builtin#error">error</a>)</code>
+
+## EntityTypes
+
+Response Types:
+
+- <a href="https://pkg.go.dev/github.com/stiggio/stigg-go">stigg</a>.<a href="https://pkg.go.dev/github.com/stiggio/stigg-go#V1BetaEntityTypeListResponse">V1BetaEntityTypeListResponse</a>
+- <a href="https://pkg.go.dev/github.com/stiggio/stigg-go">stigg</a>.<a href="https://pkg.go.dev/github.com/stiggio/stigg-go#V1BetaEntityTypeUpsertResponse">V1BetaEntityTypeUpsertResponse</a>
+
+Methods:
+
+- <code title="get /api/v1-beta/entity-types">client.V1Beta.EntityTypes.<a href="https://pkg.go.dev/github.com/stiggio/stigg-go#V1BetaEntityTypeService.List">List</a>(ctx <a href="https://pkg.go.dev/context">context</a>.<a href="https://pkg.go.dev/context#Context">Context</a>, query <a href="https://pkg.go.dev/github.com/stiggio/stigg-go">stigg</a>.<a href="https://pkg.go.dev/github.com/stiggio/stigg-go#V1BetaEntityTypeListParams">V1BetaEntityTypeListParams</a>) (\*<a href="https://pkg.go.dev/github.com/stiggio/stigg-go/packages/pagination">pagination</a>.<a href="https://pkg.go.dev/github.com/stiggio/stigg-go/packages/pagination#MyCursorIDPage">MyCursorIDPage</a>[<a href="https://pkg.go.dev/github.com/stiggio/stigg-go">stigg</a>.<a href="https://pkg.go.dev/github.com/stiggio/stigg-go#V1BetaEntityTypeListResponse">V1BetaEntityTypeListResponse</a>], <a href="https://pkg.go.dev/builtin#error">error</a>)</code>
+- <code title="put /api/v1-beta/entity-types">client.V1Beta.EntityTypes.<a href="https://pkg.go.dev/github.com/stiggio/stigg-go#V1BetaEntityTypeService.Upsert">Upsert</a>(ctx <a href="https://pkg.go.dev/context">context</a>.<a href="https://pkg.go.dev/context#Context">Context</a>, body <a href="https://pkg.go.dev/github.com/stiggio/stigg-go">stigg</a>.<a href="https://pkg.go.dev/github.com/stiggio/stigg-go#V1BetaEntityTypeUpsertParams">V1BetaEntityTypeUpsertParams</a>) (\*<a href="https://pkg.go.dev/github.com/stiggio/stigg-go">stigg</a>.<a href="https://pkg.go.dev/github.com/stiggio/stigg-go#V1BetaEntityTypeUpsertResponse">V1BetaEntityTypeUpsertResponse</a>, <a href="https://pkg.go.dev/builtin#error">error</a>)</code>
