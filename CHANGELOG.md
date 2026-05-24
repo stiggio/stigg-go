@@ -1,5 +1,13 @@
 # Changelog
 
+## 0.1.0-beta.7 (2026-05-24)
+
+Full Changelog: [v0.1.0-beta.6...v0.1.0-beta.7](https://github.com/stiggio/stigg-go/compare/v0.1.0-beta.6...v0.1.0-beta.7)
+
+### Features
+
+* **api:** add entity types list/upsert endpoints to v1-beta events ([0bc78aa](https://github.com/stiggio/stigg-go/commit/0bc78aab22b29efa6de0bfa8f824b43a4407daf8))
+
 ## 0.1.0-beta.6 (2026-05-21)
 
 Full Changelog: [v0.1.0-beta.5...v0.1.0-beta.6](https://github.com/stiggio/stigg-go/compare/v0.1.0-beta.5...v0.1.0-beta.6)
