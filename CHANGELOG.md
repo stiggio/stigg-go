@@ -1,5 +1,13 @@
 # Changelog
 
+## 0.1.0-beta.8 (2026-05-25)
+
+Full Changelog: [v0.1.0-beta.7...v0.1.0-beta.8](https://github.com/stiggio/stigg-go/compare/v0.1.0-beta.7...v0.1.0-beta.8)
+
+### Features
+
+* **api:** add get/list/archive/unarchive/upsert methods to customer entities ([6bfdbb7](https://github.com/stiggio/stigg-go/commit/6bfdbb7d53ea75e9d4ddf588b32f2e14048d3529))
+
 ## 0.1.0-beta.7 (2026-05-24)
 
 Full Changelog: [v0.1.0-beta.6...v0.1.0-beta.7](https://github.com/stiggio/stigg-go/compare/v0.1.0-beta.6...v0.1.0-beta.7)
