@@ -13,6 +13,7 @@ import (
 
 	"github.com/stiggio/stigg-go/internal/apijson"
 	"github.com/stiggio/stigg-go/internal/apiquery"
+	shimjson "github.com/stiggio/stigg-go/internal/encoding/json"
 	"github.com/stiggio/stigg-go/internal/requestconfig"
 	"github.com/stiggio/stigg-go/option"
 	"github.com/stiggio/stigg-go/packages/pagination"
@@ -83,7 +84,7 @@ func (r *V1BetaCustomerEntityService) ListAutoPaging(ctx context.Context, id str
 }
 
 // Archives entities in bulk for the given customer by id.
-func (r *V1BetaCustomerEntityService) Archive(ctx context.Context, id string, body V1BetaCustomerEntityArchiveParams, opts ...option.RequestOption) (res *V1BetaCustomerEntityArchiveResponse, err error) {
+func (r *V1BetaCustomerEntityService) Archive(ctx context.Context, id string, body V1BetaCustomerEntityArchiveParams, opts ...option.RequestOption) (res *EntityIDsActionResponseDto, err error) {
 	opts = slices.Concat(r.Options, opts)
 	if id == "" {
 		err = errors.New("missing required id parameter")
@@ -95,7 +96,7 @@ func (r *V1BetaCustomerEntityService) Archive(ctx context.Context, id string, bo
 }
 
 // Restores previously archived entities in bulk for the given customer by id.
-func (r *V1BetaCustomerEntityService) Unarchive(ctx context.Context, id string, body V1BetaCustomerEntityUnarchiveParams, opts ...option.RequestOption) (res *V1BetaCustomerEntityUnarchiveResponse, err error) {
+func (r *V1BetaCustomerEntityService) Unarchive(ctx context.Context, id string, body V1BetaCustomerEntityUnarchiveParams, opts ...option.RequestOption) (res *EntityIDsActionResponseDto, err error) {
 	opts = slices.Concat(r.Options, opts)
 	if id == "" {
 		err = errors.New("missing required id parameter")
@@ -117,6 +118,59 @@ func (r *V1BetaCustomerEntityService) Upsert(ctx context.Context, id string, bod
 	path := fmt.Sprintf("api/v1-beta/customers/%s/entities", id)
 	err = requestconfig.ExecuteNewRequest(ctx, http.MethodPut, path, body, &res, opts...)
 	return res, err
+}
+
+// Wrapped response echoing the ids that were acted on by an archive/unarchive call
+type EntityIDsActionResponseDto struct {
+	// List of entity identifiers that were acted on
+	Data EntityIDsActionResponseDtoData `json:"data" api:"required"`
+	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
+	JSON struct {
+		Data        respjson.Field
+		ExtraFields map[string]respjson.Field
+		raw         string
+	} `json:"-"`
+}
+
+// Returns the unmodified JSON received from the API
+func (r EntityIDsActionResponseDto) RawJSON() string { return r.JSON.raw }
+func (r *EntityIDsActionResponseDto) UnmarshalJSON(data []byte) error {
+	return apijson.UnmarshalRoot(data, r)
+}
+
+// List of entity identifiers that were acted on
+type EntityIDsActionResponseDtoData struct {
+	// Entity identifiers to act on
+	IDs []string `json:"ids" api:"required"`
+	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
+	JSON struct {
+		IDs         respjson.Field
+		ExtraFields map[string]respjson.Field
+		raw         string
+	} `json:"-"`
+}
+
+// Returns the unmodified JSON received from the API
+func (r EntityIDsActionResponseDtoData) RawJSON() string { return r.JSON.raw }
+func (r *EntityIDsActionResponseDtoData) UnmarshalJSON(data []byte) error {
+	return apijson.UnmarshalRoot(data, r)
+}
+
+// List of entity identifiers to act on in bulk (1-100 entries)
+//
+// The property IDs is required.
+type EntityIDsRequestDtoParam struct {
+	// Entity identifiers to act on
+	IDs []string `json:"ids,omitzero" api:"required"`
+	paramObj
+}
+
+func (r EntityIDsRequestDtoParam) MarshalJSON() (data []byte, err error) {
+	type shadow EntityIDsRequestDtoParam
+	return param.MarshalObject(r, (*shadow)(&r))
+}
+func (r *EntityIDsRequestDtoParam) UnmarshalJSON(data []byte) error {
+	return apijson.UnmarshalRoot(data, r)
 }
 
 // Response object
@@ -200,78 +254,6 @@ type V1BetaCustomerEntityListResponse struct {
 // Returns the unmodified JSON received from the API
 func (r V1BetaCustomerEntityListResponse) RawJSON() string { return r.JSON.raw }
 func (r *V1BetaCustomerEntityListResponse) UnmarshalJSON(data []byte) error {
-	return apijson.UnmarshalRoot(data, r)
-}
-
-// Wrapped response echoing the ids that were acted on by an archive/unarchive call
-type V1BetaCustomerEntityArchiveResponse struct {
-	// List of entity identifiers that were acted on
-	Data V1BetaCustomerEntityArchiveResponseData `json:"data" api:"required"`
-	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
-	JSON struct {
-		Data        respjson.Field
-		ExtraFields map[string]respjson.Field
-		raw         string
-	} `json:"-"`
-}
-
-// Returns the unmodified JSON received from the API
-func (r V1BetaCustomerEntityArchiveResponse) RawJSON() string { return r.JSON.raw }
-func (r *V1BetaCustomerEntityArchiveResponse) UnmarshalJSON(data []byte) error {
-	return apijson.UnmarshalRoot(data, r)
-}
-
-// List of entity identifiers that were acted on
-type V1BetaCustomerEntityArchiveResponseData struct {
-	// Entity identifiers to act on
-	IDs []string `json:"ids" api:"required"`
-	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
-	JSON struct {
-		IDs         respjson.Field
-		ExtraFields map[string]respjson.Field
-		raw         string
-	} `json:"-"`
-}
-
-// Returns the unmodified JSON received from the API
-func (r V1BetaCustomerEntityArchiveResponseData) RawJSON() string { return r.JSON.raw }
-func (r *V1BetaCustomerEntityArchiveResponseData) UnmarshalJSON(data []byte) error {
-	return apijson.UnmarshalRoot(data, r)
-}
-
-// Wrapped response echoing the ids that were acted on by an archive/unarchive call
-type V1BetaCustomerEntityUnarchiveResponse struct {
-	// List of entity identifiers that were acted on
-	Data V1BetaCustomerEntityUnarchiveResponseData `json:"data" api:"required"`
-	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
-	JSON struct {
-		Data        respjson.Field
-		ExtraFields map[string]respjson.Field
-		raw         string
-	} `json:"-"`
-}
-
-// Returns the unmodified JSON received from the API
-func (r V1BetaCustomerEntityUnarchiveResponse) RawJSON() string { return r.JSON.raw }
-func (r *V1BetaCustomerEntityUnarchiveResponse) UnmarshalJSON(data []byte) error {
-	return apijson.UnmarshalRoot(data, r)
-}
-
-// List of entity identifiers that were acted on
-type V1BetaCustomerEntityUnarchiveResponseData struct {
-	// Entity identifiers to act on
-	IDs []string `json:"ids" api:"required"`
-	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
-	JSON struct {
-		IDs         respjson.Field
-		ExtraFields map[string]respjson.Field
-		raw         string
-	} `json:"-"`
-}
-
-// Returns the unmodified JSON received from the API
-func (r V1BetaCustomerEntityUnarchiveResponseData) RawJSON() string { return r.JSON.raw }
-func (r *V1BetaCustomerEntityUnarchiveResponseData) UnmarshalJSON(data []byte) error {
 	return apijson.UnmarshalRoot(data, r)
 }
 
@@ -364,28 +346,26 @@ const (
 )
 
 type V1BetaCustomerEntityArchiveParams struct {
-	// Entity identifiers to act on
-	IDs []string `json:"ids,omitzero" api:"required"`
+	// List of entity identifiers to act on in bulk (1-100 entries)
+	EntityIDsRequestDto EntityIDsRequestDtoParam
 	paramObj
 }
 
 func (r V1BetaCustomerEntityArchiveParams) MarshalJSON() (data []byte, err error) {
-	type shadow V1BetaCustomerEntityArchiveParams
-	return param.MarshalObject(r, (*shadow)(&r))
+	return shimjson.Marshal(r.EntityIDsRequestDto)
 }
 func (r *V1BetaCustomerEntityArchiveParams) UnmarshalJSON(data []byte) error {
 	return apijson.UnmarshalRoot(data, r)
 }
 
 type V1BetaCustomerEntityUnarchiveParams struct {
-	// Entity identifiers to act on
-	IDs []string `json:"ids,omitzero" api:"required"`
+	// List of entity identifiers to act on in bulk (1-100 entries)
+	EntityIDsRequestDto EntityIDsRequestDtoParam
 	paramObj
 }
 
 func (r V1BetaCustomerEntityUnarchiveParams) MarshalJSON() (data []byte, err error) {
-	type shadow V1BetaCustomerEntityUnarchiveParams
-	return param.MarshalObject(r, (*shadow)(&r))
+	return shimjson.Marshal(r.EntityIDsRequestDto)
 }
 func (r *V1BetaCustomerEntityUnarchiveParams) UnmarshalJSON(data []byte) error {
 	return apijson.UnmarshalRoot(data, r)
