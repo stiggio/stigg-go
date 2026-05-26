@@ -225,20 +225,23 @@ func (r *V1CreditGetUsageResponseDataCurrency) UnmarshalJSON(data []byte) error 
 
 // Credit usage data for a single feature
 type V1CreditGetUsageResponseDataSeries struct {
-	// The feature ID
+	// The feature ID; null when grouping by dimensions only
 	FeatureID string `json:"featureId" api:"required"`
-	// The display name of the feature
+	// The display name of the feature; null when grouping by dimensions only
 	FeatureName string `json:"featureName" api:"required"`
 	// Time-series data points for this feature
 	Points []V1CreditGetUsageResponseDataSeriesPoint `json:"points" api:"required"`
 	// Total credits consumed by this feature in the time range
 	TotalCredits float64 `json:"totalCredits" api:"required"`
+	// Dimension key/value pairs identifying this series when groupBy is applied
+	Tags []V1CreditGetUsageResponseDataSeriesTag `json:"tags"`
 	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
 	JSON struct {
 		FeatureID    respjson.Field
 		FeatureName  respjson.Field
 		Points       respjson.Field
 		TotalCredits respjson.Field
+		Tags         respjson.Field
 		ExtraFields  map[string]respjson.Field
 		raw          string
 	} `json:"-"`
@@ -268,6 +271,27 @@ type V1CreditGetUsageResponseDataSeriesPoint struct {
 // Returns the unmodified JSON received from the API
 func (r V1CreditGetUsageResponseDataSeriesPoint) RawJSON() string { return r.JSON.raw }
 func (r *V1CreditGetUsageResponseDataSeriesPoint) UnmarshalJSON(data []byte) error {
+	return apijson.UnmarshalRoot(data, r)
+}
+
+// Dimension key/value pair identifying a credit usage series
+type V1CreditGetUsageResponseDataSeriesTag struct {
+	// The dimension key
+	Key string `json:"key" api:"required"`
+	// The dimension value for this series
+	Value string `json:"value" api:"required"`
+	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
+	JSON struct {
+		Key         respjson.Field
+		Value       respjson.Field
+		ExtraFields map[string]respjson.Field
+		raw         string
+	} `json:"-"`
+}
+
+// Returns the unmodified JSON received from the API
+func (r V1CreditGetUsageResponseDataSeriesTag) RawJSON() string { return r.JSON.raw }
+func (r *V1CreditGetUsageResponseDataSeriesTag) UnmarshalJSON(data []byte) error {
 	return apijson.UnmarshalRoot(data, r)
 }
 
@@ -355,6 +379,9 @@ type V1CreditGetUsageParams struct {
 	// End date for the credit usage time range (ISO 8601). Defaults to now when
 	// startDate is provided
 	EndDate param.Opt[time.Time] `query:"endDate,omitzero" format:"date-time" json:"-"`
+	// Comma-separated list of feature dimension keys to group usage series by (up to
+	// 3). Each key matches /^[a-zA-Z0-9_$-]+$/
+	GroupBy param.Opt[string] `query:"groupBy,omitzero" json:"-"`
 	// Filter by resource ID
 	ResourceID param.Opt[string] `query:"resourceId,omitzero" json:"-"`
 	// Start date for the credit usage time range (ISO 8601). Takes precedence over
