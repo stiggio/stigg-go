@@ -16,7 +16,6 @@ type V1BetaService struct {
 	Options     []option.RequestOption
 	Customers   V1BetaCustomerService
 	EntityTypes V1BetaEntityTypeService
-	Entities    V1BetaEntityService
 }
 
 // NewV1BetaService generates a new service that applies the given options to each
@@ -27,6 +26,5 @@ func NewV1BetaService(opts ...option.RequestOption) (r V1BetaService) {
 	r.Options = opts
 	r.Customers = NewV1BetaCustomerService(opts...)
 	r.EntityTypes = NewV1BetaEntityTypeService(opts...)
-	r.Entities = NewV1BetaEntityService(opts...)
 	return
 }
