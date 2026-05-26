@@ -92,7 +92,9 @@ func TestV1BetaCustomerEntityArchive(t *testing.T) {
 		context.TODO(),
 		"id",
 		stigg.V1BetaCustomerEntityArchiveParams{
-			IDs: []string{"user-7f3a0c1d", "user-c4d1b2e9"},
+			EntityIDsRequestDto: stigg.EntityIDsRequestDtoParam{
+				IDs: []string{"user-7f3a0c1d", "user-c4d1b2e9"},
+			},
 		},
 	)
 	if err != nil {
@@ -121,7 +123,9 @@ func TestV1BetaCustomerEntityUnarchive(t *testing.T) {
 		context.TODO(),
 		"id",
 		stigg.V1BetaCustomerEntityUnarchiveParams{
-			IDs: []string{"user-7f3a0c1d", "user-c4d1b2e9"},
+			EntityIDsRequestDto: stigg.EntityIDsRequestDtoParam{
+				IDs: []string{"user-7f3a0c1d", "user-c4d1b2e9"},
+			},
 		},
 	)
 	if err != nil {
