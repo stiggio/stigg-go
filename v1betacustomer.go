@@ -15,6 +15,8 @@ import (
 type V1BetaCustomerService struct {
 	Options      []option.RequestOption
 	Entitlements V1BetaCustomerEntitlementService
+	Entities     V1BetaCustomerEntityService
+	Assignments  V1BetaCustomerAssignmentService
 }
 
 // NewV1BetaCustomerService generates a new service that applies the given options
@@ -24,5 +26,7 @@ func NewV1BetaCustomerService(opts ...option.RequestOption) (r V1BetaCustomerSer
 	r = V1BetaCustomerService{}
 	r.Options = opts
 	r.Entitlements = NewV1BetaCustomerEntitlementService(opts...)
+	r.Entities = NewV1BetaCustomerEntityService(opts...)
+	r.Assignments = NewV1BetaCustomerAssignmentService(opts...)
 	return
 }
