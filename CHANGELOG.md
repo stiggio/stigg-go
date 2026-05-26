@@ -1,5 +1,13 @@
 # Changelog
 
+## 0.1.0-beta.11 (2026-05-26)
+
+Full Changelog: [v0.1.0-beta.10...v0.1.0-beta.11](https://github.com/stiggio/stigg-go/compare/v0.1.0-beta.10...v0.1.0-beta.11)
+
+### Features
+
+* **api:** add groupBy parameter and tags field to credit usage ([8c7e8c3](https://github.com/stiggio/stigg-go/commit/8c7e8c339cee178aa3ceaa0e040ddc11e0c9da19))
+
 ## 0.1.0-beta.10 (2026-05-26)
 
 Full Changelog: [v0.1.0-beta.9...v0.1.0-beta.10](https://github.com/stiggio/stigg-go/compare/v0.1.0-beta.9...v0.1.0-beta.10)
