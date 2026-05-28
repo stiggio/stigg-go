@@ -125,7 +125,7 @@ func (r *V1AddonService) NewDraft(ctx context.Context, id string, opts ...option
 }
 
 // Retrieves the list of charges configured on an addon.
-func (r *V1AddonService) ListCharges(ctx context.Context, id string, query V1AddonListChargesParams, opts ...option.RequestOption) (res *pagination.MyCursorIDPage[ChargeListData], err error) {
+func (r *V1AddonService) ListCharges(ctx context.Context, id string, query V1AddonListChargesParams, opts ...option.RequestOption) (res *pagination.MyCursorIDPage[V1AddonListChargesResponse], err error) {
 	var raw *http.Response
 	opts = slices.Concat(r.Options, opts)
 	opts = append([]option.RequestOption{option.WithResponseInto(&raw)}, opts...)
@@ -147,7 +147,7 @@ func (r *V1AddonService) ListCharges(ctx context.Context, id string, query V1Add
 }
 
 // Retrieves the list of charges configured on an addon.
-func (r *V1AddonService) ListChargesAutoPaging(ctx context.Context, id string, query V1AddonListChargesParams, opts ...option.RequestOption) *pagination.MyCursorIDPageAutoPager[ChargeListData] {
+func (r *V1AddonService) ListChargesAutoPaging(ctx context.Context, id string, query V1AddonListChargesParams, opts ...option.RequestOption) *pagination.MyCursorIDPageAutoPager[V1AddonListChargesResponse] {
 	return pagination.NewMyCursorIDPageAutoPager(r.ListCharges(ctx, id, query, opts...))
 }
 
@@ -278,282 +278,6 @@ func (r *AddonDataEntitlement) UnmarshalJSON(data []byte) error {
 	return apijson.UnmarshalRoot(data, r)
 }
 
-// Response list object
-type ChargeList struct {
-	Data []ChargeListData `json:"data" api:"required"`
-	// Pagination metadata including cursors for navigating through results
-	Pagination ChargeListPagination `json:"pagination" api:"required"`
-	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
-	JSON struct {
-		Data        respjson.Field
-		Pagination  respjson.Field
-		ExtraFields map[string]respjson.Field
-		raw         string
-	} `json:"-"`
-}
-
-// Returns the unmodified JSON received from the API
-func (r ChargeList) RawJSON() string { return r.JSON.raw }
-func (r *ChargeList) UnmarshalJSON(data []byte) error {
-	return apijson.UnmarshalRoot(data, r)
-}
-
-// A single pricing row on a plan or addon. Each charge encodes one (billingPeriod,
-// billingModel, billingCadence, billingCountryCode) combination. Plans and addons
-// own many of these — one per currency / billing period / feature.
-type ChargeListData struct {
-	// Unique identifier of the charge
-	ID string `json:"id" api:"required" format:"uuid"`
-	// The billing cadence (RECURRING or ONE_OFF)
-	//
-	// Any of "RECURRING", "ONE_OFF".
-	BillingCadence string `json:"billingCadence" api:"required"`
-	// The billing model (FLAT_FEE, PER_UNIT, USAGE_BASED, CREDIT_BASED, MINIMUM_SPEND)
-	//
-	// Any of "FLAT_FEE", "MINIMUM_SPEND", "PER_UNIT", "USAGE_BASED", "CREDIT_BASED".
-	BillingModel string `json:"billingModel" api:"required"`
-	// The billing period (MONTHLY or ANNUALLY)
-	//
-	// Any of "MONTHLY", "ANNUALLY".
-	BillingPeriod string `json:"billingPeriod" api:"required"`
-	// Timestamp when the charge was created
-	CreatedAt time.Time `json:"createdAt" api:"required" format:"date-time"`
-	// ISO country code for localized pricing, if any
-	BillingCountryCode string `json:"billingCountryCode" api:"nullable"`
-	// Identifier in the external billing integration (e.g. Stripe price id), if any
-	BillingID string `json:"billingId" api:"nullable"`
-	// Block size for usage-based pricing
-	BlockSize float64 `json:"blockSize" api:"nullable"`
-	// When credits are granted (for credit-based pricing)
-	//
-	// Any of "BEGINNING_OF_BILLING_PERIOD", "MONTHLY".
-	CreditGrantCadence string `json:"creditGrantCadence" api:"nullable"`
-	// Credit rate configuration for credit-based pricing
-	CreditRate ChargeListDataCreditRate `json:"creditRate" api:"nullable"`
-	// Identifier in the linked CRM, if any
-	CRMID string `json:"crmId" api:"nullable"`
-	// Deep link to the charge in the linked CRM, if any
-	CRMLinkURL string `json:"crmLinkUrl" api:"nullable"`
-	// The feature this charge meters, if metered
-	FeatureID string `json:"featureId" api:"nullable"`
-	// Maximum unit quantity that can be purchased
-	MaxUnitQuantity float64 `json:"maxUnitQuantity" api:"nullable"`
-	// Minimum unit quantity that can be purchased
-	MinUnitQuantity float64 `json:"minUnitQuantity" api:"nullable"`
-	// The flat price amount and currency, when applicable
-	Price ChargeListDataPrice `json:"price" api:"nullable"`
-	// Tiered pricing rows when the charge is tiered
-	Tiers []ChargeListDataTier `json:"tiers" api:"nullable"`
-	// Tiered pricing mode (VOLUME or GRADUATED) when the charge is tiered
-	//
-	// Any of "VOLUME", "GRADUATED".
-	TiersMode string `json:"tiersMode" api:"nullable"`
-	// Custom currency identifier for top-up pricing, if any
-	TopUpCustomCurrencyID string `json:"topUpCustomCurrencyId" api:"nullable"`
-	// True if this charge is referenced by at least one subscription
-	UsedInSubscriptions bool `json:"usedInSubscriptions" api:"nullable"`
-	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
-	JSON struct {
-		ID                    respjson.Field
-		BillingCadence        respjson.Field
-		BillingModel          respjson.Field
-		BillingPeriod         respjson.Field
-		CreatedAt             respjson.Field
-		BillingCountryCode    respjson.Field
-		BillingID             respjson.Field
-		BlockSize             respjson.Field
-		CreditGrantCadence    respjson.Field
-		CreditRate            respjson.Field
-		CRMID                 respjson.Field
-		CRMLinkURL            respjson.Field
-		FeatureID             respjson.Field
-		MaxUnitQuantity       respjson.Field
-		MinUnitQuantity       respjson.Field
-		Price                 respjson.Field
-		Tiers                 respjson.Field
-		TiersMode             respjson.Field
-		TopUpCustomCurrencyID respjson.Field
-		UsedInSubscriptions   respjson.Field
-		ExtraFields           map[string]respjson.Field
-		raw                   string
-	} `json:"-"`
-}
-
-// Returns the unmodified JSON received from the API
-func (r ChargeListData) RawJSON() string { return r.JSON.raw }
-func (r *ChargeListData) UnmarshalJSON(data []byte) error {
-	return apijson.UnmarshalRoot(data, r)
-}
-
-// Credit rate configuration for credit-based pricing
-type ChargeListDataCreditRate struct {
-	// Credit rate amount
-	Amount float64 `json:"amount" api:"required"`
-	// Custom currency identifier
-	CurrencyID string `json:"currencyId" api:"required"`
-	// Optional cost formula expression
-	CostFormula string `json:"costFormula" api:"nullable"`
-	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
-	JSON struct {
-		Amount      respjson.Field
-		CurrencyID  respjson.Field
-		CostFormula respjson.Field
-		ExtraFields map[string]respjson.Field
-		raw         string
-	} `json:"-"`
-}
-
-// Returns the unmodified JSON received from the API
-func (r ChargeListDataCreditRate) RawJSON() string { return r.JSON.raw }
-func (r *ChargeListDataCreditRate) UnmarshalJSON(data []byte) error {
-	return apijson.UnmarshalRoot(data, r)
-}
-
-// The flat price amount and currency, when applicable
-type ChargeListDataPrice struct {
-	// The price amount
-	Amount float64 `json:"amount" api:"required"`
-	// ISO 4217 currency code
-	//
-	// Any of "usd", "aed", "all", "amd", "ang", "aud", "awg", "azn", "bam", "bbd",
-	// "bdt", "bgn", "bif", "bmd", "bnd", "bsd", "bwp", "byn", "bzd", "brl", "cad",
-	// "cdf", "chf", "cny", "czk", "dkk", "dop", "dzd", "egp", "etb", "eur", "fjd",
-	// "gbp", "gel", "gip", "gmd", "gyd", "hkd", "hrk", "htg", "idr", "ils", "inr",
-	// "isk", "jmd", "jpy", "kes", "kgs", "khr", "kmf", "krw", "kyd", "kzt", "lbp",
-	// "lkr", "lrd", "lsl", "mad", "mdl", "mga", "mkd", "mmk", "mnt", "mop", "mro",
-	// "mvr", "mwk", "mxn", "myr", "mzn", "nad", "ngn", "nok", "npr", "nzd", "pgk",
-	// "php", "pkr", "pln", "qar", "ron", "rsd", "rub", "rwf", "sar", "sbd", "scr",
-	// "sek", "sgd", "sle", "sll", "sos", "szl", "thb", "tjs", "top", "try", "ttd",
-	// "tzs", "uah", "uzs", "vnd", "vuv", "wst", "xaf", "xcd", "yer", "zar", "zmw",
-	// "clp", "djf", "gnf", "ugx", "pyg", "xof", "xpf".
-	Currency string `json:"currency" api:"required"`
-	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
-	JSON struct {
-		Amount      respjson.Field
-		Currency    respjson.Field
-		ExtraFields map[string]respjson.Field
-		raw         string
-	} `json:"-"`
-}
-
-// Returns the unmodified JSON received from the API
-func (r ChargeListDataPrice) RawJSON() string { return r.JSON.raw }
-func (r *ChargeListDataPrice) UnmarshalJSON(data []byte) error {
-	return apijson.UnmarshalRoot(data, r)
-}
-
-// A single tier within a tiered charge
-type ChargeListDataTier struct {
-	// Flat price for this tier
-	FlatPrice ChargeListDataTierFlatPrice `json:"flatPrice" api:"nullable"`
-	// Per-unit price in this tier
-	UnitPrice ChargeListDataTierUnitPrice `json:"unitPrice" api:"nullable"`
-	// Upper bound of this tier (null for unlimited)
-	UpTo float64 `json:"upTo" api:"nullable"`
-	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
-	JSON struct {
-		FlatPrice   respjson.Field
-		UnitPrice   respjson.Field
-		UpTo        respjson.Field
-		ExtraFields map[string]respjson.Field
-		raw         string
-	} `json:"-"`
-}
-
-// Returns the unmodified JSON received from the API
-func (r ChargeListDataTier) RawJSON() string { return r.JSON.raw }
-func (r *ChargeListDataTier) UnmarshalJSON(data []byte) error {
-	return apijson.UnmarshalRoot(data, r)
-}
-
-// Flat price for this tier
-type ChargeListDataTierFlatPrice struct {
-	// The price amount
-	Amount float64 `json:"amount" api:"required"`
-	// ISO 4217 currency code
-	//
-	// Any of "usd", "aed", "all", "amd", "ang", "aud", "awg", "azn", "bam", "bbd",
-	// "bdt", "bgn", "bif", "bmd", "bnd", "bsd", "bwp", "byn", "bzd", "brl", "cad",
-	// "cdf", "chf", "cny", "czk", "dkk", "dop", "dzd", "egp", "etb", "eur", "fjd",
-	// "gbp", "gel", "gip", "gmd", "gyd", "hkd", "hrk", "htg", "idr", "ils", "inr",
-	// "isk", "jmd", "jpy", "kes", "kgs", "khr", "kmf", "krw", "kyd", "kzt", "lbp",
-	// "lkr", "lrd", "lsl", "mad", "mdl", "mga", "mkd", "mmk", "mnt", "mop", "mro",
-	// "mvr", "mwk", "mxn", "myr", "mzn", "nad", "ngn", "nok", "npr", "nzd", "pgk",
-	// "php", "pkr", "pln", "qar", "ron", "rsd", "rub", "rwf", "sar", "sbd", "scr",
-	// "sek", "sgd", "sle", "sll", "sos", "szl", "thb", "tjs", "top", "try", "ttd",
-	// "tzs", "uah", "uzs", "vnd", "vuv", "wst", "xaf", "xcd", "yer", "zar", "zmw",
-	// "clp", "djf", "gnf", "ugx", "pyg", "xof", "xpf".
-	Currency string `json:"currency" api:"required"`
-	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
-	JSON struct {
-		Amount      respjson.Field
-		Currency    respjson.Field
-		ExtraFields map[string]respjson.Field
-		raw         string
-	} `json:"-"`
-}
-
-// Returns the unmodified JSON received from the API
-func (r ChargeListDataTierFlatPrice) RawJSON() string { return r.JSON.raw }
-func (r *ChargeListDataTierFlatPrice) UnmarshalJSON(data []byte) error {
-	return apijson.UnmarshalRoot(data, r)
-}
-
-// Per-unit price in this tier
-type ChargeListDataTierUnitPrice struct {
-	// The price amount
-	Amount float64 `json:"amount" api:"required"`
-	// ISO 4217 currency code
-	//
-	// Any of "usd", "aed", "all", "amd", "ang", "aud", "awg", "azn", "bam", "bbd",
-	// "bdt", "bgn", "bif", "bmd", "bnd", "bsd", "bwp", "byn", "bzd", "brl", "cad",
-	// "cdf", "chf", "cny", "czk", "dkk", "dop", "dzd", "egp", "etb", "eur", "fjd",
-	// "gbp", "gel", "gip", "gmd", "gyd", "hkd", "hrk", "htg", "idr", "ils", "inr",
-	// "isk", "jmd", "jpy", "kes", "kgs", "khr", "kmf", "krw", "kyd", "kzt", "lbp",
-	// "lkr", "lrd", "lsl", "mad", "mdl", "mga", "mkd", "mmk", "mnt", "mop", "mro",
-	// "mvr", "mwk", "mxn", "myr", "mzn", "nad", "ngn", "nok", "npr", "nzd", "pgk",
-	// "php", "pkr", "pln", "qar", "ron", "rsd", "rub", "rwf", "sar", "sbd", "scr",
-	// "sek", "sgd", "sle", "sll", "sos", "szl", "thb", "tjs", "top", "try", "ttd",
-	// "tzs", "uah", "uzs", "vnd", "vuv", "wst", "xaf", "xcd", "yer", "zar", "zmw",
-	// "clp", "djf", "gnf", "ugx", "pyg", "xof", "xpf".
-	Currency string `json:"currency" api:"required"`
-	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
-	JSON struct {
-		Amount      respjson.Field
-		Currency    respjson.Field
-		ExtraFields map[string]respjson.Field
-		raw         string
-	} `json:"-"`
-}
-
-// Returns the unmodified JSON received from the API
-func (r ChargeListDataTierUnitPrice) RawJSON() string { return r.JSON.raw }
-func (r *ChargeListDataTierUnitPrice) UnmarshalJSON(data []byte) error {
-	return apijson.UnmarshalRoot(data, r)
-}
-
-// Pagination metadata including cursors for navigating through results
-type ChargeListPagination struct {
-	// Cursor for fetching the next page of results, or null if no additional pages
-	// exist
-	Next string `json:"next" api:"required" format:"uuid"`
-	// Cursor for fetching the previous page of results, or null if at the beginning
-	Prev string `json:"prev" api:"required" format:"uuid"`
-	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
-	JSON struct {
-		Next        respjson.Field
-		Prev        respjson.Field
-		ExtraFields map[string]respjson.Field
-		raw         string
-	} `json:"-"`
-}
-
-// Returns the unmodified JSON received from the API
-func (r ChargeListPagination) RawJSON() string { return r.JSON.raw }
-func (r *ChargeListPagination) UnmarshalJSON(data []byte) error {
-	return apijson.UnmarshalRoot(data, r)
-}
-
 // Addon configuration object
 type V1AddonListResponse struct {
 	// The unique identifier for the entity
@@ -655,6 +379,283 @@ const (
 	V1AddonListResponseStatusDraft     V1AddonListResponseStatus = "DRAFT"
 	V1AddonListResponseStatusPublished V1AddonListResponseStatus = "PUBLISHED"
 	V1AddonListResponseStatusArchived  V1AddonListResponseStatus = "ARCHIVED"
+)
+
+// A single pricing row on a plan or addon. Each charge encodes one (billingPeriod,
+// billingModel, billingCadence, billingCountryCode) combination. Plans and addons
+// own many of these — one per currency / billing period / feature.
+type V1AddonListChargesResponse struct {
+	// Unique identifier of the charge
+	ID string `json:"id" api:"required" format:"uuid"`
+	// The billing cadence (RECURRING or ONE_OFF)
+	//
+	// Any of "RECURRING", "ONE_OFF".
+	BillingCadence V1AddonListChargesResponseBillingCadence `json:"billingCadence" api:"required"`
+	// The billing model (FLAT_FEE, PER_UNIT, USAGE_BASED, CREDIT_BASED, MINIMUM_SPEND)
+	//
+	// Any of "FLAT_FEE", "MINIMUM_SPEND", "PER_UNIT", "USAGE_BASED", "CREDIT_BASED".
+	BillingModel V1AddonListChargesResponseBillingModel `json:"billingModel" api:"required"`
+	// The billing period (MONTHLY or ANNUALLY)
+	//
+	// Any of "MONTHLY", "ANNUALLY".
+	BillingPeriod V1AddonListChargesResponseBillingPeriod `json:"billingPeriod" api:"required"`
+	// Timestamp when the charge was created
+	CreatedAt time.Time `json:"createdAt" api:"required" format:"date-time"`
+	// ISO country code for localized pricing, if any
+	BillingCountryCode string `json:"billingCountryCode" api:"nullable"`
+	// Identifier in the external billing integration (e.g. Stripe price id), if any
+	BillingID string `json:"billingId" api:"nullable"`
+	// Block size for usage-based pricing
+	BlockSize float64 `json:"blockSize" api:"nullable"`
+	// When credits are granted (for credit-based pricing)
+	//
+	// Any of "BEGINNING_OF_BILLING_PERIOD", "MONTHLY".
+	CreditGrantCadence V1AddonListChargesResponseCreditGrantCadence `json:"creditGrantCadence" api:"nullable"`
+	// Credit rate configuration for credit-based pricing
+	CreditRate V1AddonListChargesResponseCreditRate `json:"creditRate" api:"nullable"`
+	// Identifier in the linked CRM, if any
+	CRMID string `json:"crmId" api:"nullable"`
+	// Deep link to the charge in the linked CRM, if any
+	CRMLinkURL string `json:"crmLinkUrl" api:"nullable"`
+	// The feature this charge meters, if metered
+	FeatureID string `json:"featureId" api:"nullable"`
+	// Maximum unit quantity that can be purchased
+	MaxUnitQuantity float64 `json:"maxUnitQuantity" api:"nullable"`
+	// Minimum unit quantity that can be purchased
+	MinUnitQuantity float64 `json:"minUnitQuantity" api:"nullable"`
+	// The flat price amount and currency, when applicable
+	Price V1AddonListChargesResponsePrice `json:"price" api:"nullable"`
+	// Tiered pricing rows when the charge is tiered
+	Tiers []V1AddonListChargesResponseTier `json:"tiers" api:"nullable"`
+	// Tiered pricing mode (VOLUME or GRADUATED) when the charge is tiered
+	//
+	// Any of "VOLUME", "GRADUATED".
+	TiersMode V1AddonListChargesResponseTiersMode `json:"tiersMode" api:"nullable"`
+	// Custom currency identifier for top-up pricing, if any
+	TopUpCustomCurrencyID string `json:"topUpCustomCurrencyId" api:"nullable"`
+	// True if this charge is referenced by at least one subscription
+	UsedInSubscriptions bool `json:"usedInSubscriptions" api:"nullable"`
+	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
+	JSON struct {
+		ID                    respjson.Field
+		BillingCadence        respjson.Field
+		BillingModel          respjson.Field
+		BillingPeriod         respjson.Field
+		CreatedAt             respjson.Field
+		BillingCountryCode    respjson.Field
+		BillingID             respjson.Field
+		BlockSize             respjson.Field
+		CreditGrantCadence    respjson.Field
+		CreditRate            respjson.Field
+		CRMID                 respjson.Field
+		CRMLinkURL            respjson.Field
+		FeatureID             respjson.Field
+		MaxUnitQuantity       respjson.Field
+		MinUnitQuantity       respjson.Field
+		Price                 respjson.Field
+		Tiers                 respjson.Field
+		TiersMode             respjson.Field
+		TopUpCustomCurrencyID respjson.Field
+		UsedInSubscriptions   respjson.Field
+		ExtraFields           map[string]respjson.Field
+		raw                   string
+	} `json:"-"`
+}
+
+// Returns the unmodified JSON received from the API
+func (r V1AddonListChargesResponse) RawJSON() string { return r.JSON.raw }
+func (r *V1AddonListChargesResponse) UnmarshalJSON(data []byte) error {
+	return apijson.UnmarshalRoot(data, r)
+}
+
+// The billing cadence (RECURRING or ONE_OFF)
+type V1AddonListChargesResponseBillingCadence string
+
+const (
+	V1AddonListChargesResponseBillingCadenceRecurring V1AddonListChargesResponseBillingCadence = "RECURRING"
+	V1AddonListChargesResponseBillingCadenceOneOff    V1AddonListChargesResponseBillingCadence = "ONE_OFF"
+)
+
+// The billing model (FLAT_FEE, PER_UNIT, USAGE_BASED, CREDIT_BASED, MINIMUM_SPEND)
+type V1AddonListChargesResponseBillingModel string
+
+const (
+	V1AddonListChargesResponseBillingModelFlatFee      V1AddonListChargesResponseBillingModel = "FLAT_FEE"
+	V1AddonListChargesResponseBillingModelMinimumSpend V1AddonListChargesResponseBillingModel = "MINIMUM_SPEND"
+	V1AddonListChargesResponseBillingModelPerUnit      V1AddonListChargesResponseBillingModel = "PER_UNIT"
+	V1AddonListChargesResponseBillingModelUsageBased   V1AddonListChargesResponseBillingModel = "USAGE_BASED"
+	V1AddonListChargesResponseBillingModelCreditBased  V1AddonListChargesResponseBillingModel = "CREDIT_BASED"
+)
+
+// The billing period (MONTHLY or ANNUALLY)
+type V1AddonListChargesResponseBillingPeriod string
+
+const (
+	V1AddonListChargesResponseBillingPeriodMonthly  V1AddonListChargesResponseBillingPeriod = "MONTHLY"
+	V1AddonListChargesResponseBillingPeriodAnnually V1AddonListChargesResponseBillingPeriod = "ANNUALLY"
+)
+
+// When credits are granted (for credit-based pricing)
+type V1AddonListChargesResponseCreditGrantCadence string
+
+const (
+	V1AddonListChargesResponseCreditGrantCadenceBeginningOfBillingPeriod V1AddonListChargesResponseCreditGrantCadence = "BEGINNING_OF_BILLING_PERIOD"
+	V1AddonListChargesResponseCreditGrantCadenceMonthly                  V1AddonListChargesResponseCreditGrantCadence = "MONTHLY"
+)
+
+// Credit rate configuration for credit-based pricing
+type V1AddonListChargesResponseCreditRate struct {
+	// Credit rate amount
+	Amount float64 `json:"amount" api:"required"`
+	// Custom currency identifier
+	CurrencyID string `json:"currencyId" api:"required"`
+	// Optional cost formula expression
+	CostFormula string `json:"costFormula" api:"nullable"`
+	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
+	JSON struct {
+		Amount      respjson.Field
+		CurrencyID  respjson.Field
+		CostFormula respjson.Field
+		ExtraFields map[string]respjson.Field
+		raw         string
+	} `json:"-"`
+}
+
+// Returns the unmodified JSON received from the API
+func (r V1AddonListChargesResponseCreditRate) RawJSON() string { return r.JSON.raw }
+func (r *V1AddonListChargesResponseCreditRate) UnmarshalJSON(data []byte) error {
+	return apijson.UnmarshalRoot(data, r)
+}
+
+// The flat price amount and currency, when applicable
+type V1AddonListChargesResponsePrice struct {
+	// The price amount
+	Amount float64 `json:"amount" api:"required"`
+	// ISO 4217 currency code
+	//
+	// Any of "usd", "aed", "all", "amd", "ang", "aud", "awg", "azn", "bam", "bbd",
+	// "bdt", "bgn", "bif", "bmd", "bnd", "bsd", "bwp", "byn", "bzd", "brl", "cad",
+	// "cdf", "chf", "cny", "czk", "dkk", "dop", "dzd", "egp", "etb", "eur", "fjd",
+	// "gbp", "gel", "gip", "gmd", "gyd", "hkd", "hrk", "htg", "idr", "ils", "inr",
+	// "isk", "jmd", "jpy", "kes", "kgs", "khr", "kmf", "krw", "kyd", "kzt", "lbp",
+	// "lkr", "lrd", "lsl", "mad", "mdl", "mga", "mkd", "mmk", "mnt", "mop", "mro",
+	// "mvr", "mwk", "mxn", "myr", "mzn", "nad", "ngn", "nok", "npr", "nzd", "pgk",
+	// "php", "pkr", "pln", "qar", "ron", "rsd", "rub", "rwf", "sar", "sbd", "scr",
+	// "sek", "sgd", "sle", "sll", "sos", "szl", "thb", "tjs", "top", "try", "ttd",
+	// "tzs", "uah", "uzs", "vnd", "vuv", "wst", "xaf", "xcd", "yer", "zar", "zmw",
+	// "clp", "djf", "gnf", "ugx", "pyg", "xof", "xpf".
+	Currency string `json:"currency" api:"required"`
+	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
+	JSON struct {
+		Amount      respjson.Field
+		Currency    respjson.Field
+		ExtraFields map[string]respjson.Field
+		raw         string
+	} `json:"-"`
+}
+
+// Returns the unmodified JSON received from the API
+func (r V1AddonListChargesResponsePrice) RawJSON() string { return r.JSON.raw }
+func (r *V1AddonListChargesResponsePrice) UnmarshalJSON(data []byte) error {
+	return apijson.UnmarshalRoot(data, r)
+}
+
+// A single tier within a tiered charge
+type V1AddonListChargesResponseTier struct {
+	// Flat price for this tier
+	FlatPrice V1AddonListChargesResponseTierFlatPrice `json:"flatPrice" api:"nullable"`
+	// Per-unit price in this tier
+	UnitPrice V1AddonListChargesResponseTierUnitPrice `json:"unitPrice" api:"nullable"`
+	// Upper bound of this tier (null for unlimited)
+	UpTo float64 `json:"upTo" api:"nullable"`
+	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
+	JSON struct {
+		FlatPrice   respjson.Field
+		UnitPrice   respjson.Field
+		UpTo        respjson.Field
+		ExtraFields map[string]respjson.Field
+		raw         string
+	} `json:"-"`
+}
+
+// Returns the unmodified JSON received from the API
+func (r V1AddonListChargesResponseTier) RawJSON() string { return r.JSON.raw }
+func (r *V1AddonListChargesResponseTier) UnmarshalJSON(data []byte) error {
+	return apijson.UnmarshalRoot(data, r)
+}
+
+// Flat price for this tier
+type V1AddonListChargesResponseTierFlatPrice struct {
+	// The price amount
+	Amount float64 `json:"amount" api:"required"`
+	// ISO 4217 currency code
+	//
+	// Any of "usd", "aed", "all", "amd", "ang", "aud", "awg", "azn", "bam", "bbd",
+	// "bdt", "bgn", "bif", "bmd", "bnd", "bsd", "bwp", "byn", "bzd", "brl", "cad",
+	// "cdf", "chf", "cny", "czk", "dkk", "dop", "dzd", "egp", "etb", "eur", "fjd",
+	// "gbp", "gel", "gip", "gmd", "gyd", "hkd", "hrk", "htg", "idr", "ils", "inr",
+	// "isk", "jmd", "jpy", "kes", "kgs", "khr", "kmf", "krw", "kyd", "kzt", "lbp",
+	// "lkr", "lrd", "lsl", "mad", "mdl", "mga", "mkd", "mmk", "mnt", "mop", "mro",
+	// "mvr", "mwk", "mxn", "myr", "mzn", "nad", "ngn", "nok", "npr", "nzd", "pgk",
+	// "php", "pkr", "pln", "qar", "ron", "rsd", "rub", "rwf", "sar", "sbd", "scr",
+	// "sek", "sgd", "sle", "sll", "sos", "szl", "thb", "tjs", "top", "try", "ttd",
+	// "tzs", "uah", "uzs", "vnd", "vuv", "wst", "xaf", "xcd", "yer", "zar", "zmw",
+	// "clp", "djf", "gnf", "ugx", "pyg", "xof", "xpf".
+	Currency string `json:"currency" api:"required"`
+	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
+	JSON struct {
+		Amount      respjson.Field
+		Currency    respjson.Field
+		ExtraFields map[string]respjson.Field
+		raw         string
+	} `json:"-"`
+}
+
+// Returns the unmodified JSON received from the API
+func (r V1AddonListChargesResponseTierFlatPrice) RawJSON() string { return r.JSON.raw }
+func (r *V1AddonListChargesResponseTierFlatPrice) UnmarshalJSON(data []byte) error {
+	return apijson.UnmarshalRoot(data, r)
+}
+
+// Per-unit price in this tier
+type V1AddonListChargesResponseTierUnitPrice struct {
+	// The price amount
+	Amount float64 `json:"amount" api:"required"`
+	// ISO 4217 currency code
+	//
+	// Any of "usd", "aed", "all", "amd", "ang", "aud", "awg", "azn", "bam", "bbd",
+	// "bdt", "bgn", "bif", "bmd", "bnd", "bsd", "bwp", "byn", "bzd", "brl", "cad",
+	// "cdf", "chf", "cny", "czk", "dkk", "dop", "dzd", "egp", "etb", "eur", "fjd",
+	// "gbp", "gel", "gip", "gmd", "gyd", "hkd", "hrk", "htg", "idr", "ils", "inr",
+	// "isk", "jmd", "jpy", "kes", "kgs", "khr", "kmf", "krw", "kyd", "kzt", "lbp",
+	// "lkr", "lrd", "lsl", "mad", "mdl", "mga", "mkd", "mmk", "mnt", "mop", "mro",
+	// "mvr", "mwk", "mxn", "myr", "mzn", "nad", "ngn", "nok", "npr", "nzd", "pgk",
+	// "php", "pkr", "pln", "qar", "ron", "rsd", "rub", "rwf", "sar", "sbd", "scr",
+	// "sek", "sgd", "sle", "sll", "sos", "szl", "thb", "tjs", "top", "try", "ttd",
+	// "tzs", "uah", "uzs", "vnd", "vuv", "wst", "xaf", "xcd", "yer", "zar", "zmw",
+	// "clp", "djf", "gnf", "ugx", "pyg", "xof", "xpf".
+	Currency string `json:"currency" api:"required"`
+	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
+	JSON struct {
+		Amount      respjson.Field
+		Currency    respjson.Field
+		ExtraFields map[string]respjson.Field
+		raw         string
+	} `json:"-"`
+}
+
+// Returns the unmodified JSON received from the API
+func (r V1AddonListChargesResponseTierUnitPrice) RawJSON() string { return r.JSON.raw }
+func (r *V1AddonListChargesResponseTierUnitPrice) UnmarshalJSON(data []byte) error {
+	return apijson.UnmarshalRoot(data, r)
+}
+
+// Tiered pricing mode (VOLUME or GRADUATED) when the charge is tiered
+type V1AddonListChargesResponseTiersMode string
+
+const (
+	V1AddonListChargesResponseTiersModeVolume    V1AddonListChargesResponseTiersMode = "VOLUME"
+	V1AddonListChargesResponseTiersModeGraduated V1AddonListChargesResponseTiersMode = "GRADUATED"
 )
 
 // Response containing task ID for publish operation

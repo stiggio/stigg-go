@@ -13,7 +13,7 @@ import (
 	"github.com/stiggio/stigg-go/option"
 )
 
-func TestV1BetaCustomerEntityGet(t *testing.T) {
+func TestV1EventBetaCustomerEntityGet(t *testing.T) {
 	t.Skip("Mock server tests are disabled")
 	baseURL := "http://localhost:4010"
 	if envURL, ok := os.LookupEnv("TEST_API_BASE_URL"); ok {
@@ -26,10 +26,10 @@ func TestV1BetaCustomerEntityGet(t *testing.T) {
 		option.WithBaseURL(baseURL),
 		option.WithAPIKey("My API Key"),
 	)
-	_, err := client.V1Beta.Customers.Entities.Get(
+	_, err := client.V1.Events.Beta.Customers.Entities.Get(
 		context.TODO(),
 		"x",
-		stigg.V1BetaCustomerEntityGetParams{
+		stigg.V1EventBetaCustomerEntityGetParams{
 			ID: "id",
 		},
 	)
@@ -42,7 +42,7 @@ func TestV1BetaCustomerEntityGet(t *testing.T) {
 	}
 }
 
-func TestV1BetaCustomerEntityListWithOptionalParams(t *testing.T) {
+func TestV1EventBetaCustomerEntityListWithOptionalParams(t *testing.T) {
 	t.Skip("Mock server tests are disabled")
 	baseURL := "http://localhost:4010"
 	if envURL, ok := os.LookupEnv("TEST_API_BASE_URL"); ok {
@@ -55,13 +55,13 @@ func TestV1BetaCustomerEntityListWithOptionalParams(t *testing.T) {
 		option.WithBaseURL(baseURL),
 		option.WithAPIKey("My API Key"),
 	)
-	_, err := client.V1Beta.Customers.Entities.List(
+	_, err := client.V1.Events.Beta.Customers.Entities.List(
 		context.TODO(),
 		"id",
-		stigg.V1BetaCustomerEntityListParams{
+		stigg.V1EventBetaCustomerEntityListParams{
 			After:           stigg.String("182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e"),
 			Before:          stigg.String("182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e"),
-			IncludeArchived: stigg.V1BetaCustomerEntityListParamsIncludeArchivedTrue,
+			IncludeArchived: stigg.V1EventBetaCustomerEntityListParamsIncludeArchivedTrue,
 			Limit:           stigg.Int(1),
 			TypeRefID:       stigg.String("typeRefId"),
 		},
@@ -75,7 +75,7 @@ func TestV1BetaCustomerEntityListWithOptionalParams(t *testing.T) {
 	}
 }
 
-func TestV1BetaCustomerEntityArchive(t *testing.T) {
+func TestV1EventBetaCustomerEntityArchive(t *testing.T) {
 	t.Skip("Mock server tests are disabled")
 	baseURL := "http://localhost:4010"
 	if envURL, ok := os.LookupEnv("TEST_API_BASE_URL"); ok {
@@ -88,13 +88,11 @@ func TestV1BetaCustomerEntityArchive(t *testing.T) {
 		option.WithBaseURL(baseURL),
 		option.WithAPIKey("My API Key"),
 	)
-	_, err := client.V1Beta.Customers.Entities.Archive(
+	_, err := client.V1.Events.Beta.Customers.Entities.Archive(
 		context.TODO(),
 		"id",
-		stigg.V1BetaCustomerEntityArchiveParams{
-			EntityIDsRequestDto: stigg.EntityIDsRequestDtoParam{
-				IDs: []string{"user-7f3a0c1d", "user-c4d1b2e9"},
-			},
+		stigg.V1EventBetaCustomerEntityArchiveParams{
+			IDs: []string{"user-7f3a0c1d", "user-c4d1b2e9"},
 		},
 	)
 	if err != nil {
@@ -106,7 +104,7 @@ func TestV1BetaCustomerEntityArchive(t *testing.T) {
 	}
 }
 
-func TestV1BetaCustomerEntityUnarchive(t *testing.T) {
+func TestV1EventBetaCustomerEntityUnarchive(t *testing.T) {
 	t.Skip("Mock server tests are disabled")
 	baseURL := "http://localhost:4010"
 	if envURL, ok := os.LookupEnv("TEST_API_BASE_URL"); ok {
@@ -119,13 +117,11 @@ func TestV1BetaCustomerEntityUnarchive(t *testing.T) {
 		option.WithBaseURL(baseURL),
 		option.WithAPIKey("My API Key"),
 	)
-	_, err := client.V1Beta.Customers.Entities.Unarchive(
+	_, err := client.V1.Events.Beta.Customers.Entities.Unarchive(
 		context.TODO(),
 		"id",
-		stigg.V1BetaCustomerEntityUnarchiveParams{
-			EntityIDsRequestDto: stigg.EntityIDsRequestDtoParam{
-				IDs: []string{"user-7f3a0c1d", "user-c4d1b2e9"},
-			},
+		stigg.V1EventBetaCustomerEntityUnarchiveParams{
+			IDs: []string{"user-7f3a0c1d", "user-c4d1b2e9"},
 		},
 	)
 	if err != nil {
@@ -137,7 +133,7 @@ func TestV1BetaCustomerEntityUnarchive(t *testing.T) {
 	}
 }
 
-func TestV1BetaCustomerEntityUpsert(t *testing.T) {
+func TestV1EventBetaCustomerEntityUpsert(t *testing.T) {
 	t.Skip("Mock server tests are disabled")
 	baseURL := "http://localhost:4010"
 	if envURL, ok := os.LookupEnv("TEST_API_BASE_URL"); ok {
@@ -150,11 +146,11 @@ func TestV1BetaCustomerEntityUpsert(t *testing.T) {
 		option.WithBaseURL(baseURL),
 		option.WithAPIKey("My API Key"),
 	)
-	_, err := client.V1Beta.Customers.Entities.Upsert(
+	_, err := client.V1.Events.Beta.Customers.Entities.Upsert(
 		context.TODO(),
 		"id",
-		stigg.V1BetaCustomerEntityUpsertParams{
-			Entities: []stigg.V1BetaCustomerEntityUpsertParamsEntity{{
+		stigg.V1EventBetaCustomerEntityUpsertParams{
+			Entities: []stigg.V1EventBetaCustomerEntityUpsertParamsEntity{{
 				ID: "user-7f3a0c1d",
 				Metadata: map[string]string{
 					"email": "jane@acme.com",
