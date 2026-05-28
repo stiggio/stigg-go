@@ -21,21 +21,21 @@ import (
 	"github.com/stiggio/stigg-go/shared/constant"
 )
 
-// V1BetaCustomerEntitlementService contains methods and other services that help
-// with interacting with the stigg API.
+// V1EventBetaCustomerEntitlementService contains methods and other services that
+// help with interacting with the stigg API.
 //
 // Note, unlike clients, this service does not read variables from the environment
 // automatically. You should not instantiate this service directly, and instead use
-// the [NewV1BetaCustomerEntitlementService] method instead.
-type V1BetaCustomerEntitlementService struct {
+// the [NewV1EventBetaCustomerEntitlementService] method instead.
+type V1EventBetaCustomerEntitlementService struct {
 	Options []option.RequestOption
 }
 
-// NewV1BetaCustomerEntitlementService generates a new service that applies the
-// given options to each request. These options are applied after the parent
+// NewV1EventBetaCustomerEntitlementService generates a new service that applies
+// the given options to each request. These options are applied after the parent
 // client's options (if there is one), and before any request-specific options.
-func NewV1BetaCustomerEntitlementService(opts ...option.RequestOption) (r V1BetaCustomerEntitlementService) {
-	r = V1BetaCustomerEntitlementService{}
+func NewV1EventBetaCustomerEntitlementService(opts ...option.RequestOption) (r V1EventBetaCustomerEntitlementService) {
+	r = V1EventBetaCustomerEntitlementService{}
 	r.Options = opts
 	return
 }
@@ -43,7 +43,7 @@ func NewV1BetaCustomerEntitlementService(opts ...option.RequestOption) (r V1Beta
 // Experimental — request and response shapes may change without notice. Same
 // semantics as `Check entitlement`, plus an optional `dimensions` query param that
 // resolves to per-entity governance limits surfaced as `chains` on the response.
-func (r *V1BetaCustomerEntitlementService) Check(ctx context.Context, id string, query V1BetaCustomerEntitlementCheckParams, opts ...option.RequestOption) (res *V1BetaCustomerEntitlementCheckResponse, err error) {
+func (r *V1EventBetaCustomerEntitlementService) Check(ctx context.Context, id string, query V1EventBetaCustomerEntitlementCheckParams, opts ...option.RequestOption) (res *V1EventBetaCustomerEntitlementCheckResponse, err error) {
 	opts = slices.Concat(r.Options, opts)
 	if id == "" {
 		err = errors.New("missing required id parameter")
@@ -55,9 +55,9 @@ func (r *V1BetaCustomerEntitlementService) Check(ctx context.Context, id string,
 }
 
 // Response object
-type V1BetaCustomerEntitlementCheckResponse struct {
+type V1EventBetaCustomerEntitlementCheckResponse struct {
 	// Feature entitlement with optional governance chains attached.
-	Data V1BetaCustomerEntitlementCheckResponseDataUnion `json:"data" api:"required"`
+	Data V1EventBetaCustomerEntitlementCheckResponseDataUnion `json:"data" api:"required"`
 	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
 	JSON struct {
 		Data        respjson.Field
@@ -67,46 +67,54 @@ type V1BetaCustomerEntitlementCheckResponse struct {
 }
 
 // Returns the unmodified JSON received from the API
-func (r V1BetaCustomerEntitlementCheckResponse) RawJSON() string { return r.JSON.raw }
-func (r *V1BetaCustomerEntitlementCheckResponse) UnmarshalJSON(data []byte) error {
+func (r V1EventBetaCustomerEntitlementCheckResponse) RawJSON() string { return r.JSON.raw }
+func (r *V1EventBetaCustomerEntitlementCheckResponse) UnmarshalJSON(data []byte) error {
 	return apijson.UnmarshalRoot(data, r)
 }
 
-// V1BetaCustomerEntitlementCheckResponseDataUnion contains all possible properties
-// and values from [V1BetaCustomerEntitlementCheckResponseDataFeature],
-// [V1BetaCustomerEntitlementCheckResponseDataCredit].
+// V1EventBetaCustomerEntitlementCheckResponseDataUnion contains all possible
+// properties and values from
+// [V1EventBetaCustomerEntitlementCheckResponseDataFeature],
+// [V1EventBetaCustomerEntitlementCheckResponseDataCredit].
 //
-// Use the [V1BetaCustomerEntitlementCheckResponseDataUnion.AsAny] method to switch
-// on the variant.
+// Use the [V1EventBetaCustomerEntitlementCheckResponseDataUnion.AsAny] method to
+// switch on the variant.
 //
 // Use the methods beginning with 'As' to cast the union to one of its variants.
-type V1BetaCustomerEntitlementCheckResponseDataUnion struct {
+type V1EventBetaCustomerEntitlementCheckResponseDataUnion struct {
 	AccessDeniedReason string `json:"accessDeniedReason"`
 	IsGranted          bool   `json:"isGranted"`
 	// Any of "FEATURE", "CREDIT".
 	Type string `json:"type"`
 	// This field is a union of
-	// [[][]V1BetaCustomerEntitlementCheckResponseDataFeatureChain],
-	// [[][]V1BetaCustomerEntitlementCheckResponseDataCreditChain]
-	Chains               V1BetaCustomerEntitlementCheckResponseDataUnionChains `json:"chains"`
-	CurrentUsage         float64                                               `json:"currentUsage"`
-	EntitlementUpdatedAt time.Time                                             `json:"entitlementUpdatedAt"`
-	// This field is from variant [V1BetaCustomerEntitlementCheckResponseDataFeature].
-	Feature V1BetaCustomerEntitlementCheckResponseDataFeatureFeature `json:"feature"`
-	// This field is from variant [V1BetaCustomerEntitlementCheckResponseDataFeature].
+	// [[][]V1EventBetaCustomerEntitlementCheckResponseDataFeatureChain],
+	// [[][]V1EventBetaCustomerEntitlementCheckResponseDataCreditChain]
+	Chains               V1EventBetaCustomerEntitlementCheckResponseDataUnionChains `json:"chains"`
+	CurrentUsage         float64                                                    `json:"currentUsage"`
+	EntitlementUpdatedAt time.Time                                                  `json:"entitlementUpdatedAt"`
+	// This field is from variant
+	// [V1EventBetaCustomerEntitlementCheckResponseDataFeature].
+	Feature V1EventBetaCustomerEntitlementCheckResponseDataFeatureFeature `json:"feature"`
+	// This field is from variant
+	// [V1EventBetaCustomerEntitlementCheckResponseDataFeature].
 	HasUnlimitedUsage bool `json:"hasUnlimitedUsage"`
-	// This field is from variant [V1BetaCustomerEntitlementCheckResponseDataFeature].
+	// This field is from variant
+	// [V1EventBetaCustomerEntitlementCheckResponseDataFeature].
 	ResetPeriod string  `json:"resetPeriod"`
 	UsageLimit  float64 `json:"usageLimit"`
-	// This field is from variant [V1BetaCustomerEntitlementCheckResponseDataFeature].
+	// This field is from variant
+	// [V1EventBetaCustomerEntitlementCheckResponseDataFeature].
 	UsagePeriodAnchor time.Time `json:"usagePeriodAnchor"`
 	UsagePeriodEnd    time.Time `json:"usagePeriodEnd"`
-	// This field is from variant [V1BetaCustomerEntitlementCheckResponseDataFeature].
+	// This field is from variant
+	// [V1EventBetaCustomerEntitlementCheckResponseDataFeature].
 	UsagePeriodStart time.Time `json:"usagePeriodStart"`
 	ValidUntil       time.Time `json:"validUntil"`
-	// This field is from variant [V1BetaCustomerEntitlementCheckResponseDataCredit].
-	Currency V1BetaCustomerEntitlementCheckResponseDataCreditCurrency `json:"currency"`
-	// This field is from variant [V1BetaCustomerEntitlementCheckResponseDataCredit].
+	// This field is from variant
+	// [V1EventBetaCustomerEntitlementCheckResponseDataCredit].
+	Currency V1EventBetaCustomerEntitlementCheckResponseDataCreditCurrency `json:"currency"`
+	// This field is from variant
+	// [V1EventBetaCustomerEntitlementCheckResponseDataCredit].
 	UsageUpdatedAt time.Time `json:"usageUpdatedAt"`
 	JSON           struct {
 		AccessDeniedReason   respjson.Field
@@ -129,27 +137,28 @@ type V1BetaCustomerEntitlementCheckResponseDataUnion struct {
 	} `json:"-"`
 }
 
-// anyV1BetaCustomerEntitlementCheckResponseData is implemented by each variant of
-// [V1BetaCustomerEntitlementCheckResponseDataUnion] to add type safety for the
-// return type of [V1BetaCustomerEntitlementCheckResponseDataUnion.AsAny]
-type anyV1BetaCustomerEntitlementCheckResponseData interface {
-	implV1BetaCustomerEntitlementCheckResponseDataUnion()
+// anyV1EventBetaCustomerEntitlementCheckResponseData is implemented by each
+// variant of [V1EventBetaCustomerEntitlementCheckResponseDataUnion] to add type
+// safety for the return type of
+// [V1EventBetaCustomerEntitlementCheckResponseDataUnion.AsAny]
+type anyV1EventBetaCustomerEntitlementCheckResponseData interface {
+	implV1EventBetaCustomerEntitlementCheckResponseDataUnion()
 }
 
-func (V1BetaCustomerEntitlementCheckResponseDataFeature) implV1BetaCustomerEntitlementCheckResponseDataUnion() {
+func (V1EventBetaCustomerEntitlementCheckResponseDataFeature) implV1EventBetaCustomerEntitlementCheckResponseDataUnion() {
 }
-func (V1BetaCustomerEntitlementCheckResponseDataCredit) implV1BetaCustomerEntitlementCheckResponseDataUnion() {
+func (V1EventBetaCustomerEntitlementCheckResponseDataCredit) implV1EventBetaCustomerEntitlementCheckResponseDataUnion() {
 }
 
 // Use the following switch statement to find the correct variant
 //
-//	switch variant := V1BetaCustomerEntitlementCheckResponseDataUnion.AsAny().(type) {
-//	case stigg.V1BetaCustomerEntitlementCheckResponseDataFeature:
-//	case stigg.V1BetaCustomerEntitlementCheckResponseDataCredit:
+//	switch variant := V1EventBetaCustomerEntitlementCheckResponseDataUnion.AsAny().(type) {
+//	case stigg.V1EventBetaCustomerEntitlementCheckResponseDataFeature:
+//	case stigg.V1EventBetaCustomerEntitlementCheckResponseDataCredit:
 //	default:
 //	  fmt.Errorf("no variant present")
 //	}
-func (u V1BetaCustomerEntitlementCheckResponseDataUnion) AsAny() anyV1BetaCustomerEntitlementCheckResponseData {
+func (u V1EventBetaCustomerEntitlementCheckResponseDataUnion) AsAny() anyV1EventBetaCustomerEntitlementCheckResponseData {
 	switch u.Type {
 	case "FEATURE":
 		return u.AsFeature()
@@ -159,50 +168,50 @@ func (u V1BetaCustomerEntitlementCheckResponseDataUnion) AsAny() anyV1BetaCustom
 	return nil
 }
 
-func (u V1BetaCustomerEntitlementCheckResponseDataUnion) AsFeature() (v V1BetaCustomerEntitlementCheckResponseDataFeature) {
+func (u V1EventBetaCustomerEntitlementCheckResponseDataUnion) AsFeature() (v V1EventBetaCustomerEntitlementCheckResponseDataFeature) {
 	apijson.UnmarshalRoot(json.RawMessage(u.JSON.raw), &v)
 	return
 }
 
-func (u V1BetaCustomerEntitlementCheckResponseDataUnion) AsCredit() (v V1BetaCustomerEntitlementCheckResponseDataCredit) {
+func (u V1EventBetaCustomerEntitlementCheckResponseDataUnion) AsCredit() (v V1EventBetaCustomerEntitlementCheckResponseDataCredit) {
 	apijson.UnmarshalRoot(json.RawMessage(u.JSON.raw), &v)
 	return
 }
 
 // Returns the unmodified JSON received from the API
-func (u V1BetaCustomerEntitlementCheckResponseDataUnion) RawJSON() string { return u.JSON.raw }
+func (u V1EventBetaCustomerEntitlementCheckResponseDataUnion) RawJSON() string { return u.JSON.raw }
 
-func (r *V1BetaCustomerEntitlementCheckResponseDataUnion) UnmarshalJSON(data []byte) error {
+func (r *V1EventBetaCustomerEntitlementCheckResponseDataUnion) UnmarshalJSON(data []byte) error {
 	return apijson.UnmarshalRoot(data, r)
 }
 
-// V1BetaCustomerEntitlementCheckResponseDataUnionChains is an implicit subunion of
-// [V1BetaCustomerEntitlementCheckResponseDataUnion].
-// V1BetaCustomerEntitlementCheckResponseDataUnionChains provides convenient access
-// to the sub-properties of the union.
+// V1EventBetaCustomerEntitlementCheckResponseDataUnionChains is an implicit
+// subunion of [V1EventBetaCustomerEntitlementCheckResponseDataUnion].
+// V1EventBetaCustomerEntitlementCheckResponseDataUnionChains provides convenient
+// access to the sub-properties of the union.
 //
 // For type safety it is recommended to directly use a variant of the
-// [V1BetaCustomerEntitlementCheckResponseDataUnion].
+// [V1EventBetaCustomerEntitlementCheckResponseDataUnion].
 //
 // If the underlying value is not a json object, one of the following properties
 // will be valid: OfBetaChains]
-type V1BetaCustomerEntitlementCheckResponseDataUnionChains struct {
+type V1EventBetaCustomerEntitlementCheckResponseDataUnionChains struct {
 	// This field will be present if the value is a
-	// [[][]V1BetaCustomerEntitlementCheckResponseDataFeatureChain] instead of an
+	// [[][]V1EventBetaCustomerEntitlementCheckResponseDataFeatureChain] instead of an
 	// object.
-	OfBetaChains [][]V1BetaCustomerEntitlementCheckResponseDataFeatureChain `json:",inline"`
+	OfBetaChains [][]V1EventBetaCustomerEntitlementCheckResponseDataFeatureChain `json:",inline"`
 	JSON         struct {
 		OfBetaChains respjson.Field
 		raw          string
 	} `json:"-"`
 }
 
-func (r *V1BetaCustomerEntitlementCheckResponseDataUnionChains) UnmarshalJSON(data []byte) error {
+func (r *V1EventBetaCustomerEntitlementCheckResponseDataUnionChains) UnmarshalJSON(data []byte) error {
 	return apijson.UnmarshalRoot(data, r)
 }
 
 // Feature entitlement with optional governance chains attached.
-type V1BetaCustomerEntitlementCheckResponseDataFeature struct {
+type V1EventBetaCustomerEntitlementCheckResponseDataFeature struct {
 	// Any of "FeatureNotFound", "CustomerNotFound", "CustomerIsArchived",
 	// "CustomerResourceNotFound", "NoActiveSubscription",
 	// "NoFeatureEntitlementInSubscription", "RequestedUsageExceedingLimit",
@@ -213,12 +222,12 @@ type V1BetaCustomerEntitlementCheckResponseDataFeature struct {
 	Type               constant.Feature `json:"type" default:"FEATURE"`
 	// Per-entity rollups, one chain per resolved dimension. Omitted when dimensions
 	// was not provided.
-	Chains       [][]V1BetaCustomerEntitlementCheckResponseDataFeatureChain `json:"chains"`
-	CurrentUsage float64                                                    `json:"currentUsage"`
+	Chains       [][]V1EventBetaCustomerEntitlementCheckResponseDataFeatureChain `json:"chains"`
+	CurrentUsage float64                                                         `json:"currentUsage"`
 	// Timestamp of the last update to the entitlement grant or configuration.
-	EntitlementUpdatedAt time.Time                                                `json:"entitlementUpdatedAt" format:"date-time"`
-	Feature              V1BetaCustomerEntitlementCheckResponseDataFeatureFeature `json:"feature"`
-	HasUnlimitedUsage    bool                                                     `json:"hasUnlimitedUsage"`
+	EntitlementUpdatedAt time.Time                                                     `json:"entitlementUpdatedAt" format:"date-time"`
+	Feature              V1EventBetaCustomerEntitlementCheckResponseDataFeatureFeature `json:"feature"`
+	HasUnlimitedUsage    bool                                                          `json:"hasUnlimitedUsage"`
 	// Any of "YEAR", "MONTH", "WEEK", "DAY", "HOUR".
 	ResetPeriod string  `json:"resetPeriod" api:"nullable"`
 	UsageLimit  float64 `json:"usageLimit" api:"nullable"`
@@ -255,14 +264,14 @@ type V1BetaCustomerEntitlementCheckResponseDataFeature struct {
 }
 
 // Returns the unmodified JSON received from the API
-func (r V1BetaCustomerEntitlementCheckResponseDataFeature) RawJSON() string { return r.JSON.raw }
-func (r *V1BetaCustomerEntitlementCheckResponseDataFeature) UnmarshalJSON(data []byte) error {
+func (r V1EventBetaCustomerEntitlementCheckResponseDataFeature) RawJSON() string { return r.JSON.raw }
+func (r *V1EventBetaCustomerEntitlementCheckResponseDataFeature) UnmarshalJSON(data []byte) error {
 	return apijson.UnmarshalRoot(data, r)
 }
 
 // Per-entity governance node — limit and current usage for a single resolved
 // entity.
-type V1BetaCustomerEntitlementCheckResponseDataFeatureChain struct {
+type V1EventBetaCustomerEntitlementCheckResponseDataFeatureChain struct {
 	// Amount consumed by this entity in the current cadence period.
 	CurrentUsage float64 `json:"currentUsage" api:"required"`
 	// External id of the entity within the customer.
@@ -283,12 +292,14 @@ type V1BetaCustomerEntitlementCheckResponseDataFeatureChain struct {
 }
 
 // Returns the unmodified JSON received from the API
-func (r V1BetaCustomerEntitlementCheckResponseDataFeatureChain) RawJSON() string { return r.JSON.raw }
-func (r *V1BetaCustomerEntitlementCheckResponseDataFeatureChain) UnmarshalJSON(data []byte) error {
+func (r V1EventBetaCustomerEntitlementCheckResponseDataFeatureChain) RawJSON() string {
+	return r.JSON.raw
+}
+func (r *V1EventBetaCustomerEntitlementCheckResponseDataFeatureChain) UnmarshalJSON(data []byte) error {
 	return apijson.UnmarshalRoot(data, r)
 }
 
-type V1BetaCustomerEntitlementCheckResponseDataFeatureFeature struct {
+type V1EventBetaCustomerEntitlementCheckResponseDataFeatureFeature struct {
 	// The unique reference ID of the entitlement.
 	ID string `json:"id" api:"required"`
 	// The human-readable name of the entitlement, shown in UI elements.
@@ -313,13 +324,15 @@ type V1BetaCustomerEntitlementCheckResponseDataFeatureFeature struct {
 }
 
 // Returns the unmodified JSON received from the API
-func (r V1BetaCustomerEntitlementCheckResponseDataFeatureFeature) RawJSON() string { return r.JSON.raw }
-func (r *V1BetaCustomerEntitlementCheckResponseDataFeatureFeature) UnmarshalJSON(data []byte) error {
+func (r V1EventBetaCustomerEntitlementCheckResponseDataFeatureFeature) RawJSON() string {
+	return r.JSON.raw
+}
+func (r *V1EventBetaCustomerEntitlementCheckResponseDataFeatureFeature) UnmarshalJSON(data []byte) error {
 	return apijson.UnmarshalRoot(data, r)
 }
 
 // Credit entitlement with optional governance chains attached.
-type V1BetaCustomerEntitlementCheckResponseDataCredit struct {
+type V1EventBetaCustomerEntitlementCheckResponseDataCredit struct {
 	// Any of "FeatureNotFound", "CustomerNotFound", "CustomerIsArchived",
 	// "CustomerResourceNotFound", "NoActiveSubscription",
 	// "NoFeatureEntitlementInSubscription", "RequestedUsageExceedingLimit",
@@ -327,16 +340,16 @@ type V1BetaCustomerEntitlementCheckResponseDataCredit struct {
 	// "Revoked", "InsufficientCredits", "EntitlementNotFound".
 	AccessDeniedReason string `json:"accessDeniedReason" api:"required"`
 	// The currency associated with a credit entitlement.
-	Currency     V1BetaCustomerEntitlementCheckResponseDataCreditCurrency `json:"currency" api:"required"`
-	CurrentUsage float64                                                  `json:"currentUsage" api:"required"`
-	IsGranted    bool                                                     `json:"isGranted" api:"required"`
-	Type         constant.Credit                                          `json:"type" default:"CREDIT"`
-	UsageLimit   float64                                                  `json:"usageLimit" api:"required"`
+	Currency     V1EventBetaCustomerEntitlementCheckResponseDataCreditCurrency `json:"currency" api:"required"`
+	CurrentUsage float64                                                       `json:"currentUsage" api:"required"`
+	IsGranted    bool                                                          `json:"isGranted" api:"required"`
+	Type         constant.Credit                                               `json:"type" default:"CREDIT"`
+	UsageLimit   float64                                                       `json:"usageLimit" api:"required"`
 	// Timestamp of the last update to the credit usage.
 	UsageUpdatedAt time.Time `json:"usageUpdatedAt" api:"required" format:"date-time"`
 	// Per-entity rollups, one chain per resolved dimension. Omitted when dimensions
 	// was not provided.
-	Chains [][]V1BetaCustomerEntitlementCheckResponseDataCreditChain `json:"chains"`
+	Chains [][]V1EventBetaCustomerEntitlementCheckResponseDataCreditChain `json:"chains"`
 	// Timestamp of the last update to the entitlement grant or configuration.
 	EntitlementUpdatedAt time.Time `json:"entitlementUpdatedAt" format:"date-time"`
 	// The end date of the current billing period for recurring credit grants.
@@ -362,13 +375,13 @@ type V1BetaCustomerEntitlementCheckResponseDataCredit struct {
 }
 
 // Returns the unmodified JSON received from the API
-func (r V1BetaCustomerEntitlementCheckResponseDataCredit) RawJSON() string { return r.JSON.raw }
-func (r *V1BetaCustomerEntitlementCheckResponseDataCredit) UnmarshalJSON(data []byte) error {
+func (r V1EventBetaCustomerEntitlementCheckResponseDataCredit) RawJSON() string { return r.JSON.raw }
+func (r *V1EventBetaCustomerEntitlementCheckResponseDataCredit) UnmarshalJSON(data []byte) error {
 	return apijson.UnmarshalRoot(data, r)
 }
 
 // The currency associated with a credit entitlement.
-type V1BetaCustomerEntitlementCheckResponseDataCreditCurrency struct {
+type V1EventBetaCustomerEntitlementCheckResponseDataCreditCurrency struct {
 	// The unique identifier of the custom currency.
 	CurrencyID string `json:"currencyId" api:"required"`
 	// The display name of the currency.
@@ -395,14 +408,16 @@ type V1BetaCustomerEntitlementCheckResponseDataCreditCurrency struct {
 }
 
 // Returns the unmodified JSON received from the API
-func (r V1BetaCustomerEntitlementCheckResponseDataCreditCurrency) RawJSON() string { return r.JSON.raw }
-func (r *V1BetaCustomerEntitlementCheckResponseDataCreditCurrency) UnmarshalJSON(data []byte) error {
+func (r V1EventBetaCustomerEntitlementCheckResponseDataCreditCurrency) RawJSON() string {
+	return r.JSON.raw
+}
+func (r *V1EventBetaCustomerEntitlementCheckResponseDataCreditCurrency) UnmarshalJSON(data []byte) error {
 	return apijson.UnmarshalRoot(data, r)
 }
 
 // Per-entity governance node — limit and current usage for a single resolved
 // entity.
-type V1BetaCustomerEntitlementCheckResponseDataCreditChain struct {
+type V1EventBetaCustomerEntitlementCheckResponseDataCreditChain struct {
 	// Amount consumed by this entity in the current cadence period.
 	CurrentUsage float64 `json:"currentUsage" api:"required"`
 	// External id of the entity within the customer.
@@ -423,12 +438,14 @@ type V1BetaCustomerEntitlementCheckResponseDataCreditChain struct {
 }
 
 // Returns the unmodified JSON received from the API
-func (r V1BetaCustomerEntitlementCheckResponseDataCreditChain) RawJSON() string { return r.JSON.raw }
-func (r *V1BetaCustomerEntitlementCheckResponseDataCreditChain) UnmarshalJSON(data []byte) error {
+func (r V1EventBetaCustomerEntitlementCheckResponseDataCreditChain) RawJSON() string {
+	return r.JSON.raw
+}
+func (r *V1EventBetaCustomerEntitlementCheckResponseDataCreditChain) UnmarshalJSON(data []byte) error {
 	return apijson.UnmarshalRoot(data, r)
 }
 
-type V1BetaCustomerEntitlementCheckParams struct {
+type V1EventBetaCustomerEntitlementCheckParams struct {
 	// Currency ID (refId) to check for credit entitlements. Mutually exclusive with
 	// `featureId`.
 	CurrencyID param.Opt[string] `query:"currencyId,omitzero" json:"-"`
@@ -447,9 +464,9 @@ type V1BetaCustomerEntitlementCheckParams struct {
 	paramObj
 }
 
-// URLQuery serializes [V1BetaCustomerEntitlementCheckParams]'s query parameters as
-// `url.Values`.
-func (r V1BetaCustomerEntitlementCheckParams) URLQuery() (v url.Values, err error) {
+// URLQuery serializes [V1EventBetaCustomerEntitlementCheckParams]'s query
+// parameters as `url.Values`.
+func (r V1EventBetaCustomerEntitlementCheckParams) URLQuery() (v url.Values, err error) {
 	return apiquery.MarshalWithSettings(r, apiquery.QuerySettings{
 		ArrayFormat:  apiquery.ArrayQueryFormatComma,
 		NestedFormat: apiquery.NestedQueryFormatBrackets,
