@@ -1,5 +1,13 @@
 # Changelog
 
+## 0.1.0-beta.12 (2026-05-28)
+
+Full Changelog: [v0.1.0-beta.11...v0.1.0-beta.12](https://github.com/stiggio/stigg-go/compare/v0.1.0-beta.11...v0.1.0-beta.12)
+
+### Features
+
+* **api:** add RECEIVED to vendor identifier enum in customer integrations/payments ([fb235bb](https://github.com/stiggio/stigg-go/commit/fb235bbeb6b51aa8f769338857a0d3f64a3ed932))
+
 ## 0.1.0-beta.11 (2026-05-26)
 
 Full Changelog: [v0.1.0-beta.10...v0.1.0-beta.11](https://github.com/stiggio/stigg-go/compare/v0.1.0-beta.10...v0.1.0-beta.11)
