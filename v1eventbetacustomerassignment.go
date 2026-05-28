@@ -20,21 +20,21 @@ import (
 	"github.com/stiggio/stigg-go/packages/respjson"
 )
 
-// V1BetaCustomerAssignmentService contains methods and other services that help
-// with interacting with the stigg API.
+// V1EventBetaCustomerAssignmentService contains methods and other services that
+// help with interacting with the stigg API.
 //
 // Note, unlike clients, this service does not read variables from the environment
 // automatically. You should not instantiate this service directly, and instead use
-// the [NewV1BetaCustomerAssignmentService] method instead.
-type V1BetaCustomerAssignmentService struct {
+// the [NewV1EventBetaCustomerAssignmentService] method instead.
+type V1EventBetaCustomerAssignmentService struct {
 	Options []option.RequestOption
 }
 
-// NewV1BetaCustomerAssignmentService generates a new service that applies the
+// NewV1EventBetaCustomerAssignmentService generates a new service that applies the
 // given options to each request. These options are applied after the parent
 // client's options (if there is one), and before any request-specific options.
-func NewV1BetaCustomerAssignmentService(opts ...option.RequestOption) (r V1BetaCustomerAssignmentService) {
-	r = V1BetaCustomerAssignmentService{}
+func NewV1EventBetaCustomerAssignmentService(opts ...option.RequestOption) (r V1EventBetaCustomerAssignmentService) {
+	r = V1EventBetaCustomerAssignmentService{}
 	r.Options = opts
 	return
 }
@@ -42,7 +42,7 @@ func NewV1BetaCustomerAssignmentService(opts ...option.RequestOption) (r V1BetaC
 // Returns a cursor-paginated list of capability assignments for the given
 // customer. An assignment ties an entity to a capability with a usage limit and
 // reset cadence.
-func (r *V1BetaCustomerAssignmentService) List(ctx context.Context, id string, query V1BetaCustomerAssignmentListParams, opts ...option.RequestOption) (res *pagination.MyCursorIDPage[V1BetaCustomerAssignmentListResponse], err error) {
+func (r *V1EventBetaCustomerAssignmentService) List(ctx context.Context, id string, query V1EventBetaCustomerAssignmentListParams, opts ...option.RequestOption) (res *pagination.MyCursorIDPage[V1EventBetaCustomerAssignmentListResponse], err error) {
 	var raw *http.Response
 	opts = slices.Concat(r.Options, opts)
 	opts = append([]option.RequestOption{option.WithResponseInto(&raw)}, opts...)
@@ -66,7 +66,7 @@ func (r *V1BetaCustomerAssignmentService) List(ctx context.Context, id string, q
 // Returns a cursor-paginated list of capability assignments for the given
 // customer. An assignment ties an entity to a capability with a usage limit and
 // reset cadence.
-func (r *V1BetaCustomerAssignmentService) ListAutoPaging(ctx context.Context, id string, query V1BetaCustomerAssignmentListParams, opts ...option.RequestOption) *pagination.MyCursorIDPageAutoPager[V1BetaCustomerAssignmentListResponse] {
+func (r *V1EventBetaCustomerAssignmentService) ListAutoPaging(ctx context.Context, id string, query V1EventBetaCustomerAssignmentListParams, opts ...option.RequestOption) *pagination.MyCursorIDPageAutoPager[V1EventBetaCustomerAssignmentListResponse] {
 	return pagination.NewMyCursorIDPageAutoPager(r.List(ctx, id, query, opts...))
 }
 
@@ -74,7 +74,7 @@ func (r *V1BetaCustomerAssignmentService) ListAutoPaging(ctx context.Context, id
 // by (entityId, capabilityId) are updated; new pairs are created. On update,
 // omitted fields (usageLimit, cadence) are preserved; on create both are required
 // by the governance service.
-func (r *V1BetaCustomerAssignmentService) Upsert(ctx context.Context, id string, body V1BetaCustomerAssignmentUpsertParams, opts ...option.RequestOption) (res *V1BetaCustomerAssignmentUpsertResponse, err error) {
+func (r *V1EventBetaCustomerAssignmentService) Upsert(ctx context.Context, id string, body V1EventBetaCustomerAssignmentUpsertParams, opts ...option.RequestOption) (res *V1EventBetaCustomerAssignmentUpsertResponse, err error) {
 	opts = slices.Concat(r.Options, opts)
 	if id == "" {
 		err = errors.New("missing required id parameter")
@@ -88,13 +88,13 @@ func (r *V1BetaCustomerAssignmentService) Upsert(ctx context.Context, id string,
 // A capability assignment for an entity belonging to a customer. Defines how much
 // of the capability the entity may consume (`usageLimit`) and how often the
 // counter resets (`cadence`).
-type V1BetaCustomerAssignmentListResponse struct {
+type V1EventBetaCustomerAssignmentListResponse struct {
 	// Synthetic UUID identifier — also the cursor anchor for paginated lists
 	ID string `json:"id" api:"required" format:"uuid"`
 	// Usage-reset cadence. Currently only `MONTH` is supported
 	//
 	// Any of "MONTH".
-	Cadence V1BetaCustomerAssignmentListResponseCadence `json:"cadence" api:"required"`
+	Cadence V1EventBetaCustomerAssignmentListResponseCadence `json:"cadence" api:"required"`
 	// The capability refId this assignment grants
 	CapabilityID string `json:"capabilityId" api:"required"`
 	// Timestamp of when the record was created
@@ -120,21 +120,21 @@ type V1BetaCustomerAssignmentListResponse struct {
 }
 
 // Returns the unmodified JSON received from the API
-func (r V1BetaCustomerAssignmentListResponse) RawJSON() string { return r.JSON.raw }
-func (r *V1BetaCustomerAssignmentListResponse) UnmarshalJSON(data []byte) error {
+func (r V1EventBetaCustomerAssignmentListResponse) RawJSON() string { return r.JSON.raw }
+func (r *V1EventBetaCustomerAssignmentListResponse) UnmarshalJSON(data []byte) error {
 	return apijson.UnmarshalRoot(data, r)
 }
 
 // Usage-reset cadence. Currently only `MONTH` is supported
-type V1BetaCustomerAssignmentListResponseCadence string
+type V1EventBetaCustomerAssignmentListResponseCadence string
 
 const (
-	V1BetaCustomerAssignmentListResponseCadenceMonth V1BetaCustomerAssignmentListResponseCadence = "MONTH"
+	V1EventBetaCustomerAssignmentListResponseCadenceMonth V1EventBetaCustomerAssignmentListResponseCadence = "MONTH"
 )
 
 // Assignments after upsert.
-type V1BetaCustomerAssignmentUpsertResponse struct {
-	Data []V1BetaCustomerAssignmentUpsertResponseData `json:"data" api:"required"`
+type V1EventBetaCustomerAssignmentUpsertResponse struct {
+	Data []V1EventBetaCustomerAssignmentUpsertResponseData `json:"data" api:"required"`
 	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
 	JSON struct {
 		Data        respjson.Field
@@ -144,15 +144,15 @@ type V1BetaCustomerAssignmentUpsertResponse struct {
 }
 
 // Returns the unmodified JSON received from the API
-func (r V1BetaCustomerAssignmentUpsertResponse) RawJSON() string { return r.JSON.raw }
-func (r *V1BetaCustomerAssignmentUpsertResponse) UnmarshalJSON(data []byte) error {
+func (r V1EventBetaCustomerAssignmentUpsertResponse) RawJSON() string { return r.JSON.raw }
+func (r *V1EventBetaCustomerAssignmentUpsertResponse) UnmarshalJSON(data []byte) error {
 	return apijson.UnmarshalRoot(data, r)
 }
 
 // A capability assignment for an entity belonging to a customer. Defines how much
 // of the capability the entity may consume (`usageLimit`) and how often the
 // counter resets (`cadence`).
-type V1BetaCustomerAssignmentUpsertResponseData struct {
+type V1EventBetaCustomerAssignmentUpsertResponseData struct {
 	// Synthetic UUID identifier — also the cursor anchor for paginated lists
 	ID string `json:"id" api:"required" format:"uuid"`
 	// Usage-reset cadence. Currently only `MONTH` is supported
@@ -184,12 +184,12 @@ type V1BetaCustomerAssignmentUpsertResponseData struct {
 }
 
 // Returns the unmodified JSON received from the API
-func (r V1BetaCustomerAssignmentUpsertResponseData) RawJSON() string { return r.JSON.raw }
-func (r *V1BetaCustomerAssignmentUpsertResponseData) UnmarshalJSON(data []byte) error {
+func (r V1EventBetaCustomerAssignmentUpsertResponseData) RawJSON() string { return r.JSON.raw }
+func (r *V1EventBetaCustomerAssignmentUpsertResponseData) UnmarshalJSON(data []byte) error {
 	return apijson.UnmarshalRoot(data, r)
 }
 
-type V1BetaCustomerAssignmentListParams struct {
+type V1EventBetaCustomerAssignmentListParams struct {
 	// Return items that come after this cursor
 	After param.Opt[string] `query:"after,omitzero" format:"uuid" json:"-"`
 	// Return items that come before this cursor
@@ -203,26 +203,26 @@ type V1BetaCustomerAssignmentListParams struct {
 	paramObj
 }
 
-// URLQuery serializes [V1BetaCustomerAssignmentListParams]'s query parameters as
-// `url.Values`.
-func (r V1BetaCustomerAssignmentListParams) URLQuery() (v url.Values, err error) {
+// URLQuery serializes [V1EventBetaCustomerAssignmentListParams]'s query parameters
+// as `url.Values`.
+func (r V1EventBetaCustomerAssignmentListParams) URLQuery() (v url.Values, err error) {
 	return apiquery.MarshalWithSettings(r, apiquery.QuerySettings{
 		ArrayFormat:  apiquery.ArrayQueryFormatComma,
 		NestedFormat: apiquery.NestedQueryFormatBrackets,
 	})
 }
 
-type V1BetaCustomerAssignmentUpsertParams struct {
+type V1EventBetaCustomerAssignmentUpsertParams struct {
 	// Assignments to upsert (1–100 per request)
-	Assignments []V1BetaCustomerAssignmentUpsertParamsAssignment `json:"assignments,omitzero" api:"required"`
+	Assignments []V1EventBetaCustomerAssignmentUpsertParamsAssignment `json:"assignments,omitzero" api:"required"`
 	paramObj
 }
 
-func (r V1BetaCustomerAssignmentUpsertParams) MarshalJSON() (data []byte, err error) {
-	type shadow V1BetaCustomerAssignmentUpsertParams
+func (r V1EventBetaCustomerAssignmentUpsertParams) MarshalJSON() (data []byte, err error) {
+	type shadow V1EventBetaCustomerAssignmentUpsertParams
 	return param.MarshalObject(r, (*shadow)(&r))
 }
-func (r *V1BetaCustomerAssignmentUpsertParams) UnmarshalJSON(data []byte) error {
+func (r *V1EventBetaCustomerAssignmentUpsertParams) UnmarshalJSON(data []byte) error {
 	return apijson.UnmarshalRoot(data, r)
 }
 
@@ -232,7 +232,7 @@ func (r *V1BetaCustomerAssignmentUpsertParams) UnmarshalJSON(data []byte) error 
 // value.
 //
 // The properties CapabilityID, EntityID are required.
-type V1BetaCustomerAssignmentUpsertParamsAssignment struct {
+type V1EventBetaCustomerAssignmentUpsertParamsAssignment struct {
 	// The capability refId this assignment grants
 	CapabilityID string `json:"capabilityId" api:"required"`
 	// The entity refId this assignment is attached to
@@ -246,16 +246,16 @@ type V1BetaCustomerAssignmentUpsertParamsAssignment struct {
 	paramObj
 }
 
-func (r V1BetaCustomerAssignmentUpsertParamsAssignment) MarshalJSON() (data []byte, err error) {
-	type shadow V1BetaCustomerAssignmentUpsertParamsAssignment
+func (r V1EventBetaCustomerAssignmentUpsertParamsAssignment) MarshalJSON() (data []byte, err error) {
+	type shadow V1EventBetaCustomerAssignmentUpsertParamsAssignment
 	return param.MarshalObject(r, (*shadow)(&r))
 }
-func (r *V1BetaCustomerAssignmentUpsertParamsAssignment) UnmarshalJSON(data []byte) error {
+func (r *V1EventBetaCustomerAssignmentUpsertParamsAssignment) UnmarshalJSON(data []byte) error {
 	return apijson.UnmarshalRoot(data, r)
 }
 
 func init() {
-	apijson.RegisterFieldValidator[V1BetaCustomerAssignmentUpsertParamsAssignment](
+	apijson.RegisterFieldValidator[V1EventBetaCustomerAssignmentUpsertParamsAssignment](
 		"cadence", "MONTH",
 	)
 }

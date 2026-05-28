@@ -139,7 +139,7 @@ type V1CustomerIntegrationListResponse struct {
 	// The vendor identifier of integration
 	//
 	// Any of "AUTH0", "ZUORA", "STRIPE", "HUBSPOT", "AWS_MARKETPLACE", "SNOWFLAKE",
-	// "SALESFORCE", "BIG_QUERY", "OPEN_FGA", "APP_STORE".
+	// "SALESFORCE", "BIG_QUERY", "OPEN_FGA", "APP_STORE", "RECEIVED".
 	VendorIdentifier V1CustomerIntegrationListResponseVendorIdentifier `json:"vendorIdentifier" api:"required"`
 	// Price billing sync revision data containing billing ID, link URL, and price
 	// group package billing ID
@@ -175,6 +175,7 @@ const (
 	V1CustomerIntegrationListResponseVendorIdentifierBigQuery       V1CustomerIntegrationListResponseVendorIdentifier = "BIG_QUERY"
 	V1CustomerIntegrationListResponseVendorIdentifierOpenFga        V1CustomerIntegrationListResponseVendorIdentifier = "OPEN_FGA"
 	V1CustomerIntegrationListResponseVendorIdentifierAppStore       V1CustomerIntegrationListResponseVendorIdentifier = "APP_STORE"
+	V1CustomerIntegrationListResponseVendorIdentifierReceived       V1CustomerIntegrationListResponseVendorIdentifier = "RECEIVED"
 )
 
 // V1CustomerIntegrationListResponseSyncDataUnion contains all possible properties
@@ -325,7 +326,7 @@ type V1CustomerIntegrationListParams struct {
 	// vendors (e.g., STRIPE,HUBSPOT)
 	//
 	// Any of "AUTH0", "ZUORA", "STRIPE", "HUBSPOT", "AWS_MARKETPLACE", "SNOWFLAKE",
-	// "SALESFORCE", "BIG_QUERY", "OPEN_FGA", "APP_STORE".
+	// "SALESFORCE", "BIG_QUERY", "OPEN_FGA", "APP_STORE", "RECEIVED".
 	VendorIdentifier []string `query:"vendorIdentifier,omitzero" json:"-"`
 	paramObj
 }
@@ -347,7 +348,7 @@ type V1CustomerIntegrationLinkParams struct {
 	// The vendor identifier of integration
 	//
 	// Any of "AUTH0", "ZUORA", "STRIPE", "HUBSPOT", "AWS_MARKETPLACE", "SNOWFLAKE",
-	// "SALESFORCE", "BIG_QUERY", "OPEN_FGA", "APP_STORE".
+	// "SALESFORCE", "BIG_QUERY", "OPEN_FGA", "APP_STORE", "RECEIVED".
 	VendorIdentifier V1CustomerIntegrationLinkParamsVendorIdentifier `json:"vendorIdentifier,omitzero" api:"required"`
 	paramObj
 }
@@ -374,6 +375,7 @@ const (
 	V1CustomerIntegrationLinkParamsVendorIdentifierBigQuery       V1CustomerIntegrationLinkParamsVendorIdentifier = "BIG_QUERY"
 	V1CustomerIntegrationLinkParamsVendorIdentifierOpenFga        V1CustomerIntegrationLinkParamsVendorIdentifier = "OPEN_FGA"
 	V1CustomerIntegrationLinkParamsVendorIdentifierAppStore       V1CustomerIntegrationLinkParamsVendorIdentifier = "APP_STORE"
+	V1CustomerIntegrationLinkParamsVendorIdentifierReceived       V1CustomerIntegrationLinkParamsVendorIdentifier = "RECEIVED"
 )
 
 type V1CustomerIntegrationUnlinkParams struct {
