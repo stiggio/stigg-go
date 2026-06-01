@@ -70,7 +70,7 @@ type V1CustomerPaymentMethodAttachParams struct {
 	// The vendor identifier of integration
 	//
 	// Any of "AUTH0", "ZUORA", "STRIPE", "HUBSPOT", "AWS_MARKETPLACE", "SNOWFLAKE",
-	// "SALESFORCE", "BIG_QUERY", "OPEN_FGA", "APP_STORE", "RECEIVED".
+	// "SALESFORCE", "BIG_QUERY", "OPEN_FGA", "APP_STORE", "RECEIVED", "PREQUEL".
 	VendorIdentifier V1CustomerPaymentMethodAttachParamsVendorIdentifier `json:"vendorIdentifier,omitzero" api:"required"`
 	// Customers selected currency
 	//
@@ -112,6 +112,7 @@ const (
 	V1CustomerPaymentMethodAttachParamsVendorIdentifierOpenFga        V1CustomerPaymentMethodAttachParamsVendorIdentifier = "OPEN_FGA"
 	V1CustomerPaymentMethodAttachParamsVendorIdentifierAppStore       V1CustomerPaymentMethodAttachParamsVendorIdentifier = "APP_STORE"
 	V1CustomerPaymentMethodAttachParamsVendorIdentifierReceived       V1CustomerPaymentMethodAttachParamsVendorIdentifier = "RECEIVED"
+	V1CustomerPaymentMethodAttachParamsVendorIdentifierPrequel        V1CustomerPaymentMethodAttachParamsVendorIdentifier = "PREQUEL"
 )
 
 // Customers selected currency
