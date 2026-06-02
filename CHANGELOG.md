@@ -1,5 +1,13 @@
 # Changelog
 
+## 0.1.0-beta.15 (2026-06-02)
+
+Full Changelog: [v0.1.0-beta.14...v0.1.0-beta.15](https://github.com/stiggio/stigg-go/compare/v0.1.0-beta.14...v0.1.0-beta.15)
+
+### Features
+
+* **api:** add limit/offset params and pagination field to credit usage ([5471b9a](https://github.com/stiggio/stigg-go/commit/5471b9a1d1afa7cad9dc4f4e805853ca78f39a9f))
+
 ## 0.1.0-beta.14 (2026-06-02)
 
 Full Changelog: [v0.1.0-beta.13...v0.1.0-beta.14](https://github.com/stiggio/stigg-go/compare/v0.1.0-beta.13...v0.1.0-beta.14)
