@@ -176,11 +176,16 @@ func (r *V1CreditGetUsageResponse) UnmarshalJSON(data []byte) error {
 type V1CreditGetUsageResponseData struct {
 	// The custom currency used for credit measurement
 	Currency V1CreditGetUsageResponseDataCurrency `json:"currency" api:"required"`
+	// Cursor-based pagination for the returned series. `next`/`prev` are opaque
+	// cursors; pass them back as `after`/`before` to traverse pages. The series axis
+	// is `groupBy` when provided, otherwise `featureId`
+	Pagination V1CreditGetUsageResponseDataPagination `json:"pagination" api:"required"`
 	// Credit usage series grouped by feature
 	Series []V1CreditGetUsageResponseDataSeries `json:"series" api:"required"`
 	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
 	JSON struct {
 		Currency    respjson.Field
+		Pagination  respjson.Field
 		Series      respjson.Field
 		ExtraFields map[string]respjson.Field
 		raw         string
@@ -220,6 +225,30 @@ type V1CreditGetUsageResponseDataCurrency struct {
 // Returns the unmodified JSON received from the API
 func (r V1CreditGetUsageResponseDataCurrency) RawJSON() string { return r.JSON.raw }
 func (r *V1CreditGetUsageResponseDataCurrency) UnmarshalJSON(data []byte) error {
+	return apijson.UnmarshalRoot(data, r)
+}
+
+// Cursor-based pagination for the returned series. `next`/`prev` are opaque
+// cursors; pass them back as `after`/`before` to traverse pages. The series axis
+// is `groupBy` when provided, otherwise `featureId`
+type V1CreditGetUsageResponseDataPagination struct {
+	// Cursor for fetching the next page of results, or null if no additional pages
+	// exist
+	Next string `json:"next" api:"required"`
+	// Cursor for fetching the previous page of results, or null if at the beginning
+	Prev string `json:"prev" api:"required"`
+	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
+	JSON struct {
+		Next        respjson.Field
+		Prev        respjson.Field
+		ExtraFields map[string]respjson.Field
+		raw         string
+	} `json:"-"`
+}
+
+// Returns the unmodified JSON received from the API
+func (r V1CreditGetUsageResponseDataPagination) RawJSON() string { return r.JSON.raw }
+func (r *V1CreditGetUsageResponseDataPagination) UnmarshalJSON(data []byte) error {
 	return apijson.UnmarshalRoot(data, r)
 }
 
@@ -374,6 +403,10 @@ func (r V1CreditGetAutoRechargeParams) URLQuery() (v url.Values, err error) {
 type V1CreditGetUsageParams struct {
 	// Filter by customer ID (required)
 	CustomerID string `query:"customerId" api:"required" json:"-"`
+	// Return items that come after this cursor
+	After param.Opt[string] `query:"after,omitzero" json:"-"`
+	// Return items that come before this cursor
+	Before param.Opt[string] `query:"before,omitzero" json:"-"`
 	// Filter by currency ID
 	CurrencyID param.Opt[string] `query:"currencyId,omitzero" json:"-"`
 	// End date for the credit usage time range (ISO 8601). Defaults to now when
@@ -382,6 +415,8 @@ type V1CreditGetUsageParams struct {
 	// Comma-separated list of feature dimension keys to group usage series by (up to
 	// 3). Each key matches /^[a-zA-Z0-9_$-]+$/
 	GroupBy param.Opt[string] `query:"groupBy,omitzero" json:"-"`
+	// Maximum number of items to return
+	Limit param.Opt[int64] `query:"limit,omitzero" json:"-"`
 	// Filter by resource ID
 	ResourceID param.Opt[string] `query:"resourceId,omitzero" json:"-"`
 	// Start date for the credit usage time range (ISO 8601). Takes precedence over
