@@ -55,9 +55,12 @@ func TestV1CreditGetUsageWithOptionalParams(t *testing.T) {
 	)
 	_, err := client.V1.Credits.GetUsage(context.TODO(), stigg.V1CreditGetUsageParams{
 		CustomerID: "customerId",
+		After:      stigg.String("after"),
+		Before:     stigg.String("before"),
 		CurrencyID: stigg.String("currencyId"),
 		EndDate:    stigg.Time(time.Now()),
 		GroupBy:    stigg.String("groupBy"),
+		Limit:      stigg.Int(1),
 		ResourceID: stigg.String("resourceId"),
 		StartDate:  stigg.Time(time.Now()),
 		TimeRange:  stigg.V1CreditGetUsageParamsTimeRangeLastDay,
