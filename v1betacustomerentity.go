@@ -20,27 +20,27 @@ import (
 	"github.com/stiggio/stigg-go/packages/respjson"
 )
 
-// V1EventBetaCustomerEntityService contains methods and other services that help
-// with interacting with the stigg API.
+// V1BetaCustomerEntityService contains methods and other services that help with
+// interacting with the stigg API.
 //
 // Note, unlike clients, this service does not read variables from the environment
 // automatically. You should not instantiate this service directly, and instead use
-// the [NewV1EventBetaCustomerEntityService] method instead.
-type V1EventBetaCustomerEntityService struct {
+// the [NewV1BetaCustomerEntityService] method instead.
+type V1BetaCustomerEntityService struct {
 	Options []option.RequestOption
 }
 
-// NewV1EventBetaCustomerEntityService generates a new service that applies the
-// given options to each request. These options are applied after the parent
-// client's options (if there is one), and before any request-specific options.
-func NewV1EventBetaCustomerEntityService(opts ...option.RequestOption) (r V1EventBetaCustomerEntityService) {
-	r = V1EventBetaCustomerEntityService{}
+// NewV1BetaCustomerEntityService generates a new service that applies the given
+// options to each request. These options are applied after the parent client's
+// options (if there is one), and before any request-specific options.
+func NewV1BetaCustomerEntityService(opts ...option.RequestOption) (r V1BetaCustomerEntityService) {
+	r = V1BetaCustomerEntityService{}
 	r.Options = opts
 	return
 }
 
 // Retrieves a single entity for the given customer by its identifier.
-func (r *V1EventBetaCustomerEntityService) Get(ctx context.Context, entityID string, query V1EventBetaCustomerEntityGetParams, opts ...option.RequestOption) (res *V1EventBetaCustomerEntityGetResponse, err error) {
+func (r *V1BetaCustomerEntityService) Get(ctx context.Context, entityID string, query V1BetaCustomerEntityGetParams, opts ...option.RequestOption) (res *V1BetaCustomerEntityGetResponse, err error) {
 	opts = slices.Concat(r.Options, opts)
 	if query.ID == "" {
 		err = errors.New("missing required id parameter")
@@ -56,7 +56,7 @@ func (r *V1EventBetaCustomerEntityService) Get(ctx context.Context, entityID str
 }
 
 // Retrieves a paginated list of entities for the given customer.
-func (r *V1EventBetaCustomerEntityService) List(ctx context.Context, id string, query V1EventBetaCustomerEntityListParams, opts ...option.RequestOption) (res *pagination.MyCursorIDPage[V1EventBetaCustomerEntityListResponse], err error) {
+func (r *V1BetaCustomerEntityService) List(ctx context.Context, id string, query V1BetaCustomerEntityListParams, opts ...option.RequestOption) (res *pagination.MyCursorIDPage[V1BetaCustomerEntityListResponse], err error) {
 	var raw *http.Response
 	opts = slices.Concat(r.Options, opts)
 	opts = append([]option.RequestOption{option.WithResponseInto(&raw)}, opts...)
@@ -78,12 +78,12 @@ func (r *V1EventBetaCustomerEntityService) List(ctx context.Context, id string, 
 }
 
 // Retrieves a paginated list of entities for the given customer.
-func (r *V1EventBetaCustomerEntityService) ListAutoPaging(ctx context.Context, id string, query V1EventBetaCustomerEntityListParams, opts ...option.RequestOption) *pagination.MyCursorIDPageAutoPager[V1EventBetaCustomerEntityListResponse] {
+func (r *V1BetaCustomerEntityService) ListAutoPaging(ctx context.Context, id string, query V1BetaCustomerEntityListParams, opts ...option.RequestOption) *pagination.MyCursorIDPageAutoPager[V1BetaCustomerEntityListResponse] {
 	return pagination.NewMyCursorIDPageAutoPager(r.List(ctx, id, query, opts...))
 }
 
 // Archives entities in bulk for the given customer by id.
-func (r *V1EventBetaCustomerEntityService) Archive(ctx context.Context, id string, body V1EventBetaCustomerEntityArchiveParams, opts ...option.RequestOption) (res *V1EventBetaCustomerEntityArchiveResponse, err error) {
+func (r *V1BetaCustomerEntityService) Archive(ctx context.Context, id string, body V1BetaCustomerEntityArchiveParams, opts ...option.RequestOption) (res *V1BetaCustomerEntityArchiveResponse, err error) {
 	opts = slices.Concat(r.Options, opts)
 	if id == "" {
 		err = errors.New("missing required id parameter")
@@ -95,7 +95,7 @@ func (r *V1EventBetaCustomerEntityService) Archive(ctx context.Context, id strin
 }
 
 // Restores previously archived entities in bulk for the given customer by id.
-func (r *V1EventBetaCustomerEntityService) Unarchive(ctx context.Context, id string, body V1EventBetaCustomerEntityUnarchiveParams, opts ...option.RequestOption) (res *V1EventBetaCustomerEntityUnarchiveResponse, err error) {
+func (r *V1BetaCustomerEntityService) Unarchive(ctx context.Context, id string, body V1BetaCustomerEntityUnarchiveParams, opts ...option.RequestOption) (res *V1BetaCustomerEntityUnarchiveResponse, err error) {
 	opts = slices.Concat(r.Options, opts)
 	if id == "" {
 		err = errors.New("missing required id parameter")
@@ -108,7 +108,7 @@ func (r *V1EventBetaCustomerEntityService) Unarchive(ctx context.Context, id str
 
 // Creates or updates entities in bulk for the given customer. Existing entities
 // matched by id are updated; new ids are created.
-func (r *V1EventBetaCustomerEntityService) Upsert(ctx context.Context, id string, body V1EventBetaCustomerEntityUpsertParams, opts ...option.RequestOption) (res *V1EventBetaCustomerEntityUpsertResponse, err error) {
+func (r *V1BetaCustomerEntityService) Upsert(ctx context.Context, id string, body V1BetaCustomerEntityUpsertParams, opts ...option.RequestOption) (res *V1BetaCustomerEntityUpsertResponse, err error) {
 	opts = slices.Concat(r.Options, opts)
 	if id == "" {
 		err = errors.New("missing required id parameter")
@@ -120,9 +120,9 @@ func (r *V1EventBetaCustomerEntityService) Upsert(ctx context.Context, id string
 }
 
 // Response object
-type V1EventBetaCustomerEntityGetResponse struct {
+type V1BetaCustomerEntityGetResponse struct {
 	// A stored entity instance tracked by the governance service for a given customer
-	Data V1EventBetaCustomerEntityGetResponseData `json:"data" api:"required"`
+	Data V1BetaCustomerEntityGetResponseData `json:"data" api:"required"`
 	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
 	JSON struct {
 		Data        respjson.Field
@@ -132,13 +132,13 @@ type V1EventBetaCustomerEntityGetResponse struct {
 }
 
 // Returns the unmodified JSON received from the API
-func (r V1EventBetaCustomerEntityGetResponse) RawJSON() string { return r.JSON.raw }
-func (r *V1EventBetaCustomerEntityGetResponse) UnmarshalJSON(data []byte) error {
+func (r V1BetaCustomerEntityGetResponse) RawJSON() string { return r.JSON.raw }
+func (r *V1BetaCustomerEntityGetResponse) UnmarshalJSON(data []byte) error {
 	return apijson.UnmarshalRoot(data, r)
 }
 
 // A stored entity instance tracked by the governance service for a given customer
-type V1EventBetaCustomerEntityGetResponseData struct {
+type V1BetaCustomerEntityGetResponseData struct {
 	// The unique identifier for the entity
 	ID string `json:"id" api:"required"`
 	// Timestamp of when the record was deleted
@@ -165,13 +165,13 @@ type V1EventBetaCustomerEntityGetResponseData struct {
 }
 
 // Returns the unmodified JSON received from the API
-func (r V1EventBetaCustomerEntityGetResponseData) RawJSON() string { return r.JSON.raw }
-func (r *V1EventBetaCustomerEntityGetResponseData) UnmarshalJSON(data []byte) error {
+func (r V1BetaCustomerEntityGetResponseData) RawJSON() string { return r.JSON.raw }
+func (r *V1BetaCustomerEntityGetResponseData) UnmarshalJSON(data []byte) error {
 	return apijson.UnmarshalRoot(data, r)
 }
 
 // A stored entity instance tracked by the governance service for a given customer
-type V1EventBetaCustomerEntityListResponse struct {
+type V1BetaCustomerEntityListResponse struct {
 	// The unique identifier for the entity
 	ID string `json:"id" api:"required"`
 	// Timestamp of when the record was deleted
@@ -198,15 +198,15 @@ type V1EventBetaCustomerEntityListResponse struct {
 }
 
 // Returns the unmodified JSON received from the API
-func (r V1EventBetaCustomerEntityListResponse) RawJSON() string { return r.JSON.raw }
-func (r *V1EventBetaCustomerEntityListResponse) UnmarshalJSON(data []byte) error {
+func (r V1BetaCustomerEntityListResponse) RawJSON() string { return r.JSON.raw }
+func (r *V1BetaCustomerEntityListResponse) UnmarshalJSON(data []byte) error {
 	return apijson.UnmarshalRoot(data, r)
 }
 
 // Wrapped response echoing the ids that were acted on by an archive/unarchive call
-type V1EventBetaCustomerEntityArchiveResponse struct {
+type V1BetaCustomerEntityArchiveResponse struct {
 	// List of entity identifiers that were acted on
-	Data V1EventBetaCustomerEntityArchiveResponseData `json:"data" api:"required"`
+	Data V1BetaCustomerEntityArchiveResponseData `json:"data" api:"required"`
 	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
 	JSON struct {
 		Data        respjson.Field
@@ -216,13 +216,13 @@ type V1EventBetaCustomerEntityArchiveResponse struct {
 }
 
 // Returns the unmodified JSON received from the API
-func (r V1EventBetaCustomerEntityArchiveResponse) RawJSON() string { return r.JSON.raw }
-func (r *V1EventBetaCustomerEntityArchiveResponse) UnmarshalJSON(data []byte) error {
+func (r V1BetaCustomerEntityArchiveResponse) RawJSON() string { return r.JSON.raw }
+func (r *V1BetaCustomerEntityArchiveResponse) UnmarshalJSON(data []byte) error {
 	return apijson.UnmarshalRoot(data, r)
 }
 
 // List of entity identifiers that were acted on
-type V1EventBetaCustomerEntityArchiveResponseData struct {
+type V1BetaCustomerEntityArchiveResponseData struct {
 	// Entity identifiers to act on
 	IDs []string `json:"ids" api:"required"`
 	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
@@ -234,15 +234,15 @@ type V1EventBetaCustomerEntityArchiveResponseData struct {
 }
 
 // Returns the unmodified JSON received from the API
-func (r V1EventBetaCustomerEntityArchiveResponseData) RawJSON() string { return r.JSON.raw }
-func (r *V1EventBetaCustomerEntityArchiveResponseData) UnmarshalJSON(data []byte) error {
+func (r V1BetaCustomerEntityArchiveResponseData) RawJSON() string { return r.JSON.raw }
+func (r *V1BetaCustomerEntityArchiveResponseData) UnmarshalJSON(data []byte) error {
 	return apijson.UnmarshalRoot(data, r)
 }
 
 // Wrapped response echoing the ids that were acted on by an archive/unarchive call
-type V1EventBetaCustomerEntityUnarchiveResponse struct {
+type V1BetaCustomerEntityUnarchiveResponse struct {
 	// List of entity identifiers that were acted on
-	Data V1EventBetaCustomerEntityUnarchiveResponseData `json:"data" api:"required"`
+	Data V1BetaCustomerEntityUnarchiveResponseData `json:"data" api:"required"`
 	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
 	JSON struct {
 		Data        respjson.Field
@@ -252,13 +252,13 @@ type V1EventBetaCustomerEntityUnarchiveResponse struct {
 }
 
 // Returns the unmodified JSON received from the API
-func (r V1EventBetaCustomerEntityUnarchiveResponse) RawJSON() string { return r.JSON.raw }
-func (r *V1EventBetaCustomerEntityUnarchiveResponse) UnmarshalJSON(data []byte) error {
+func (r V1BetaCustomerEntityUnarchiveResponse) RawJSON() string { return r.JSON.raw }
+func (r *V1BetaCustomerEntityUnarchiveResponse) UnmarshalJSON(data []byte) error {
 	return apijson.UnmarshalRoot(data, r)
 }
 
 // List of entity identifiers that were acted on
-type V1EventBetaCustomerEntityUnarchiveResponseData struct {
+type V1BetaCustomerEntityUnarchiveResponseData struct {
 	// Entity identifiers to act on
 	IDs []string `json:"ids" api:"required"`
 	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
@@ -270,14 +270,14 @@ type V1EventBetaCustomerEntityUnarchiveResponseData struct {
 }
 
 // Returns the unmodified JSON received from the API
-func (r V1EventBetaCustomerEntityUnarchiveResponseData) RawJSON() string { return r.JSON.raw }
-func (r *V1EventBetaCustomerEntityUnarchiveResponseData) UnmarshalJSON(data []byte) error {
+func (r V1BetaCustomerEntityUnarchiveResponseData) RawJSON() string { return r.JSON.raw }
+func (r *V1BetaCustomerEntityUnarchiveResponseData) UnmarshalJSON(data []byte) error {
 	return apijson.UnmarshalRoot(data, r)
 }
 
 // List of entities created or updated by an upsert request
-type V1EventBetaCustomerEntityUpsertResponse struct {
-	Data []V1EventBetaCustomerEntityUpsertResponseData `json:"data" api:"required"`
+type V1BetaCustomerEntityUpsertResponse struct {
+	Data []V1BetaCustomerEntityUpsertResponseData `json:"data" api:"required"`
 	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
 	JSON struct {
 		Data        respjson.Field
@@ -287,13 +287,13 @@ type V1EventBetaCustomerEntityUpsertResponse struct {
 }
 
 // Returns the unmodified JSON received from the API
-func (r V1EventBetaCustomerEntityUpsertResponse) RawJSON() string { return r.JSON.raw }
-func (r *V1EventBetaCustomerEntityUpsertResponse) UnmarshalJSON(data []byte) error {
+func (r V1BetaCustomerEntityUpsertResponse) RawJSON() string { return r.JSON.raw }
+func (r *V1BetaCustomerEntityUpsertResponse) UnmarshalJSON(data []byte) error {
 	return apijson.UnmarshalRoot(data, r)
 }
 
 // A stored entity instance tracked by the governance service for a given customer
-type V1EventBetaCustomerEntityUpsertResponseData struct {
+type V1BetaCustomerEntityUpsertResponseData struct {
 	// The unique identifier for the entity
 	ID string `json:"id" api:"required"`
 	// Timestamp of when the record was deleted
@@ -320,17 +320,17 @@ type V1EventBetaCustomerEntityUpsertResponseData struct {
 }
 
 // Returns the unmodified JSON received from the API
-func (r V1EventBetaCustomerEntityUpsertResponseData) RawJSON() string { return r.JSON.raw }
-func (r *V1EventBetaCustomerEntityUpsertResponseData) UnmarshalJSON(data []byte) error {
+func (r V1BetaCustomerEntityUpsertResponseData) RawJSON() string { return r.JSON.raw }
+func (r *V1BetaCustomerEntityUpsertResponseData) UnmarshalJSON(data []byte) error {
 	return apijson.UnmarshalRoot(data, r)
 }
 
-type V1EventBetaCustomerEntityGetParams struct {
+type V1BetaCustomerEntityGetParams struct {
 	ID string `path:"id" api:"required" json:"-"`
 	paramObj
 }
 
-type V1EventBetaCustomerEntityListParams struct {
+type V1BetaCustomerEntityListParams struct {
 	// Return items that come after this cursor
 	After param.Opt[string] `query:"after,omitzero" format:"uuid" json:"-"`
 	// Return items that come before this cursor
@@ -342,13 +342,13 @@ type V1EventBetaCustomerEntityListParams struct {
 	// Whether to include archived entities. One of: true, false
 	//
 	// Any of "true", "false".
-	IncludeArchived V1EventBetaCustomerEntityListParamsIncludeArchived `query:"includeArchived,omitzero" json:"-"`
+	IncludeArchived V1BetaCustomerEntityListParamsIncludeArchived `query:"includeArchived,omitzero" json:"-"`
 	paramObj
 }
 
-// URLQuery serializes [V1EventBetaCustomerEntityListParams]'s query parameters as
+// URLQuery serializes [V1BetaCustomerEntityListParams]'s query parameters as
 // `url.Values`.
-func (r V1EventBetaCustomerEntityListParams) URLQuery() (v url.Values, err error) {
+func (r V1BetaCustomerEntityListParams) URLQuery() (v url.Values, err error) {
 	return apiquery.MarshalWithSettings(r, apiquery.QuerySettings{
 		ArrayFormat:  apiquery.ArrayQueryFormatComma,
 		NestedFormat: apiquery.NestedQueryFormatBrackets,
@@ -356,59 +356,59 @@ func (r V1EventBetaCustomerEntityListParams) URLQuery() (v url.Values, err error
 }
 
 // Whether to include archived entities. One of: true, false
-type V1EventBetaCustomerEntityListParamsIncludeArchived string
+type V1BetaCustomerEntityListParamsIncludeArchived string
 
 const (
-	V1EventBetaCustomerEntityListParamsIncludeArchivedTrue  V1EventBetaCustomerEntityListParamsIncludeArchived = "true"
-	V1EventBetaCustomerEntityListParamsIncludeArchivedFalse V1EventBetaCustomerEntityListParamsIncludeArchived = "false"
+	V1BetaCustomerEntityListParamsIncludeArchivedTrue  V1BetaCustomerEntityListParamsIncludeArchived = "true"
+	V1BetaCustomerEntityListParamsIncludeArchivedFalse V1BetaCustomerEntityListParamsIncludeArchived = "false"
 )
 
-type V1EventBetaCustomerEntityArchiveParams struct {
+type V1BetaCustomerEntityArchiveParams struct {
 	// Entity identifiers to act on
 	IDs []string `json:"ids,omitzero" api:"required"`
 	paramObj
 }
 
-func (r V1EventBetaCustomerEntityArchiveParams) MarshalJSON() (data []byte, err error) {
-	type shadow V1EventBetaCustomerEntityArchiveParams
+func (r V1BetaCustomerEntityArchiveParams) MarshalJSON() (data []byte, err error) {
+	type shadow V1BetaCustomerEntityArchiveParams
 	return param.MarshalObject(r, (*shadow)(&r))
 }
-func (r *V1EventBetaCustomerEntityArchiveParams) UnmarshalJSON(data []byte) error {
+func (r *V1BetaCustomerEntityArchiveParams) UnmarshalJSON(data []byte) error {
 	return apijson.UnmarshalRoot(data, r)
 }
 
-type V1EventBetaCustomerEntityUnarchiveParams struct {
+type V1BetaCustomerEntityUnarchiveParams struct {
 	// Entity identifiers to act on
 	IDs []string `json:"ids,omitzero" api:"required"`
 	paramObj
 }
 
-func (r V1EventBetaCustomerEntityUnarchiveParams) MarshalJSON() (data []byte, err error) {
-	type shadow V1EventBetaCustomerEntityUnarchiveParams
+func (r V1BetaCustomerEntityUnarchiveParams) MarshalJSON() (data []byte, err error) {
+	type shadow V1BetaCustomerEntityUnarchiveParams
 	return param.MarshalObject(r, (*shadow)(&r))
 }
-func (r *V1EventBetaCustomerEntityUnarchiveParams) UnmarshalJSON(data []byte) error {
+func (r *V1BetaCustomerEntityUnarchiveParams) UnmarshalJSON(data []byte) error {
 	return apijson.UnmarshalRoot(data, r)
 }
 
-type V1EventBetaCustomerEntityUpsertParams struct {
+type V1BetaCustomerEntityUpsertParams struct {
 	// List of entities to create or update (1-100 entries)
-	Entities []V1EventBetaCustomerEntityUpsertParamsEntity `json:"entities,omitzero" api:"required"`
+	Entities []V1BetaCustomerEntityUpsertParamsEntity `json:"entities,omitzero" api:"required"`
 	paramObj
 }
 
-func (r V1EventBetaCustomerEntityUpsertParams) MarshalJSON() (data []byte, err error) {
-	type shadow V1EventBetaCustomerEntityUpsertParams
+func (r V1BetaCustomerEntityUpsertParams) MarshalJSON() (data []byte, err error) {
+	type shadow V1BetaCustomerEntityUpsertParams
 	return param.MarshalObject(r, (*shadow)(&r))
 }
-func (r *V1EventBetaCustomerEntityUpsertParams) UnmarshalJSON(data []byte) error {
+func (r *V1BetaCustomerEntityUpsertParams) UnmarshalJSON(data []byte) error {
 	return apijson.UnmarshalRoot(data, r)
 }
 
 // A single entity to create or update.
 //
 // The property ID is required.
-type V1EventBetaCustomerEntityUpsertParamsEntity struct {
+type V1BetaCustomerEntityUpsertParamsEntity struct {
 	// The unique identifier for the entity
 	ID string `json:"id" api:"required"`
 	// The entity type refId this entity instantiates. Required when creating a new
@@ -421,10 +421,10 @@ type V1EventBetaCustomerEntityUpsertParamsEntity struct {
 	paramObj
 }
 
-func (r V1EventBetaCustomerEntityUpsertParamsEntity) MarshalJSON() (data []byte, err error) {
-	type shadow V1EventBetaCustomerEntityUpsertParamsEntity
+func (r V1BetaCustomerEntityUpsertParamsEntity) MarshalJSON() (data []byte, err error) {
+	type shadow V1BetaCustomerEntityUpsertParamsEntity
 	return param.MarshalObject(r, (*shadow)(&r))
 }
-func (r *V1EventBetaCustomerEntityUpsertParamsEntity) UnmarshalJSON(data []byte) error {
+func (r *V1BetaCustomerEntityUpsertParamsEntity) UnmarshalJSON(data []byte) error {
 	return apijson.UnmarshalRoot(data, r)
 }

@@ -25,7 +25,6 @@ import (
 // the [NewV1EventService] method instead.
 type V1EventService struct {
 	Options []option.RequestOption
-	Beta    V1EventBetaService
 }
 
 // NewV1EventService generates a new service that applies the given options to each
@@ -34,7 +33,6 @@ type V1EventService struct {
 func NewV1EventService(opts ...option.RequestOption) (r V1EventService) {
 	r = V1EventService{}
 	r.Options = opts
-	r.Beta = NewV1EventBetaService(opts...)
 	return
 }
 
