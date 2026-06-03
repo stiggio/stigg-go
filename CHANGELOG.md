@@ -1,5 +1,13 @@
 # Changelog
 
+## 0.1.0-beta.16 (2026-06-03)
+
+Full Changelog: [v0.1.0-beta.15...v0.1.0-beta.16](https://github.com/stiggio/stigg-go/compare/v0.1.0-beta.15...v0.1.0-beta.16)
+
+### Features
+
+* **api:** manual updates ([bd0207a](https://github.com/stiggio/stigg-go/commit/bd0207ab55d60ff31f85365edca898db4b067b75))
+
 ## 0.1.0-beta.15 (2026-06-02)
 
 Full Changelog: [v0.1.0-beta.14...v0.1.0-beta.15](https://github.com/stiggio/stigg-go/compare/v0.1.0-beta.14...v0.1.0-beta.15)
