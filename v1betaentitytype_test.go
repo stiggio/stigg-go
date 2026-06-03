@@ -13,7 +13,7 @@ import (
 	"github.com/stiggio/stigg-go/option"
 )
 
-func TestV1EventBetaCustomerAssignmentListWithOptionalParams(t *testing.T) {
+func TestV1BetaEntityTypeListWithOptionalParams(t *testing.T) {
 	t.Skip("Mock server tests are disabled")
 	baseURL := "http://localhost:4010"
 	if envURL, ok := os.LookupEnv("TEST_API_BASE_URL"); ok {
@@ -26,17 +26,11 @@ func TestV1EventBetaCustomerAssignmentListWithOptionalParams(t *testing.T) {
 		option.WithBaseURL(baseURL),
 		option.WithAPIKey("My API Key"),
 	)
-	_, err := client.V1.Events.Beta.Customers.Assignments.List(
-		context.TODO(),
-		"id",
-		stigg.V1EventBetaCustomerAssignmentListParams{
-			After:        stigg.String("182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e"),
-			Before:       stigg.String("182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e"),
-			CapabilityID: stigg.String("capabilityId"),
-			EntityID:     stigg.String("entityId"),
-			Limit:        stigg.Int(1),
-		},
-	)
+	_, err := client.V1Beta.EntityTypes.List(context.TODO(), stigg.V1BetaEntityTypeListParams{
+		After:  stigg.String("182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e"),
+		Before: stigg.String("182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e"),
+		Limit:  stigg.Int(1),
+	})
 	if err != nil {
 		var apierr *stigg.Error
 		if errors.As(err, &apierr) {
@@ -46,7 +40,7 @@ func TestV1EventBetaCustomerAssignmentListWithOptionalParams(t *testing.T) {
 	}
 }
 
-func TestV1EventBetaCustomerAssignmentUpsert(t *testing.T) {
+func TestV1BetaEntityTypeUpsert(t *testing.T) {
 	t.Skip("Mock server tests are disabled")
 	baseURL := "http://localhost:4010"
 	if envURL, ok := os.LookupEnv("TEST_API_BASE_URL"); ok {
@@ -59,23 +53,17 @@ func TestV1EventBetaCustomerAssignmentUpsert(t *testing.T) {
 		option.WithBaseURL(baseURL),
 		option.WithAPIKey("My API Key"),
 	)
-	_, err := client.V1.Events.Beta.Customers.Assignments.Upsert(
-		context.TODO(),
-		"id",
-		stigg.V1EventBetaCustomerAssignmentUpsertParams{
-			Assignments: []stigg.V1EventBetaCustomerAssignmentUpsertParamsAssignment{{
-				CapabilityID: "compute-minutes",
-				EntityID:     "workspace-001",
-				Cadence:      "MONTH",
-				UsageLimit:   stigg.Float(1000),
-			}, {
-				CapabilityID: "compute-minutes",
-				EntityID:     "workspace-002",
-				Cadence:      "MONTH",
-				UsageLimit:   stigg.Float(2000),
-			}},
-		},
-	)
+	_, err := client.V1Beta.EntityTypes.Upsert(context.TODO(), stigg.V1BetaEntityTypeUpsertParams{
+		Types: []stigg.V1BetaEntityTypeUpsertParamsType{{
+			ID:              "org",
+			AttributionKeys: []string{"organizationId"},
+			DisplayName:     "Organization",
+		}, {
+			ID:              "team",
+			AttributionKeys: []string{"teamId"},
+			DisplayName:     "Team",
+		}},
+	})
 	if err != nil {
 		var apierr *stigg.Error
 		if errors.As(err, &apierr) {
