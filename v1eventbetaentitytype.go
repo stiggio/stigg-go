@@ -18,21 +18,21 @@ import (
 	"github.com/stiggio/stigg-go/packages/respjson"
 )
 
-// V1BetaEntityTypeService contains methods and other services that help with
+// V1EventBetaEntityTypeService contains methods and other services that help with
 // interacting with the stigg API.
 //
 // Note, unlike clients, this service does not read variables from the environment
 // automatically. You should not instantiate this service directly, and instead use
-// the [NewV1BetaEntityTypeService] method instead.
-type V1BetaEntityTypeService struct {
+// the [NewV1EventBetaEntityTypeService] method instead.
+type V1EventBetaEntityTypeService struct {
 	Options []option.RequestOption
 }
 
-// NewV1BetaEntityTypeService generates a new service that applies the given
+// NewV1EventBetaEntityTypeService generates a new service that applies the given
 // options to each request. These options are applied after the parent client's
 // options (if there is one), and before any request-specific options.
-func NewV1BetaEntityTypeService(opts ...option.RequestOption) (r V1BetaEntityTypeService) {
-	r = V1BetaEntityTypeService{}
+func NewV1EventBetaEntityTypeService(opts ...option.RequestOption) (r V1EventBetaEntityTypeService) {
+	r = V1EventBetaEntityTypeService{}
 	r.Options = opts
 	return
 }
@@ -40,7 +40,7 @@ func NewV1BetaEntityTypeService(opts ...option.RequestOption) (r V1BetaEntityTyp
 // Returns a cursor-paginated list of entity types defined in the environment.
 // Entity types are vendor-defined categories of resource that can be governed
 // (e.g. Org, Team, User).
-func (r *V1BetaEntityTypeService) List(ctx context.Context, query V1BetaEntityTypeListParams, opts ...option.RequestOption) (res *pagination.MyCursorIDPage[V1BetaEntityTypeListResponse], err error) {
+func (r *V1EventBetaEntityTypeService) List(ctx context.Context, query V1EventBetaEntityTypeListParams, opts ...option.RequestOption) (res *pagination.MyCursorIDPage[V1EventBetaEntityTypeListResponse], err error) {
 	var raw *http.Response
 	opts = slices.Concat(r.Options, opts)
 	opts = append([]option.RequestOption{option.WithResponseInto(&raw)}, opts...)
@@ -60,14 +60,14 @@ func (r *V1BetaEntityTypeService) List(ctx context.Context, query V1BetaEntityTy
 // Returns a cursor-paginated list of entity types defined in the environment.
 // Entity types are vendor-defined categories of resource that can be governed
 // (e.g. Org, Team, User).
-func (r *V1BetaEntityTypeService) ListAutoPaging(ctx context.Context, query V1BetaEntityTypeListParams, opts ...option.RequestOption) *pagination.MyCursorIDPageAutoPager[V1BetaEntityTypeListResponse] {
+func (r *V1EventBetaEntityTypeService) ListAutoPaging(ctx context.Context, query V1EventBetaEntityTypeListParams, opts ...option.RequestOption) *pagination.MyCursorIDPageAutoPager[V1EventBetaEntityTypeListResponse] {
 	return pagination.NewMyCursorIDPageAutoPager(r.List(ctx, query, opts...))
 }
 
 // Batched create-or-update of entity types. Existing types matched by id are
 // updated; new ids are created. Idempotent — re-submitting the same payload
 // converges to the same state.
-func (r *V1BetaEntityTypeService) Upsert(ctx context.Context, body V1BetaEntityTypeUpsertParams, opts ...option.RequestOption) (res *V1BetaEntityTypeUpsertResponse, err error) {
+func (r *V1EventBetaEntityTypeService) Upsert(ctx context.Context, body V1EventBetaEntityTypeUpsertParams, opts ...option.RequestOption) (res *V1EventBetaEntityTypeUpsertResponse, err error) {
 	opts = slices.Concat(r.Options, opts)
 	path := "api/v1-beta/entity-types"
 	err = requestconfig.ExecuteNewRequest(ctx, http.MethodPut, path, body, &res, opts...)
@@ -78,7 +78,7 @@ func (r *V1BetaEntityTypeService) Upsert(ctx context.Context, body V1BetaEntityT
 // User). Vendors define entity types once per environment; their customers create
 // instances (entities) of these types and the governance engine tracks usage and
 // enforces limits per instance.
-type V1BetaEntityTypeListResponse struct {
+type V1EventBetaEntityTypeListResponse struct {
 	// The unique identifier for the entity
 	ID string `json:"id" api:"required"`
 	// Dimension keys used to attribute usage events to instances of this type (e.g.
@@ -103,14 +103,14 @@ type V1BetaEntityTypeListResponse struct {
 }
 
 // Returns the unmodified JSON received from the API
-func (r V1BetaEntityTypeListResponse) RawJSON() string { return r.JSON.raw }
-func (r *V1BetaEntityTypeListResponse) UnmarshalJSON(data []byte) error {
+func (r V1EventBetaEntityTypeListResponse) RawJSON() string { return r.JSON.raw }
+func (r *V1EventBetaEntityTypeListResponse) UnmarshalJSON(data []byte) error {
 	return apijson.UnmarshalRoot(data, r)
 }
 
 // Entity types after upsert.
-type V1BetaEntityTypeUpsertResponse struct {
-	Data []V1BetaEntityTypeUpsertResponseData `json:"data" api:"required"`
+type V1EventBetaEntityTypeUpsertResponse struct {
+	Data []V1EventBetaEntityTypeUpsertResponseData `json:"data" api:"required"`
 	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
 	JSON struct {
 		Data        respjson.Field
@@ -120,8 +120,8 @@ type V1BetaEntityTypeUpsertResponse struct {
 }
 
 // Returns the unmodified JSON received from the API
-func (r V1BetaEntityTypeUpsertResponse) RawJSON() string { return r.JSON.raw }
-func (r *V1BetaEntityTypeUpsertResponse) UnmarshalJSON(data []byte) error {
+func (r V1EventBetaEntityTypeUpsertResponse) RawJSON() string { return r.JSON.raw }
+func (r *V1EventBetaEntityTypeUpsertResponse) UnmarshalJSON(data []byte) error {
 	return apijson.UnmarshalRoot(data, r)
 }
 
@@ -129,7 +129,7 @@ func (r *V1BetaEntityTypeUpsertResponse) UnmarshalJSON(data []byte) error {
 // User). Vendors define entity types once per environment; their customers create
 // instances (entities) of these types and the governance engine tracks usage and
 // enforces limits per instance.
-type V1BetaEntityTypeUpsertResponseData struct {
+type V1EventBetaEntityTypeUpsertResponseData struct {
 	// The unique identifier for the entity
 	ID string `json:"id" api:"required"`
 	// Dimension keys used to attribute usage events to instances of this type (e.g.
@@ -154,12 +154,12 @@ type V1BetaEntityTypeUpsertResponseData struct {
 }
 
 // Returns the unmodified JSON received from the API
-func (r V1BetaEntityTypeUpsertResponseData) RawJSON() string { return r.JSON.raw }
-func (r *V1BetaEntityTypeUpsertResponseData) UnmarshalJSON(data []byte) error {
+func (r V1EventBetaEntityTypeUpsertResponseData) RawJSON() string { return r.JSON.raw }
+func (r *V1EventBetaEntityTypeUpsertResponseData) UnmarshalJSON(data []byte) error {
 	return apijson.UnmarshalRoot(data, r)
 }
 
-type V1BetaEntityTypeListParams struct {
+type V1EventBetaEntityTypeListParams struct {
 	// Return items that come after this cursor
 	After param.Opt[string] `query:"after,omitzero" format:"uuid" json:"-"`
 	// Return items that come before this cursor
@@ -169,33 +169,33 @@ type V1BetaEntityTypeListParams struct {
 	paramObj
 }
 
-// URLQuery serializes [V1BetaEntityTypeListParams]'s query parameters as
+// URLQuery serializes [V1EventBetaEntityTypeListParams]'s query parameters as
 // `url.Values`.
-func (r V1BetaEntityTypeListParams) URLQuery() (v url.Values, err error) {
+func (r V1EventBetaEntityTypeListParams) URLQuery() (v url.Values, err error) {
 	return apiquery.MarshalWithSettings(r, apiquery.QuerySettings{
 		ArrayFormat:  apiquery.ArrayQueryFormatComma,
 		NestedFormat: apiquery.NestedQueryFormatBrackets,
 	})
 }
 
-type V1BetaEntityTypeUpsertParams struct {
+type V1EventBetaEntityTypeUpsertParams struct {
 	// Entity types to upsert (1–100 per request)
-	Types []V1BetaEntityTypeUpsertParamsType `json:"types,omitzero" api:"required"`
+	Types []V1EventBetaEntityTypeUpsertParamsType `json:"types,omitzero" api:"required"`
 	paramObj
 }
 
-func (r V1BetaEntityTypeUpsertParams) MarshalJSON() (data []byte, err error) {
-	type shadow V1BetaEntityTypeUpsertParams
+func (r V1EventBetaEntityTypeUpsertParams) MarshalJSON() (data []byte, err error) {
+	type shadow V1EventBetaEntityTypeUpsertParams
 	return param.MarshalObject(r, (*shadow)(&r))
 }
-func (r *V1BetaEntityTypeUpsertParams) UnmarshalJSON(data []byte) error {
+func (r *V1EventBetaEntityTypeUpsertParams) UnmarshalJSON(data []byte) error {
 	return apijson.UnmarshalRoot(data, r)
 }
 
 // A single entity type definition.
 //
 // The properties ID, AttributionKeys, DisplayName are required.
-type V1BetaEntityTypeUpsertParamsType struct {
+type V1EventBetaEntityTypeUpsertParamsType struct {
 	// The unique identifier for the entity
 	ID string `json:"id" api:"required"`
 	// Dimension keys used to attribute usage events to instances of this type (e.g.
@@ -206,10 +206,10 @@ type V1BetaEntityTypeUpsertParamsType struct {
 	paramObj
 }
 
-func (r V1BetaEntityTypeUpsertParamsType) MarshalJSON() (data []byte, err error) {
-	type shadow V1BetaEntityTypeUpsertParamsType
+func (r V1EventBetaEntityTypeUpsertParamsType) MarshalJSON() (data []byte, err error) {
+	type shadow V1EventBetaEntityTypeUpsertParamsType
 	return param.MarshalObject(r, (*shadow)(&r))
 }
-func (r *V1BetaEntityTypeUpsertParamsType) UnmarshalJSON(data []byte) error {
+func (r *V1EventBetaEntityTypeUpsertParamsType) UnmarshalJSON(data []byte) error {
 	return apijson.UnmarshalRoot(data, r)
 }

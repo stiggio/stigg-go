@@ -13,7 +13,7 @@ import (
 	"github.com/stiggio/stigg-go/option"
 )
 
-func TestV1BetaCustomerEntitlementCheckWithOptionalParams(t *testing.T) {
+func TestV1EventBetaCustomerEntitlementCheckWithOptionalParams(t *testing.T) {
 	t.Skip("Mock server tests are disabled")
 	baseURL := "http://localhost:4010"
 	if envURL, ok := os.LookupEnv("TEST_API_BASE_URL"); ok {
@@ -26,10 +26,10 @@ func TestV1BetaCustomerEntitlementCheckWithOptionalParams(t *testing.T) {
 		option.WithBaseURL(baseURL),
 		option.WithAPIKey("My API Key"),
 	)
-	_, err := client.V1Beta.Customers.Entitlements.Check(
+	_, err := client.V1.Events.Beta.Customers.Entitlements.Check(
 		context.TODO(),
 		"x",
-		stigg.V1BetaCustomerEntitlementCheckParams{
+		stigg.V1EventBetaCustomerEntitlementCheckParams{
 			CurrencyID: stigg.String("x"),
 			Dimensions: map[string]string{
 				"foo": "string",
