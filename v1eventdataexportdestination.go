@@ -1,0 +1,196 @@
+// File generated from our OpenAPI spec by Stainless. See CONTRIBUTING.md for details.
+
+package stigg
+
+import (
+	"context"
+	"errors"
+	"fmt"
+	"net/http"
+	"slices"
+
+	"github.com/stiggio/stigg-go/internal/apijson"
+	"github.com/stiggio/stigg-go/internal/requestconfig"
+	"github.com/stiggio/stigg-go/option"
+	"github.com/stiggio/stigg-go/packages/param"
+	"github.com/stiggio/stigg-go/packages/respjson"
+)
+
+// V1EventDataExportDestinationService contains methods and other services that
+// help with interacting with the stigg API.
+//
+// Note, unlike clients, this service does not read variables from the environment
+// automatically. You should not instantiate this service directly, and instead use
+// the [NewV1EventDataExportDestinationService] method instead.
+type V1EventDataExportDestinationService struct {
+	Options []option.RequestOption
+}
+
+// NewV1EventDataExportDestinationService generates a new service that applies the
+// given options to each request. These options are applied after the parent
+// client's options (if there is one), and before any request-specific options.
+func NewV1EventDataExportDestinationService(opts ...option.RequestOption) (r V1EventDataExportDestinationService) {
+	r = V1EventDataExportDestinationService{}
+	r.Options = opts
+	return
+}
+
+// Register a destination on the environment's DATA_EXPORT integration.
+// Lazy-creates the integration row + provider recipient on first call. Idempotent
+// on destinationId.
+func (r *V1EventDataExportDestinationService) New(ctx context.Context, body V1EventDataExportDestinationNewParams, opts ...option.RequestOption) (res *V1EventDataExportDestinationNewResponse, err error) {
+	opts = slices.Concat(r.Options, opts)
+	path := "api/v1/data-export/destinations"
+	err = requestconfig.ExecuteNewRequest(ctx, http.MethodPost, path, body, &res, opts...)
+	return res, err
+}
+
+// Remove a destination from the DATA_EXPORT integration metadata. Idempotent.
+func (r *V1EventDataExportDestinationService) Delete(ctx context.Context, destinationID string, opts ...option.RequestOption) (res *V1EventDataExportDestinationDeleteResponse, err error) {
+	opts = slices.Concat(r.Options, opts)
+	if destinationID == "" {
+		err = errors.New("missing required destinationId parameter")
+		return nil, err
+	}
+	path := fmt.Sprintf("api/v1/data-export/destinations/%s", destinationID)
+	err = requestconfig.ExecuteNewRequest(ctx, http.MethodDelete, path, nil, &res, opts...)
+	return res, err
+}
+
+// Response object
+type V1EventDataExportDestinationNewResponse struct {
+	// Current destinations under the DATA_EXPORT integration.
+	Data V1EventDataExportDestinationNewResponseData `json:"data" api:"required"`
+	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
+	JSON struct {
+		Data        respjson.Field
+		ExtraFields map[string]respjson.Field
+		raw         string
+	} `json:"-"`
+}
+
+// Returns the unmodified JSON received from the API
+func (r V1EventDataExportDestinationNewResponse) RawJSON() string { return r.JSON.raw }
+func (r *V1EventDataExportDestinationNewResponse) UnmarshalJSON(data []byte) error {
+	return apijson.UnmarshalRoot(data, r)
+}
+
+// Current destinations under the DATA_EXPORT integration.
+type V1EventDataExportDestinationNewResponseData struct {
+	// Current destinations under the DATA_EXPORT integration
+	Destinations []V1EventDataExportDestinationNewResponseDataDestination `json:"destinations" api:"required"`
+	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
+	JSON struct {
+		Destinations respjson.Field
+		ExtraFields  map[string]respjson.Field
+		raw          string
+	} `json:"-"`
+}
+
+// Returns the unmodified JSON received from the API
+func (r V1EventDataExportDestinationNewResponseData) RawJSON() string { return r.JSON.raw }
+func (r *V1EventDataExportDestinationNewResponseData) UnmarshalJSON(data []byte) error {
+	return apijson.UnmarshalRoot(data, r)
+}
+
+// A single destination entry under the DATA_EXPORT integration.
+type V1EventDataExportDestinationNewResponseDataDestination struct {
+	// ISO8601 timestamp of when the destination was connected
+	ConnectedAt string `json:"connectedAt" api:"required"`
+	// Provider destination ID
+	DestinationID string `json:"destinationId" api:"required"`
+	// Destination type (snowflake, bigquery, ...)
+	Type string `json:"type" api:"required"`
+	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
+	JSON struct {
+		ConnectedAt   respjson.Field
+		DestinationID respjson.Field
+		Type          respjson.Field
+		ExtraFields   map[string]respjson.Field
+		raw           string
+	} `json:"-"`
+}
+
+// Returns the unmodified JSON received from the API
+func (r V1EventDataExportDestinationNewResponseDataDestination) RawJSON() string { return r.JSON.raw }
+func (r *V1EventDataExportDestinationNewResponseDataDestination) UnmarshalJSON(data []byte) error {
+	return apijson.UnmarshalRoot(data, r)
+}
+
+// Response object
+type V1EventDataExportDestinationDeleteResponse struct {
+	// Current destinations under the DATA_EXPORT integration.
+	Data V1EventDataExportDestinationDeleteResponseData `json:"data" api:"required"`
+	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
+	JSON struct {
+		Data        respjson.Field
+		ExtraFields map[string]respjson.Field
+		raw         string
+	} `json:"-"`
+}
+
+// Returns the unmodified JSON received from the API
+func (r V1EventDataExportDestinationDeleteResponse) RawJSON() string { return r.JSON.raw }
+func (r *V1EventDataExportDestinationDeleteResponse) UnmarshalJSON(data []byte) error {
+	return apijson.UnmarshalRoot(data, r)
+}
+
+// Current destinations under the DATA_EXPORT integration.
+type V1EventDataExportDestinationDeleteResponseData struct {
+	// Current destinations under the DATA_EXPORT integration
+	Destinations []V1EventDataExportDestinationDeleteResponseDataDestination `json:"destinations" api:"required"`
+	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
+	JSON struct {
+		Destinations respjson.Field
+		ExtraFields  map[string]respjson.Field
+		raw          string
+	} `json:"-"`
+}
+
+// Returns the unmodified JSON received from the API
+func (r V1EventDataExportDestinationDeleteResponseData) RawJSON() string { return r.JSON.raw }
+func (r *V1EventDataExportDestinationDeleteResponseData) UnmarshalJSON(data []byte) error {
+	return apijson.UnmarshalRoot(data, r)
+}
+
+// A single destination entry under the DATA_EXPORT integration.
+type V1EventDataExportDestinationDeleteResponseDataDestination struct {
+	// ISO8601 timestamp of when the destination was connected
+	ConnectedAt string `json:"connectedAt" api:"required"`
+	// Provider destination ID
+	DestinationID string `json:"destinationId" api:"required"`
+	// Destination type (snowflake, bigquery, ...)
+	Type string `json:"type" api:"required"`
+	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
+	JSON struct {
+		ConnectedAt   respjson.Field
+		DestinationID respjson.Field
+		Type          respjson.Field
+		ExtraFields   map[string]respjson.Field
+		raw           string
+	} `json:"-"`
+}
+
+// Returns the unmodified JSON received from the API
+func (r V1EventDataExportDestinationDeleteResponseDataDestination) RawJSON() string {
+	return r.JSON.raw
+}
+func (r *V1EventDataExportDestinationDeleteResponseDataDestination) UnmarshalJSON(data []byte) error {
+	return apijson.UnmarshalRoot(data, r)
+}
+
+type V1EventDataExportDestinationNewParams struct {
+	// The provider destination ID returned by the embedded SDK on connect
+	DestinationID string `json:"destinationId" api:"required"`
+	// The destination type (e.g. snowflake, bigquery)
+	DestinationType string `json:"destinationType" api:"required"`
+	paramObj
+}
+
+func (r V1EventDataExportDestinationNewParams) MarshalJSON() (data []byte, err error) {
+	type shadow V1EventDataExportDestinationNewParams
+	return param.MarshalObject(r, (*shadow)(&r))
+}
+func (r *V1EventDataExportDestinationNewParams) UnmarshalJSON(data []byte) error {
+	return apijson.UnmarshalRoot(data, r)
+}

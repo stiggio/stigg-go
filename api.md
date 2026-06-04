@@ -197,6 +197,30 @@ Methods:
 - <code title="get /api/v1-beta/entity-types">client.V1.Events.Beta.EntityTypes.<a href="https://pkg.go.dev/github.com/stiggio/stigg-go#V1EventBetaEntityTypeService.List">List</a>(ctx <a href="https://pkg.go.dev/context">context</a>.<a href="https://pkg.go.dev/context#Context">Context</a>, query <a href="https://pkg.go.dev/github.com/stiggio/stigg-go">stigg</a>.<a href="https://pkg.go.dev/github.com/stiggio/stigg-go#V1EventBetaEntityTypeListParams">V1EventBetaEntityTypeListParams</a>) (\*<a href="https://pkg.go.dev/github.com/stiggio/stigg-go/packages/pagination">pagination</a>.<a href="https://pkg.go.dev/github.com/stiggio/stigg-go/packages/pagination#MyCursorIDPage">MyCursorIDPage</a>[<a href="https://pkg.go.dev/github.com/stiggio/stigg-go">stigg</a>.<a href="https://pkg.go.dev/github.com/stiggio/stigg-go#V1EventBetaEntityTypeListResponse">V1EventBetaEntityTypeListResponse</a>], <a href="https://pkg.go.dev/builtin#error">error</a>)</code>
 - <code title="put /api/v1-beta/entity-types">client.V1.Events.Beta.EntityTypes.<a href="https://pkg.go.dev/github.com/stiggio/stigg-go#V1EventBetaEntityTypeService.Upsert">Upsert</a>(ctx <a href="https://pkg.go.dev/context">context</a>.<a href="https://pkg.go.dev/context#Context">Context</a>, body <a href="https://pkg.go.dev/github.com/stiggio/stigg-go">stigg</a>.<a href="https://pkg.go.dev/github.com/stiggio/stigg-go#V1EventBetaEntityTypeUpsertParams">V1EventBetaEntityTypeUpsertParams</a>) (\*<a href="https://pkg.go.dev/github.com/stiggio/stigg-go">stigg</a>.<a href="https://pkg.go.dev/github.com/stiggio/stigg-go#V1EventBetaEntityTypeUpsertResponse">V1EventBetaEntityTypeUpsertResponse</a>, <a href="https://pkg.go.dev/builtin#error">error</a>)</code>
 
+### DataExport
+
+Response Types:
+
+- <a href="https://pkg.go.dev/github.com/stiggio/stigg-go">stigg</a>.<a href="https://pkg.go.dev/github.com/stiggio/stigg-go#V1EventDataExportMintScopedTokenResponse">V1EventDataExportMintScopedTokenResponse</a>
+- <a href="https://pkg.go.dev/github.com/stiggio/stigg-go">stigg</a>.<a href="https://pkg.go.dev/github.com/stiggio/stigg-go#V1EventDataExportTriggerSyncResponse">V1EventDataExportTriggerSyncResponse</a>
+
+Methods:
+
+- <code title="post /api/v1/data-export/scoped-token">client.V1.Events.DataExport.<a href="https://pkg.go.dev/github.com/stiggio/stigg-go#V1EventDataExportService.MintScopedToken">MintScopedToken</a>(ctx <a href="https://pkg.go.dev/context">context</a>.<a href="https://pkg.go.dev/context#Context">Context</a>, body <a href="https://pkg.go.dev/github.com/stiggio/stigg-go">stigg</a>.<a href="https://pkg.go.dev/github.com/stiggio/stigg-go#V1EventDataExportMintScopedTokenParams">V1EventDataExportMintScopedTokenParams</a>) (\*<a href="https://pkg.go.dev/github.com/stiggio/stigg-go">stigg</a>.<a href="https://pkg.go.dev/github.com/stiggio/stigg-go#V1EventDataExportMintScopedTokenResponse">V1EventDataExportMintScopedTokenResponse</a>, <a href="https://pkg.go.dev/builtin#error">error</a>)</code>
+- <code title="post /api/v1/data-export/sync">client.V1.Events.DataExport.<a href="https://pkg.go.dev/github.com/stiggio/stigg-go#V1EventDataExportService.TriggerSync">TriggerSync</a>(ctx <a href="https://pkg.go.dev/context">context</a>.<a href="https://pkg.go.dev/context#Context">Context</a>, body <a href="https://pkg.go.dev/github.com/stiggio/stigg-go">stigg</a>.<a href="https://pkg.go.dev/github.com/stiggio/stigg-go#V1EventDataExportTriggerSyncParams">V1EventDataExportTriggerSyncParams</a>) (\*<a href="https://pkg.go.dev/github.com/stiggio/stigg-go">stigg</a>.<a href="https://pkg.go.dev/github.com/stiggio/stigg-go#V1EventDataExportTriggerSyncResponse">V1EventDataExportTriggerSyncResponse</a>, <a href="https://pkg.go.dev/builtin#error">error</a>)</code>
+
+#### Destinations
+
+Response Types:
+
+- <a href="https://pkg.go.dev/github.com/stiggio/stigg-go">stigg</a>.<a href="https://pkg.go.dev/github.com/stiggio/stigg-go#V1EventDataExportDestinationNewResponse">V1EventDataExportDestinationNewResponse</a>
+- <a href="https://pkg.go.dev/github.com/stiggio/stigg-go">stigg</a>.<a href="https://pkg.go.dev/github.com/stiggio/stigg-go#V1EventDataExportDestinationDeleteResponse">V1EventDataExportDestinationDeleteResponse</a>
+
+Methods:
+
+- <code title="post /api/v1/data-export/destinations">client.V1.Events.DataExport.Destinations.<a href="https://pkg.go.dev/github.com/stiggio/stigg-go#V1EventDataExportDestinationService.New">New</a>(ctx <a href="https://pkg.go.dev/context">context</a>.<a href="https://pkg.go.dev/context#Context">Context</a>, body <a href="https://pkg.go.dev/github.com/stiggio/stigg-go">stigg</a>.<a href="https://pkg.go.dev/github.com/stiggio/stigg-go#V1EventDataExportDestinationNewParams">V1EventDataExportDestinationNewParams</a>) (\*<a href="https://pkg.go.dev/github.com/stiggio/stigg-go">stigg</a>.<a href="https://pkg.go.dev/github.com/stiggio/stigg-go#V1EventDataExportDestinationNewResponse">V1EventDataExportDestinationNewResponse</a>, <a href="https://pkg.go.dev/builtin#error">error</a>)</code>
+- <code title="delete /api/v1/data-export/destinations/{destinationId}">client.V1.Events.DataExport.Destinations.<a href="https://pkg.go.dev/github.com/stiggio/stigg-go#V1EventDataExportDestinationService.Delete">Delete</a>(ctx <a href="https://pkg.go.dev/context">context</a>.<a href="https://pkg.go.dev/context#Context">Context</a>, destinationID <a href="https://pkg.go.dev/builtin#string">string</a>) (\*<a href="https://pkg.go.dev/github.com/stiggio/stigg-go">stigg</a>.<a href="https://pkg.go.dev/github.com/stiggio/stigg-go#V1EventDataExportDestinationDeleteResponse">V1EventDataExportDestinationDeleteResponse</a>, <a href="https://pkg.go.dev/builtin#error">error</a>)</code>
+
 ## Credits
 
 Response Types:

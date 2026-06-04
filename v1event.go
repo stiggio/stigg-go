@@ -24,8 +24,9 @@ import (
 // automatically. You should not instantiate this service directly, and instead use
 // the [NewV1EventService] method instead.
 type V1EventService struct {
-	Options []option.RequestOption
-	Beta    V1EventBetaService
+	Options    []option.RequestOption
+	Beta       V1EventBetaService
+	DataExport V1EventDataExportService
 }
 
 // NewV1EventService generates a new service that applies the given options to each
@@ -35,6 +36,7 @@ func NewV1EventService(opts ...option.RequestOption) (r V1EventService) {
 	r = V1EventService{}
 	r.Options = opts
 	r.Beta = NewV1EventBetaService(opts...)
+	r.DataExport = NewV1EventDataExportService(opts...)
 	return
 }
 
