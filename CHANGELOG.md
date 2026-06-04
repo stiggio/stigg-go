@@ -1,5 +1,18 @@
 # Changelog
 
+## 0.1.0-beta.17 (2026-06-04)
+
+Full Changelog: [v0.1.0-beta.16...v0.1.0-beta.17](https://github.com/stiggio/stigg-go/compare/v0.1.0-beta.16...v0.1.0-beta.17)
+
+### Features
+
+* **api:** add data export methods and destinations to events ([94d618f](https://github.com/stiggio/stigg-go/commit/94d618fabef79e6ece56dce9fbd6c5df8217f7e1))
+
+
+### Chores
+
+* **api:** move beta resources from V1Beta to V1.Events.Beta ([df3aba0](https://github.com/stiggio/stigg-go/commit/df3aba09958032b214cb94c4300a8e8e75c58e7e))
+
 ## 0.1.0-beta.16 (2026-06-03)
 
 Full Changelog: [v0.1.0-beta.15...v0.1.0-beta.16](https://github.com/stiggio/stigg-go/compare/v0.1.0-beta.15...v0.1.0-beta.16)
