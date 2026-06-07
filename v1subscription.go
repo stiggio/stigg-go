@@ -2600,6 +2600,8 @@ func (r *V1SubscriptionProvisionResponseDataSubscriptionTrial) UnmarshalJSON(dat
 }
 
 type V1SubscriptionUpdateParams struct {
+	// Subscription cancellation date
+	CancellationDate param.Opt[time.Time] `json:"cancellationDate,omitzero" format:"date-time"`
 	// Await payment confirmation
 	AwaitPaymentConfirmation param.Opt[bool] `json:"awaitPaymentConfirmation,omitzero"`
 	// Promotion code
@@ -3843,6 +3845,8 @@ type V1SubscriptionProvisionParams struct {
 	ID param.Opt[string] `json:"id,omitzero"`
 	// Whether to wait for payment confirmation before returning the subscription
 	AwaitPaymentConfirmation param.Opt[bool] `json:"awaitPaymentConfirmation,omitzero"`
+	// Subscription cancellation date
+	CancellationDate param.Opt[time.Time] `json:"cancellationDate,omitzero" format:"date-time"`
 	// Subscription start date
 	StartDate param.Opt[time.Time] `json:"startDate,omitzero" format:"date-time"`
 	// Unit quantity for per-unit pricing. Minimum is 0 (zero is allowed).
