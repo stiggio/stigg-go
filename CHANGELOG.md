@@ -1,5 +1,13 @@
 # Changelog
 
+## 0.1.0-beta.18 (2026-06-07)
+
+Full Changelog: [v0.1.0-beta.17...v0.1.0-beta.18](https://github.com/stiggio/stigg-go/compare/v0.1.0-beta.17...v0.1.0-beta.18)
+
+### Features
+
+* **api:** add cancellation_date to subscription update and provision methods ([34daab0](https://github.com/stiggio/stigg-go/commit/34daab0a40bf8fb582149f7550f26b5c86e2803e))
+
 ## 0.1.0-beta.17 (2026-06-04)
 
 Full Changelog: [v0.1.0-beta.16...v0.1.0-beta.17](https://github.com/stiggio/stigg-go/compare/v0.1.0-beta.16...v0.1.0-beta.17)
