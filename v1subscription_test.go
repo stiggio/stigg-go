@@ -109,6 +109,7 @@ func TestV1SubscriptionUpdateWithOptionalParams(t *testing.T) {
 				HasSoftLimit: true,
 				Limit:        0,
 			},
+			CancellationDate: stigg.Time(time.Now()),
 			Charges: []stigg.V1SubscriptionUpdateParamsCharge{{
 				ID:       "id",
 				Quantity: 0,
@@ -504,6 +505,7 @@ func TestV1SubscriptionProvisionWithOptionalParams(t *testing.T) {
 			HasSoftLimit: true,
 			Limit:        0,
 		},
+		CancellationDate: stigg.Time(time.Now()),
 		Charges: []stigg.V1SubscriptionProvisionParamsCharge{{
 			ID:       "id",
 			Quantity: 0,
