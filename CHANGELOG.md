@@ -1,5 +1,13 @@
 # Changelog
 
+## 0.1.0-beta.20 (2026-06-08)
+
+Full Changelog: [v0.1.0-beta.19...v0.1.0-beta.20](https://github.com/stiggio/stigg-go/compare/v0.1.0-beta.19...v0.1.0-beta.20)
+
+### Features
+
+* **api:** add x-account-id/X-ENVIRONMENT-ID headers, standardize param naming ([574dc07](https://github.com/stiggio/stigg-go/commit/574dc070793a16b0259fe06ff3550ecd64a9c57b))
+
 ## 0.1.0-beta.19 (2026-06-08)
 
 Full Changelog: [v0.1.0-beta.18...v0.1.0-beta.19](https://github.com/stiggio/stigg-go/compare/v0.1.0-beta.18...v0.1.0-beta.19)
