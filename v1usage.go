@@ -42,6 +42,12 @@ func NewV1UsageService(opts ...option.RequestOption) (r V1UsageService) {
 
 // Retrieves historical usage data for a customer's metered feature over time.
 func (r *V1UsageService) History(ctx context.Context, featureID string, params V1UsageHistoryParams, opts ...option.RequestOption) (res *V1UsageHistoryResponse, err error) {
+	if !param.IsOmitted(params.XAccountID) {
+		opts = append(opts, option.WithHeader("X-ACCOUNT-ID", fmt.Sprintf("%v", params.XAccountID.Value)))
+	}
+	if !param.IsOmitted(params.XEnvironmentID) {
+		opts = append(opts, option.WithHeader("X-ENVIRONMENT-ID", fmt.Sprintf("%v", params.XEnvironmentID.Value)))
+	}
 	opts = slices.Concat(r.Options, opts)
 	if params.CustomerID == "" {
 		err = errors.New("missing required customerId parameter")
@@ -58,10 +64,16 @@ func (r *V1UsageService) History(ctx context.Context, featureID string, params V
 
 // Reports usage measurements for metered features. The reported usage is used to
 // track, limit, and bill customer consumption.
-func (r *V1UsageService) Report(ctx context.Context, body V1UsageReportParams, opts ...option.RequestOption) (res *V1UsageReportResponse, err error) {
+func (r *V1UsageService) Report(ctx context.Context, params V1UsageReportParams, opts ...option.RequestOption) (res *V1UsageReportResponse, err error) {
+	if !param.IsOmitted(params.XAccountID) {
+		opts = append(opts, option.WithHeader("X-ACCOUNT-ID", fmt.Sprintf("%v", params.XAccountID.Value)))
+	}
+	if !param.IsOmitted(params.XEnvironmentID) {
+		opts = append(opts, option.WithHeader("X-ENVIRONMENT-ID", fmt.Sprintf("%v", params.XEnvironmentID.Value)))
+	}
 	opts = slices.Concat(r.Options, opts)
 	path := "api/v1/usage"
-	err = requestconfig.ExecuteNewRequest(ctx, http.MethodPost, path, body, &res, opts...)
+	err = requestconfig.ExecuteNewRequest(ctx, http.MethodPost, path, params, &res, opts...)
 	return res, err
 }
 
@@ -271,7 +283,9 @@ type V1UsageHistoryParams struct {
 	// The end date of the range
 	EndDate param.Opt[time.Time] `query:"endDate,omitzero" format:"date-time" json:"-"`
 	// Criteria by which to group the usage history
-	GroupBy param.Opt[string] `query:"groupBy,omitzero" json:"-"`
+	GroupBy        param.Opt[string] `query:"groupBy,omitzero" json:"-"`
+	XAccountID     param.Opt[string] `header:"X-ACCOUNT-ID,omitzero" json:"-"`
+	XEnvironmentID param.Opt[string] `header:"X-ENVIRONMENT-ID,omitzero" json:"-"`
 	paramObj
 }
 
@@ -285,7 +299,9 @@ func (r V1UsageHistoryParams) URLQuery() (v url.Values, err error) {
 
 type V1UsageReportParams struct {
 	// A list of usage reports to be submitted in bulk
-	Usages []V1UsageReportParamsUsage `json:"usages,omitzero" api:"required"`
+	Usages         []V1UsageReportParamsUsage `json:"usages,omitzero" api:"required"`
+	XAccountID     param.Opt[string]          `header:"X-ACCOUNT-ID,omitzero" json:"-"`
+	XEnvironmentID param.Opt[string]          `header:"X-ENVIRONMENT-ID,omitzero" json:"-"`
 	paramObj
 }
 

@@ -13,7 +13,7 @@ import (
 	"github.com/stiggio/stigg-go/option"
 )
 
-func TestV1SubscriptionFutureUpdateCancelPendingPayment(t *testing.T) {
+func TestV1SubscriptionFutureUpdateCancelPendingPaymentWithOptionalParams(t *testing.T) {
 	t.Skip("Mock server tests are disabled")
 	baseURL := "http://localhost:4010"
 	if envURL, ok := os.LookupEnv("TEST_API_BASE_URL"); ok {
@@ -26,7 +26,14 @@ func TestV1SubscriptionFutureUpdateCancelPendingPayment(t *testing.T) {
 		option.WithBaseURL(baseURL),
 		option.WithAPIKey("My API Key"),
 	)
-	_, err := client.V1.Subscriptions.FutureUpdate.CancelPendingPayment(context.TODO(), "x")
+	_, err := client.V1.Subscriptions.FutureUpdate.CancelPendingPayment(
+		context.TODO(),
+		"x",
+		stigg.V1SubscriptionFutureUpdateCancelPendingPaymentParams{
+			XAccountID:     stigg.String("X-ACCOUNT-ID"),
+			XEnvironmentID: stigg.String("X-ENVIRONMENT-ID"),
+		},
+	)
 	if err != nil {
 		var apierr *stigg.Error
 		if errors.As(err, &apierr) {
@@ -36,7 +43,7 @@ func TestV1SubscriptionFutureUpdateCancelPendingPayment(t *testing.T) {
 	}
 }
 
-func TestV1SubscriptionFutureUpdateCancelSchedule(t *testing.T) {
+func TestV1SubscriptionFutureUpdateCancelScheduleWithOptionalParams(t *testing.T) {
 	t.Skip("Mock server tests are disabled")
 	baseURL := "http://localhost:4010"
 	if envURL, ok := os.LookupEnv("TEST_API_BASE_URL"); ok {
@@ -49,7 +56,14 @@ func TestV1SubscriptionFutureUpdateCancelSchedule(t *testing.T) {
 		option.WithBaseURL(baseURL),
 		option.WithAPIKey("My API Key"),
 	)
-	_, err := client.V1.Subscriptions.FutureUpdate.CancelSchedule(context.TODO(), "x")
+	_, err := client.V1.Subscriptions.FutureUpdate.CancelSchedule(
+		context.TODO(),
+		"x",
+		stigg.V1SubscriptionFutureUpdateCancelScheduleParams{
+			XAccountID:     stigg.String("X-ACCOUNT-ID"),
+			XEnvironmentID: stigg.String("X-ENVIRONMENT-ID"),
+		},
+	)
 	if err != nil {
 		var apierr *stigg.Error
 		if errors.As(err, &apierr) {

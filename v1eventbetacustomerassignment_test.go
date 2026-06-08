@@ -30,11 +30,13 @@ func TestV1EventBetaCustomerAssignmentListWithOptionalParams(t *testing.T) {
 		context.TODO(),
 		"id",
 		stigg.V1EventBetaCustomerAssignmentListParams{
-			After:        stigg.String("182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e"),
-			Before:       stigg.String("182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e"),
-			CapabilityID: stigg.String("capabilityId"),
-			EntityID:     stigg.String("entityId"),
-			Limit:        stigg.Int(1),
+			After:          stigg.String("182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e"),
+			Before:         stigg.String("182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e"),
+			CapabilityID:   stigg.String("capabilityId"),
+			EntityID:       stigg.String("entityId"),
+			Limit:          stigg.Int(1),
+			XAccountID:     stigg.String("X-ACCOUNT-ID"),
+			XEnvironmentID: stigg.String("X-ENVIRONMENT-ID"),
 		},
 	)
 	if err != nil {
@@ -46,7 +48,7 @@ func TestV1EventBetaCustomerAssignmentListWithOptionalParams(t *testing.T) {
 	}
 }
 
-func TestV1EventBetaCustomerAssignmentUpsert(t *testing.T) {
+func TestV1EventBetaCustomerAssignmentUpsertWithOptionalParams(t *testing.T) {
 	t.Skip("Mock server tests are disabled")
 	baseURL := "http://localhost:4010"
 	if envURL, ok := os.LookupEnv("TEST_API_BASE_URL"); ok {
@@ -74,6 +76,8 @@ func TestV1EventBetaCustomerAssignmentUpsert(t *testing.T) {
 				Cadence:      "MONTH",
 				UsageLimit:   stigg.Float(2000),
 			}},
+			XAccountID:     stigg.String("X-ACCOUNT-ID"),
+			XEnvironmentID: stigg.String("X-ENVIRONMENT-ID"),
 		},
 	)
 	if err != nil {

@@ -43,14 +43,20 @@ func NewV1EventBetaCustomerEntitlementService(opts ...option.RequestOption) (r V
 // Experimental — request and response shapes may change without notice. Same
 // semantics as `Check entitlement`, plus an optional `dimensions` query param that
 // resolves to per-entity governance limits surfaced as `chains` on the response.
-func (r *V1EventBetaCustomerEntitlementService) Check(ctx context.Context, id string, query V1EventBetaCustomerEntitlementCheckParams, opts ...option.RequestOption) (res *V1EventBetaCustomerEntitlementCheckResponse, err error) {
+func (r *V1EventBetaCustomerEntitlementService) Check(ctx context.Context, id string, params V1EventBetaCustomerEntitlementCheckParams, opts ...option.RequestOption) (res *V1EventBetaCustomerEntitlementCheckResponse, err error) {
+	if !param.IsOmitted(params.XAccountID) {
+		opts = append(opts, option.WithHeader("X-ACCOUNT-ID", fmt.Sprintf("%v", params.XAccountID.Value)))
+	}
+	if !param.IsOmitted(params.XEnvironmentID) {
+		opts = append(opts, option.WithHeader("X-ENVIRONMENT-ID", fmt.Sprintf("%v", params.XEnvironmentID.Value)))
+	}
 	opts = slices.Concat(r.Options, opts)
 	if id == "" {
 		err = errors.New("missing required id parameter")
 		return nil, err
 	}
 	path := fmt.Sprintf("api/v1-beta/customers/%s/entitlements/check", id)
-	err = requestconfig.ExecuteNewRequest(ctx, http.MethodGet, path, query, &res, opts...)
+	err = requestconfig.ExecuteNewRequest(ctx, http.MethodGet, path, params, &res, opts...)
 	return res, err
 }
 
@@ -455,7 +461,9 @@ type V1EventBetaCustomerEntitlementCheckParams struct {
 	// features only)
 	RequestedUsage param.Opt[int64] `query:"requestedUsage,omitzero" json:"-"`
 	// Resource ID to scope the entitlement check to a specific resource
-	ResourceID param.Opt[string] `query:"resourceId,omitzero" json:"-"`
+	ResourceID     param.Opt[string] `query:"resourceId,omitzero" json:"-"`
+	XAccountID     param.Opt[string] `header:"X-ACCOUNT-ID,omitzero" json:"-"`
+	XEnvironmentID param.Opt[string] `header:"X-ENVIRONMENT-ID,omitzero" json:"-"`
 	// Optional attribution map (e.g. `dimensions[userId]=u1`). When provided, the
 	// response includes a `chains` array with per-entity governance limits.
 	Dimensions map[string]string `query:"dimensions,omitzero" json:"-"`

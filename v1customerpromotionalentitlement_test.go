@@ -14,7 +14,7 @@ import (
 	"github.com/stiggio/stigg-go/option"
 )
 
-func TestV1CustomerPromotionalEntitlementNew(t *testing.T) {
+func TestV1CustomerPromotionalEntitlementNewWithOptionalParams(t *testing.T) {
 	t.Skip("Mock server tests are disabled")
 	baseURL := "http://localhost:4010"
 	if envURL, ok := os.LookupEnv("TEST_API_BASE_URL"); ok {
@@ -51,6 +51,8 @@ func TestV1CustomerPromotionalEntitlementNew(t *testing.T) {
 					AccordingTo: "SubscriptionStart",
 				},
 			}},
+			XAccountID:     stigg.String("X-ACCOUNT-ID"),
+			XEnvironmentID: stigg.String("X-ENVIRONMENT-ID"),
 		},
 	)
 	if err != nil {
@@ -87,8 +89,10 @@ func TestV1CustomerPromotionalEntitlementListWithOptionalParams(t *testing.T) {
 				Lt:  stigg.Time(time.Now()),
 				Lte: stigg.Time(time.Now()),
 			},
-			Limit:  stigg.Int(1),
-			Status: []string{"Active"},
+			Limit:          stigg.Int(1),
+			Status:         []string{"Active"},
+			XAccountID:     stigg.String("X-ACCOUNT-ID"),
+			XEnvironmentID: stigg.String("X-ENVIRONMENT-ID"),
 		},
 	)
 	if err != nil {
@@ -100,7 +104,7 @@ func TestV1CustomerPromotionalEntitlementListWithOptionalParams(t *testing.T) {
 	}
 }
 
-func TestV1CustomerPromotionalEntitlementRevoke(t *testing.T) {
+func TestV1CustomerPromotionalEntitlementRevokeWithOptionalParams(t *testing.T) {
 	t.Skip("Mock server tests are disabled")
 	baseURL := "http://localhost:4010"
 	if envURL, ok := os.LookupEnv("TEST_API_BASE_URL"); ok {
@@ -117,7 +121,9 @@ func TestV1CustomerPromotionalEntitlementRevoke(t *testing.T) {
 		context.TODO(),
 		"featureId",
 		stigg.V1CustomerPromotionalEntitlementRevokeParams{
-			ID: "id",
+			ID:             "id",
+			XAccountID:     stigg.String("X-ACCOUNT-ID"),
+			XEnvironmentID: stigg.String("X-ENVIRONMENT-ID"),
 		},
 	)
 	if err != nil {

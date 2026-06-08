@@ -65,7 +65,11 @@ func main() {
 	client := stigg.NewClient(
 		option.WithAPIKey("My API Key"), // defaults to os.LookupEnv("STIGG_API_KEY")
 	)
-	customerResponse, err := client.V1.Customers.Get(context.TODO(), "REPLACE_ME")
+	customerResponse, err := client.V1.Customers.Get(
+		context.TODO(),
+		"REPLACE_ME",
+		stigg.V1CustomerGetParams{},
+	)
 	if err != nil {
 		panic(err.Error())
 	}
@@ -335,7 +339,11 @@ When the API returns a non-success status code, we return an error with type
 To handle errors, we recommend that you use the `errors.As` pattern:
 
 ```go
-_, err := client.V1.Customers.Get(context.TODO(), "REPLACE_ME")
+_, err := client.V1.Customers.Get(
+	context.TODO(),
+	"REPLACE_ME",
+	stigg.V1CustomerGetParams{},
+)
 if err != nil {
 	var apierr *stigg.Error
 	if errors.As(err, &apierr) {
@@ -363,6 +371,7 @@ defer cancel()
 client.V1.Customers.Get(
 	ctx,
 	"REPLACE_ME",
+	stigg.V1CustomerGetParams{},
 	// This sets the per-retry timeout
 	option.WithRequestTimeout(20*time.Second),
 )
@@ -399,6 +408,7 @@ client := stigg.NewClient(
 client.V1.Customers.Get(
 	context.TODO(),
 	"REPLACE_ME",
+	stigg.V1CustomerGetParams{},
 	option.WithMaxRetries(5),
 )
 ```
@@ -414,6 +424,7 @@ var response *http.Response
 customerResponse, err := client.V1.Customers.Get(
 	context.TODO(),
 	"REPLACE_ME",
+	stigg.V1CustomerGetParams{},
 	option.WithResponseInto(&response),
 )
 if err != nil {

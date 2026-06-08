@@ -38,6 +38,8 @@ func TestV1EventBetaCustomerEntitlementCheckWithOptionalParams(t *testing.T) {
 			RequestedUsage:  stigg.Int(0),
 			RequestedValues: []string{"string"},
 			ResourceID:      stigg.String("x"),
+			XAccountID:      stigg.String("X-ACCOUNT-ID"),
+			XEnvironmentID:  stigg.String("X-ENVIRONMENT-ID"),
 		},
 	)
 	if err != nil {

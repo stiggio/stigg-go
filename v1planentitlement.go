@@ -39,19 +39,31 @@ func NewV1PlanEntitlementService(opts ...option.RequestOption) (r V1PlanEntitlem
 }
 
 // Creates one or more entitlements (feature or credit) on a draft plan.
-func (r *V1PlanEntitlementService) New(ctx context.Context, planID string, body V1PlanEntitlementNewParams, opts ...option.RequestOption) (res *V1PlanEntitlementNewResponse, err error) {
+func (r *V1PlanEntitlementService) New(ctx context.Context, planID string, params V1PlanEntitlementNewParams, opts ...option.RequestOption) (res *V1PlanEntitlementNewResponse, err error) {
+	if !param.IsOmitted(params.XAccountID) {
+		opts = append(opts, option.WithHeader("X-ACCOUNT-ID", fmt.Sprintf("%v", params.XAccountID.Value)))
+	}
+	if !param.IsOmitted(params.XEnvironmentID) {
+		opts = append(opts, option.WithHeader("X-ENVIRONMENT-ID", fmt.Sprintf("%v", params.XEnvironmentID.Value)))
+	}
 	opts = slices.Concat(r.Options, opts)
 	if planID == "" {
 		err = errors.New("missing required planId parameter")
 		return nil, err
 	}
 	path := fmt.Sprintf("api/v1/plans/%s/entitlements", planID)
-	err = requestconfig.ExecuteNewRequest(ctx, http.MethodPost, path, body, &res, opts...)
+	err = requestconfig.ExecuteNewRequest(ctx, http.MethodPost, path, params, &res, opts...)
 	return res, err
 }
 
 // Updates an existing entitlement on a draft plan.
 func (r *V1PlanEntitlementService) Update(ctx context.Context, id string, params V1PlanEntitlementUpdateParams, opts ...option.RequestOption) (res *PlanEntitlement, err error) {
+	if !param.IsOmitted(params.XAccountID) {
+		opts = append(opts, option.WithHeader("X-ACCOUNT-ID", fmt.Sprintf("%v", params.XAccountID.Value)))
+	}
+	if !param.IsOmitted(params.XEnvironmentID) {
+		opts = append(opts, option.WithHeader("X-ENVIRONMENT-ID", fmt.Sprintf("%v", params.XEnvironmentID.Value)))
+	}
 	opts = slices.Concat(r.Options, opts)
 	if params.PlanID == "" {
 		err = errors.New("missing required planId parameter")
@@ -67,7 +79,13 @@ func (r *V1PlanEntitlementService) Update(ctx context.Context, id string, params
 }
 
 // Retrieves a list of entitlements for a plan.
-func (r *V1PlanEntitlementService) List(ctx context.Context, planID string, opts ...option.RequestOption) (res *V1PlanEntitlementListResponse, err error) {
+func (r *V1PlanEntitlementService) List(ctx context.Context, planID string, query V1PlanEntitlementListParams, opts ...option.RequestOption) (res *V1PlanEntitlementListResponse, err error) {
+	if !param.IsOmitted(query.XAccountID) {
+		opts = append(opts, option.WithHeader("X-ACCOUNT-ID", fmt.Sprintf("%v", query.XAccountID.Value)))
+	}
+	if !param.IsOmitted(query.XEnvironmentID) {
+		opts = append(opts, option.WithHeader("X-ENVIRONMENT-ID", fmt.Sprintf("%v", query.XEnvironmentID.Value)))
+	}
 	opts = slices.Concat(r.Options, opts)
 	if planID == "" {
 		err = errors.New("missing required planId parameter")
@@ -79,9 +97,15 @@ func (r *V1PlanEntitlementService) List(ctx context.Context, planID string, opts
 }
 
 // Deletes an entitlement from a draft plan.
-func (r *V1PlanEntitlementService) Delete(ctx context.Context, id string, body V1PlanEntitlementDeleteParams, opts ...option.RequestOption) (res *PlanEntitlement, err error) {
+func (r *V1PlanEntitlementService) Delete(ctx context.Context, id string, params V1PlanEntitlementDeleteParams, opts ...option.RequestOption) (res *PlanEntitlement, err error) {
+	if !param.IsOmitted(params.XAccountID) {
+		opts = append(opts, option.WithHeader("X-ACCOUNT-ID", fmt.Sprintf("%v", params.XAccountID.Value)))
+	}
+	if !param.IsOmitted(params.XEnvironmentID) {
+		opts = append(opts, option.WithHeader("X-ENVIRONMENT-ID", fmt.Sprintf("%v", params.XEnvironmentID.Value)))
+	}
 	opts = slices.Concat(r.Options, opts)
-	if body.PlanID == "" {
+	if params.PlanID == "" {
 		err = errors.New("missing required planId parameter")
 		return nil, err
 	}
@@ -89,7 +113,7 @@ func (r *V1PlanEntitlementService) Delete(ctx context.Context, id string, body V
 		err = errors.New("missing required id parameter")
 		return nil, err
 	}
-	path := fmt.Sprintf("api/v1/plans/%s/entitlements/%s", body.PlanID, id)
+	path := fmt.Sprintf("api/v1/plans/%s/entitlements/%s", params.PlanID, id)
 	err = requestconfig.ExecuteNewRequest(ctx, http.MethodDelete, path, nil, &res, opts...)
 	return res, err
 }
@@ -1225,7 +1249,9 @@ func (r *V1PlanEntitlementListResponsePagination) UnmarshalJSON(data []byte) err
 
 type V1PlanEntitlementNewParams struct {
 	// Entitlements to create
-	Entitlements []V1PlanEntitlementNewParamsEntitlementUnion `json:"entitlements,omitzero" api:"required"`
+	Entitlements   []V1PlanEntitlementNewParamsEntitlementUnion `json:"entitlements,omitzero" api:"required"`
+	XAccountID     param.Opt[string]                            `header:"X-ACCOUNT-ID,omitzero" json:"-"`
+	XEnvironmentID param.Opt[string]                            `header:"X-ENVIRONMENT-ID,omitzero" json:"-"`
 	paramObj
 }
 
@@ -1662,6 +1688,8 @@ type V1PlanEntitlementUpdateParams struct {
 	// to update on a credit entitlement
 	OfCredit *V1PlanEntitlementUpdateParamsBodyCredit `json:",inline"`
 
+	XAccountID     param.Opt[string] `header:"X-ACCOUNT-ID,omitzero" json:"-"`
+	XEnvironmentID param.Opt[string] `header:"X-ENVIRONMENT-ID,omitzero" json:"-"`
 	paramObj
 }
 
@@ -1867,7 +1895,15 @@ func init() {
 	)
 }
 
+type V1PlanEntitlementListParams struct {
+	XAccountID     param.Opt[string] `header:"X-ACCOUNT-ID,omitzero" json:"-"`
+	XEnvironmentID param.Opt[string] `header:"X-ENVIRONMENT-ID,omitzero" json:"-"`
+	paramObj
+}
+
 type V1PlanEntitlementDeleteParams struct {
-	PlanID string `path:"planId" api:"required" json:"-"`
+	PlanID         string            `path:"planId" api:"required" json:"-"`
+	XAccountID     param.Opt[string] `header:"X-ACCOUNT-ID,omitzero" json:"-"`
+	XEnvironmentID param.Opt[string] `header:"X-ENVIRONMENT-ID,omitzero" json:"-"`
 	paramObj
 }

@@ -59,6 +59,8 @@ func TestV1CreditGrantNewWithOptionalParams(t *testing.T) {
 		PaymentCollectionMethod: stigg.V1CreditGrantNewParamsPaymentCollectionMethodCharge,
 		Priority:                stigg.Int(0),
 		ResourceID:              stigg.String("resourceId"),
+		XAccountID:              stigg.String("X-ACCOUNT-ID"),
+		XEnvironmentID:          stigg.String("X-ENVIRONMENT-ID"),
 	})
 	if err != nil {
 		var apierr *stigg.Error
@@ -92,9 +94,11 @@ func TestV1CreditGrantListWithOptionalParams(t *testing.T) {
 			Lt:  stigg.Time(time.Now()),
 			Lte: stigg.Time(time.Now()),
 		},
-		CurrencyID: stigg.String("currencyId"),
-		Limit:      stigg.Int(1),
-		ResourceID: stigg.String("resourceId"),
+		CurrencyID:     stigg.String("currencyId"),
+		Limit:          stigg.Int(1),
+		ResourceID:     stigg.String("resourceId"),
+		XAccountID:     stigg.String("X-ACCOUNT-ID"),
+		XEnvironmentID: stigg.String("X-ENVIRONMENT-ID"),
 	})
 	if err != nil {
 		var apierr *stigg.Error
@@ -105,7 +109,7 @@ func TestV1CreditGrantListWithOptionalParams(t *testing.T) {
 	}
 }
 
-func TestV1CreditGrantVoid(t *testing.T) {
+func TestV1CreditGrantVoidWithOptionalParams(t *testing.T) {
 	t.Skip("Mock server tests are disabled")
 	baseURL := "http://localhost:4010"
 	if envURL, ok := os.LookupEnv("TEST_API_BASE_URL"); ok {
@@ -118,7 +122,14 @@ func TestV1CreditGrantVoid(t *testing.T) {
 		option.WithBaseURL(baseURL),
 		option.WithAPIKey("My API Key"),
 	)
-	_, err := client.V1.Credits.Grants.Void(context.TODO(), "x")
+	_, err := client.V1.Credits.Grants.Void(
+		context.TODO(),
+		"x",
+		stigg.V1CreditGrantVoidParams{
+			XAccountID:     stigg.String("X-ACCOUNT-ID"),
+			XEnvironmentID: stigg.String("X-ENVIRONMENT-ID"),
+		},
+	)
 	if err != nil {
 		var apierr *stigg.Error
 		if errors.As(err, &apierr) {

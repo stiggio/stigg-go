@@ -44,16 +44,28 @@ func NewV1PlanService(opts ...option.RequestOption) (r V1PlanService) {
 }
 
 // Creates a new plan in draft status.
-func (r *V1PlanService) New(ctx context.Context, body V1PlanNewParams, opts ...option.RequestOption) (res *Plan, err error) {
+func (r *V1PlanService) New(ctx context.Context, params V1PlanNewParams, opts ...option.RequestOption) (res *Plan, err error) {
+	if !param.IsOmitted(params.XAccountID) {
+		opts = append(opts, option.WithHeader("X-ACCOUNT-ID", fmt.Sprintf("%v", params.XAccountID.Value)))
+	}
+	if !param.IsOmitted(params.XEnvironmentID) {
+		opts = append(opts, option.WithHeader("X-ENVIRONMENT-ID", fmt.Sprintf("%v", params.XEnvironmentID.Value)))
+	}
 	opts = slices.Concat(r.Options, opts)
 	path := "api/v1/plans"
-	err = requestconfig.ExecuteNewRequest(ctx, http.MethodPost, path, body, &res, opts...)
+	err = requestconfig.ExecuteNewRequest(ctx, http.MethodPost, path, params, &res, opts...)
 	return res, err
 }
 
 // Retrieves a plan by its unique identifier, including entitlements and pricing
 // details.
-func (r *V1PlanService) Get(ctx context.Context, id string, opts ...option.RequestOption) (res *Plan, err error) {
+func (r *V1PlanService) Get(ctx context.Context, id string, query V1PlanGetParams, opts ...option.RequestOption) (res *Plan, err error) {
+	if !param.IsOmitted(query.XAccountID) {
+		opts = append(opts, option.WithHeader("X-ACCOUNT-ID", fmt.Sprintf("%v", query.XAccountID.Value)))
+	}
+	if !param.IsOmitted(query.XEnvironmentID) {
+		opts = append(opts, option.WithHeader("X-ENVIRONMENT-ID", fmt.Sprintf("%v", query.XEnvironmentID.Value)))
+	}
 	opts = slices.Concat(r.Options, opts)
 	if id == "" {
 		err = errors.New("missing required id parameter")
@@ -66,24 +78,36 @@ func (r *V1PlanService) Get(ctx context.Context, id string, opts ...option.Reque
 
 // Updates an existing plan's properties such as display name, description, and
 // metadata.
-func (r *V1PlanService) Update(ctx context.Context, id string, body V1PlanUpdateParams, opts ...option.RequestOption) (res *Plan, err error) {
+func (r *V1PlanService) Update(ctx context.Context, id string, params V1PlanUpdateParams, opts ...option.RequestOption) (res *Plan, err error) {
+	if !param.IsOmitted(params.XAccountID) {
+		opts = append(opts, option.WithHeader("X-ACCOUNT-ID", fmt.Sprintf("%v", params.XAccountID.Value)))
+	}
+	if !param.IsOmitted(params.XEnvironmentID) {
+		opts = append(opts, option.WithHeader("X-ENVIRONMENT-ID", fmt.Sprintf("%v", params.XEnvironmentID.Value)))
+	}
 	opts = slices.Concat(r.Options, opts)
 	if id == "" {
 		err = errors.New("missing required id parameter")
 		return nil, err
 	}
 	path := fmt.Sprintf("api/v1/plans/%s", id)
-	err = requestconfig.ExecuteNewRequest(ctx, http.MethodPatch, path, body, &res, opts...)
+	err = requestconfig.ExecuteNewRequest(ctx, http.MethodPatch, path, params, &res, opts...)
 	return res, err
 }
 
 // Retrieves a paginated list of plans in the environment.
-func (r *V1PlanService) List(ctx context.Context, query V1PlanListParams, opts ...option.RequestOption) (res *pagination.MyCursorIDPage[V1PlanListResponse], err error) {
+func (r *V1PlanService) List(ctx context.Context, params V1PlanListParams, opts ...option.RequestOption) (res *pagination.MyCursorIDPage[V1PlanListResponse], err error) {
 	var raw *http.Response
+	if !param.IsOmitted(params.XAccountID) {
+		opts = append(opts, option.WithHeader("X-ACCOUNT-ID", fmt.Sprintf("%v", params.XAccountID.Value)))
+	}
+	if !param.IsOmitted(params.XEnvironmentID) {
+		opts = append(opts, option.WithHeader("X-ENVIRONMENT-ID", fmt.Sprintf("%v", params.XEnvironmentID.Value)))
+	}
 	opts = slices.Concat(r.Options, opts)
 	opts = append([]option.RequestOption{option.WithResponseInto(&raw)}, opts...)
 	path := "api/v1/plans"
-	cfg, err := requestconfig.NewRequestConfig(ctx, http.MethodGet, path, query, &res, opts...)
+	cfg, err := requestconfig.NewRequestConfig(ctx, http.MethodGet, path, params, &res, opts...)
 	if err != nil {
 		return nil, err
 	}
@@ -96,12 +120,18 @@ func (r *V1PlanService) List(ctx context.Context, query V1PlanListParams, opts .
 }
 
 // Retrieves a paginated list of plans in the environment.
-func (r *V1PlanService) ListAutoPaging(ctx context.Context, query V1PlanListParams, opts ...option.RequestOption) *pagination.MyCursorIDPageAutoPager[V1PlanListResponse] {
-	return pagination.NewMyCursorIDPageAutoPager(r.List(ctx, query, opts...))
+func (r *V1PlanService) ListAutoPaging(ctx context.Context, params V1PlanListParams, opts ...option.RequestOption) *pagination.MyCursorIDPageAutoPager[V1PlanListResponse] {
+	return pagination.NewMyCursorIDPageAutoPager(r.List(ctx, params, opts...))
 }
 
 // Archives a plan, preventing it from being used in new subscriptions.
-func (r *V1PlanService) Archive(ctx context.Context, id string, opts ...option.RequestOption) (res *Plan, err error) {
+func (r *V1PlanService) Archive(ctx context.Context, id string, body V1PlanArchiveParams, opts ...option.RequestOption) (res *Plan, err error) {
+	if !param.IsOmitted(body.XAccountID) {
+		opts = append(opts, option.WithHeader("X-ACCOUNT-ID", fmt.Sprintf("%v", body.XAccountID.Value)))
+	}
+	if !param.IsOmitted(body.XEnvironmentID) {
+		opts = append(opts, option.WithHeader("X-ENVIRONMENT-ID", fmt.Sprintf("%v", body.XEnvironmentID.Value)))
+	}
 	opts = slices.Concat(r.Options, opts)
 	if id == "" {
 		err = errors.New("missing required id parameter")
@@ -113,7 +143,13 @@ func (r *V1PlanService) Archive(ctx context.Context, id string, opts ...option.R
 }
 
 // Creates a draft version of an existing plan for modification before publishing.
-func (r *V1PlanService) NewDraft(ctx context.Context, id string, opts ...option.RequestOption) (res *Plan, err error) {
+func (r *V1PlanService) NewDraft(ctx context.Context, id string, body V1PlanNewDraftParams, opts ...option.RequestOption) (res *Plan, err error) {
+	if !param.IsOmitted(body.XAccountID) {
+		opts = append(opts, option.WithHeader("X-ACCOUNT-ID", fmt.Sprintf("%v", body.XAccountID.Value)))
+	}
+	if !param.IsOmitted(body.XEnvironmentID) {
+		opts = append(opts, option.WithHeader("X-ENVIRONMENT-ID", fmt.Sprintf("%v", body.XEnvironmentID.Value)))
+	}
 	opts = slices.Concat(r.Options, opts)
 	if id == "" {
 		err = errors.New("missing required id parameter")
@@ -125,8 +161,14 @@ func (r *V1PlanService) NewDraft(ctx context.Context, id string, opts ...option.
 }
 
 // Retrieves the list of charges configured on a plan.
-func (r *V1PlanService) ListCharges(ctx context.Context, id string, query V1PlanListChargesParams, opts ...option.RequestOption) (res *pagination.MyCursorIDPage[V1PlanListChargesResponse], err error) {
+func (r *V1PlanService) ListCharges(ctx context.Context, id string, params V1PlanListChargesParams, opts ...option.RequestOption) (res *pagination.MyCursorIDPage[V1PlanListChargesResponse], err error) {
 	var raw *http.Response
+	if !param.IsOmitted(params.XAccountID) {
+		opts = append(opts, option.WithHeader("X-ACCOUNT-ID", fmt.Sprintf("%v", params.XAccountID.Value)))
+	}
+	if !param.IsOmitted(params.XEnvironmentID) {
+		opts = append(opts, option.WithHeader("X-ENVIRONMENT-ID", fmt.Sprintf("%v", params.XEnvironmentID.Value)))
+	}
 	opts = slices.Concat(r.Options, opts)
 	opts = append([]option.RequestOption{option.WithResponseInto(&raw)}, opts...)
 	if id == "" {
@@ -134,7 +176,7 @@ func (r *V1PlanService) ListCharges(ctx context.Context, id string, query V1Plan
 		return nil, err
 	}
 	path := fmt.Sprintf("api/v1/plans/%s/charges", id)
-	cfg, err := requestconfig.NewRequestConfig(ctx, http.MethodGet, path, query, &res, opts...)
+	cfg, err := requestconfig.NewRequestConfig(ctx, http.MethodGet, path, params, &res, opts...)
 	if err != nil {
 		return nil, err
 	}
@@ -147,13 +189,19 @@ func (r *V1PlanService) ListCharges(ctx context.Context, id string, query V1Plan
 }
 
 // Retrieves the list of charges configured on a plan.
-func (r *V1PlanService) ListChargesAutoPaging(ctx context.Context, id string, query V1PlanListChargesParams, opts ...option.RequestOption) *pagination.MyCursorIDPageAutoPager[V1PlanListChargesResponse] {
-	return pagination.NewMyCursorIDPageAutoPager(r.ListCharges(ctx, id, query, opts...))
+func (r *V1PlanService) ListChargesAutoPaging(ctx context.Context, id string, params V1PlanListChargesParams, opts ...option.RequestOption) *pagination.MyCursorIDPageAutoPager[V1PlanListChargesResponse] {
+	return pagination.NewMyCursorIDPageAutoPager(r.ListCharges(ctx, id, params, opts...))
 }
 
 // Retrieves the list of overage charges configured on a plan.
-func (r *V1PlanService) ListOverageCharges(ctx context.Context, id string, query V1PlanListOverageChargesParams, opts ...option.RequestOption) (res *pagination.MyCursorIDPage[V1PlanListOverageChargesResponse], err error) {
+func (r *V1PlanService) ListOverageCharges(ctx context.Context, id string, params V1PlanListOverageChargesParams, opts ...option.RequestOption) (res *pagination.MyCursorIDPage[V1PlanListOverageChargesResponse], err error) {
 	var raw *http.Response
+	if !param.IsOmitted(params.XAccountID) {
+		opts = append(opts, option.WithHeader("X-ACCOUNT-ID", fmt.Sprintf("%v", params.XAccountID.Value)))
+	}
+	if !param.IsOmitted(params.XEnvironmentID) {
+		opts = append(opts, option.WithHeader("X-ENVIRONMENT-ID", fmt.Sprintf("%v", params.XEnvironmentID.Value)))
+	}
 	opts = slices.Concat(r.Options, opts)
 	opts = append([]option.RequestOption{option.WithResponseInto(&raw)}, opts...)
 	if id == "" {
@@ -161,7 +209,7 @@ func (r *V1PlanService) ListOverageCharges(ctx context.Context, id string, query
 		return nil, err
 	}
 	path := fmt.Sprintf("api/v1/plans/%s/overage-charges", id)
-	cfg, err := requestconfig.NewRequestConfig(ctx, http.MethodGet, path, query, &res, opts...)
+	cfg, err := requestconfig.NewRequestConfig(ctx, http.MethodGet, path, params, &res, opts...)
 	if err != nil {
 		return nil, err
 	}
@@ -174,24 +222,36 @@ func (r *V1PlanService) ListOverageCharges(ctx context.Context, id string, query
 }
 
 // Retrieves the list of overage charges configured on a plan.
-func (r *V1PlanService) ListOverageChargesAutoPaging(ctx context.Context, id string, query V1PlanListOverageChargesParams, opts ...option.RequestOption) *pagination.MyCursorIDPageAutoPager[V1PlanListOverageChargesResponse] {
-	return pagination.NewMyCursorIDPageAutoPager(r.ListOverageCharges(ctx, id, query, opts...))
+func (r *V1PlanService) ListOverageChargesAutoPaging(ctx context.Context, id string, params V1PlanListOverageChargesParams, opts ...option.RequestOption) *pagination.MyCursorIDPageAutoPager[V1PlanListOverageChargesResponse] {
+	return pagination.NewMyCursorIDPageAutoPager(r.ListOverageCharges(ctx, id, params, opts...))
 }
 
 // Publishes a draft plan, making it available for use in subscriptions.
-func (r *V1PlanService) Publish(ctx context.Context, id string, body V1PlanPublishParams, opts ...option.RequestOption) (res *V1PlanPublishResponse, err error) {
+func (r *V1PlanService) Publish(ctx context.Context, id string, params V1PlanPublishParams, opts ...option.RequestOption) (res *V1PlanPublishResponse, err error) {
+	if !param.IsOmitted(params.XAccountID) {
+		opts = append(opts, option.WithHeader("X-ACCOUNT-ID", fmt.Sprintf("%v", params.XAccountID.Value)))
+	}
+	if !param.IsOmitted(params.XEnvironmentID) {
+		opts = append(opts, option.WithHeader("X-ENVIRONMENT-ID", fmt.Sprintf("%v", params.XEnvironmentID.Value)))
+	}
 	opts = slices.Concat(r.Options, opts)
 	if id == "" {
 		err = errors.New("missing required id parameter")
 		return nil, err
 	}
 	path := fmt.Sprintf("api/v1/plans/%s/publish", id)
-	err = requestconfig.ExecuteNewRequest(ctx, http.MethodPost, path, body, &res, opts...)
+	err = requestconfig.ExecuteNewRequest(ctx, http.MethodPost, path, params, &res, opts...)
 	return res, err
 }
 
 // Removes a draft version of a plan.
-func (r *V1PlanService) RemoveDraft(ctx context.Context, id string, opts ...option.RequestOption) (res *V1PlanRemoveDraftResponse, err error) {
+func (r *V1PlanService) RemoveDraft(ctx context.Context, id string, body V1PlanRemoveDraftParams, opts ...option.RequestOption) (res *V1PlanRemoveDraftResponse, err error) {
+	if !param.IsOmitted(body.XAccountID) {
+		opts = append(opts, option.WithHeader("X-ACCOUNT-ID", fmt.Sprintf("%v", body.XAccountID.Value)))
+	}
+	if !param.IsOmitted(body.XEnvironmentID) {
+		opts = append(opts, option.WithHeader("X-ENVIRONMENT-ID", fmt.Sprintf("%v", body.XEnvironmentID.Value)))
+	}
 	opts = slices.Concat(r.Options, opts)
 	if id == "" {
 		err = errors.New("missing required id parameter")
@@ -1150,7 +1210,9 @@ type V1PlanNewParams struct {
 	// The description of the package
 	Description param.Opt[string] `json:"description,omitzero"`
 	// The ID of the parent plan, if applicable
-	ParentPlanID param.Opt[string] `json:"parentPlanId,omitzero"`
+	ParentPlanID   param.Opt[string] `json:"parentPlanId,omitzero"`
+	XAccountID     param.Opt[string] `header:"X-ACCOUNT-ID,omitzero" json:"-"`
+	XEnvironmentID param.Opt[string] `header:"X-ENVIRONMENT-ID,omitzero" json:"-"`
 	// Default trial configuration for the plan
 	DefaultTrialConfig V1PlanNewParamsDefaultTrialConfig `json:"defaultTrialConfig,omitzero"`
 	// The pricing type of the package
@@ -1247,6 +1309,12 @@ const (
 	V1PlanNewParamsStatusArchived  V1PlanNewParamsStatus = "ARCHIVED"
 )
 
+type V1PlanGetParams struct {
+	XAccountID     param.Opt[string] `header:"X-ACCOUNT-ID,omitzero" json:"-"`
+	XEnvironmentID param.Opt[string] `header:"X-ENVIRONMENT-ID,omitzero" json:"-"`
+	paramObj
+}
+
 type V1PlanUpdateParams struct {
 	// The unique identifier for the entity in the billing provider
 	BillingID param.Opt[string] `json:"billingId,omitzero"`
@@ -1256,6 +1324,8 @@ type V1PlanUpdateParams struct {
 	ParentPlanID param.Opt[string] `json:"parentPlanId,omitzero"`
 	// The display name of the package
 	DisplayName        param.Opt[string] `json:"displayName,omitzero"`
+	XAccountID         param.Opt[string] `header:"X-ACCOUNT-ID,omitzero" json:"-"`
+	XEnvironmentID     param.Opt[string] `header:"X-ENVIRONMENT-ID,omitzero" json:"-"`
 	CompatibleAddonIDs []string          `json:"compatibleAddonIds,omitzero"`
 	// Default trial configuration for the plan
 	DefaultTrialConfig V1PlanUpdateParamsDefaultTrialConfig `json:"defaultTrialConfig,omitzero"`
@@ -2120,7 +2190,9 @@ type V1PlanListParams struct {
 	// Maximum number of items to return
 	Limit param.Opt[int64] `query:"limit,omitzero" json:"-"`
 	// Filter by product ID
-	ProductID param.Opt[string] `query:"productId,omitzero" json:"-"`
+	ProductID      param.Opt[string] `query:"productId,omitzero" json:"-"`
+	XAccountID     param.Opt[string] `header:"X-ACCOUNT-ID,omitzero" json:"-"`
+	XEnvironmentID param.Opt[string] `header:"X-ENVIRONMENT-ID,omitzero" json:"-"`
 	// Filter by creation date using range operators: gt, gte, lt, lte
 	CreatedAt V1PlanListParamsCreatedAt `query:"createdAt,omitzero" json:"-"`
 	// Filter by status. Supports comma-separated values for multiple statuses
@@ -2160,13 +2232,27 @@ func (r V1PlanListParamsCreatedAt) URLQuery() (v url.Values, err error) {
 	})
 }
 
+type V1PlanArchiveParams struct {
+	XAccountID     param.Opt[string] `header:"X-ACCOUNT-ID,omitzero" json:"-"`
+	XEnvironmentID param.Opt[string] `header:"X-ENVIRONMENT-ID,omitzero" json:"-"`
+	paramObj
+}
+
+type V1PlanNewDraftParams struct {
+	XAccountID     param.Opt[string] `header:"X-ACCOUNT-ID,omitzero" json:"-"`
+	XEnvironmentID param.Opt[string] `header:"X-ENVIRONMENT-ID,omitzero" json:"-"`
+	paramObj
+}
+
 type V1PlanListChargesParams struct {
 	// Return items that come after this cursor
 	After param.Opt[string] `query:"after,omitzero" format:"uuid" json:"-"`
 	// Return items that come before this cursor
 	Before param.Opt[string] `query:"before,omitzero" format:"uuid" json:"-"`
 	// Maximum number of items to return
-	Limit param.Opt[int64] `query:"limit,omitzero" json:"-"`
+	Limit          param.Opt[int64]  `query:"limit,omitzero" json:"-"`
+	XAccountID     param.Opt[string] `header:"X-ACCOUNT-ID,omitzero" json:"-"`
+	XEnvironmentID param.Opt[string] `header:"X-ENVIRONMENT-ID,omitzero" json:"-"`
 	paramObj
 }
 
@@ -2185,7 +2271,9 @@ type V1PlanListOverageChargesParams struct {
 	// Return items that come before this cursor
 	Before param.Opt[string] `query:"before,omitzero" format:"uuid" json:"-"`
 	// Maximum number of items to return
-	Limit param.Opt[int64] `query:"limit,omitzero" json:"-"`
+	Limit          param.Opt[int64]  `query:"limit,omitzero" json:"-"`
+	XAccountID     param.Opt[string] `header:"X-ACCOUNT-ID,omitzero" json:"-"`
+	XEnvironmentID param.Opt[string] `header:"X-ENVIRONMENT-ID,omitzero" json:"-"`
 	paramObj
 }
 
@@ -2202,7 +2290,9 @@ type V1PlanPublishParams struct {
 	// The migration type of the package
 	//
 	// Any of "NEW_CUSTOMERS", "ALL_CUSTOMERS".
-	MigrationType V1PlanPublishParamsMigrationType `json:"migrationType,omitzero" api:"required"`
+	MigrationType  V1PlanPublishParamsMigrationType `json:"migrationType,omitzero" api:"required"`
+	XAccountID     param.Opt[string]                `header:"X-ACCOUNT-ID,omitzero" json:"-"`
+	XEnvironmentID param.Opt[string]                `header:"X-ENVIRONMENT-ID,omitzero" json:"-"`
 	paramObj
 }
 
@@ -2221,3 +2311,9 @@ const (
 	V1PlanPublishParamsMigrationTypeNewCustomers V1PlanPublishParamsMigrationType = "NEW_CUSTOMERS"
 	V1PlanPublishParamsMigrationTypeAllCustomers V1PlanPublishParamsMigrationType = "ALL_CUSTOMERS"
 )
+
+type V1PlanRemoveDraftParams struct {
+	XAccountID     param.Opt[string] `header:"X-ACCOUNT-ID,omitzero" json:"-"`
+	XEnvironmentID param.Opt[string] `header:"X-ENVIRONMENT-ID,omitzero" json:"-"`
+	paramObj
+}

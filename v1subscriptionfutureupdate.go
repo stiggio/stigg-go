@@ -12,6 +12,7 @@ import (
 	"github.com/stiggio/stigg-go/internal/apijson"
 	"github.com/stiggio/stigg-go/internal/requestconfig"
 	"github.com/stiggio/stigg-go/option"
+	"github.com/stiggio/stigg-go/packages/param"
 	"github.com/stiggio/stigg-go/packages/respjson"
 )
 
@@ -37,7 +38,13 @@ func NewV1SubscriptionFutureUpdateService(opts ...option.RequestOption) (r V1Sub
 }
 
 // Cancels a subscription update that is pending payment completion.
-func (r *V1SubscriptionFutureUpdateService) CancelPendingPayment(ctx context.Context, id string, opts ...option.RequestOption) (res *CancelSubscription, err error) {
+func (r *V1SubscriptionFutureUpdateService) CancelPendingPayment(ctx context.Context, id string, body V1SubscriptionFutureUpdateCancelPendingPaymentParams, opts ...option.RequestOption) (res *CancelSubscription, err error) {
+	if !param.IsOmitted(body.XAccountID) {
+		opts = append(opts, option.WithHeader("X-ACCOUNT-ID", fmt.Sprintf("%v", body.XAccountID.Value)))
+	}
+	if !param.IsOmitted(body.XEnvironmentID) {
+		opts = append(opts, option.WithHeader("X-ENVIRONMENT-ID", fmt.Sprintf("%v", body.XEnvironmentID.Value)))
+	}
 	opts = slices.Concat(r.Options, opts)
 	if id == "" {
 		err = errors.New("missing required id parameter")
@@ -50,7 +57,13 @@ func (r *V1SubscriptionFutureUpdateService) CancelPendingPayment(ctx context.Con
 
 // Cancels a scheduled subscription update, such as a future downgrade or plan
 // change.
-func (r *V1SubscriptionFutureUpdateService) CancelSchedule(ctx context.Context, id string, opts ...option.RequestOption) (res *CancelSubscription, err error) {
+func (r *V1SubscriptionFutureUpdateService) CancelSchedule(ctx context.Context, id string, body V1SubscriptionFutureUpdateCancelScheduleParams, opts ...option.RequestOption) (res *CancelSubscription, err error) {
+	if !param.IsOmitted(body.XAccountID) {
+		opts = append(opts, option.WithHeader("X-ACCOUNT-ID", fmt.Sprintf("%v", body.XAccountID.Value)))
+	}
+	if !param.IsOmitted(body.XEnvironmentID) {
+		opts = append(opts, option.WithHeader("X-ENVIRONMENT-ID", fmt.Sprintf("%v", body.XEnvironmentID.Value)))
+	}
 	opts = slices.Concat(r.Options, opts)
 	if id == "" {
 		err = errors.New("missing required id parameter")
@@ -93,4 +106,16 @@ type CancelSubscriptionData struct {
 func (r CancelSubscriptionData) RawJSON() string { return r.JSON.raw }
 func (r *CancelSubscriptionData) UnmarshalJSON(data []byte) error {
 	return apijson.UnmarshalRoot(data, r)
+}
+
+type V1SubscriptionFutureUpdateCancelPendingPaymentParams struct {
+	XAccountID     param.Opt[string] `header:"X-ACCOUNT-ID,omitzero" json:"-"`
+	XEnvironmentID param.Opt[string] `header:"X-ENVIRONMENT-ID,omitzero" json:"-"`
+	paramObj
+}
+
+type V1SubscriptionFutureUpdateCancelScheduleParams struct {
+	XAccountID     param.Opt[string] `header:"X-ACCOUNT-ID,omitzero" json:"-"`
+	XEnvironmentID param.Opt[string] `header:"X-ENVIRONMENT-ID,omitzero" json:"-"`
+	paramObj
 }

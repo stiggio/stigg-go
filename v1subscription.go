@@ -52,7 +52,13 @@ func NewV1SubscriptionService(opts ...option.RequestOption) (r V1SubscriptionSer
 
 // Retrieves a subscription by its unique identifier, including plan details,
 // billing period, status, and add-ons.
-func (r *V1SubscriptionService) Get(ctx context.Context, id string, opts ...option.RequestOption) (res *Subscription, err error) {
+func (r *V1SubscriptionService) Get(ctx context.Context, id string, query V1SubscriptionGetParams, opts ...option.RequestOption) (res *Subscription, err error) {
+	if !param.IsOmitted(query.XAccountID) {
+		opts = append(opts, option.WithHeader("X-ACCOUNT-ID", fmt.Sprintf("%v", query.XAccountID.Value)))
+	}
+	if !param.IsOmitted(query.XEnvironmentID) {
+		opts = append(opts, option.WithHeader("X-ENVIRONMENT-ID", fmt.Sprintf("%v", query.XEnvironmentID.Value)))
+	}
 	opts = slices.Concat(r.Options, opts)
 	if id == "" {
 		err = errors.New("missing required id parameter")
@@ -65,25 +71,37 @@ func (r *V1SubscriptionService) Get(ctx context.Context, id string, opts ...opti
 
 // Updates an active subscription's properties including billing period, add-ons,
 // unit quantities, and discounts.
-func (r *V1SubscriptionService) Update(ctx context.Context, id string, body V1SubscriptionUpdateParams, opts ...option.RequestOption) (res *Subscription, err error) {
+func (r *V1SubscriptionService) Update(ctx context.Context, id string, params V1SubscriptionUpdateParams, opts ...option.RequestOption) (res *Subscription, err error) {
+	if !param.IsOmitted(params.XAccountID) {
+		opts = append(opts, option.WithHeader("X-ACCOUNT-ID", fmt.Sprintf("%v", params.XAccountID.Value)))
+	}
+	if !param.IsOmitted(params.XEnvironmentID) {
+		opts = append(opts, option.WithHeader("X-ENVIRONMENT-ID", fmt.Sprintf("%v", params.XEnvironmentID.Value)))
+	}
 	opts = slices.Concat(r.Options, opts)
 	if id == "" {
 		err = errors.New("missing required id parameter")
 		return nil, err
 	}
 	path := fmt.Sprintf("api/v1/subscriptions/%s", id)
-	err = requestconfig.ExecuteNewRequest(ctx, http.MethodPatch, path, body, &res, opts...)
+	err = requestconfig.ExecuteNewRequest(ctx, http.MethodPatch, path, params, &res, opts...)
 	return res, err
 }
 
 // Retrieves a paginated list of subscriptions, with optional filters for customer,
 // status, and plan.
-func (r *V1SubscriptionService) List(ctx context.Context, query V1SubscriptionListParams, opts ...option.RequestOption) (res *pagination.MyCursorIDPage[V1SubscriptionListResponse], err error) {
+func (r *V1SubscriptionService) List(ctx context.Context, params V1SubscriptionListParams, opts ...option.RequestOption) (res *pagination.MyCursorIDPage[V1SubscriptionListResponse], err error) {
 	var raw *http.Response
+	if !param.IsOmitted(params.XAccountID) {
+		opts = append(opts, option.WithHeader("X-ACCOUNT-ID", fmt.Sprintf("%v", params.XAccountID.Value)))
+	}
+	if !param.IsOmitted(params.XEnvironmentID) {
+		opts = append(opts, option.WithHeader("X-ENVIRONMENT-ID", fmt.Sprintf("%v", params.XEnvironmentID.Value)))
+	}
 	opts = slices.Concat(r.Options, opts)
 	opts = append([]option.RequestOption{option.WithResponseInto(&raw)}, opts...)
 	path := "api/v1/subscriptions"
-	cfg, err := requestconfig.NewRequestConfig(ctx, http.MethodGet, path, query, &res, opts...)
+	cfg, err := requestconfig.NewRequestConfig(ctx, http.MethodGet, path, params, &res, opts...)
 	if err != nil {
 		return nil, err
 	}
@@ -97,86 +115,128 @@ func (r *V1SubscriptionService) List(ctx context.Context, query V1SubscriptionLi
 
 // Retrieves a paginated list of subscriptions, with optional filters for customer,
 // status, and plan.
-func (r *V1SubscriptionService) ListAutoPaging(ctx context.Context, query V1SubscriptionListParams, opts ...option.RequestOption) *pagination.MyCursorIDPageAutoPager[V1SubscriptionListResponse] {
-	return pagination.NewMyCursorIDPageAutoPager(r.List(ctx, query, opts...))
+func (r *V1SubscriptionService) ListAutoPaging(ctx context.Context, params V1SubscriptionListParams, opts ...option.RequestOption) *pagination.MyCursorIDPageAutoPager[V1SubscriptionListResponse] {
+	return pagination.NewMyCursorIDPageAutoPager(r.List(ctx, params, opts...))
 }
 
 // Cancels an active subscription, either immediately or at a specified time such
 // as end of billing period.
-func (r *V1SubscriptionService) Cancel(ctx context.Context, id string, body V1SubscriptionCancelParams, opts ...option.RequestOption) (res *Subscription, err error) {
+func (r *V1SubscriptionService) Cancel(ctx context.Context, id string, params V1SubscriptionCancelParams, opts ...option.RequestOption) (res *Subscription, err error) {
+	if !param.IsOmitted(params.XAccountID) {
+		opts = append(opts, option.WithHeader("X-ACCOUNT-ID", fmt.Sprintf("%v", params.XAccountID.Value)))
+	}
+	if !param.IsOmitted(params.XEnvironmentID) {
+		opts = append(opts, option.WithHeader("X-ENVIRONMENT-ID", fmt.Sprintf("%v", params.XEnvironmentID.Value)))
+	}
 	opts = slices.Concat(r.Options, opts)
 	if id == "" {
 		err = errors.New("missing required id parameter")
 		return nil, err
 	}
 	path := fmt.Sprintf("api/v1/subscriptions/%s/cancel", id)
-	err = requestconfig.ExecuteNewRequest(ctx, http.MethodPost, path, body, &res, opts...)
+	err = requestconfig.ExecuteNewRequest(ctx, http.MethodPost, path, params, &res, opts...)
 	return res, err
 }
 
 // Delegates the payment responsibility of a subscription to a different customer.
 // The delegated customer will be billed for this subscription.
-func (r *V1SubscriptionService) Delegate(ctx context.Context, id string, body V1SubscriptionDelegateParams, opts ...option.RequestOption) (res *Subscription, err error) {
+func (r *V1SubscriptionService) Delegate(ctx context.Context, id string, params V1SubscriptionDelegateParams, opts ...option.RequestOption) (res *Subscription, err error) {
+	if !param.IsOmitted(params.XAccountID) {
+		opts = append(opts, option.WithHeader("X-ACCOUNT-ID", fmt.Sprintf("%v", params.XAccountID.Value)))
+	}
+	if !param.IsOmitted(params.XEnvironmentID) {
+		opts = append(opts, option.WithHeader("X-ENVIRONMENT-ID", fmt.Sprintf("%v", params.XEnvironmentID.Value)))
+	}
 	opts = slices.Concat(r.Options, opts)
 	if id == "" {
 		err = errors.New("missing required id parameter")
 		return nil, err
 	}
 	path := fmt.Sprintf("api/v1/subscriptions/%s/delegate", id)
-	err = requestconfig.ExecuteNewRequest(ctx, http.MethodPost, path, body, &res, opts...)
+	err = requestconfig.ExecuteNewRequest(ctx, http.MethodPost, path, params, &res, opts...)
 	return res, err
 }
 
 // Imports multiple subscriptions in bulk. Used for migrating subscription data
 // from external systems.
-func (r *V1SubscriptionService) Import(ctx context.Context, body V1SubscriptionImportParams, opts ...option.RequestOption) (res *V1SubscriptionImportResponse, err error) {
+func (r *V1SubscriptionService) Import(ctx context.Context, params V1SubscriptionImportParams, opts ...option.RequestOption) (res *V1SubscriptionImportResponse, err error) {
+	if !param.IsOmitted(params.XAccountID) {
+		opts = append(opts, option.WithHeader("X-ACCOUNT-ID", fmt.Sprintf("%v", params.XAccountID.Value)))
+	}
+	if !param.IsOmitted(params.XEnvironmentID) {
+		opts = append(opts, option.WithHeader("X-ENVIRONMENT-ID", fmt.Sprintf("%v", params.XEnvironmentID.Value)))
+	}
 	opts = slices.Concat(r.Options, opts)
 	path := "api/v1/subscriptions/import"
-	err = requestconfig.ExecuteNewRequest(ctx, http.MethodPost, path, body, &res, opts...)
+	err = requestconfig.ExecuteNewRequest(ctx, http.MethodPost, path, params, &res, opts...)
 	return res, err
 }
 
 // Migrates a subscription to the latest published version of its plan or add-ons.
 // Handles prorated charges or credits automatically.
-func (r *V1SubscriptionService) Migrate(ctx context.Context, id string, body V1SubscriptionMigrateParams, opts ...option.RequestOption) (res *Subscription, err error) {
+func (r *V1SubscriptionService) Migrate(ctx context.Context, id string, params V1SubscriptionMigrateParams, opts ...option.RequestOption) (res *Subscription, err error) {
+	if !param.IsOmitted(params.XAccountID) {
+		opts = append(opts, option.WithHeader("X-ACCOUNT-ID", fmt.Sprintf("%v", params.XAccountID.Value)))
+	}
+	if !param.IsOmitted(params.XEnvironmentID) {
+		opts = append(opts, option.WithHeader("X-ENVIRONMENT-ID", fmt.Sprintf("%v", params.XEnvironmentID.Value)))
+	}
 	opts = slices.Concat(r.Options, opts)
 	if id == "" {
 		err = errors.New("missing required id parameter")
 		return nil, err
 	}
 	path := fmt.Sprintf("api/v1/subscriptions/%s/migrate", id)
-	err = requestconfig.ExecuteNewRequest(ctx, http.MethodPost, path, body, &res, opts...)
+	err = requestconfig.ExecuteNewRequest(ctx, http.MethodPost, path, params, &res, opts...)
 	return res, err
 }
 
 // Previews the pricing impact of creating or updating a subscription without
 // making changes. Returns estimated costs, taxes, and proration details.
-func (r *V1SubscriptionService) Preview(ctx context.Context, body V1SubscriptionPreviewParams, opts ...option.RequestOption) (res *V1SubscriptionPreviewResponse, err error) {
+func (r *V1SubscriptionService) Preview(ctx context.Context, params V1SubscriptionPreviewParams, opts ...option.RequestOption) (res *V1SubscriptionPreviewResponse, err error) {
+	if !param.IsOmitted(params.XAccountID) {
+		opts = append(opts, option.WithHeader("X-ACCOUNT-ID", fmt.Sprintf("%v", params.XAccountID.Value)))
+	}
+	if !param.IsOmitted(params.XEnvironmentID) {
+		opts = append(opts, option.WithHeader("X-ENVIRONMENT-ID", fmt.Sprintf("%v", params.XEnvironmentID.Value)))
+	}
 	opts = slices.Concat(r.Options, opts)
 	path := "api/v1/subscriptions/preview"
-	err = requestconfig.ExecuteNewRequest(ctx, http.MethodPost, path, body, &res, opts...)
+	err = requestconfig.ExecuteNewRequest(ctx, http.MethodPost, path, params, &res, opts...)
 	return res, err
 }
 
 // Creates a new subscription for an existing customer. When payment is required
 // and no payment method exists, returns a checkout URL.
-func (r *V1SubscriptionService) Provision(ctx context.Context, body V1SubscriptionProvisionParams, opts ...option.RequestOption) (res *V1SubscriptionProvisionResponse, err error) {
+func (r *V1SubscriptionService) Provision(ctx context.Context, params V1SubscriptionProvisionParams, opts ...option.RequestOption) (res *V1SubscriptionProvisionResponse, err error) {
+	if !param.IsOmitted(params.XAccountID) {
+		opts = append(opts, option.WithHeader("X-ACCOUNT-ID", fmt.Sprintf("%v", params.XAccountID.Value)))
+	}
+	if !param.IsOmitted(params.XEnvironmentID) {
+		opts = append(opts, option.WithHeader("X-ENVIRONMENT-ID", fmt.Sprintf("%v", params.XEnvironmentID.Value)))
+	}
 	opts = slices.Concat(r.Options, opts)
 	path := "api/v1/subscriptions"
-	err = requestconfig.ExecuteNewRequest(ctx, http.MethodPost, path, body, &res, opts...)
+	err = requestconfig.ExecuteNewRequest(ctx, http.MethodPost, path, params, &res, opts...)
 	return res, err
 }
 
 // Transfers a subscription to a different resource ID. Used for multi-resource
 // products where subscriptions apply to specific entities like websites or apps.
-func (r *V1SubscriptionService) Transfer(ctx context.Context, id string, body V1SubscriptionTransferParams, opts ...option.RequestOption) (res *Subscription, err error) {
+func (r *V1SubscriptionService) Transfer(ctx context.Context, id string, params V1SubscriptionTransferParams, opts ...option.RequestOption) (res *Subscription, err error) {
+	if !param.IsOmitted(params.XAccountID) {
+		opts = append(opts, option.WithHeader("X-ACCOUNT-ID", fmt.Sprintf("%v", params.XAccountID.Value)))
+	}
+	if !param.IsOmitted(params.XEnvironmentID) {
+		opts = append(opts, option.WithHeader("X-ENVIRONMENT-ID", fmt.Sprintf("%v", params.XEnvironmentID.Value)))
+	}
 	opts = slices.Concat(r.Options, opts)
 	if id == "" {
 		err = errors.New("missing required id parameter")
 		return nil, err
 	}
 	path := fmt.Sprintf("api/v1/subscriptions/%s/transfer", id)
-	err = requestconfig.ExecuteNewRequest(ctx, http.MethodPost, path, body, &res, opts...)
+	err = requestconfig.ExecuteNewRequest(ctx, http.MethodPost, path, params, &res, opts...)
 	return res, err
 }
 
@@ -2599,6 +2659,12 @@ func (r *V1SubscriptionProvisionResponseDataSubscriptionTrial) UnmarshalJSON(dat
 	return apijson.UnmarshalRoot(data, r)
 }
 
+type V1SubscriptionGetParams struct {
+	XAccountID     param.Opt[string] `header:"X-ACCOUNT-ID,omitzero" json:"-"`
+	XEnvironmentID param.Opt[string] `header:"X-ENVIRONMENT-ID,omitzero" json:"-"`
+	paramObj
+}
+
 type V1SubscriptionUpdateParams struct {
 	// Subscription cancellation date
 	CancellationDate param.Opt[time.Time] `json:"cancellationDate,omitzero" format:"date-time"`
@@ -2607,8 +2673,10 @@ type V1SubscriptionUpdateParams struct {
 	// Promotion code
 	PromotionCode param.Opt[string] `json:"promotionCode,omitzero"`
 	// Subscription trial end date
-	TrialEndDate param.Opt[time.Time]             `json:"trialEndDate,omitzero" format:"date-time"`
-	Budget       V1SubscriptionUpdateParamsBudget `json:"budget,omitzero"`
+	TrialEndDate   param.Opt[time.Time]             `json:"trialEndDate,omitzero" format:"date-time"`
+	XAccountID     param.Opt[string]                `header:"X-ACCOUNT-ID,omitzero" json:"-"`
+	XEnvironmentID param.Opt[string]                `header:"X-ENVIRONMENT-ID,omitzero" json:"-"`
+	Budget         V1SubscriptionUpdateParamsBudget `json:"budget,omitzero"`
 	// Minimum spend amount
 	MinimumSpend  V1SubscriptionUpdateParamsMinimumSpend  `json:"minimumSpend,omitzero"`
 	Addons        []V1SubscriptionUpdateParamsAddon       `json:"addons,omitzero"`
@@ -3243,7 +3311,9 @@ type V1SubscriptionListParams struct {
 	// Filter by plan ID
 	PlanID param.Opt[string] `query:"planId,omitzero" json:"-"`
 	// Filter by resource ID
-	ResourceID param.Opt[string] `query:"resourceId,omitzero" json:"-"`
+	ResourceID     param.Opt[string] `query:"resourceId,omitzero" json:"-"`
+	XAccountID     param.Opt[string] `header:"X-ACCOUNT-ID,omitzero" json:"-"`
+	XEnvironmentID param.Opt[string] `header:"X-ENVIRONMENT-ID,omitzero" json:"-"`
 	// Filter by creation date using range operators: gt, gte, lt, lte
 	CreatedAt V1SubscriptionListParamsCreatedAt `query:"createdAt,omitzero" json:"-"`
 	// Filter by pricing type. Supports comma-separated values for multiple types
@@ -3294,7 +3364,9 @@ type V1SubscriptionCancelParams struct {
 	// Subscription end date
 	EndDate param.Opt[time.Time] `json:"endDate,omitzero" format:"date-time"`
 	// If set, enables or disables prorating of credits on subscription cancellation.
-	Prorate param.Opt[bool] `json:"prorate,omitzero"`
+	Prorate        param.Opt[bool]   `json:"prorate,omitzero"`
+	XAccountID     param.Opt[string] `header:"X-ACCOUNT-ID,omitzero" json:"-"`
+	XEnvironmentID param.Opt[string] `header:"X-ENVIRONMENT-ID,omitzero" json:"-"`
 	// Action on cancellation (downgrade or revoke)
 	//
 	// Any of "DEFAULT", "REVOKE_ENTITLEMENTS".
@@ -3335,7 +3407,9 @@ type V1SubscriptionDelegateParams struct {
 	// The unique identifier of the customer who will assume payment responsibility for
 	// this subscription. This customer must already exist in your Stigg account and
 	// have a valid payment method if the subscription requires payment.
-	TargetCustomerID string `json:"targetCustomerId" api:"required"`
+	TargetCustomerID string            `json:"targetCustomerId" api:"required"`
+	XAccountID       param.Opt[string] `header:"X-ACCOUNT-ID,omitzero" json:"-"`
+	XEnvironmentID   param.Opt[string] `header:"X-ENVIRONMENT-ID,omitzero" json:"-"`
 	paramObj
 }
 
@@ -3351,7 +3425,9 @@ type V1SubscriptionImportParams struct {
 	// List of subscription objects to import
 	Subscriptions []V1SubscriptionImportParamsSubscription `json:"subscriptions,omitzero" api:"required"`
 	// Integration ID to use for importing subscriptions
-	IntegrationID param.Opt[string] `json:"integrationId,omitzero"`
+	IntegrationID  param.Opt[string] `json:"integrationId,omitzero"`
+	XAccountID     param.Opt[string] `header:"X-ACCOUNT-ID,omitzero" json:"-"`
+	XEnvironmentID param.Opt[string] `header:"X-ENVIRONMENT-ID,omitzero" json:"-"`
 	paramObj
 }
 
@@ -3454,6 +3530,8 @@ func init() {
 }
 
 type V1SubscriptionMigrateParams struct {
+	XAccountID     param.Opt[string] `header:"X-ACCOUNT-ID,omitzero" json:"-"`
+	XEnvironmentID param.Opt[string] `header:"X-ENVIRONMENT-ID,omitzero" json:"-"`
 	// When to migrate (immediate or period end)
 	//
 	// Any of "END_OF_BILLING_PERIOD", "IMMEDIATE".
@@ -3491,7 +3569,9 @@ type V1SubscriptionPreviewParams struct {
 	// Subscription start date
 	StartDate param.Opt[time.Time] `json:"startDate,omitzero" format:"date-time"`
 	// Unit quantity for per-unit pricing. Minimum is 0 (zero is allowed).
-	UnitQuantity param.Opt[int64] `json:"unitQuantity,omitzero"`
+	UnitQuantity   param.Opt[int64]  `json:"unitQuantity,omitzero"`
+	XAccountID     param.Opt[string] `header:"X-ACCOUNT-ID,omitzero" json:"-"`
+	XEnvironmentID param.Opt[string] `header:"X-ENVIRONMENT-ID,omitzero" json:"-"`
 	// Addons to include
 	Addons []V1SubscriptionPreviewParamsAddon `json:"addons,omitzero"`
 	// Coupon or discount to apply
@@ -3850,8 +3930,10 @@ type V1SubscriptionProvisionParams struct {
 	// Subscription start date
 	StartDate param.Opt[time.Time] `json:"startDate,omitzero" format:"date-time"`
 	// Unit quantity for per-unit pricing. Minimum is 0 (zero is allowed).
-	UnitQuantity param.Opt[int64]                    `json:"unitQuantity,omitzero"`
-	Budget       V1SubscriptionProvisionParamsBudget `json:"budget,omitzero"`
+	UnitQuantity   param.Opt[int64]                    `json:"unitQuantity,omitzero"`
+	XAccountID     param.Opt[string]                   `header:"X-ACCOUNT-ID,omitzero" json:"-"`
+	XEnvironmentID param.Opt[string]                   `header:"X-ENVIRONMENT-ID,omitzero" json:"-"`
+	Budget         V1SubscriptionProvisionParamsBudget `json:"budget,omitzero"`
 	// Minimum spend amount
 	MinimumSpend V1SubscriptionProvisionParamsMinimumSpend `json:"minimumSpend,omitzero"`
 	Addons       []V1SubscriptionProvisionParamsAddon      `json:"addons,omitzero"`
@@ -4705,7 +4787,9 @@ func init() {
 
 type V1SubscriptionTransferParams struct {
 	// Resource ID to transfer the subscription to
-	DestinationResourceID string `json:"destinationResourceId" api:"required"`
+	DestinationResourceID string            `json:"destinationResourceId" api:"required"`
+	XAccountID            param.Opt[string] `header:"X-ACCOUNT-ID,omitzero" json:"-"`
+	XEnvironmentID        param.Opt[string] `header:"X-ENVIRONMENT-ID,omitzero" json:"-"`
 	paramObj
 }
 

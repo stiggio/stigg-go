@@ -14,7 +14,7 @@ import (
 	"github.com/stiggio/stigg-go/option"
 )
 
-func TestV1ProductArchiveProduct(t *testing.T) {
+func TestV1ProductArchiveProductWithOptionalParams(t *testing.T) {
 	t.Skip("Mock server tests are disabled")
 	baseURL := "http://localhost:4010"
 	if envURL, ok := os.LookupEnv("TEST_API_BASE_URL"); ok {
@@ -27,7 +27,14 @@ func TestV1ProductArchiveProduct(t *testing.T) {
 		option.WithBaseURL(baseURL),
 		option.WithAPIKey("My API Key"),
 	)
-	_, err := client.V1.Products.ArchiveProduct(context.TODO(), "x")
+	_, err := client.V1.Products.ArchiveProduct(
+		context.TODO(),
+		"x",
+		stigg.V1ProductArchiveProductParams{
+			XAccountID:     stigg.String("X-ACCOUNT-ID"),
+			XEnvironmentID: stigg.String("X-ENVIRONMENT-ID"),
+		},
+	)
 	if err != nil {
 		var apierr *stigg.Error
 		if errors.As(err, &apierr) {
@@ -58,6 +65,8 @@ func TestV1ProductNewProductWithOptionalParams(t *testing.T) {
 			"foo": "string",
 		},
 		MultipleSubscriptions: stigg.Bool(true),
+		XAccountID:            stigg.String("X-ACCOUNT-ID"),
+		XEnvironmentID:        stigg.String("X-ENVIRONMENT-ID"),
 	})
 	if err != nil {
 		var apierr *stigg.Error
@@ -85,9 +94,11 @@ func TestV1ProductDuplicateProductWithOptionalParams(t *testing.T) {
 		context.TODO(),
 		"x",
 		stigg.V1ProductDuplicateProductParams{
-			TargetID:    "targetId",
-			Description: stigg.String("description"),
-			DisplayName: stigg.String("displayName"),
+			TargetID:       "targetId",
+			Description:    stigg.String("description"),
+			DisplayName:    stigg.String("displayName"),
+			XAccountID:     stigg.String("X-ACCOUNT-ID"),
+			XEnvironmentID: stigg.String("X-ENVIRONMENT-ID"),
 		},
 	)
 	if err != nil {
@@ -122,8 +133,10 @@ func TestV1ProductListProductsWithOptionalParams(t *testing.T) {
 			Lt:  stigg.Time(time.Now()),
 			Lte: stigg.Time(time.Now()),
 		},
-		Limit:  stigg.Int(1),
-		Status: []string{"PUBLISHED"},
+		Limit:          stigg.Int(1),
+		Status:         []string{"PUBLISHED"},
+		XAccountID:     stigg.String("X-ACCOUNT-ID"),
+		XEnvironmentID: stigg.String("X-ENVIRONMENT-ID"),
 	})
 	if err != nil {
 		var apierr *stigg.Error
@@ -134,7 +147,7 @@ func TestV1ProductListProductsWithOptionalParams(t *testing.T) {
 	}
 }
 
-func TestV1ProductUnarchiveProduct(t *testing.T) {
+func TestV1ProductUnarchiveProductWithOptionalParams(t *testing.T) {
 	t.Skip("Mock server tests are disabled")
 	baseURL := "http://localhost:4010"
 	if envURL, ok := os.LookupEnv("TEST_API_BASE_URL"); ok {
@@ -147,7 +160,14 @@ func TestV1ProductUnarchiveProduct(t *testing.T) {
 		option.WithBaseURL(baseURL),
 		option.WithAPIKey("My API Key"),
 	)
-	_, err := client.V1.Products.UnarchiveProduct(context.TODO(), "x")
+	_, err := client.V1.Products.UnarchiveProduct(
+		context.TODO(),
+		"x",
+		stigg.V1ProductUnarchiveProductParams{
+			XAccountID:     stigg.String("X-ACCOUNT-ID"),
+			XEnvironmentID: stigg.String("X-ENVIRONMENT-ID"),
+		},
+	)
 	if err != nil {
 		var apierr *stigg.Error
 		if errors.As(err, &apierr) {
@@ -191,6 +211,8 @@ func TestV1ProductUpdateProductWithOptionalParams(t *testing.T) {
 			UsageResetCutoffRule: stigg.V1ProductUpdateProductParamsUsageResetCutoffRule{
 				Behavior: "NEVER_RESET",
 			},
+			XAccountID:     stigg.String("X-ACCOUNT-ID"),
+			XEnvironmentID: stigg.String("X-ENVIRONMENT-ID"),
 		},
 	)
 	if err != nil {

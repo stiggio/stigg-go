@@ -39,19 +39,31 @@ func NewV1AddonEntitlementService(opts ...option.RequestOption) (r V1AddonEntitl
 }
 
 // Creates one or more entitlements (feature or credit) on a draft addon.
-func (r *V1AddonEntitlementService) New(ctx context.Context, addonID string, body V1AddonEntitlementNewParams, opts ...option.RequestOption) (res *V1AddonEntitlementNewResponse, err error) {
+func (r *V1AddonEntitlementService) New(ctx context.Context, addonID string, params V1AddonEntitlementNewParams, opts ...option.RequestOption) (res *V1AddonEntitlementNewResponse, err error) {
+	if !param.IsOmitted(params.XAccountID) {
+		opts = append(opts, option.WithHeader("X-ACCOUNT-ID", fmt.Sprintf("%v", params.XAccountID.Value)))
+	}
+	if !param.IsOmitted(params.XEnvironmentID) {
+		opts = append(opts, option.WithHeader("X-ENVIRONMENT-ID", fmt.Sprintf("%v", params.XEnvironmentID.Value)))
+	}
 	opts = slices.Concat(r.Options, opts)
 	if addonID == "" {
 		err = errors.New("missing required addonId parameter")
 		return nil, err
 	}
 	path := fmt.Sprintf("api/v1/addons/%s/entitlements", addonID)
-	err = requestconfig.ExecuteNewRequest(ctx, http.MethodPost, path, body, &res, opts...)
+	err = requestconfig.ExecuteNewRequest(ctx, http.MethodPost, path, params, &res, opts...)
 	return res, err
 }
 
 // Updates an existing entitlement on a draft addon.
 func (r *V1AddonEntitlementService) Update(ctx context.Context, id string, params V1AddonEntitlementUpdateParams, opts ...option.RequestOption) (res *AddonPackageEntitlement, err error) {
+	if !param.IsOmitted(params.XAccountID) {
+		opts = append(opts, option.WithHeader("X-ACCOUNT-ID", fmt.Sprintf("%v", params.XAccountID.Value)))
+	}
+	if !param.IsOmitted(params.XEnvironmentID) {
+		opts = append(opts, option.WithHeader("X-ENVIRONMENT-ID", fmt.Sprintf("%v", params.XEnvironmentID.Value)))
+	}
 	opts = slices.Concat(r.Options, opts)
 	if params.AddonID == "" {
 		err = errors.New("missing required addonId parameter")
@@ -67,7 +79,13 @@ func (r *V1AddonEntitlementService) Update(ctx context.Context, id string, param
 }
 
 // Retrieves a list of entitlements for an addon.
-func (r *V1AddonEntitlementService) List(ctx context.Context, addonID string, opts ...option.RequestOption) (res *V1AddonEntitlementListResponse, err error) {
+func (r *V1AddonEntitlementService) List(ctx context.Context, addonID string, query V1AddonEntitlementListParams, opts ...option.RequestOption) (res *V1AddonEntitlementListResponse, err error) {
+	if !param.IsOmitted(query.XAccountID) {
+		opts = append(opts, option.WithHeader("X-ACCOUNT-ID", fmt.Sprintf("%v", query.XAccountID.Value)))
+	}
+	if !param.IsOmitted(query.XEnvironmentID) {
+		opts = append(opts, option.WithHeader("X-ENVIRONMENT-ID", fmt.Sprintf("%v", query.XEnvironmentID.Value)))
+	}
 	opts = slices.Concat(r.Options, opts)
 	if addonID == "" {
 		err = errors.New("missing required addonId parameter")
@@ -79,9 +97,15 @@ func (r *V1AddonEntitlementService) List(ctx context.Context, addonID string, op
 }
 
 // Deletes an entitlement from a draft addon.
-func (r *V1AddonEntitlementService) Delete(ctx context.Context, id string, body V1AddonEntitlementDeleteParams, opts ...option.RequestOption) (res *AddonPackageEntitlement, err error) {
+func (r *V1AddonEntitlementService) Delete(ctx context.Context, id string, params V1AddonEntitlementDeleteParams, opts ...option.RequestOption) (res *AddonPackageEntitlement, err error) {
+	if !param.IsOmitted(params.XAccountID) {
+		opts = append(opts, option.WithHeader("X-ACCOUNT-ID", fmt.Sprintf("%v", params.XAccountID.Value)))
+	}
+	if !param.IsOmitted(params.XEnvironmentID) {
+		opts = append(opts, option.WithHeader("X-ENVIRONMENT-ID", fmt.Sprintf("%v", params.XEnvironmentID.Value)))
+	}
 	opts = slices.Concat(r.Options, opts)
-	if body.AddonID == "" {
+	if params.AddonID == "" {
 		err = errors.New("missing required addonId parameter")
 		return nil, err
 	}
@@ -89,7 +113,7 @@ func (r *V1AddonEntitlementService) Delete(ctx context.Context, id string, body 
 		err = errors.New("missing required id parameter")
 		return nil, err
 	}
-	path := fmt.Sprintf("api/v1/addons/%s/entitlements/%s", body.AddonID, id)
+	path := fmt.Sprintf("api/v1/addons/%s/entitlements/%s", params.AddonID, id)
 	err = requestconfig.ExecuteNewRequest(ctx, http.MethodDelete, path, nil, &res, opts...)
 	return res, err
 }
@@ -1228,7 +1252,9 @@ func (r *V1AddonEntitlementListResponsePagination) UnmarshalJSON(data []byte) er
 
 type V1AddonEntitlementNewParams struct {
 	// Entitlements to create
-	Entitlements []V1AddonEntitlementNewParamsEntitlementUnion `json:"entitlements,omitzero" api:"required"`
+	Entitlements   []V1AddonEntitlementNewParamsEntitlementUnion `json:"entitlements,omitzero" api:"required"`
+	XAccountID     param.Opt[string]                             `header:"X-ACCOUNT-ID,omitzero" json:"-"`
+	XEnvironmentID param.Opt[string]                             `header:"X-ENVIRONMENT-ID,omitzero" json:"-"`
 	paramObj
 }
 
@@ -1665,6 +1691,8 @@ type V1AddonEntitlementUpdateParams struct {
 	// to update on a credit entitlement
 	OfCredit *V1AddonEntitlementUpdateParamsBodyCredit `json:",inline"`
 
+	XAccountID     param.Opt[string] `header:"X-ACCOUNT-ID,omitzero" json:"-"`
+	XEnvironmentID param.Opt[string] `header:"X-ENVIRONMENT-ID,omitzero" json:"-"`
 	paramObj
 }
 
@@ -1870,7 +1898,15 @@ func init() {
 	)
 }
 
+type V1AddonEntitlementListParams struct {
+	XAccountID     param.Opt[string] `header:"X-ACCOUNT-ID,omitzero" json:"-"`
+	XEnvironmentID param.Opt[string] `header:"X-ENVIRONMENT-ID,omitzero" json:"-"`
+	paramObj
+}
+
 type V1AddonEntitlementDeleteParams struct {
-	AddonID string `path:"addonId" api:"required" json:"-"`
+	AddonID        string            `path:"addonId" api:"required" json:"-"`
+	XAccountID     param.Opt[string] `header:"X-ACCOUNT-ID,omitzero" json:"-"`
+	XEnvironmentID param.Opt[string] `header:"X-ENVIRONMENT-ID,omitzero" json:"-"`
 	paramObj
 }

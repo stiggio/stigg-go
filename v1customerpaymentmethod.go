@@ -38,20 +38,32 @@ func NewV1CustomerPaymentMethodService(opts ...option.RequestOption) (r V1Custom
 
 // Attaches a payment method to a customer for billing. Required for paid
 // subscriptions when integrated with a billing provider.
-func (r *V1CustomerPaymentMethodService) Attach(ctx context.Context, id string, body V1CustomerPaymentMethodAttachParams, opts ...option.RequestOption) (res *CustomerResponse, err error) {
+func (r *V1CustomerPaymentMethodService) Attach(ctx context.Context, id string, params V1CustomerPaymentMethodAttachParams, opts ...option.RequestOption) (res *CustomerResponse, err error) {
+	if !param.IsOmitted(params.XAccountID) {
+		opts = append(opts, option.WithHeader("X-ACCOUNT-ID", fmt.Sprintf("%v", params.XAccountID.Value)))
+	}
+	if !param.IsOmitted(params.XEnvironmentID) {
+		opts = append(opts, option.WithHeader("X-ENVIRONMENT-ID", fmt.Sprintf("%v", params.XEnvironmentID.Value)))
+	}
 	opts = slices.Concat(r.Options, opts)
 	if id == "" {
 		err = errors.New("missing required id parameter")
 		return nil, err
 	}
 	path := fmt.Sprintf("api/v1/customers/%s/payment-method", id)
-	err = requestconfig.ExecuteNewRequest(ctx, http.MethodPost, path, body, &res, opts...)
+	err = requestconfig.ExecuteNewRequest(ctx, http.MethodPost, path, params, &res, opts...)
 	return res, err
 }
 
 // Removes the payment method from a customer. Ensure active paid subscriptions
 // have an alternative payment method.
-func (r *V1CustomerPaymentMethodService) Detach(ctx context.Context, id string, opts ...option.RequestOption) (res *CustomerResponse, err error) {
+func (r *V1CustomerPaymentMethodService) Detach(ctx context.Context, id string, body V1CustomerPaymentMethodDetachParams, opts ...option.RequestOption) (res *CustomerResponse, err error) {
+	if !param.IsOmitted(body.XAccountID) {
+		opts = append(opts, option.WithHeader("X-ACCOUNT-ID", fmt.Sprintf("%v", body.XAccountID.Value)))
+	}
+	if !param.IsOmitted(body.XEnvironmentID) {
+		opts = append(opts, option.WithHeader("X-ENVIRONMENT-ID", fmt.Sprintf("%v", body.XEnvironmentID.Value)))
+	}
 	opts = slices.Concat(r.Options, opts)
 	if id == "" {
 		err = errors.New("missing required id parameter")
@@ -72,6 +84,8 @@ type V1CustomerPaymentMethodAttachParams struct {
 	// Any of "AUTH0", "ZUORA", "STRIPE", "HUBSPOT", "AWS_MARKETPLACE", "SNOWFLAKE",
 	// "SALESFORCE", "BIG_QUERY", "OPEN_FGA", "APP_STORE", "RECEIVED", "PREQUEL".
 	VendorIdentifier V1CustomerPaymentMethodAttachParamsVendorIdentifier `json:"vendorIdentifier,omitzero" api:"required"`
+	XAccountID       param.Opt[string]                                   `header:"X-ACCOUNT-ID,omitzero" json:"-"`
+	XEnvironmentID   param.Opt[string]                                   `header:"X-ENVIRONMENT-ID,omitzero" json:"-"`
 	// Customers selected currency
 	//
 	// Any of "usd", "aed", "all", "amd", "ang", "aud", "awg", "azn", "bam", "bbd",
@@ -236,3 +250,9 @@ const (
 	V1CustomerPaymentMethodAttachParamsBillingCurrencyXof V1CustomerPaymentMethodAttachParamsBillingCurrency = "xof"
 	V1CustomerPaymentMethodAttachParamsBillingCurrencyXpf V1CustomerPaymentMethodAttachParamsBillingCurrency = "xpf"
 )
+
+type V1CustomerPaymentMethodDetachParams struct {
+	XAccountID     param.Opt[string] `header:"X-ACCOUNT-ID,omitzero" json:"-"`
+	XEnvironmentID param.Opt[string] `header:"X-ENVIRONMENT-ID,omitzero" json:"-"`
+	paramObj
+}
