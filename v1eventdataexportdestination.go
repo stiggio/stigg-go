@@ -101,19 +101,60 @@ type V1EventDataExportDestinationNewResponseDataDestination struct {
 	DestinationID string `json:"destinationId" api:"required"`
 	// Destination type (snowflake, bigquery, ...)
 	Type string `json:"type" api:"required"`
+	// Connection status of the destination (connected, failed)
+	ConnectionStatus string `json:"connectionStatus"`
+	// Latest sync snapshot for the destination, refreshed by the provider webhook
+	LastSyncStatus V1EventDataExportDestinationNewResponseDataDestinationLastSyncStatus `json:"lastSyncStatus"`
 	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
 	JSON struct {
-		ConnectedAt   respjson.Field
-		DestinationID respjson.Field
-		Type          respjson.Field
-		ExtraFields   map[string]respjson.Field
-		raw           string
+		ConnectedAt      respjson.Field
+		DestinationID    respjson.Field
+		Type             respjson.Field
+		ConnectionStatus respjson.Field
+		LastSyncStatus   respjson.Field
+		ExtraFields      map[string]respjson.Field
+		raw              string
 	} `json:"-"`
 }
 
 // Returns the unmodified JSON received from the API
 func (r V1EventDataExportDestinationNewResponseDataDestination) RawJSON() string { return r.JSON.raw }
 func (r *V1EventDataExportDestinationNewResponseDataDestination) UnmarshalJSON(data []byte) error {
+	return apijson.UnmarshalRoot(data, r)
+}
+
+// Latest sync snapshot for the destination, refreshed by the provider webhook
+type V1EventDataExportDestinationNewResponseDataDestinationLastSyncStatus struct {
+	// ISO8601 timestamp of when the latest sync finished
+	FinishedAt string `json:"finishedAt" api:"required"`
+	// Sync status (PENDING, RUNNING, INCOMPLETE, FAILED, SUCCEEDED, CANCELLED)
+	Status string `json:"status" api:"required"`
+	// Provider transfer ID of the latest sync
+	TransferID string `json:"transferId" api:"required"`
+	// Party responsible for a failed sync, as reported by the data-export provider
+	BlamedParty string `json:"blamedParty"`
+	// Customer-friendly failure message, when the latest sync failed
+	FailureMessage string `json:"failureMessage"`
+	// Number of rows transferred in the latest sync
+	RowsTransferred float64 `json:"rowsTransferred"`
+	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
+	JSON struct {
+		FinishedAt      respjson.Field
+		Status          respjson.Field
+		TransferID      respjson.Field
+		BlamedParty     respjson.Field
+		FailureMessage  respjson.Field
+		RowsTransferred respjson.Field
+		ExtraFields     map[string]respjson.Field
+		raw             string
+	} `json:"-"`
+}
+
+// Returns the unmodified JSON received from the API
+func (r V1EventDataExportDestinationNewResponseDataDestinationLastSyncStatus) RawJSON() string {
+	return r.JSON.raw
+}
+func (r *V1EventDataExportDestinationNewResponseDataDestinationLastSyncStatus) UnmarshalJSON(data []byte) error {
 	return apijson.UnmarshalRoot(data, r)
 }
 
@@ -161,13 +202,19 @@ type V1EventDataExportDestinationDeleteResponseDataDestination struct {
 	DestinationID string `json:"destinationId" api:"required"`
 	// Destination type (snowflake, bigquery, ...)
 	Type string `json:"type" api:"required"`
+	// Connection status of the destination (connected, failed)
+	ConnectionStatus string `json:"connectionStatus"`
+	// Latest sync snapshot for the destination, refreshed by the provider webhook
+	LastSyncStatus V1EventDataExportDestinationDeleteResponseDataDestinationLastSyncStatus `json:"lastSyncStatus"`
 	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
 	JSON struct {
-		ConnectedAt   respjson.Field
-		DestinationID respjson.Field
-		Type          respjson.Field
-		ExtraFields   map[string]respjson.Field
-		raw           string
+		ConnectedAt      respjson.Field
+		DestinationID    respjson.Field
+		Type             respjson.Field
+		ConnectionStatus respjson.Field
+		LastSyncStatus   respjson.Field
+		ExtraFields      map[string]respjson.Field
+		raw              string
 	} `json:"-"`
 }
 
@@ -176,6 +223,41 @@ func (r V1EventDataExportDestinationDeleteResponseDataDestination) RawJSON() str
 	return r.JSON.raw
 }
 func (r *V1EventDataExportDestinationDeleteResponseDataDestination) UnmarshalJSON(data []byte) error {
+	return apijson.UnmarshalRoot(data, r)
+}
+
+// Latest sync snapshot for the destination, refreshed by the provider webhook
+type V1EventDataExportDestinationDeleteResponseDataDestinationLastSyncStatus struct {
+	// ISO8601 timestamp of when the latest sync finished
+	FinishedAt string `json:"finishedAt" api:"required"`
+	// Sync status (PENDING, RUNNING, INCOMPLETE, FAILED, SUCCEEDED, CANCELLED)
+	Status string `json:"status" api:"required"`
+	// Provider transfer ID of the latest sync
+	TransferID string `json:"transferId" api:"required"`
+	// Party responsible for a failed sync, as reported by the data-export provider
+	BlamedParty string `json:"blamedParty"`
+	// Customer-friendly failure message, when the latest sync failed
+	FailureMessage string `json:"failureMessage"`
+	// Number of rows transferred in the latest sync
+	RowsTransferred float64 `json:"rowsTransferred"`
+	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
+	JSON struct {
+		FinishedAt      respjson.Field
+		Status          respjson.Field
+		TransferID      respjson.Field
+		BlamedParty     respjson.Field
+		FailureMessage  respjson.Field
+		RowsTransferred respjson.Field
+		ExtraFields     map[string]respjson.Field
+		raw             string
+	} `json:"-"`
+}
+
+// Returns the unmodified JSON received from the API
+func (r V1EventDataExportDestinationDeleteResponseDataDestinationLastSyncStatus) RawJSON() string {
+	return r.JSON.raw
+}
+func (r *V1EventDataExportDestinationDeleteResponseDataDestinationLastSyncStatus) UnmarshalJSON(data []byte) error {
 	return apijson.UnmarshalRoot(data, r)
 }
 
