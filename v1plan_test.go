@@ -45,9 +45,11 @@ func TestV1PlanNewWithOptionalParams(t *testing.T) {
 		Metadata: map[string]string{
 			"foo": "string",
 		},
-		ParentPlanID: stigg.String("parentPlanId"),
-		PricingType:  stigg.V1PlanNewParamsPricingTypeFree,
-		Status:       stigg.V1PlanNewParamsStatusDraft,
+		ParentPlanID:   stigg.String("parentPlanId"),
+		PricingType:    stigg.V1PlanNewParamsPricingTypeFree,
+		Status:         stigg.V1PlanNewParamsStatusDraft,
+		XAccountID:     stigg.String("X-ACCOUNT-ID"),
+		XEnvironmentID: stigg.String("X-ENVIRONMENT-ID"),
 	})
 	if err != nil {
 		var apierr *stigg.Error
@@ -58,7 +60,7 @@ func TestV1PlanNewWithOptionalParams(t *testing.T) {
 	}
 }
 
-func TestV1PlanGet(t *testing.T) {
+func TestV1PlanGetWithOptionalParams(t *testing.T) {
 	t.Skip("Mock server tests are disabled")
 	baseURL := "http://localhost:4010"
 	if envURL, ok := os.LookupEnv("TEST_API_BASE_URL"); ok {
@@ -71,7 +73,14 @@ func TestV1PlanGet(t *testing.T) {
 		option.WithBaseURL(baseURL),
 		option.WithAPIKey("My API Key"),
 	)
-	_, err := client.V1.Plans.Get(context.TODO(), "x")
+	_, err := client.V1.Plans.Get(
+		context.TODO(),
+		"x",
+		stigg.V1PlanGetParams{
+			XAccountID:     stigg.String("X-ACCOUNT-ID"),
+			XEnvironmentID: stigg.String("X-ENVIRONMENT-ID"),
+		},
+	)
 	if err != nil {
 		var apierr *stigg.Error
 		if errors.As(err, &apierr) {
@@ -219,7 +228,9 @@ func TestV1PlanUpdateWithOptionalParams(t *testing.T) {
 			Metadata: map[string]string{
 				"foo": "string",
 			},
-			ParentPlanID: stigg.String("parentPlanId"),
+			ParentPlanID:   stigg.String("parentPlanId"),
+			XAccountID:     stigg.String("X-ACCOUNT-ID"),
+			XEnvironmentID: stigg.String("X-ENVIRONMENT-ID"),
 		},
 	)
 	if err != nil {
@@ -253,9 +264,11 @@ func TestV1PlanListWithOptionalParams(t *testing.T) {
 			Lt:  stigg.Time(time.Now()),
 			Lte: stigg.Time(time.Now()),
 		},
-		Limit:     stigg.Int(1),
-		ProductID: stigg.String("productId"),
-		Status:    []string{"DRAFT"},
+		Limit:          stigg.Int(1),
+		ProductID:      stigg.String("productId"),
+		Status:         []string{"DRAFT"},
+		XAccountID:     stigg.String("X-ACCOUNT-ID"),
+		XEnvironmentID: stigg.String("X-ENVIRONMENT-ID"),
 	})
 	if err != nil {
 		var apierr *stigg.Error
@@ -266,7 +279,7 @@ func TestV1PlanListWithOptionalParams(t *testing.T) {
 	}
 }
 
-func TestV1PlanArchive(t *testing.T) {
+func TestV1PlanArchiveWithOptionalParams(t *testing.T) {
 	t.Skip("Mock server tests are disabled")
 	baseURL := "http://localhost:4010"
 	if envURL, ok := os.LookupEnv("TEST_API_BASE_URL"); ok {
@@ -279,7 +292,14 @@ func TestV1PlanArchive(t *testing.T) {
 		option.WithBaseURL(baseURL),
 		option.WithAPIKey("My API Key"),
 	)
-	_, err := client.V1.Plans.Archive(context.TODO(), "x")
+	_, err := client.V1.Plans.Archive(
+		context.TODO(),
+		"x",
+		stigg.V1PlanArchiveParams{
+			XAccountID:     stigg.String("X-ACCOUNT-ID"),
+			XEnvironmentID: stigg.String("X-ENVIRONMENT-ID"),
+		},
+	)
 	if err != nil {
 		var apierr *stigg.Error
 		if errors.As(err, &apierr) {
@@ -289,7 +309,7 @@ func TestV1PlanArchive(t *testing.T) {
 	}
 }
 
-func TestV1PlanNewDraft(t *testing.T) {
+func TestV1PlanNewDraftWithOptionalParams(t *testing.T) {
 	t.Skip("Mock server tests are disabled")
 	baseURL := "http://localhost:4010"
 	if envURL, ok := os.LookupEnv("TEST_API_BASE_URL"); ok {
@@ -302,7 +322,14 @@ func TestV1PlanNewDraft(t *testing.T) {
 		option.WithBaseURL(baseURL),
 		option.WithAPIKey("My API Key"),
 	)
-	_, err := client.V1.Plans.NewDraft(context.TODO(), "x")
+	_, err := client.V1.Plans.NewDraft(
+		context.TODO(),
+		"x",
+		stigg.V1PlanNewDraftParams{
+			XAccountID:     stigg.String("X-ACCOUNT-ID"),
+			XEnvironmentID: stigg.String("X-ENVIRONMENT-ID"),
+		},
+	)
 	if err != nil {
 		var apierr *stigg.Error
 		if errors.As(err, &apierr) {
@@ -329,9 +356,11 @@ func TestV1PlanListChargesWithOptionalParams(t *testing.T) {
 		context.TODO(),
 		"x",
 		stigg.V1PlanListChargesParams{
-			After:  stigg.String("182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e"),
-			Before: stigg.String("182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e"),
-			Limit:  stigg.Int(1),
+			After:          stigg.String("182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e"),
+			Before:         stigg.String("182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e"),
+			Limit:          stigg.Int(1),
+			XAccountID:     stigg.String("X-ACCOUNT-ID"),
+			XEnvironmentID: stigg.String("X-ENVIRONMENT-ID"),
 		},
 	)
 	if err != nil {
@@ -360,9 +389,11 @@ func TestV1PlanListOverageChargesWithOptionalParams(t *testing.T) {
 		context.TODO(),
 		"x",
 		stigg.V1PlanListOverageChargesParams{
-			After:  stigg.String("182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e"),
-			Before: stigg.String("182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e"),
-			Limit:  stigg.Int(1),
+			After:          stigg.String("182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e"),
+			Before:         stigg.String("182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e"),
+			Limit:          stigg.Int(1),
+			XAccountID:     stigg.String("X-ACCOUNT-ID"),
+			XEnvironmentID: stigg.String("X-ENVIRONMENT-ID"),
 		},
 	)
 	if err != nil {
@@ -374,7 +405,7 @@ func TestV1PlanListOverageChargesWithOptionalParams(t *testing.T) {
 	}
 }
 
-func TestV1PlanPublish(t *testing.T) {
+func TestV1PlanPublishWithOptionalParams(t *testing.T) {
 	t.Skip("Mock server tests are disabled")
 	baseURL := "http://localhost:4010"
 	if envURL, ok := os.LookupEnv("TEST_API_BASE_URL"); ok {
@@ -391,7 +422,9 @@ func TestV1PlanPublish(t *testing.T) {
 		context.TODO(),
 		"x",
 		stigg.V1PlanPublishParams{
-			MigrationType: stigg.V1PlanPublishParamsMigrationTypeNewCustomers,
+			MigrationType:  stigg.V1PlanPublishParamsMigrationTypeNewCustomers,
+			XAccountID:     stigg.String("X-ACCOUNT-ID"),
+			XEnvironmentID: stigg.String("X-ENVIRONMENT-ID"),
 		},
 	)
 	if err != nil {
@@ -403,7 +436,7 @@ func TestV1PlanPublish(t *testing.T) {
 	}
 }
 
-func TestV1PlanRemoveDraft(t *testing.T) {
+func TestV1PlanRemoveDraftWithOptionalParams(t *testing.T) {
 	t.Skip("Mock server tests are disabled")
 	baseURL := "http://localhost:4010"
 	if envURL, ok := os.LookupEnv("TEST_API_BASE_URL"); ok {
@@ -416,7 +449,14 @@ func TestV1PlanRemoveDraft(t *testing.T) {
 		option.WithBaseURL(baseURL),
 		option.WithAPIKey("My API Key"),
 	)
-	_, err := client.V1.Plans.RemoveDraft(context.TODO(), "x")
+	_, err := client.V1.Plans.RemoveDraft(
+		context.TODO(),
+		"x",
+		stigg.V1PlanRemoveDraftParams{
+			XAccountID:     stigg.String("X-ACCOUNT-ID"),
+			XEnvironmentID: stigg.String("X-ENVIRONMENT-ID"),
+		},
+	)
 	if err != nil {
 		var apierr *stigg.Error
 		if errors.As(err, &apierr) {

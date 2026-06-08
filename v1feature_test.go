@@ -14,7 +14,7 @@ import (
 	"github.com/stiggio/stigg-go/option"
 )
 
-func TestV1FeatureArchiveFeature(t *testing.T) {
+func TestV1FeatureArchiveFeatureWithOptionalParams(t *testing.T) {
 	t.Skip("Mock server tests are disabled")
 	baseURL := "http://localhost:4010"
 	if envURL, ok := os.LookupEnv("TEST_API_BASE_URL"); ok {
@@ -27,7 +27,14 @@ func TestV1FeatureArchiveFeature(t *testing.T) {
 		option.WithBaseURL(baseURL),
 		option.WithAPIKey("My API Key"),
 	)
-	_, err := client.V1.Features.ArchiveFeature(context.TODO(), "x")
+	_, err := client.V1.Features.ArchiveFeature(
+		context.TODO(),
+		"x",
+		stigg.V1FeatureArchiveFeatureParams{
+			XAccountID:     stigg.String("X-ACCOUNT-ID"),
+			XEnvironmentID: stigg.String("X-ENVIRONMENT-ID"),
+		},
+	)
 	if err != nil {
 		var apierr *stigg.Error
 		if errors.As(err, &apierr) {
@@ -72,6 +79,8 @@ func TestV1FeatureNewFeatureWithOptionalParams(t *testing.T) {
 			FeatureUnitsPlural: stigg.String("featureUnitsPlural"),
 			Round:              "UP",
 		},
+		XAccountID:     stigg.String("X-ACCOUNT-ID"),
+		XEnvironmentID: stigg.String("X-ENVIRONMENT-ID"),
 	})
 	if err != nil {
 		var apierr *stigg.Error
@@ -105,10 +114,12 @@ func TestV1FeatureListFeaturesWithOptionalParams(t *testing.T) {
 			Lt:  stigg.Time(time.Now()),
 			Lte: stigg.Time(time.Now()),
 		},
-		FeatureType: []string{"BOOLEAN"},
-		Limit:       stigg.Int(1),
-		MeterType:   []string{"None"},
-		Status:      []string{"NEW"},
+		FeatureType:    []string{"BOOLEAN"},
+		Limit:          stigg.Int(1),
+		MeterType:      []string{"None"},
+		Status:         []string{"NEW"},
+		XAccountID:     stigg.String("X-ACCOUNT-ID"),
+		XEnvironmentID: stigg.String("X-ENVIRONMENT-ID"),
 	})
 	if err != nil {
 		var apierr *stigg.Error
@@ -119,7 +130,7 @@ func TestV1FeatureListFeaturesWithOptionalParams(t *testing.T) {
 	}
 }
 
-func TestV1FeatureGetFeature(t *testing.T) {
+func TestV1FeatureGetFeatureWithOptionalParams(t *testing.T) {
 	t.Skip("Mock server tests are disabled")
 	baseURL := "http://localhost:4010"
 	if envURL, ok := os.LookupEnv("TEST_API_BASE_URL"); ok {
@@ -132,7 +143,14 @@ func TestV1FeatureGetFeature(t *testing.T) {
 		option.WithBaseURL(baseURL),
 		option.WithAPIKey("My API Key"),
 	)
-	_, err := client.V1.Features.GetFeature(context.TODO(), "x")
+	_, err := client.V1.Features.GetFeature(
+		context.TODO(),
+		"x",
+		stigg.V1FeatureGetFeatureParams{
+			XAccountID:     stigg.String("X-ACCOUNT-ID"),
+			XEnvironmentID: stigg.String("X-ENVIRONMENT-ID"),
+		},
+	)
 	if err != nil {
 		var apierr *stigg.Error
 		if errors.As(err, &apierr) {
@@ -142,7 +160,7 @@ func TestV1FeatureGetFeature(t *testing.T) {
 	}
 }
 
-func TestV1FeatureUnarchiveFeature(t *testing.T) {
+func TestV1FeatureUnarchiveFeatureWithOptionalParams(t *testing.T) {
 	t.Skip("Mock server tests are disabled")
 	baseURL := "http://localhost:4010"
 	if envURL, ok := os.LookupEnv("TEST_API_BASE_URL"); ok {
@@ -155,7 +173,14 @@ func TestV1FeatureUnarchiveFeature(t *testing.T) {
 		option.WithBaseURL(baseURL),
 		option.WithAPIKey("My API Key"),
 	)
-	_, err := client.V1.Features.UnarchiveFeature(context.TODO(), "x")
+	_, err := client.V1.Features.UnarchiveFeature(
+		context.TODO(),
+		"x",
+		stigg.V1FeatureUnarchiveFeatureParams{
+			XAccountID:     stigg.String("X-ACCOUNT-ID"),
+			XEnvironmentID: stigg.String("X-ENVIRONMENT-ID"),
+		},
+	)
 	if err != nil {
 		var apierr *stigg.Error
 		if errors.As(err, &apierr) {
@@ -213,6 +238,8 @@ func TestV1FeatureUpdateFeatureWithOptionalParams(t *testing.T) {
 				FeatureUnitsPlural: stigg.String("featureUnitsPlural"),
 				Round:              "UP",
 			},
+			XAccountID:     stigg.String("X-ACCOUNT-ID"),
+			XEnvironmentID: stigg.String("X-ENVIRONMENT-ID"),
 		},
 	)
 	if err != nil {

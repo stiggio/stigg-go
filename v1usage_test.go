@@ -31,11 +31,13 @@ func TestV1UsageHistoryWithOptionalParams(t *testing.T) {
 		context.TODO(),
 		"featureId",
 		stigg.V1UsageHistoryParams{
-			CustomerID: "customerId",
-			StartDate:  time.Now(),
-			EndDate:    stigg.Time(time.Now()),
-			GroupBy:    stigg.String("groupBy"),
-			ResourceID: stigg.String("resourceId"),
+			CustomerID:     "customerId",
+			StartDate:      time.Now(),
+			EndDate:        stigg.Time(time.Now()),
+			GroupBy:        stigg.String("groupBy"),
+			ResourceID:     stigg.String("resourceId"),
+			XAccountID:     stigg.String("X-ACCOUNT-ID"),
+			XEnvironmentID: stigg.String("X-ENVIRONMENT-ID"),
 		},
 	)
 	if err != nil {
@@ -47,7 +49,7 @@ func TestV1UsageHistoryWithOptionalParams(t *testing.T) {
 	}
 }
 
-func TestV1UsageReport(t *testing.T) {
+func TestV1UsageReportWithOptionalParams(t *testing.T) {
 	t.Skip("Mock server tests are disabled")
 	baseURL := "http://localhost:4010"
 	if envURL, ok := os.LookupEnv("TEST_API_BASE_URL"); ok {
@@ -74,6 +76,8 @@ func TestV1UsageReport(t *testing.T) {
 			ResourceID:     stigg.String("resourceId"),
 			UpdateBehavior: "DELTA",
 		}},
+		XAccountID:     stigg.String("X-ACCOUNT-ID"),
+		XEnvironmentID: stigg.String("X-ENVIRONMENT-ID"),
 	})
 	if err != nil {
 		var apierr *stigg.Error

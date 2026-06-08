@@ -14,7 +14,7 @@ import (
 	"github.com/stiggio/stigg-go/option"
 )
 
-func TestV1SubscriptionGet(t *testing.T) {
+func TestV1SubscriptionGetWithOptionalParams(t *testing.T) {
 	t.Skip("Mock server tests are disabled")
 	baseURL := "http://localhost:4010"
 	if envURL, ok := os.LookupEnv("TEST_API_BASE_URL"); ok {
@@ -27,7 +27,14 @@ func TestV1SubscriptionGet(t *testing.T) {
 		option.WithBaseURL(baseURL),
 		option.WithAPIKey("My API Key"),
 	)
-	_, err := client.V1.Subscriptions.Get(context.TODO(), "x")
+	_, err := client.V1.Subscriptions.Get(
+		context.TODO(),
+		"x",
+		stigg.V1SubscriptionGetParams{
+			XAccountID:     stigg.String("X-ACCOUNT-ID"),
+			XEnvironmentID: stigg.String("X-ENVIRONMENT-ID"),
+		},
+	)
 	if err != nil {
 		var apierr *stigg.Error
 		if errors.As(err, &apierr) {
@@ -151,6 +158,8 @@ func TestV1SubscriptionUpdateWithOptionalParams(t *testing.T) {
 			PromotionCode:    stigg.String("promotionCode"),
 			ScheduleStrategy: stigg.V1SubscriptionUpdateParamsScheduleStrategyEndOfBillingPeriod,
 			TrialEndDate:     stigg.Time(time.Now()),
+			XAccountID:       stigg.String("X-ACCOUNT-ID"),
+			XEnvironmentID:   stigg.String("X-ENVIRONMENT-ID"),
 		},
 	)
 	if err != nil {
@@ -184,12 +193,14 @@ func TestV1SubscriptionListWithOptionalParams(t *testing.T) {
 			Lt:  stigg.Time(time.Now()),
 			Lte: stigg.Time(time.Now()),
 		},
-		CustomerID:  stigg.String("customerId"),
-		Limit:       stigg.Int(1),
-		PlanID:      stigg.String("planId"),
-		PricingType: []string{"FREE"},
-		ResourceID:  stigg.String("resourceId"),
-		Status:      []string{"PAYMENT_PENDING"},
+		CustomerID:     stigg.String("customerId"),
+		Limit:          stigg.Int(1),
+		PlanID:         stigg.String("planId"),
+		PricingType:    []string{"FREE"},
+		ResourceID:     stigg.String("resourceId"),
+		Status:         []string{"PAYMENT_PENDING"},
+		XAccountID:     stigg.String("X-ACCOUNT-ID"),
+		XEnvironmentID: stigg.String("X-ENVIRONMENT-ID"),
 	})
 	if err != nil {
 		var apierr *stigg.Error
@@ -221,6 +232,8 @@ func TestV1SubscriptionCancelWithOptionalParams(t *testing.T) {
 			CancellationTime:   stigg.V1SubscriptionCancelParamsCancellationTimeEndOfBillingPeriod,
 			EndDate:            stigg.Time(time.Now()),
 			Prorate:            stigg.Bool(true),
+			XAccountID:         stigg.String("X-ACCOUNT-ID"),
+			XEnvironmentID:     stigg.String("X-ENVIRONMENT-ID"),
 		},
 	)
 	if err != nil {
@@ -232,7 +245,7 @@ func TestV1SubscriptionCancelWithOptionalParams(t *testing.T) {
 	}
 }
 
-func TestV1SubscriptionDelegate(t *testing.T) {
+func TestV1SubscriptionDelegateWithOptionalParams(t *testing.T) {
 	t.Skip("Mock server tests are disabled")
 	baseURL := "http://localhost:4010"
 	if envURL, ok := os.LookupEnv("TEST_API_BASE_URL"); ok {
@@ -250,6 +263,8 @@ func TestV1SubscriptionDelegate(t *testing.T) {
 		"x",
 		stigg.V1SubscriptionDelegateParams{
 			TargetCustomerID: "targetCustomerId",
+			XAccountID:       stigg.String("X-ACCOUNT-ID"),
+			XEnvironmentID:   stigg.String("X-ENVIRONMENT-ID"),
 		},
 	)
 	if err != nil {
@@ -297,7 +312,9 @@ func TestV1SubscriptionImportWithOptionalParams(t *testing.T) {
 			ResourceID: stigg.String("resourceId"),
 			StartDate:  stigg.Time(time.Now()),
 		}},
-		IntegrationID: stigg.String("integrationId"),
+		IntegrationID:  stigg.String("integrationId"),
+		XAccountID:     stigg.String("X-ACCOUNT-ID"),
+		XEnvironmentID: stigg.String("X-ENVIRONMENT-ID"),
 	})
 	if err != nil {
 		var apierr *stigg.Error
@@ -326,6 +343,8 @@ func TestV1SubscriptionMigrateWithOptionalParams(t *testing.T) {
 		"x",
 		stigg.V1SubscriptionMigrateParams{
 			SubscriptionMigrationTime: stigg.V1SubscriptionMigrateParamsSubscriptionMigrationTimeEndOfBillingPeriod,
+			XAccountID:                stigg.String("X-ACCOUNT-ID"),
+			XEnvironmentID:            stigg.String("X-ENVIRONMENT-ID"),
 		},
 	)
 	if err != nil {
@@ -421,7 +440,9 @@ func TestV1SubscriptionPreviewWithOptionalParams(t *testing.T) {
 			TrialEndBehavior: "CONVERT_TO_PAID",
 			TrialEndDate:     stigg.Time(time.Now()),
 		},
-		UnitQuantity: stigg.Int(0),
+		UnitQuantity:   stigg.Int(0),
+		XAccountID:     stigg.String("X-ACCOUNT-ID"),
+		XEnvironmentID: stigg.String("X-ENVIRONMENT-ID"),
 	})
 	if err != nil {
 		var apierr *stigg.Error
@@ -582,7 +603,9 @@ func TestV1SubscriptionProvisionWithOptionalParams(t *testing.T) {
 			TrialEndBehavior: "CONVERT_TO_PAID",
 			TrialEndDate:     stigg.Time(time.Now()),
 		},
-		UnitQuantity: stigg.Int(0),
+		UnitQuantity:   stigg.Int(0),
+		XAccountID:     stigg.String("X-ACCOUNT-ID"),
+		XEnvironmentID: stigg.String("X-ENVIRONMENT-ID"),
 	})
 	if err != nil {
 		var apierr *stigg.Error
@@ -593,7 +616,7 @@ func TestV1SubscriptionProvisionWithOptionalParams(t *testing.T) {
 	}
 }
 
-func TestV1SubscriptionTransfer(t *testing.T) {
+func TestV1SubscriptionTransferWithOptionalParams(t *testing.T) {
 	t.Skip("Mock server tests are disabled")
 	baseURL := "http://localhost:4010"
 	if envURL, ok := os.LookupEnv("TEST_API_BASE_URL"); ok {
@@ -611,6 +634,8 @@ func TestV1SubscriptionTransfer(t *testing.T) {
 		"x",
 		stigg.V1SubscriptionTransferParams{
 			DestinationResourceID: "destinationResourceId",
+			XAccountID:            stigg.String("X-ACCOUNT-ID"),
+			XEnvironmentID:        stigg.String("X-ENVIRONMENT-ID"),
 		},
 	)
 	if err != nil {

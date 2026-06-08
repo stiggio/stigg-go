@@ -12,6 +12,7 @@ import (
 	"github.com/stiggio/stigg-go/internal/apijson"
 	"github.com/stiggio/stigg-go/internal/requestconfig"
 	"github.com/stiggio/stigg-go/option"
+	"github.com/stiggio/stigg-go/packages/param"
 	"github.com/stiggio/stigg-go/packages/respjson"
 )
 
@@ -38,7 +39,13 @@ func NewV1SubscriptionInvoiceService(opts ...option.RequestOption) (r V1Subscrip
 
 // Marks the latest invoice of a subscription as paid in the billing provider. The
 // invoice must exist and have an OPEN status.
-func (r *V1SubscriptionInvoiceService) MarkAsPaid(ctx context.Context, id string, opts ...option.RequestOption) (res *V1SubscriptionInvoiceMarkAsPaidResponse, err error) {
+func (r *V1SubscriptionInvoiceService) MarkAsPaid(ctx context.Context, id string, body V1SubscriptionInvoiceMarkAsPaidParams, opts ...option.RequestOption) (res *V1SubscriptionInvoiceMarkAsPaidResponse, err error) {
+	if !param.IsOmitted(body.XAccountID) {
+		opts = append(opts, option.WithHeader("X-ACCOUNT-ID", fmt.Sprintf("%v", body.XAccountID.Value)))
+	}
+	if !param.IsOmitted(body.XEnvironmentID) {
+		opts = append(opts, option.WithHeader("X-ENVIRONMENT-ID", fmt.Sprintf("%v", body.XEnvironmentID.Value)))
+	}
 	opts = slices.Concat(r.Options, opts)
 	if id == "" {
 		err = errors.New("missing required id parameter")
@@ -83,4 +90,10 @@ type V1SubscriptionInvoiceMarkAsPaidResponseData struct {
 func (r V1SubscriptionInvoiceMarkAsPaidResponseData) RawJSON() string { return r.JSON.raw }
 func (r *V1SubscriptionInvoiceMarkAsPaidResponseData) UnmarshalJSON(data []byte) error {
 	return apijson.UnmarshalRoot(data, r)
+}
+
+type V1SubscriptionInvoiceMarkAsPaidParams struct {
+	XAccountID     param.Opt[string] `header:"X-ACCOUNT-ID,omitzero" json:"-"`
+	XEnvironmentID param.Opt[string] `header:"X-ENVIRONMENT-ID,omitzero" json:"-"`
+	paramObj
 }

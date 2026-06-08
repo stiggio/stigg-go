@@ -27,9 +27,11 @@ func TestV1EventBetaEntityTypeListWithOptionalParams(t *testing.T) {
 		option.WithAPIKey("My API Key"),
 	)
 	_, err := client.V1.Events.Beta.EntityTypes.List(context.TODO(), stigg.V1EventBetaEntityTypeListParams{
-		After:  stigg.String("182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e"),
-		Before: stigg.String("182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e"),
-		Limit:  stigg.Int(1),
+		After:          stigg.String("182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e"),
+		Before:         stigg.String("182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e"),
+		Limit:          stigg.Int(1),
+		XAccountID:     stigg.String("X-ACCOUNT-ID"),
+		XEnvironmentID: stigg.String("X-ENVIRONMENT-ID"),
 	})
 	if err != nil {
 		var apierr *stigg.Error
@@ -40,7 +42,7 @@ func TestV1EventBetaEntityTypeListWithOptionalParams(t *testing.T) {
 	}
 }
 
-func TestV1EventBetaEntityTypeUpsert(t *testing.T) {
+func TestV1EventBetaEntityTypeUpsertWithOptionalParams(t *testing.T) {
 	t.Skip("Mock server tests are disabled")
 	baseURL := "http://localhost:4010"
 	if envURL, ok := os.LookupEnv("TEST_API_BASE_URL"); ok {
@@ -63,6 +65,8 @@ func TestV1EventBetaEntityTypeUpsert(t *testing.T) {
 			AttributionKeys: []string{"teamId"},
 			DisplayName:     "Team",
 		}},
+		XAccountID:     stigg.String("X-ACCOUNT-ID"),
+		XEnvironmentID: stigg.String("X-ENVIRONMENT-ID"),
 	})
 	if err != nil {
 		var apierr *stigg.Error

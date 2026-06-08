@@ -51,7 +51,13 @@ func NewV1CustomerService(opts ...option.RequestOption) (r V1CustomerService) {
 
 // Retrieves a customer by their unique identifier, including billing information
 // and subscription status.
-func (r *V1CustomerService) Get(ctx context.Context, id string, opts ...option.RequestOption) (res *CustomerResponse, err error) {
+func (r *V1CustomerService) Get(ctx context.Context, id string, query V1CustomerGetParams, opts ...option.RequestOption) (res *CustomerResponse, err error) {
+	if !param.IsOmitted(query.XAccountID) {
+		opts = append(opts, option.WithHeader("X-ACCOUNT-ID", fmt.Sprintf("%v", query.XAccountID.Value)))
+	}
+	if !param.IsOmitted(query.XEnvironmentID) {
+		opts = append(opts, option.WithHeader("X-ENVIRONMENT-ID", fmt.Sprintf("%v", query.XEnvironmentID.Value)))
+	}
 	opts = slices.Concat(r.Options, opts)
 	if id == "" {
 		err = errors.New("missing required id parameter")
@@ -64,24 +70,36 @@ func (r *V1CustomerService) Get(ctx context.Context, id string, opts ...option.R
 
 // Updates an existing customer's properties such as name, email, and billing
 // information.
-func (r *V1CustomerService) Update(ctx context.Context, id string, body V1CustomerUpdateParams, opts ...option.RequestOption) (res *CustomerResponse, err error) {
+func (r *V1CustomerService) Update(ctx context.Context, id string, params V1CustomerUpdateParams, opts ...option.RequestOption) (res *CustomerResponse, err error) {
+	if !param.IsOmitted(params.XAccountID) {
+		opts = append(opts, option.WithHeader("X-ACCOUNT-ID", fmt.Sprintf("%v", params.XAccountID.Value)))
+	}
+	if !param.IsOmitted(params.XEnvironmentID) {
+		opts = append(opts, option.WithHeader("X-ENVIRONMENT-ID", fmt.Sprintf("%v", params.XEnvironmentID.Value)))
+	}
 	opts = slices.Concat(r.Options, opts)
 	if id == "" {
 		err = errors.New("missing required id parameter")
 		return nil, err
 	}
 	path := fmt.Sprintf("api/v1/customers/%s", id)
-	err = requestconfig.ExecuteNewRequest(ctx, http.MethodPatch, path, body, &res, opts...)
+	err = requestconfig.ExecuteNewRequest(ctx, http.MethodPatch, path, params, &res, opts...)
 	return res, err
 }
 
 // Retrieves a paginated list of customers in the environment.
-func (r *V1CustomerService) List(ctx context.Context, query V1CustomerListParams, opts ...option.RequestOption) (res *pagination.MyCursorIDPage[V1CustomerListResponse], err error) {
+func (r *V1CustomerService) List(ctx context.Context, params V1CustomerListParams, opts ...option.RequestOption) (res *pagination.MyCursorIDPage[V1CustomerListResponse], err error) {
 	var raw *http.Response
+	if !param.IsOmitted(params.XAccountID) {
+		opts = append(opts, option.WithHeader("X-ACCOUNT-ID", fmt.Sprintf("%v", params.XAccountID.Value)))
+	}
+	if !param.IsOmitted(params.XEnvironmentID) {
+		opts = append(opts, option.WithHeader("X-ENVIRONMENT-ID", fmt.Sprintf("%v", params.XEnvironmentID.Value)))
+	}
 	opts = slices.Concat(r.Options, opts)
 	opts = append([]option.RequestOption{option.WithResponseInto(&raw)}, opts...)
 	path := "api/v1/customers"
-	cfg, err := requestconfig.NewRequestConfig(ctx, http.MethodGet, path, query, &res, opts...)
+	cfg, err := requestconfig.NewRequestConfig(ctx, http.MethodGet, path, params, &res, opts...)
 	if err != nil {
 		return nil, err
 	}
@@ -94,13 +112,19 @@ func (r *V1CustomerService) List(ctx context.Context, query V1CustomerListParams
 }
 
 // Retrieves a paginated list of customers in the environment.
-func (r *V1CustomerService) ListAutoPaging(ctx context.Context, query V1CustomerListParams, opts ...option.RequestOption) *pagination.MyCursorIDPageAutoPager[V1CustomerListResponse] {
-	return pagination.NewMyCursorIDPageAutoPager(r.List(ctx, query, opts...))
+func (r *V1CustomerService) ListAutoPaging(ctx context.Context, params V1CustomerListParams, opts ...option.RequestOption) *pagination.MyCursorIDPageAutoPager[V1CustomerListResponse] {
+	return pagination.NewMyCursorIDPageAutoPager(r.List(ctx, params, opts...))
 }
 
 // Archives a customer, preventing new subscriptions. Optionally cancels existing
 // subscriptions.
-func (r *V1CustomerService) Archive(ctx context.Context, id string, opts ...option.RequestOption) (res *CustomerResponse, err error) {
+func (r *V1CustomerService) Archive(ctx context.Context, id string, body V1CustomerArchiveParams, opts ...option.RequestOption) (res *CustomerResponse, err error) {
+	if !param.IsOmitted(body.XAccountID) {
+		opts = append(opts, option.WithHeader("X-ACCOUNT-ID", fmt.Sprintf("%v", body.XAccountID.Value)))
+	}
+	if !param.IsOmitted(body.XEnvironmentID) {
+		opts = append(opts, option.WithHeader("X-ENVIRONMENT-ID", fmt.Sprintf("%v", body.XEnvironmentID.Value)))
+	}
 	opts = slices.Concat(r.Options, opts)
 	if id == "" {
 		err = errors.New("missing required id parameter")
@@ -119,29 +143,47 @@ func (r *V1CustomerService) Archive(ctx context.Context, id string, opts ...opti
 // mechanisms, and low-latency guarantees. It is not recommended for hot-path
 // entitlement checks. For production use, consider using the Stigg Node Server SDK
 // with caching or the Sidecar for low-latency cached responses.
-func (r *V1CustomerService) CheckEntitlement(ctx context.Context, id string, query V1CustomerCheckEntitlementParams, opts ...option.RequestOption) (res *V1CustomerCheckEntitlementResponse, err error) {
+func (r *V1CustomerService) CheckEntitlement(ctx context.Context, id string, params V1CustomerCheckEntitlementParams, opts ...option.RequestOption) (res *V1CustomerCheckEntitlementResponse, err error) {
+	if !param.IsOmitted(params.XAccountID) {
+		opts = append(opts, option.WithHeader("X-ACCOUNT-ID", fmt.Sprintf("%v", params.XAccountID.Value)))
+	}
+	if !param.IsOmitted(params.XEnvironmentID) {
+		opts = append(opts, option.WithHeader("X-ENVIRONMENT-ID", fmt.Sprintf("%v", params.XEnvironmentID.Value)))
+	}
 	opts = slices.Concat(r.Options, opts)
 	if id == "" {
 		err = errors.New("missing required id parameter")
 		return nil, err
 	}
 	path := fmt.Sprintf("api/v1/customers/%s/entitlements/check", id)
-	err = requestconfig.ExecuteNewRequest(ctx, http.MethodGet, path, query, &res, opts...)
+	err = requestconfig.ExecuteNewRequest(ctx, http.MethodGet, path, params, &res, opts...)
 	return res, err
 }
 
 // Imports multiple customers in bulk. Used for migrating customer data from
 // external systems.
-func (r *V1CustomerService) Import(ctx context.Context, body V1CustomerImportParams, opts ...option.RequestOption) (res *V1CustomerImportResponse, err error) {
+func (r *V1CustomerService) Import(ctx context.Context, params V1CustomerImportParams, opts ...option.RequestOption) (res *V1CustomerImportResponse, err error) {
+	if !param.IsOmitted(params.XAccountID) {
+		opts = append(opts, option.WithHeader("X-ACCOUNT-ID", fmt.Sprintf("%v", params.XAccountID.Value)))
+	}
+	if !param.IsOmitted(params.XEnvironmentID) {
+		opts = append(opts, option.WithHeader("X-ENVIRONMENT-ID", fmt.Sprintf("%v", params.XEnvironmentID.Value)))
+	}
 	opts = slices.Concat(r.Options, opts)
 	path := "api/v1/customers/import"
-	err = requestconfig.ExecuteNewRequest(ctx, http.MethodPost, path, body, &res, opts...)
+	err = requestconfig.ExecuteNewRequest(ctx, http.MethodPost, path, params, &res, opts...)
 	return res, err
 }
 
 // Retrieves a paginated list of resources within the same customer.
-func (r *V1CustomerService) ListResources(ctx context.Context, id string, query V1CustomerListResourcesParams, opts ...option.RequestOption) (res *pagination.MyCursorIDPage[V1CustomerListResourcesResponse], err error) {
+func (r *V1CustomerService) ListResources(ctx context.Context, id string, params V1CustomerListResourcesParams, opts ...option.RequestOption) (res *pagination.MyCursorIDPage[V1CustomerListResourcesResponse], err error) {
 	var raw *http.Response
+	if !param.IsOmitted(params.XAccountID) {
+		opts = append(opts, option.WithHeader("X-ACCOUNT-ID", fmt.Sprintf("%v", params.XAccountID.Value)))
+	}
+	if !param.IsOmitted(params.XEnvironmentID) {
+		opts = append(opts, option.WithHeader("X-ENVIRONMENT-ID", fmt.Sprintf("%v", params.XEnvironmentID.Value)))
+	}
 	opts = slices.Concat(r.Options, opts)
 	opts = append([]option.RequestOption{option.WithResponseInto(&raw)}, opts...)
 	if id == "" {
@@ -149,7 +191,7 @@ func (r *V1CustomerService) ListResources(ctx context.Context, id string, query 
 		return nil, err
 	}
 	path := fmt.Sprintf("api/v1/customers/%s/resources", id)
-	cfg, err := requestconfig.NewRequestConfig(ctx, http.MethodGet, path, query, &res, opts...)
+	cfg, err := requestconfig.NewRequestConfig(ctx, http.MethodGet, path, params, &res, opts...)
 	if err != nil {
 		return nil, err
 	}
@@ -162,16 +204,22 @@ func (r *V1CustomerService) ListResources(ctx context.Context, id string, query 
 }
 
 // Retrieves a paginated list of resources within the same customer.
-func (r *V1CustomerService) ListResourcesAutoPaging(ctx context.Context, id string, query V1CustomerListResourcesParams, opts ...option.RequestOption) *pagination.MyCursorIDPageAutoPager[V1CustomerListResourcesResponse] {
-	return pagination.NewMyCursorIDPageAutoPager(r.ListResources(ctx, id, query, opts...))
+func (r *V1CustomerService) ListResourcesAutoPaging(ctx context.Context, id string, params V1CustomerListResourcesParams, opts ...option.RequestOption) *pagination.MyCursorIDPageAutoPager[V1CustomerListResourcesResponse] {
+	return pagination.NewMyCursorIDPageAutoPager(r.ListResources(ctx, id, params, opts...))
 }
 
 // Creates a new customer and optionally provisions an initial subscription in a
 // single operation.
-func (r *V1CustomerService) Provision(ctx context.Context, body V1CustomerProvisionParams, opts ...option.RequestOption) (res *CustomerResponse, err error) {
+func (r *V1CustomerService) Provision(ctx context.Context, params V1CustomerProvisionParams, opts ...option.RequestOption) (res *CustomerResponse, err error) {
+	if !param.IsOmitted(params.XAccountID) {
+		opts = append(opts, option.WithHeader("X-ACCOUNT-ID", fmt.Sprintf("%v", params.XAccountID.Value)))
+	}
+	if !param.IsOmitted(params.XEnvironmentID) {
+		opts = append(opts, option.WithHeader("X-ENVIRONMENT-ID", fmt.Sprintf("%v", params.XEnvironmentID.Value)))
+	}
 	opts = slices.Concat(r.Options, opts)
 	path := "api/v1/customers"
-	err = requestconfig.ExecuteNewRequest(ctx, http.MethodPost, path, body, &res, opts...)
+	err = requestconfig.ExecuteNewRequest(ctx, http.MethodPost, path, params, &res, opts...)
 	return res, err
 }
 
@@ -182,19 +230,31 @@ func (r *V1CustomerService) Provision(ctx context.Context, body V1CustomerProvis
 // mechanisms, and low-latency guarantees. It is not recommended for hot-path
 // entitlement checks. For production use, consider using the Stigg Node Server SDK
 // with caching or the Sidecar for low-latency cached responses.
-func (r *V1CustomerService) GetEntitlements(ctx context.Context, id string, query V1CustomerGetEntitlementsParams, opts ...option.RequestOption) (res *V1CustomerGetEntitlementsResponse, err error) {
+func (r *V1CustomerService) GetEntitlements(ctx context.Context, id string, params V1CustomerGetEntitlementsParams, opts ...option.RequestOption) (res *V1CustomerGetEntitlementsResponse, err error) {
+	if !param.IsOmitted(params.XAccountID) {
+		opts = append(opts, option.WithHeader("X-ACCOUNT-ID", fmt.Sprintf("%v", params.XAccountID.Value)))
+	}
+	if !param.IsOmitted(params.XEnvironmentID) {
+		opts = append(opts, option.WithHeader("X-ENVIRONMENT-ID", fmt.Sprintf("%v", params.XEnvironmentID.Value)))
+	}
 	opts = slices.Concat(r.Options, opts)
 	if id == "" {
 		err = errors.New("missing required id parameter")
 		return nil, err
 	}
 	path := fmt.Sprintf("api/v1/customers/%s/entitlements", id)
-	err = requestconfig.ExecuteNewRequest(ctx, http.MethodGet, path, query, &res, opts...)
+	err = requestconfig.ExecuteNewRequest(ctx, http.MethodGet, path, params, &res, opts...)
 	return res, err
 }
 
 // Restores an archived customer, allowing them to create new subscriptions again.
-func (r *V1CustomerService) Unarchive(ctx context.Context, id string, opts ...option.RequestOption) (res *CustomerResponse, err error) {
+func (r *V1CustomerService) Unarchive(ctx context.Context, id string, body V1CustomerUnarchiveParams, opts ...option.RequestOption) (res *CustomerResponse, err error) {
+	if !param.IsOmitted(body.XAccountID) {
+		opts = append(opts, option.WithHeader("X-ACCOUNT-ID", fmt.Sprintf("%v", body.XAccountID.Value)))
+	}
+	if !param.IsOmitted(body.XEnvironmentID) {
+		opts = append(opts, option.WithHeader("X-ENVIRONMENT-ID", fmt.Sprintf("%v", body.XEnvironmentID.Value)))
+	}
 	opts = slices.Concat(r.Options, opts)
 	if id == "" {
 		err = errors.New("missing required id parameter")
@@ -1863,6 +1923,12 @@ func (r *V1CustomerGetEntitlementsResponseDataEntitlementCreditCurrency) Unmarsh
 	return apijson.UnmarshalRoot(data, r)
 }
 
+type V1CustomerGetParams struct {
+	XAccountID     param.Opt[string] `header:"X-ACCOUNT-ID,omitzero" json:"-"`
+	XEnvironmentID param.Opt[string] `header:"X-ENVIRONMENT-ID,omitzero" json:"-"`
+	paramObj
+}
+
 type V1CustomerUpdateParams struct {
 	// The unique identifier for the entity in the billing provider
 	BillingID param.Opt[string] `json:"billingId,omitzero"`
@@ -1873,7 +1939,9 @@ type V1CustomerUpdateParams struct {
 	// The name of the customer
 	Name param.Opt[string] `json:"name,omitzero"`
 	// Timezone to use for this customer
-	Timezone param.Opt[string] `json:"timezone,omitzero"`
+	Timezone       param.Opt[string] `json:"timezone,omitzero"`
+	XAccountID     param.Opt[string] `header:"X-ACCOUNT-ID,omitzero" json:"-"`
+	XEnvironmentID param.Opt[string] `header:"X-ENVIRONMENT-ID,omitzero" json:"-"`
 	// The billing currency of the customer
 	//
 	// Any of "usd", "aed", "all", "amd", "ang", "aud", "awg", "azn", "bam", "bbd",
@@ -2253,7 +2321,9 @@ type V1CustomerListParams struct {
 	// Maximum number of items to return
 	Limit param.Opt[int64] `query:"limit,omitzero" json:"-"`
 	// Filter by exact customer name
-	Name param.Opt[string] `query:"name,omitzero" json:"-"`
+	Name           param.Opt[string] `query:"name,omitzero" json:"-"`
+	XAccountID     param.Opt[string] `header:"X-ACCOUNT-ID,omitzero" json:"-"`
+	XEnvironmentID param.Opt[string] `header:"X-ENVIRONMENT-ID,omitzero" json:"-"`
 	// Filter by creation date using range operators: gt, gte, lt, lte
 	CreatedAt V1CustomerListParamsCreatedAt `query:"createdAt,omitzero" json:"-"`
 	paramObj
@@ -2289,6 +2359,12 @@ func (r V1CustomerListParamsCreatedAt) URLQuery() (v url.Values, err error) {
 	})
 }
 
+type V1CustomerArchiveParams struct {
+	XAccountID     param.Opt[string] `header:"X-ACCOUNT-ID,omitzero" json:"-"`
+	XEnvironmentID param.Opt[string] `header:"X-ENVIRONMENT-ID,omitzero" json:"-"`
+	paramObj
+}
+
 type V1CustomerCheckEntitlementParams struct {
 	// Currency ID (refId) to check for credit entitlements. Mutually exclusive with
 	// `featureId`.
@@ -2299,7 +2375,9 @@ type V1CustomerCheckEntitlementParams struct {
 	// features only)
 	RequestedUsage param.Opt[int64] `query:"requestedUsage,omitzero" json:"-"`
 	// Resource ID to scope the entitlement check to a specific resource
-	ResourceID param.Opt[string] `query:"resourceId,omitzero" json:"-"`
+	ResourceID     param.Opt[string] `query:"resourceId,omitzero" json:"-"`
+	XAccountID     param.Opt[string] `header:"X-ACCOUNT-ID,omitzero" json:"-"`
+	XEnvironmentID param.Opt[string] `header:"X-ENVIRONMENT-ID,omitzero" json:"-"`
 	// Requested values to evaluate against allowed values (enum features only)
 	RequestedValues []string `query:"requestedValues,omitzero" json:"-"`
 	paramObj
@@ -2318,7 +2396,9 @@ type V1CustomerImportParams struct {
 	// List of customer objects to import
 	Customers []V1CustomerImportParamsCustomer `json:"customers,omitzero" api:"required"`
 	// Integration details
-	IntegrationID param.Opt[string] `json:"integrationId,omitzero"`
+	IntegrationID  param.Opt[string] `json:"integrationId,omitzero"`
+	XAccountID     param.Opt[string] `header:"X-ACCOUNT-ID,omitzero" json:"-"`
+	XEnvironmentID param.Opt[string] `header:"X-ENVIRONMENT-ID,omitzero" json:"-"`
 	paramObj
 }
 
@@ -2365,7 +2445,9 @@ type V1CustomerListResourcesParams struct {
 	// Return items that come before this cursor
 	Before param.Opt[string] `query:"before,omitzero" format:"uuid" json:"-"`
 	// Maximum number of items to return
-	Limit param.Opt[int64] `query:"limit,omitzero" json:"-"`
+	Limit          param.Opt[int64]  `query:"limit,omitzero" json:"-"`
+	XAccountID     param.Opt[string] `header:"X-ACCOUNT-ID,omitzero" json:"-"`
+	XEnvironmentID param.Opt[string] `header:"X-ENVIRONMENT-ID,omitzero" json:"-"`
 	paramObj
 }
 
@@ -2390,7 +2472,9 @@ type V1CustomerProvisionParams struct {
 	// The name of the customer
 	Name param.Opt[string] `json:"name,omitzero"`
 	// Timezone to use for this customer
-	Timezone param.Opt[string] `json:"timezone,omitzero"`
+	Timezone       param.Opt[string] `json:"timezone,omitzero"`
+	XAccountID     param.Opt[string] `header:"X-ACCOUNT-ID,omitzero" json:"-"`
+	XEnvironmentID param.Opt[string] `header:"X-ENVIRONMENT-ID,omitzero" json:"-"`
 	// The billing currency of the customer
 	//
 	// Any of "usd", "aed", "all", "amd", "ang", "aud", "awg", "azn", "bam", "bbd",
@@ -2798,7 +2882,9 @@ func (r *V1CustomerProvisionParamsPassthroughZuoraBillingAddress) UnmarshalJSON(
 
 type V1CustomerGetEntitlementsParams struct {
 	// Resource ID to scope entitlements to a specific resource
-	ResourceID param.Opt[string] `query:"resourceId,omitzero" json:"-"`
+	ResourceID     param.Opt[string] `query:"resourceId,omitzero" json:"-"`
+	XAccountID     param.Opt[string] `header:"X-ACCOUNT-ID,omitzero" json:"-"`
+	XEnvironmentID param.Opt[string] `header:"X-ENVIRONMENT-ID,omitzero" json:"-"`
 	paramObj
 }
 
@@ -2809,4 +2895,10 @@ func (r V1CustomerGetEntitlementsParams) URLQuery() (v url.Values, err error) {
 		ArrayFormat:  apiquery.ArrayQueryFormatComma,
 		NestedFormat: apiquery.NestedQueryFormatBrackets,
 	})
+}
+
+type V1CustomerUnarchiveParams struct {
+	XAccountID     param.Opt[string] `header:"X-ACCOUNT-ID,omitzero" json:"-"`
+	XEnvironmentID param.Opt[string] `header:"X-ENVIRONMENT-ID,omitzero" json:"-"`
+	paramObj
 }

@@ -40,9 +40,15 @@ func NewV1CustomerIntegrationService(opts ...option.RequestOption) (r V1Customer
 }
 
 // Retrieves a specific integration for a customer by integration ID.
-func (r *V1CustomerIntegrationService) Get(ctx context.Context, integrationID string, query V1CustomerIntegrationGetParams, opts ...option.RequestOption) (res *CustomerIntegrationResponse, err error) {
+func (r *V1CustomerIntegrationService) Get(ctx context.Context, integrationID string, params V1CustomerIntegrationGetParams, opts ...option.RequestOption) (res *CustomerIntegrationResponse, err error) {
+	if !param.IsOmitted(params.XAccountID) {
+		opts = append(opts, option.WithHeader("X-ACCOUNT-ID", fmt.Sprintf("%v", params.XAccountID.Value)))
+	}
+	if !param.IsOmitted(params.XEnvironmentID) {
+		opts = append(opts, option.WithHeader("X-ENVIRONMENT-ID", fmt.Sprintf("%v", params.XEnvironmentID.Value)))
+	}
 	opts = slices.Concat(r.Options, opts)
-	if query.ID == "" {
+	if params.ID == "" {
 		err = errors.New("missing required id parameter")
 		return nil, err
 	}
@@ -50,7 +56,7 @@ func (r *V1CustomerIntegrationService) Get(ctx context.Context, integrationID st
 		err = errors.New("missing required integrationId parameter")
 		return nil, err
 	}
-	path := fmt.Sprintf("api/v1/customers/%s/integrations/%s", query.ID, integrationID)
+	path := fmt.Sprintf("api/v1/customers/%s/integrations/%s", params.ID, integrationID)
 	err = requestconfig.ExecuteNewRequest(ctx, http.MethodGet, path, nil, &res, opts...)
 	return res, err
 }
@@ -58,6 +64,12 @@ func (r *V1CustomerIntegrationService) Get(ctx context.Context, integrationID st
 // Updates a customer's integration link, such as changing the synced external
 // entity ID.
 func (r *V1CustomerIntegrationService) Update(ctx context.Context, integrationID string, params V1CustomerIntegrationUpdateParams, opts ...option.RequestOption) (res *CustomerIntegrationResponse, err error) {
+	if !param.IsOmitted(params.XAccountID) {
+		opts = append(opts, option.WithHeader("X-ACCOUNT-ID", fmt.Sprintf("%v", params.XAccountID.Value)))
+	}
+	if !param.IsOmitted(params.XEnvironmentID) {
+		opts = append(opts, option.WithHeader("X-ENVIRONMENT-ID", fmt.Sprintf("%v", params.XEnvironmentID.Value)))
+	}
 	opts = slices.Concat(r.Options, opts)
 	if params.ID == "" {
 		err = errors.New("missing required id parameter")
@@ -74,8 +86,14 @@ func (r *V1CustomerIntegrationService) Update(ctx context.Context, integrationID
 
 // Retrieves a paginated list of a customer's external integrations (billing, CRM,
 // etc.).
-func (r *V1CustomerIntegrationService) List(ctx context.Context, id string, query V1CustomerIntegrationListParams, opts ...option.RequestOption) (res *pagination.MyCursorIDPage[V1CustomerIntegrationListResponse], err error) {
+func (r *V1CustomerIntegrationService) List(ctx context.Context, id string, params V1CustomerIntegrationListParams, opts ...option.RequestOption) (res *pagination.MyCursorIDPage[V1CustomerIntegrationListResponse], err error) {
 	var raw *http.Response
+	if !param.IsOmitted(params.XAccountID) {
+		opts = append(opts, option.WithHeader("X-ACCOUNT-ID", fmt.Sprintf("%v", params.XAccountID.Value)))
+	}
+	if !param.IsOmitted(params.XEnvironmentID) {
+		opts = append(opts, option.WithHeader("X-ENVIRONMENT-ID", fmt.Sprintf("%v", params.XEnvironmentID.Value)))
+	}
 	opts = slices.Concat(r.Options, opts)
 	opts = append([]option.RequestOption{option.WithResponseInto(&raw)}, opts...)
 	if id == "" {
@@ -83,7 +101,7 @@ func (r *V1CustomerIntegrationService) List(ctx context.Context, id string, quer
 		return nil, err
 	}
 	path := fmt.Sprintf("api/v1/customers/%s/integrations", id)
-	cfg, err := requestconfig.NewRequestConfig(ctx, http.MethodGet, path, query, &res, opts...)
+	cfg, err := requestconfig.NewRequestConfig(ctx, http.MethodGet, path, params, &res, opts...)
 	if err != nil {
 		return nil, err
 	}
@@ -97,27 +115,39 @@ func (r *V1CustomerIntegrationService) List(ctx context.Context, id string, quer
 
 // Retrieves a paginated list of a customer's external integrations (billing, CRM,
 // etc.).
-func (r *V1CustomerIntegrationService) ListAutoPaging(ctx context.Context, id string, query V1CustomerIntegrationListParams, opts ...option.RequestOption) *pagination.MyCursorIDPageAutoPager[V1CustomerIntegrationListResponse] {
-	return pagination.NewMyCursorIDPageAutoPager(r.List(ctx, id, query, opts...))
+func (r *V1CustomerIntegrationService) ListAutoPaging(ctx context.Context, id string, params V1CustomerIntegrationListParams, opts ...option.RequestOption) *pagination.MyCursorIDPageAutoPager[V1CustomerIntegrationListResponse] {
+	return pagination.NewMyCursorIDPageAutoPager(r.List(ctx, id, params, opts...))
 }
 
 // Links a customer to an external integration by specifying the vendor and
 // external entity ID.
-func (r *V1CustomerIntegrationService) Link(ctx context.Context, id string, body V1CustomerIntegrationLinkParams, opts ...option.RequestOption) (res *CustomerIntegrationResponse, err error) {
+func (r *V1CustomerIntegrationService) Link(ctx context.Context, id string, params V1CustomerIntegrationLinkParams, opts ...option.RequestOption) (res *CustomerIntegrationResponse, err error) {
+	if !param.IsOmitted(params.XAccountID) {
+		opts = append(opts, option.WithHeader("X-ACCOUNT-ID", fmt.Sprintf("%v", params.XAccountID.Value)))
+	}
+	if !param.IsOmitted(params.XEnvironmentID) {
+		opts = append(opts, option.WithHeader("X-ENVIRONMENT-ID", fmt.Sprintf("%v", params.XEnvironmentID.Value)))
+	}
 	opts = slices.Concat(r.Options, opts)
 	if id == "" {
 		err = errors.New("missing required id parameter")
 		return nil, err
 	}
 	path := fmt.Sprintf("api/v1/customers/%s/integrations", id)
-	err = requestconfig.ExecuteNewRequest(ctx, http.MethodPost, path, body, &res, opts...)
+	err = requestconfig.ExecuteNewRequest(ctx, http.MethodPost, path, params, &res, opts...)
 	return res, err
 }
 
 // Removes the link between a customer and an external integration.
-func (r *V1CustomerIntegrationService) Unlink(ctx context.Context, integrationID string, body V1CustomerIntegrationUnlinkParams, opts ...option.RequestOption) (res *CustomerIntegrationResponse, err error) {
+func (r *V1CustomerIntegrationService) Unlink(ctx context.Context, integrationID string, params V1CustomerIntegrationUnlinkParams, opts ...option.RequestOption) (res *CustomerIntegrationResponse, err error) {
+	if !param.IsOmitted(params.XAccountID) {
+		opts = append(opts, option.WithHeader("X-ACCOUNT-ID", fmt.Sprintf("%v", params.XAccountID.Value)))
+	}
+	if !param.IsOmitted(params.XEnvironmentID) {
+		opts = append(opts, option.WithHeader("X-ENVIRONMENT-ID", fmt.Sprintf("%v", params.XEnvironmentID.Value)))
+	}
 	opts = slices.Concat(r.Options, opts)
-	if body.ID == "" {
+	if params.ID == "" {
 		err = errors.New("missing required id parameter")
 		return nil, err
 	}
@@ -125,7 +155,7 @@ func (r *V1CustomerIntegrationService) Unlink(ctx context.Context, integrationID
 		err = errors.New("missing required integrationId parameter")
 		return nil, err
 	}
-	path := fmt.Sprintf("api/v1/customers/%s/integrations/%s", body.ID, integrationID)
+	path := fmt.Sprintf("api/v1/customers/%s/integrations/%s", params.ID, integrationID)
 	err = requestconfig.ExecuteNewRequest(ctx, http.MethodDelete, path, nil, &res, opts...)
 	return res, err
 }
@@ -297,7 +327,9 @@ func (r *V1CustomerIntegrationListResponseSyncDataSyncRevisionMarketplaceData) U
 }
 
 type V1CustomerIntegrationGetParams struct {
-	ID string `path:"id" api:"required" json:"-"`
+	ID             string            `path:"id" api:"required" json:"-"`
+	XAccountID     param.Opt[string] `header:"X-ACCOUNT-ID,omitzero" json:"-"`
+	XEnvironmentID param.Opt[string] `header:"X-ENVIRONMENT-ID,omitzero" json:"-"`
 	paramObj
 }
 
@@ -305,6 +337,8 @@ type V1CustomerIntegrationUpdateParams struct {
 	// Synced entity id
 	SyncedEntityID param.Opt[string] `json:"syncedEntityId,omitzero" api:"required"`
 	ID             string            `path:"id" api:"required" json:"-"`
+	XAccountID     param.Opt[string] `header:"X-ACCOUNT-ID,omitzero" json:"-"`
+	XEnvironmentID param.Opt[string] `header:"X-ENVIRONMENT-ID,omitzero" json:"-"`
 	paramObj
 }
 
@@ -322,7 +356,9 @@ type V1CustomerIntegrationListParams struct {
 	// Return items that come before this cursor
 	Before param.Opt[string] `query:"before,omitzero" format:"uuid" json:"-"`
 	// Maximum number of items to return
-	Limit param.Opt[int64] `query:"limit,omitzero" json:"-"`
+	Limit          param.Opt[int64]  `query:"limit,omitzero" json:"-"`
+	XAccountID     param.Opt[string] `header:"X-ACCOUNT-ID,omitzero" json:"-"`
+	XEnvironmentID param.Opt[string] `header:"X-ENVIRONMENT-ID,omitzero" json:"-"`
 	// Filter by vendor identifier. Supports comma-separated values for multiple
 	// vendors (e.g., STRIPE,HUBSPOT)
 	//
@@ -351,6 +387,8 @@ type V1CustomerIntegrationLinkParams struct {
 	// Any of "AUTH0", "ZUORA", "STRIPE", "HUBSPOT", "AWS_MARKETPLACE", "SNOWFLAKE",
 	// "SALESFORCE", "BIG_QUERY", "OPEN_FGA", "APP_STORE", "RECEIVED", "PREQUEL".
 	VendorIdentifier V1CustomerIntegrationLinkParamsVendorIdentifier `json:"vendorIdentifier,omitzero" api:"required"`
+	XAccountID       param.Opt[string]                               `header:"X-ACCOUNT-ID,omitzero" json:"-"`
+	XEnvironmentID   param.Opt[string]                               `header:"X-ENVIRONMENT-ID,omitzero" json:"-"`
 	paramObj
 }
 
@@ -381,6 +419,8 @@ const (
 )
 
 type V1CustomerIntegrationUnlinkParams struct {
-	ID string `path:"id" api:"required" json:"-"`
+	ID             string            `path:"id" api:"required" json:"-"`
+	XAccountID     param.Opt[string] `header:"X-ACCOUNT-ID,omitzero" json:"-"`
+	XEnvironmentID param.Opt[string] `header:"X-ENVIRONMENT-ID,omitzero" json:"-"`
 	paramObj
 }

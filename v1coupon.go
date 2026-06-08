@@ -43,15 +43,27 @@ func NewV1CouponService(opts ...option.RequestOption) (r V1CouponService) {
 
 // Creates a new discount coupon with percentage or fixed amount off, applicable to
 // customer subscriptions.
-func (r *V1CouponService) New(ctx context.Context, body V1CouponNewParams, opts ...option.RequestOption) (res *Coupon, err error) {
+func (r *V1CouponService) New(ctx context.Context, params V1CouponNewParams, opts ...option.RequestOption) (res *Coupon, err error) {
+	if !param.IsOmitted(params.XAccountID) {
+		opts = append(opts, option.WithHeader("X-ACCOUNT-ID", fmt.Sprintf("%v", params.XAccountID.Value)))
+	}
+	if !param.IsOmitted(params.XEnvironmentID) {
+		opts = append(opts, option.WithHeader("X-ENVIRONMENT-ID", fmt.Sprintf("%v", params.XEnvironmentID.Value)))
+	}
 	opts = slices.Concat(r.Options, opts)
 	path := "api/v1/coupons"
-	err = requestconfig.ExecuteNewRequest(ctx, http.MethodPost, path, body, &res, opts...)
+	err = requestconfig.ExecuteNewRequest(ctx, http.MethodPost, path, params, &res, opts...)
 	return res, err
 }
 
 // Retrieves a coupon by its unique identifier.
-func (r *V1CouponService) Get(ctx context.Context, id string, opts ...option.RequestOption) (res *Coupon, err error) {
+func (r *V1CouponService) Get(ctx context.Context, id string, query V1CouponGetParams, opts ...option.RequestOption) (res *Coupon, err error) {
+	if !param.IsOmitted(query.XAccountID) {
+		opts = append(opts, option.WithHeader("X-ACCOUNT-ID", fmt.Sprintf("%v", query.XAccountID.Value)))
+	}
+	if !param.IsOmitted(query.XEnvironmentID) {
+		opts = append(opts, option.WithHeader("X-ENVIRONMENT-ID", fmt.Sprintf("%v", query.XEnvironmentID.Value)))
+	}
 	opts = slices.Concat(r.Options, opts)
 	if id == "" {
 		err = errors.New("missing required id parameter")
@@ -63,12 +75,18 @@ func (r *V1CouponService) Get(ctx context.Context, id string, opts ...option.Req
 }
 
 // Retrieves a paginated list of coupons in the environment.
-func (r *V1CouponService) List(ctx context.Context, query V1CouponListParams, opts ...option.RequestOption) (res *pagination.MyCursorIDPage[V1CouponListResponse], err error) {
+func (r *V1CouponService) List(ctx context.Context, params V1CouponListParams, opts ...option.RequestOption) (res *pagination.MyCursorIDPage[V1CouponListResponse], err error) {
 	var raw *http.Response
+	if !param.IsOmitted(params.XAccountID) {
+		opts = append(opts, option.WithHeader("X-ACCOUNT-ID", fmt.Sprintf("%v", params.XAccountID.Value)))
+	}
+	if !param.IsOmitted(params.XEnvironmentID) {
+		opts = append(opts, option.WithHeader("X-ENVIRONMENT-ID", fmt.Sprintf("%v", params.XEnvironmentID.Value)))
+	}
 	opts = slices.Concat(r.Options, opts)
 	opts = append([]option.RequestOption{option.WithResponseInto(&raw)}, opts...)
 	path := "api/v1/coupons"
-	cfg, err := requestconfig.NewRequestConfig(ctx, http.MethodGet, path, query, &res, opts...)
+	cfg, err := requestconfig.NewRequestConfig(ctx, http.MethodGet, path, params, &res, opts...)
 	if err != nil {
 		return nil, err
 	}
@@ -81,12 +99,18 @@ func (r *V1CouponService) List(ctx context.Context, query V1CouponListParams, op
 }
 
 // Retrieves a paginated list of coupons in the environment.
-func (r *V1CouponService) ListAutoPaging(ctx context.Context, query V1CouponListParams, opts ...option.RequestOption) *pagination.MyCursorIDPageAutoPager[V1CouponListResponse] {
-	return pagination.NewMyCursorIDPageAutoPager(r.List(ctx, query, opts...))
+func (r *V1CouponService) ListAutoPaging(ctx context.Context, params V1CouponListParams, opts ...option.RequestOption) *pagination.MyCursorIDPageAutoPager[V1CouponListResponse] {
+	return pagination.NewMyCursorIDPageAutoPager(r.List(ctx, params, opts...))
 }
 
 // Archives a coupon, preventing it from being applied to new subscriptions.
-func (r *V1CouponService) ArchiveCoupon(ctx context.Context, id string, opts ...option.RequestOption) (res *Coupon, err error) {
+func (r *V1CouponService) ArchiveCoupon(ctx context.Context, id string, body V1CouponArchiveCouponParams, opts ...option.RequestOption) (res *Coupon, err error) {
+	if !param.IsOmitted(body.XAccountID) {
+		opts = append(opts, option.WithHeader("X-ACCOUNT-ID", fmt.Sprintf("%v", body.XAccountID.Value)))
+	}
+	if !param.IsOmitted(body.XEnvironmentID) {
+		opts = append(opts, option.WithHeader("X-ENVIRONMENT-ID", fmt.Sprintf("%v", body.XEnvironmentID.Value)))
+	}
 	opts = slices.Concat(r.Options, opts)
 	if id == "" {
 		err = errors.New("missing required id parameter")
@@ -98,14 +122,20 @@ func (r *V1CouponService) ArchiveCoupon(ctx context.Context, id string, opts ...
 }
 
 // Updates an existing coupon's properties such as name, description, and metadata.
-func (r *V1CouponService) UpdateCoupon(ctx context.Context, id string, body V1CouponUpdateCouponParams, opts ...option.RequestOption) (res *Coupon, err error) {
+func (r *V1CouponService) UpdateCoupon(ctx context.Context, id string, params V1CouponUpdateCouponParams, opts ...option.RequestOption) (res *Coupon, err error) {
+	if !param.IsOmitted(params.XAccountID) {
+		opts = append(opts, option.WithHeader("X-ACCOUNT-ID", fmt.Sprintf("%v", params.XAccountID.Value)))
+	}
+	if !param.IsOmitted(params.XEnvironmentID) {
+		opts = append(opts, option.WithHeader("X-ENVIRONMENT-ID", fmt.Sprintf("%v", params.XEnvironmentID.Value)))
+	}
 	opts = slices.Concat(r.Options, opts)
 	if id == "" {
 		err = errors.New("missing required id parameter")
 		return nil, err
 	}
 	path := fmt.Sprintf("api/v1/coupons/%s", id)
-	err = requestconfig.ExecuteNewRequest(ctx, http.MethodPatch, path, body, &res, opts...)
+	err = requestconfig.ExecuteNewRequest(ctx, http.MethodPatch, path, params, &res, opts...)
 	return res, err
 }
 
@@ -358,7 +388,9 @@ type V1CouponNewParams struct {
 	// The unique identifier for the entity
 	ID string `json:"id" api:"required"`
 	// Name of the coupon
-	Name string `json:"name" api:"required"`
+	Name           string            `json:"name" api:"required"`
+	XAccountID     param.Opt[string] `header:"X-ACCOUNT-ID,omitzero" json:"-"`
+	XEnvironmentID param.Opt[string] `header:"X-ENVIRONMENT-ID,omitzero" json:"-"`
 	paramObj
 }
 
@@ -407,6 +439,12 @@ func init() {
 	)
 }
 
+type V1CouponGetParams struct {
+	XAccountID     param.Opt[string] `header:"X-ACCOUNT-ID,omitzero" json:"-"`
+	XEnvironmentID param.Opt[string] `header:"X-ENVIRONMENT-ID,omitzero" json:"-"`
+	paramObj
+}
+
 type V1CouponListParams struct {
 	// Filter by entity ID
 	ID param.Opt[string] `query:"id,omitzero" json:"-"`
@@ -415,7 +453,9 @@ type V1CouponListParams struct {
 	// Return items that come before this cursor
 	Before param.Opt[string] `query:"before,omitzero" format:"uuid" json:"-"`
 	// Maximum number of items to return
-	Limit param.Opt[int64] `query:"limit,omitzero" json:"-"`
+	Limit          param.Opt[int64]  `query:"limit,omitzero" json:"-"`
+	XAccountID     param.Opt[string] `header:"X-ACCOUNT-ID,omitzero" json:"-"`
+	XEnvironmentID param.Opt[string] `header:"X-ENVIRONMENT-ID,omitzero" json:"-"`
 	// Filter by creation date using range operators: gt, gte, lt, lte
 	CreatedAt V1CouponListParamsCreatedAt `query:"createdAt,omitzero" json:"-"`
 	// Filter by coupon status. Supports comma-separated values for multiple statuses
@@ -467,11 +507,19 @@ const (
 	V1CouponListParamsTypePercentage V1CouponListParamsType = "PERCENTAGE"
 )
 
+type V1CouponArchiveCouponParams struct {
+	XAccountID     param.Opt[string] `header:"X-ACCOUNT-ID,omitzero" json:"-"`
+	XEnvironmentID param.Opt[string] `header:"X-ENVIRONMENT-ID,omitzero" json:"-"`
+	paramObj
+}
+
 type V1CouponUpdateCouponParams struct {
 	// Description of the coupon
 	Description param.Opt[string] `json:"description,omitzero"`
 	// Name of the coupon
-	Name param.Opt[string] `json:"name,omitzero"`
+	Name           param.Opt[string] `json:"name,omitzero"`
+	XAccountID     param.Opt[string] `header:"X-ACCOUNT-ID,omitzero" json:"-"`
+	XEnvironmentID param.Opt[string] `header:"X-ENVIRONMENT-ID,omitzero" json:"-"`
 	// Metadata associated with the entity
 	Metadata map[string]string `json:"metadata,omitzero"`
 	paramObj

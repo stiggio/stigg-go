@@ -13,7 +13,7 @@ import (
 	"github.com/stiggio/stigg-go/option"
 )
 
-func TestV1PlanEntitlementNew(t *testing.T) {
+func TestV1PlanEntitlementNewWithOptionalParams(t *testing.T) {
 	t.Skip("Mock server tests are disabled")
 	baseURL := "http://localhost:4010"
 	if envURL, ok := os.LookupEnv("TEST_API_BASE_URL"); ok {
@@ -56,6 +56,8 @@ func TestV1PlanEntitlementNew(t *testing.T) {
 					},
 				},
 			}},
+			XAccountID:     stigg.String("X-ACCOUNT-ID"),
+			XEnvironmentID: stigg.String("X-ENVIRONMENT-ID"),
 		},
 	)
 	if err != nil {
@@ -108,6 +110,8 @@ func TestV1PlanEntitlementUpdateWithOptionalParams(t *testing.T) {
 					AccordingTo: "SubscriptionStart",
 				},
 			},
+			XAccountID:     stigg.String("X-ACCOUNT-ID"),
+			XEnvironmentID: stigg.String("X-ENVIRONMENT-ID"),
 		},
 	)
 	if err != nil {
@@ -119,7 +123,7 @@ func TestV1PlanEntitlementUpdateWithOptionalParams(t *testing.T) {
 	}
 }
 
-func TestV1PlanEntitlementList(t *testing.T) {
+func TestV1PlanEntitlementListWithOptionalParams(t *testing.T) {
 	t.Skip("Mock server tests are disabled")
 	baseURL := "http://localhost:4010"
 	if envURL, ok := os.LookupEnv("TEST_API_BASE_URL"); ok {
@@ -132,7 +136,14 @@ func TestV1PlanEntitlementList(t *testing.T) {
 		option.WithBaseURL(baseURL),
 		option.WithAPIKey("My API Key"),
 	)
-	_, err := client.V1.Plans.Entitlements.List(context.TODO(), "planId")
+	_, err := client.V1.Plans.Entitlements.List(
+		context.TODO(),
+		"planId",
+		stigg.V1PlanEntitlementListParams{
+			XAccountID:     stigg.String("X-ACCOUNT-ID"),
+			XEnvironmentID: stigg.String("X-ENVIRONMENT-ID"),
+		},
+	)
 	if err != nil {
 		var apierr *stigg.Error
 		if errors.As(err, &apierr) {
@@ -142,7 +153,7 @@ func TestV1PlanEntitlementList(t *testing.T) {
 	}
 }
 
-func TestV1PlanEntitlementDelete(t *testing.T) {
+func TestV1PlanEntitlementDeleteWithOptionalParams(t *testing.T) {
 	t.Skip("Mock server tests are disabled")
 	baseURL := "http://localhost:4010"
 	if envURL, ok := os.LookupEnv("TEST_API_BASE_URL"); ok {
@@ -159,7 +170,9 @@ func TestV1PlanEntitlementDelete(t *testing.T) {
 		context.TODO(),
 		"id",
 		stigg.V1PlanEntitlementDeleteParams{
-			PlanID: "planId",
+			PlanID:         "planId",
+			XAccountID:     stigg.String("X-ACCOUNT-ID"),
+			XEnvironmentID: stigg.String("X-ENVIRONMENT-ID"),
 		},
 	)
 	if err != nil {

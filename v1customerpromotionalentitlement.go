@@ -44,20 +44,32 @@ func NewV1CustomerPromotionalEntitlementService(opts ...option.RequestOption) (r
 
 // Grants promotional entitlements to a customer, providing feature access outside
 // their subscription. Entitlements can be time-limited or permanent.
-func (r *V1CustomerPromotionalEntitlementService) New(ctx context.Context, id string, body V1CustomerPromotionalEntitlementNewParams, opts ...option.RequestOption) (res *V1CustomerPromotionalEntitlementNewResponse, err error) {
+func (r *V1CustomerPromotionalEntitlementService) New(ctx context.Context, id string, params V1CustomerPromotionalEntitlementNewParams, opts ...option.RequestOption) (res *V1CustomerPromotionalEntitlementNewResponse, err error) {
+	if !param.IsOmitted(params.XAccountID) {
+		opts = append(opts, option.WithHeader("X-ACCOUNT-ID", fmt.Sprintf("%v", params.XAccountID.Value)))
+	}
+	if !param.IsOmitted(params.XEnvironmentID) {
+		opts = append(opts, option.WithHeader("X-ENVIRONMENT-ID", fmt.Sprintf("%v", params.XEnvironmentID.Value)))
+	}
 	opts = slices.Concat(r.Options, opts)
 	if id == "" {
 		err = errors.New("missing required id parameter")
 		return nil, err
 	}
 	path := fmt.Sprintf("api/v1/customers/%s/promotional-entitlements", id)
-	err = requestconfig.ExecuteNewRequest(ctx, http.MethodPost, path, body, &res, opts...)
+	err = requestconfig.ExecuteNewRequest(ctx, http.MethodPost, path, params, &res, opts...)
 	return res, err
 }
 
 // Retrieves a paginated list of a customer's promotional entitlements.
-func (r *V1CustomerPromotionalEntitlementService) List(ctx context.Context, id string, query V1CustomerPromotionalEntitlementListParams, opts ...option.RequestOption) (res *pagination.MyCursorIDPage[V1CustomerPromotionalEntitlementListResponse], err error) {
+func (r *V1CustomerPromotionalEntitlementService) List(ctx context.Context, id string, params V1CustomerPromotionalEntitlementListParams, opts ...option.RequestOption) (res *pagination.MyCursorIDPage[V1CustomerPromotionalEntitlementListResponse], err error) {
 	var raw *http.Response
+	if !param.IsOmitted(params.XAccountID) {
+		opts = append(opts, option.WithHeader("X-ACCOUNT-ID", fmt.Sprintf("%v", params.XAccountID.Value)))
+	}
+	if !param.IsOmitted(params.XEnvironmentID) {
+		opts = append(opts, option.WithHeader("X-ENVIRONMENT-ID", fmt.Sprintf("%v", params.XEnvironmentID.Value)))
+	}
 	opts = slices.Concat(r.Options, opts)
 	opts = append([]option.RequestOption{option.WithResponseInto(&raw)}, opts...)
 	if id == "" {
@@ -65,7 +77,7 @@ func (r *V1CustomerPromotionalEntitlementService) List(ctx context.Context, id s
 		return nil, err
 	}
 	path := fmt.Sprintf("api/v1/customers/%s/promotional-entitlements", id)
-	cfg, err := requestconfig.NewRequestConfig(ctx, http.MethodGet, path, query, &res, opts...)
+	cfg, err := requestconfig.NewRequestConfig(ctx, http.MethodGet, path, params, &res, opts...)
 	if err != nil {
 		return nil, err
 	}
@@ -78,15 +90,21 @@ func (r *V1CustomerPromotionalEntitlementService) List(ctx context.Context, id s
 }
 
 // Retrieves a paginated list of a customer's promotional entitlements.
-func (r *V1CustomerPromotionalEntitlementService) ListAutoPaging(ctx context.Context, id string, query V1CustomerPromotionalEntitlementListParams, opts ...option.RequestOption) *pagination.MyCursorIDPageAutoPager[V1CustomerPromotionalEntitlementListResponse] {
-	return pagination.NewMyCursorIDPageAutoPager(r.List(ctx, id, query, opts...))
+func (r *V1CustomerPromotionalEntitlementService) ListAutoPaging(ctx context.Context, id string, params V1CustomerPromotionalEntitlementListParams, opts ...option.RequestOption) *pagination.MyCursorIDPageAutoPager[V1CustomerPromotionalEntitlementListResponse] {
+	return pagination.NewMyCursorIDPageAutoPager(r.List(ctx, id, params, opts...))
 }
 
 // Revokes a previously granted promotional entitlement from a customer for a
 // specific feature.
-func (r *V1CustomerPromotionalEntitlementService) Revoke(ctx context.Context, featureID string, body V1CustomerPromotionalEntitlementRevokeParams, opts ...option.RequestOption) (res *V1CustomerPromotionalEntitlementRevokeResponse, err error) {
+func (r *V1CustomerPromotionalEntitlementService) Revoke(ctx context.Context, featureID string, params V1CustomerPromotionalEntitlementRevokeParams, opts ...option.RequestOption) (res *V1CustomerPromotionalEntitlementRevokeResponse, err error) {
+	if !param.IsOmitted(params.XAccountID) {
+		opts = append(opts, option.WithHeader("X-ACCOUNT-ID", fmt.Sprintf("%v", params.XAccountID.Value)))
+	}
+	if !param.IsOmitted(params.XEnvironmentID) {
+		opts = append(opts, option.WithHeader("X-ENVIRONMENT-ID", fmt.Sprintf("%v", params.XEnvironmentID.Value)))
+	}
 	opts = slices.Concat(r.Options, opts)
-	if body.ID == "" {
+	if params.ID == "" {
 		err = errors.New("missing required id parameter")
 		return nil, err
 	}
@@ -94,7 +112,7 @@ func (r *V1CustomerPromotionalEntitlementService) Revoke(ctx context.Context, fe
 		err = errors.New("missing required featureId parameter")
 		return nil, err
 	}
-	path := fmt.Sprintf("api/v1/customers/%s/promotional-entitlements/%s", body.ID, featureID)
+	path := fmt.Sprintf("api/v1/customers/%s/promotional-entitlements/%s", params.ID, featureID)
 	err = requestconfig.ExecuteNewRequest(ctx, http.MethodDelete, path, nil, &res, opts...)
 	return res, err
 }
@@ -712,6 +730,8 @@ func (r *V1CustomerPromotionalEntitlementRevokeResponseDataResetPeriodConfigurat
 type V1CustomerPromotionalEntitlementNewParams struct {
 	// Promotional entitlements to grant
 	PromotionalEntitlements []V1CustomerPromotionalEntitlementNewParamsPromotionalEntitlement `json:"promotionalEntitlements,omitzero" api:"required"`
+	XAccountID              param.Opt[string]                                                 `header:"X-ACCOUNT-ID,omitzero" json:"-"`
+	XEnvironmentID          param.Opt[string]                                                 `header:"X-ENVIRONMENT-ID,omitzero" json:"-"`
 	paramObj
 }
 
@@ -866,7 +886,9 @@ type V1CustomerPromotionalEntitlementListParams struct {
 	// Return items that come before this cursor
 	Before param.Opt[string] `query:"before,omitzero" format:"uuid" json:"-"`
 	// Maximum number of items to return
-	Limit param.Opt[int64] `query:"limit,omitzero" json:"-"`
+	Limit          param.Opt[int64]  `query:"limit,omitzero" json:"-"`
+	XAccountID     param.Opt[string] `header:"X-ACCOUNT-ID,omitzero" json:"-"`
+	XEnvironmentID param.Opt[string] `header:"X-ENVIRONMENT-ID,omitzero" json:"-"`
 	// Filter by creation date using range operators: gt, gte, lt, lte
 	CreatedAt V1CustomerPromotionalEntitlementListParamsCreatedAt `query:"createdAt,omitzero" json:"-"`
 	// Filter by promotional entitlement status. Supports comma-separated values for
@@ -909,6 +931,8 @@ func (r V1CustomerPromotionalEntitlementListParamsCreatedAt) URLQuery() (v url.V
 }
 
 type V1CustomerPromotionalEntitlementRevokeParams struct {
-	ID string `path:"id" api:"required" json:"-"`
+	ID             string            `path:"id" api:"required" json:"-"`
+	XAccountID     param.Opt[string] `header:"X-ACCOUNT-ID,omitzero" json:"-"`
+	XEnvironmentID param.Opt[string] `header:"X-ENVIRONMENT-ID,omitzero" json:"-"`
 	paramObj
 }

@@ -43,20 +43,32 @@ func NewV1CreditGrantService(opts ...option.RequestOption) (r V1CreditGrantServi
 
 // Creates a new credit grant for a customer with specified amount, type, and
 // optional billing configuration.
-func (r *V1CreditGrantService) New(ctx context.Context, body V1CreditGrantNewParams, opts ...option.RequestOption) (res *CreditGrantResponse, err error) {
+func (r *V1CreditGrantService) New(ctx context.Context, params V1CreditGrantNewParams, opts ...option.RequestOption) (res *CreditGrantResponse, err error) {
+	if !param.IsOmitted(params.XAccountID) {
+		opts = append(opts, option.WithHeader("X-ACCOUNT-ID", fmt.Sprintf("%v", params.XAccountID.Value)))
+	}
+	if !param.IsOmitted(params.XEnvironmentID) {
+		opts = append(opts, option.WithHeader("X-ENVIRONMENT-ID", fmt.Sprintf("%v", params.XEnvironmentID.Value)))
+	}
 	opts = slices.Concat(r.Options, opts)
 	path := "api/v1/credits/grants"
-	err = requestconfig.ExecuteNewRequest(ctx, http.MethodPost, path, body, &res, opts...)
+	err = requestconfig.ExecuteNewRequest(ctx, http.MethodPost, path, params, &res, opts...)
 	return res, err
 }
 
 // Retrieves a paginated list of credit grants for a customer.
-func (r *V1CreditGrantService) List(ctx context.Context, query V1CreditGrantListParams, opts ...option.RequestOption) (res *pagination.MyCursorIDPage[V1CreditGrantListResponse], err error) {
+func (r *V1CreditGrantService) List(ctx context.Context, params V1CreditGrantListParams, opts ...option.RequestOption) (res *pagination.MyCursorIDPage[V1CreditGrantListResponse], err error) {
 	var raw *http.Response
+	if !param.IsOmitted(params.XAccountID) {
+		opts = append(opts, option.WithHeader("X-ACCOUNT-ID", fmt.Sprintf("%v", params.XAccountID.Value)))
+	}
+	if !param.IsOmitted(params.XEnvironmentID) {
+		opts = append(opts, option.WithHeader("X-ENVIRONMENT-ID", fmt.Sprintf("%v", params.XEnvironmentID.Value)))
+	}
 	opts = slices.Concat(r.Options, opts)
 	opts = append([]option.RequestOption{option.WithResponseInto(&raw)}, opts...)
 	path := "api/v1/credits/grants"
-	cfg, err := requestconfig.NewRequestConfig(ctx, http.MethodGet, path, query, &res, opts...)
+	cfg, err := requestconfig.NewRequestConfig(ctx, http.MethodGet, path, params, &res, opts...)
 	if err != nil {
 		return nil, err
 	}
@@ -69,13 +81,19 @@ func (r *V1CreditGrantService) List(ctx context.Context, query V1CreditGrantList
 }
 
 // Retrieves a paginated list of credit grants for a customer.
-func (r *V1CreditGrantService) ListAutoPaging(ctx context.Context, query V1CreditGrantListParams, opts ...option.RequestOption) *pagination.MyCursorIDPageAutoPager[V1CreditGrantListResponse] {
-	return pagination.NewMyCursorIDPageAutoPager(r.List(ctx, query, opts...))
+func (r *V1CreditGrantService) ListAutoPaging(ctx context.Context, params V1CreditGrantListParams, opts ...option.RequestOption) *pagination.MyCursorIDPageAutoPager[V1CreditGrantListResponse] {
+	return pagination.NewMyCursorIDPageAutoPager(r.List(ctx, params, opts...))
 }
 
 // Voids an existing credit grant, preventing further consumption of the remaining
 // credits.
-func (r *V1CreditGrantService) Void(ctx context.Context, id string, opts ...option.RequestOption) (res *CreditGrantResponse, err error) {
+func (r *V1CreditGrantService) Void(ctx context.Context, id string, body V1CreditGrantVoidParams, opts ...option.RequestOption) (res *CreditGrantResponse, err error) {
+	if !param.IsOmitted(body.XAccountID) {
+		opts = append(opts, option.WithHeader("X-ACCOUNT-ID", fmt.Sprintf("%v", body.XAccountID.Value)))
+	}
+	if !param.IsOmitted(body.XEnvironmentID) {
+		opts = append(opts, option.WithHeader("X-ENVIRONMENT-ID", fmt.Sprintf("%v", body.XEnvironmentID.Value)))
+	}
 	opts = slices.Concat(r.Options, opts)
 	if id == "" {
 		err = errors.New("missing required id parameter")
@@ -510,7 +528,9 @@ type V1CreditGrantNewParams struct {
 	// The priority of the credit grant (lower number = higher priority)
 	Priority param.Opt[int64] `json:"priority,omitzero"`
 	// The resource ID to scope the grant to
-	ResourceID param.Opt[string] `json:"resourceId,omitzero"`
+	ResourceID     param.Opt[string] `json:"resourceId,omitzero"`
+	XAccountID     param.Opt[string] `header:"X-ACCOUNT-ID,omitzero" json:"-"`
+	XEnvironmentID param.Opt[string] `header:"X-ENVIRONMENT-ID,omitzero" json:"-"`
 	// Billing information for the credit grant
 	BillingInformation V1CreditGrantNewParamsBillingInformation `json:"billingInformation,omitzero"`
 	// The monetary cost of the credit grant
@@ -642,7 +662,9 @@ type V1CreditGrantListParams struct {
 	// Maximum number of items to return
 	Limit param.Opt[int64] `query:"limit,omitzero" json:"-"`
 	// Filter by resource ID. When omitted, only grants without a resource are returned
-	ResourceID param.Opt[string] `query:"resourceId,omitzero" json:"-"`
+	ResourceID     param.Opt[string] `query:"resourceId,omitzero" json:"-"`
+	XAccountID     param.Opt[string] `header:"X-ACCOUNT-ID,omitzero" json:"-"`
+	XEnvironmentID param.Opt[string] `header:"X-ENVIRONMENT-ID,omitzero" json:"-"`
 	// Filter by creation date using range operators: gt, gte, lt, lte
 	CreatedAt V1CreditGrantListParamsCreatedAt `query:"createdAt,omitzero" json:"-"`
 	paramObj
@@ -677,4 +699,10 @@ func (r V1CreditGrantListParamsCreatedAt) URLQuery() (v url.Values, err error) {
 		ArrayFormat:  apiquery.ArrayQueryFormatComma,
 		NestedFormat: apiquery.NestedQueryFormatBrackets,
 	})
+}
+
+type V1CreditGrantVoidParams struct {
+	XAccountID     param.Opt[string] `header:"X-ACCOUNT-ID,omitzero" json:"-"`
+	XEnvironmentID param.Opt[string] `header:"X-ENVIRONMENT-ID,omitzero" json:"-"`
+	paramObj
 }

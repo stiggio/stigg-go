@@ -43,7 +43,13 @@ func NewV1ProductService(opts ...option.RequestOption) (r V1ProductService) {
 
 // Archives a product, preventing new subscriptions. All plans and addons are
 // archived.
-func (r *V1ProductService) ArchiveProduct(ctx context.Context, id string, opts ...option.RequestOption) (res *Product, err error) {
+func (r *V1ProductService) ArchiveProduct(ctx context.Context, id string, body V1ProductArchiveProductParams, opts ...option.RequestOption) (res *Product, err error) {
+	if !param.IsOmitted(body.XAccountID) {
+		opts = append(opts, option.WithHeader("X-ACCOUNT-ID", fmt.Sprintf("%v", body.XAccountID.Value)))
+	}
+	if !param.IsOmitted(body.XEnvironmentID) {
+		opts = append(opts, option.WithHeader("X-ENVIRONMENT-ID", fmt.Sprintf("%v", body.XEnvironmentID.Value)))
+	}
 	opts = slices.Concat(r.Options, opts)
 	if id == "" {
 		err = errors.New("missing required id parameter")
@@ -55,32 +61,50 @@ func (r *V1ProductService) ArchiveProduct(ctx context.Context, id string, opts .
 }
 
 // Creates a new product.
-func (r *V1ProductService) NewProduct(ctx context.Context, body V1ProductNewProductParams, opts ...option.RequestOption) (res *Product, err error) {
+func (r *V1ProductService) NewProduct(ctx context.Context, params V1ProductNewProductParams, opts ...option.RequestOption) (res *Product, err error) {
+	if !param.IsOmitted(params.XAccountID) {
+		opts = append(opts, option.WithHeader("X-ACCOUNT-ID", fmt.Sprintf("%v", params.XAccountID.Value)))
+	}
+	if !param.IsOmitted(params.XEnvironmentID) {
+		opts = append(opts, option.WithHeader("X-ENVIRONMENT-ID", fmt.Sprintf("%v", params.XEnvironmentID.Value)))
+	}
 	opts = slices.Concat(r.Options, opts)
 	path := "api/v1/products"
-	err = requestconfig.ExecuteNewRequest(ctx, http.MethodPost, path, body, &res, opts...)
+	err = requestconfig.ExecuteNewRequest(ctx, http.MethodPost, path, params, &res, opts...)
 	return res, err
 }
 
 // Duplicates an existing product, including its plans, addons, and configuration.
-func (r *V1ProductService) DuplicateProduct(ctx context.Context, id string, body V1ProductDuplicateProductParams, opts ...option.RequestOption) (res *Product, err error) {
+func (r *V1ProductService) DuplicateProduct(ctx context.Context, id string, params V1ProductDuplicateProductParams, opts ...option.RequestOption) (res *Product, err error) {
+	if !param.IsOmitted(params.XAccountID) {
+		opts = append(opts, option.WithHeader("X-ACCOUNT-ID", fmt.Sprintf("%v", params.XAccountID.Value)))
+	}
+	if !param.IsOmitted(params.XEnvironmentID) {
+		opts = append(opts, option.WithHeader("X-ENVIRONMENT-ID", fmt.Sprintf("%v", params.XEnvironmentID.Value)))
+	}
 	opts = slices.Concat(r.Options, opts)
 	if id == "" {
 		err = errors.New("missing required id parameter")
 		return nil, err
 	}
 	path := fmt.Sprintf("api/v1/products/%s/duplicate", id)
-	err = requestconfig.ExecuteNewRequest(ctx, http.MethodPost, path, body, &res, opts...)
+	err = requestconfig.ExecuteNewRequest(ctx, http.MethodPost, path, params, &res, opts...)
 	return res, err
 }
 
 // Retrieves a paginated list of products in the environment.
-func (r *V1ProductService) ListProducts(ctx context.Context, query V1ProductListProductsParams, opts ...option.RequestOption) (res *pagination.MyCursorIDPage[V1ProductListProductsResponse], err error) {
+func (r *V1ProductService) ListProducts(ctx context.Context, params V1ProductListProductsParams, opts ...option.RequestOption) (res *pagination.MyCursorIDPage[V1ProductListProductsResponse], err error) {
 	var raw *http.Response
+	if !param.IsOmitted(params.XAccountID) {
+		opts = append(opts, option.WithHeader("X-ACCOUNT-ID", fmt.Sprintf("%v", params.XAccountID.Value)))
+	}
+	if !param.IsOmitted(params.XEnvironmentID) {
+		opts = append(opts, option.WithHeader("X-ENVIRONMENT-ID", fmt.Sprintf("%v", params.XEnvironmentID.Value)))
+	}
 	opts = slices.Concat(r.Options, opts)
 	opts = append([]option.RequestOption{option.WithResponseInto(&raw)}, opts...)
 	path := "api/v1/products"
-	cfg, err := requestconfig.NewRequestConfig(ctx, http.MethodGet, path, query, &res, opts...)
+	cfg, err := requestconfig.NewRequestConfig(ctx, http.MethodGet, path, params, &res, opts...)
 	if err != nil {
 		return nil, err
 	}
@@ -93,12 +117,18 @@ func (r *V1ProductService) ListProducts(ctx context.Context, query V1ProductList
 }
 
 // Retrieves a paginated list of products in the environment.
-func (r *V1ProductService) ListProductsAutoPaging(ctx context.Context, query V1ProductListProductsParams, opts ...option.RequestOption) *pagination.MyCursorIDPageAutoPager[V1ProductListProductsResponse] {
-	return pagination.NewMyCursorIDPageAutoPager(r.ListProducts(ctx, query, opts...))
+func (r *V1ProductService) ListProductsAutoPaging(ctx context.Context, params V1ProductListProductsParams, opts ...option.RequestOption) *pagination.MyCursorIDPageAutoPager[V1ProductListProductsResponse] {
+	return pagination.NewMyCursorIDPageAutoPager(r.ListProducts(ctx, params, opts...))
 }
 
 // Restores an archived product, allowing new subscriptions to be created.
-func (r *V1ProductService) UnarchiveProduct(ctx context.Context, id string, opts ...option.RequestOption) (res *Product, err error) {
+func (r *V1ProductService) UnarchiveProduct(ctx context.Context, id string, body V1ProductUnarchiveProductParams, opts ...option.RequestOption) (res *Product, err error) {
+	if !param.IsOmitted(body.XAccountID) {
+		opts = append(opts, option.WithHeader("X-ACCOUNT-ID", fmt.Sprintf("%v", body.XAccountID.Value)))
+	}
+	if !param.IsOmitted(body.XEnvironmentID) {
+		opts = append(opts, option.WithHeader("X-ENVIRONMENT-ID", fmt.Sprintf("%v", body.XEnvironmentID.Value)))
+	}
 	opts = slices.Concat(r.Options, opts)
 	if id == "" {
 		err = errors.New("missing required id parameter")
@@ -111,14 +141,20 @@ func (r *V1ProductService) UnarchiveProduct(ctx context.Context, id string, opts
 
 // Updates an existing product's properties such as display name, description, and
 // metadata.
-func (r *V1ProductService) UpdateProduct(ctx context.Context, id string, body V1ProductUpdateProductParams, opts ...option.RequestOption) (res *Product, err error) {
+func (r *V1ProductService) UpdateProduct(ctx context.Context, id string, params V1ProductUpdateProductParams, opts ...option.RequestOption) (res *Product, err error) {
+	if !param.IsOmitted(params.XAccountID) {
+		opts = append(opts, option.WithHeader("X-ACCOUNT-ID", fmt.Sprintf("%v", params.XAccountID.Value)))
+	}
+	if !param.IsOmitted(params.XEnvironmentID) {
+		opts = append(opts, option.WithHeader("X-ENVIRONMENT-ID", fmt.Sprintf("%v", params.XEnvironmentID.Value)))
+	}
 	opts = slices.Concat(r.Options, opts)
 	if id == "" {
 		err = errors.New("missing required id parameter")
 		return nil, err
 	}
 	path := fmt.Sprintf("api/v1/products/%s", id)
-	err = requestconfig.ExecuteNewRequest(ctx, http.MethodPatch, path, body, &res, opts...)
+	err = requestconfig.ExecuteNewRequest(ctx, http.MethodPatch, path, params, &res, opts...)
 	return res, err
 }
 
@@ -316,6 +352,12 @@ func (r *V1ProductListProductsResponseProductSettings) UnmarshalJSON(data []byte
 	return apijson.UnmarshalRoot(data, r)
 }
 
+type V1ProductArchiveProductParams struct {
+	XAccountID     param.Opt[string] `header:"X-ACCOUNT-ID,omitzero" json:"-"`
+	XEnvironmentID param.Opt[string] `header:"X-ENVIRONMENT-ID,omitzero" json:"-"`
+	paramObj
+}
+
 type V1ProductNewProductParams struct {
 	// The unique identifier for the entity
 	ID string `json:"id" api:"required"`
@@ -324,7 +366,9 @@ type V1ProductNewProductParams struct {
 	// Description of the product
 	Description param.Opt[string] `json:"description,omitzero"`
 	// Indicates if multiple subscriptions to this product are allowed
-	MultipleSubscriptions param.Opt[bool] `json:"multipleSubscriptions,omitzero"`
+	MultipleSubscriptions param.Opt[bool]   `json:"multipleSubscriptions,omitzero"`
+	XAccountID            param.Opt[string] `header:"X-ACCOUNT-ID,omitzero" json:"-"`
+	XEnvironmentID        param.Opt[string] `header:"X-ENVIRONMENT-ID,omitzero" json:"-"`
 	// Additional metadata for the product
 	Metadata map[string]string `json:"metadata,omitzero"`
 	paramObj
@@ -344,7 +388,9 @@ type V1ProductDuplicateProductParams struct {
 	// Description of the product
 	Description param.Opt[string] `json:"description,omitzero"`
 	// Display name of the product
-	DisplayName param.Opt[string] `json:"displayName,omitzero"`
+	DisplayName    param.Opt[string] `json:"displayName,omitzero"`
+	XAccountID     param.Opt[string] `header:"X-ACCOUNT-ID,omitzero" json:"-"`
+	XEnvironmentID param.Opt[string] `header:"X-ENVIRONMENT-ID,omitzero" json:"-"`
 	paramObj
 }
 
@@ -364,7 +410,9 @@ type V1ProductListProductsParams struct {
 	// Return items that come before this cursor
 	Before param.Opt[string] `query:"before,omitzero" format:"uuid" json:"-"`
 	// Maximum number of items to return
-	Limit param.Opt[int64] `query:"limit,omitzero" json:"-"`
+	Limit          param.Opt[int64]  `query:"limit,omitzero" json:"-"`
+	XAccountID     param.Opt[string] `header:"X-ACCOUNT-ID,omitzero" json:"-"`
+	XEnvironmentID param.Opt[string] `header:"X-ENVIRONMENT-ID,omitzero" json:"-"`
 	// Filter by creation date using range operators: gt, gte, lt, lte
 	CreatedAt V1ProductListProductsParamsCreatedAt `query:"createdAt,omitzero" json:"-"`
 	// Filter by product status. Supports comma-separated values for multiple statuses
@@ -405,13 +453,21 @@ func (r V1ProductListProductsParamsCreatedAt) URLQuery() (v url.Values, err erro
 	})
 }
 
+type V1ProductUnarchiveProductParams struct {
+	XAccountID     param.Opt[string] `header:"X-ACCOUNT-ID,omitzero" json:"-"`
+	XEnvironmentID param.Opt[string] `header:"X-ENVIRONMENT-ID,omitzero" json:"-"`
+	paramObj
+}
+
 type V1ProductUpdateProductParams struct {
 	// Description of the product
 	Description param.Opt[string] `json:"description,omitzero"`
 	// Display name of the product
 	DisplayName param.Opt[string] `json:"displayName,omitzero"`
 	// Indicates if multiple subscriptions to this product are allowed
-	MultipleSubscriptions param.Opt[bool] `json:"multipleSubscriptions,omitzero"`
+	MultipleSubscriptions param.Opt[bool]   `json:"multipleSubscriptions,omitzero"`
+	XAccountID            param.Opt[string] `header:"X-ACCOUNT-ID,omitzero" json:"-"`
+	XEnvironmentID        param.Opt[string] `header:"X-ENVIRONMENT-ID,omitzero" json:"-"`
 	// Additional metadata for the product
 	Metadata        map[string]string                           `json:"metadata,omitzero"`
 	ProductSettings V1ProductUpdateProductParamsProductSettings `json:"productSettings,omitzero"`

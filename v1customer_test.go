@@ -14,7 +14,7 @@ import (
 	"github.com/stiggio/stigg-go/option"
 )
 
-func TestV1CustomerGet(t *testing.T) {
+func TestV1CustomerGetWithOptionalParams(t *testing.T) {
 	t.Skip("Mock server tests are disabled")
 	baseURL := "http://localhost:4010"
 	if envURL, ok := os.LookupEnv("TEST_API_BASE_URL"); ok {
@@ -27,7 +27,14 @@ func TestV1CustomerGet(t *testing.T) {
 		option.WithBaseURL(baseURL),
 		option.WithAPIKey("My API Key"),
 	)
-	_, err := client.V1.Customers.Get(context.TODO(), "x")
+	_, err := client.V1.Customers.Get(
+		context.TODO(),
+		"x",
+		stigg.V1CustomerGetParams{
+			XAccountID:     stigg.String("X-ACCOUNT-ID"),
+			XEnvironmentID: stigg.String("X-ENVIRONMENT-ID"),
+		},
+	)
 	if err != nil {
 		var apierr *stigg.Error
 		if errors.As(err, &apierr) {
@@ -115,7 +122,9 @@ func TestV1CustomerUpdateWithOptionalParams(t *testing.T) {
 					PaymentMethodID: stigg.String("paymentMethodId"),
 				},
 			},
-			Timezone: stigg.String("timezone"),
+			Timezone:       stigg.String("timezone"),
+			XAccountID:     stigg.String("X-ACCOUNT-ID"),
+			XEnvironmentID: stigg.String("X-ENVIRONMENT-ID"),
 		},
 	)
 	if err != nil {
@@ -149,9 +158,11 @@ func TestV1CustomerListWithOptionalParams(t *testing.T) {
 			Lt:  stigg.Time(time.Now()),
 			Lte: stigg.Time(time.Now()),
 		},
-		Email: stigg.String("email"),
-		Limit: stigg.Int(1),
-		Name:  stigg.String("name"),
+		Email:          stigg.String("email"),
+		Limit:          stigg.Int(1),
+		Name:           stigg.String("name"),
+		XAccountID:     stigg.String("X-ACCOUNT-ID"),
+		XEnvironmentID: stigg.String("X-ENVIRONMENT-ID"),
 	})
 	if err != nil {
 		var apierr *stigg.Error
@@ -162,7 +173,7 @@ func TestV1CustomerListWithOptionalParams(t *testing.T) {
 	}
 }
 
-func TestV1CustomerArchive(t *testing.T) {
+func TestV1CustomerArchiveWithOptionalParams(t *testing.T) {
 	t.Skip("Mock server tests are disabled")
 	baseURL := "http://localhost:4010"
 	if envURL, ok := os.LookupEnv("TEST_API_BASE_URL"); ok {
@@ -175,7 +186,14 @@ func TestV1CustomerArchive(t *testing.T) {
 		option.WithBaseURL(baseURL),
 		option.WithAPIKey("My API Key"),
 	)
-	_, err := client.V1.Customers.Archive(context.TODO(), "x")
+	_, err := client.V1.Customers.Archive(
+		context.TODO(),
+		"x",
+		stigg.V1CustomerArchiveParams{
+			XAccountID:     stigg.String("X-ACCOUNT-ID"),
+			XEnvironmentID: stigg.String("X-ENVIRONMENT-ID"),
+		},
+	)
 	if err != nil {
 		var apierr *stigg.Error
 		if errors.As(err, &apierr) {
@@ -207,6 +225,8 @@ func TestV1CustomerCheckEntitlementWithOptionalParams(t *testing.T) {
 			RequestedUsage:  stigg.Int(0),
 			RequestedValues: []string{"string"},
 			ResourceID:      stigg.String("x"),
+			XAccountID:      stigg.String("X-ACCOUNT-ID"),
+			XEnvironmentID:  stigg.String("X-ENVIRONMENT-ID"),
 		},
 	)
 	if err != nil {
@@ -244,7 +264,9 @@ func TestV1CustomerImportWithOptionalParams(t *testing.T) {
 			SalesforceID:    stigg.String("salesforceId"),
 			UpdatedAt:       stigg.Time(time.Now()),
 		}},
-		IntegrationID: stigg.String("integrationId"),
+		IntegrationID:  stigg.String("integrationId"),
+		XAccountID:     stigg.String("X-ACCOUNT-ID"),
+		XEnvironmentID: stigg.String("X-ENVIRONMENT-ID"),
 	})
 	if err != nil {
 		var apierr *stigg.Error
@@ -272,9 +294,11 @@ func TestV1CustomerListResourcesWithOptionalParams(t *testing.T) {
 		context.TODO(),
 		"x",
 		stigg.V1CustomerListResourcesParams{
-			After:  stigg.String("182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e"),
-			Before: stigg.String("182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e"),
-			Limit:  stigg.Int(1),
+			After:          stigg.String("182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e"),
+			Before:         stigg.String("182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e"),
+			Limit:          stigg.Int(1),
+			XAccountID:     stigg.String("X-ACCOUNT-ID"),
+			XEnvironmentID: stigg.String("X-ENVIRONMENT-ID"),
 		},
 	)
 	if err != nil {
@@ -369,7 +393,9 @@ func TestV1CustomerProvisionWithOptionalParams(t *testing.T) {
 				PaymentMethodID: stigg.String("paymentMethodId"),
 			},
 		},
-		Timezone: stigg.String("timezone"),
+		Timezone:       stigg.String("timezone"),
+		XAccountID:     stigg.String("X-ACCOUNT-ID"),
+		XEnvironmentID: stigg.String("X-ENVIRONMENT-ID"),
 	})
 	if err != nil {
 		var apierr *stigg.Error
@@ -397,7 +423,9 @@ func TestV1CustomerGetEntitlementsWithOptionalParams(t *testing.T) {
 		context.TODO(),
 		"x",
 		stigg.V1CustomerGetEntitlementsParams{
-			ResourceID: stigg.String("resourceId"),
+			ResourceID:     stigg.String("resourceId"),
+			XAccountID:     stigg.String("X-ACCOUNT-ID"),
+			XEnvironmentID: stigg.String("X-ENVIRONMENT-ID"),
 		},
 	)
 	if err != nil {
@@ -409,7 +437,7 @@ func TestV1CustomerGetEntitlementsWithOptionalParams(t *testing.T) {
 	}
 }
 
-func TestV1CustomerUnarchive(t *testing.T) {
+func TestV1CustomerUnarchiveWithOptionalParams(t *testing.T) {
 	t.Skip("Mock server tests are disabled")
 	baseURL := "http://localhost:4010"
 	if envURL, ok := os.LookupEnv("TEST_API_BASE_URL"); ok {
@@ -422,7 +450,14 @@ func TestV1CustomerUnarchive(t *testing.T) {
 		option.WithBaseURL(baseURL),
 		option.WithAPIKey("My API Key"),
 	)
-	_, err := client.V1.Customers.Unarchive(context.TODO(), "x")
+	_, err := client.V1.Customers.Unarchive(
+		context.TODO(),
+		"x",
+		stigg.V1CustomerUnarchiveParams{
+			XAccountID:     stigg.String("X-ACCOUNT-ID"),
+			XEnvironmentID: stigg.String("X-ENVIRONMENT-ID"),
+		},
+	)
 	if err != nil {
 		var apierr *stigg.Error
 		if errors.As(err, &apierr) {

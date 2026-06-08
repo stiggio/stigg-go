@@ -40,20 +40,32 @@ func NewV1SubscriptionUsageService(opts ...option.RequestOption) (r V1Subscripti
 
 // Immediately charges usage for a subscription via the billing integration.
 // Calculates usage since the last charge and creates an invoice.
-func (r *V1SubscriptionUsageService) ChargeUsage(ctx context.Context, id string, body V1SubscriptionUsageChargeUsageParams, opts ...option.RequestOption) (res *V1SubscriptionUsageChargeUsageResponse, err error) {
+func (r *V1SubscriptionUsageService) ChargeUsage(ctx context.Context, id string, params V1SubscriptionUsageChargeUsageParams, opts ...option.RequestOption) (res *V1SubscriptionUsageChargeUsageResponse, err error) {
+	if !param.IsOmitted(params.XAccountID) {
+		opts = append(opts, option.WithHeader("X-ACCOUNT-ID", fmt.Sprintf("%v", params.XAccountID.Value)))
+	}
+	if !param.IsOmitted(params.XEnvironmentID) {
+		opts = append(opts, option.WithHeader("X-ENVIRONMENT-ID", fmt.Sprintf("%v", params.XEnvironmentID.Value)))
+	}
 	opts = slices.Concat(r.Options, opts)
 	if id == "" {
 		err = errors.New("missing required id parameter")
 		return nil, err
 	}
 	path := fmt.Sprintf("api/v1/subscriptions/%s/usage/charge", id)
-	err = requestconfig.ExecuteNewRequest(ctx, http.MethodPost, path, body, &res, opts...)
+	err = requestconfig.ExecuteNewRequest(ctx, http.MethodPost, path, params, &res, opts...)
 	return res, err
 }
 
 // Triggers a usage sync for a subscription, reporting current usage to the billing
 // provider.
-func (r *V1SubscriptionUsageService) Sync(ctx context.Context, id string, opts ...option.RequestOption) (res *V1SubscriptionUsageSyncResponse, err error) {
+func (r *V1SubscriptionUsageService) Sync(ctx context.Context, id string, body V1SubscriptionUsageSyncParams, opts ...option.RequestOption) (res *V1SubscriptionUsageSyncResponse, err error) {
+	if !param.IsOmitted(body.XAccountID) {
+		opts = append(opts, option.WithHeader("X-ACCOUNT-ID", fmt.Sprintf("%v", body.XAccountID.Value)))
+	}
+	if !param.IsOmitted(body.XEnvironmentID) {
+		opts = append(opts, option.WithHeader("X-ENVIRONMENT-ID", fmt.Sprintf("%v", body.XEnvironmentID.Value)))
+	}
 	opts = slices.Concat(r.Options, opts)
 	if id == "" {
 		err = errors.New("missing required id parameter")
@@ -173,7 +185,9 @@ func (r *V1SubscriptionUsageSyncResponseData) UnmarshalJSON(data []byte) error {
 
 type V1SubscriptionUsageChargeUsageParams struct {
 	// Cutoff date for usage calculation. If not provided, the current time is used.
-	UntilDate param.Opt[time.Time] `json:"untilDate,omitzero" format:"date-time"`
+	UntilDate      param.Opt[time.Time] `json:"untilDate,omitzero" format:"date-time"`
+	XAccountID     param.Opt[string]    `header:"X-ACCOUNT-ID,omitzero" json:"-"`
+	XEnvironmentID param.Opt[string]    `header:"X-ENVIRONMENT-ID,omitzero" json:"-"`
 	paramObj
 }
 
@@ -183,4 +197,10 @@ func (r V1SubscriptionUsageChargeUsageParams) MarshalJSON() (data []byte, err er
 }
 func (r *V1SubscriptionUsageChargeUsageParams) UnmarshalJSON(data []byte) error {
 	return apijson.UnmarshalRoot(data, r)
+}
+
+type V1SubscriptionUsageSyncParams struct {
+	XAccountID     param.Opt[string] `header:"X-ACCOUNT-ID,omitzero" json:"-"`
+	XEnvironmentID param.Opt[string] `header:"X-ENVIRONMENT-ID,omitzero" json:"-"`
+	paramObj
 }

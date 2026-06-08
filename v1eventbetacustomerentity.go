@@ -40,9 +40,15 @@ func NewV1EventBetaCustomerEntityService(opts ...option.RequestOption) (r V1Even
 }
 
 // Retrieves a single entity for the given customer by its identifier.
-func (r *V1EventBetaCustomerEntityService) Get(ctx context.Context, entityID string, query V1EventBetaCustomerEntityGetParams, opts ...option.RequestOption) (res *V1EventBetaCustomerEntityGetResponse, err error) {
+func (r *V1EventBetaCustomerEntityService) Get(ctx context.Context, entityID string, params V1EventBetaCustomerEntityGetParams, opts ...option.RequestOption) (res *V1EventBetaCustomerEntityGetResponse, err error) {
+	if !param.IsOmitted(params.XAccountID) {
+		opts = append(opts, option.WithHeader("X-ACCOUNT-ID", fmt.Sprintf("%v", params.XAccountID.Value)))
+	}
+	if !param.IsOmitted(params.XEnvironmentID) {
+		opts = append(opts, option.WithHeader("X-ENVIRONMENT-ID", fmt.Sprintf("%v", params.XEnvironmentID.Value)))
+	}
 	opts = slices.Concat(r.Options, opts)
-	if query.ID == "" {
+	if params.ID == "" {
 		err = errors.New("missing required id parameter")
 		return nil, err
 	}
@@ -50,14 +56,20 @@ func (r *V1EventBetaCustomerEntityService) Get(ctx context.Context, entityID str
 		err = errors.New("missing required entityId parameter")
 		return nil, err
 	}
-	path := fmt.Sprintf("api/v1-beta/customers/%s/entities/%s", query.ID, entityID)
+	path := fmt.Sprintf("api/v1-beta/customers/%s/entities/%s", params.ID, entityID)
 	err = requestconfig.ExecuteNewRequest(ctx, http.MethodGet, path, nil, &res, opts...)
 	return res, err
 }
 
 // Retrieves a paginated list of entities for the given customer.
-func (r *V1EventBetaCustomerEntityService) List(ctx context.Context, id string, query V1EventBetaCustomerEntityListParams, opts ...option.RequestOption) (res *pagination.MyCursorIDPage[V1EventBetaCustomerEntityListResponse], err error) {
+func (r *V1EventBetaCustomerEntityService) List(ctx context.Context, id string, params V1EventBetaCustomerEntityListParams, opts ...option.RequestOption) (res *pagination.MyCursorIDPage[V1EventBetaCustomerEntityListResponse], err error) {
 	var raw *http.Response
+	if !param.IsOmitted(params.XAccountID) {
+		opts = append(opts, option.WithHeader("X-ACCOUNT-ID", fmt.Sprintf("%v", params.XAccountID.Value)))
+	}
+	if !param.IsOmitted(params.XEnvironmentID) {
+		opts = append(opts, option.WithHeader("X-ENVIRONMENT-ID", fmt.Sprintf("%v", params.XEnvironmentID.Value)))
+	}
 	opts = slices.Concat(r.Options, opts)
 	opts = append([]option.RequestOption{option.WithResponseInto(&raw)}, opts...)
 	if id == "" {
@@ -65,7 +77,7 @@ func (r *V1EventBetaCustomerEntityService) List(ctx context.Context, id string, 
 		return nil, err
 	}
 	path := fmt.Sprintf("api/v1-beta/customers/%s/entities", id)
-	cfg, err := requestconfig.NewRequestConfig(ctx, http.MethodGet, path, query, &res, opts...)
+	cfg, err := requestconfig.NewRequestConfig(ctx, http.MethodGet, path, params, &res, opts...)
 	if err != nil {
 		return nil, err
 	}
@@ -78,44 +90,62 @@ func (r *V1EventBetaCustomerEntityService) List(ctx context.Context, id string, 
 }
 
 // Retrieves a paginated list of entities for the given customer.
-func (r *V1EventBetaCustomerEntityService) ListAutoPaging(ctx context.Context, id string, query V1EventBetaCustomerEntityListParams, opts ...option.RequestOption) *pagination.MyCursorIDPageAutoPager[V1EventBetaCustomerEntityListResponse] {
-	return pagination.NewMyCursorIDPageAutoPager(r.List(ctx, id, query, opts...))
+func (r *V1EventBetaCustomerEntityService) ListAutoPaging(ctx context.Context, id string, params V1EventBetaCustomerEntityListParams, opts ...option.RequestOption) *pagination.MyCursorIDPageAutoPager[V1EventBetaCustomerEntityListResponse] {
+	return pagination.NewMyCursorIDPageAutoPager(r.List(ctx, id, params, opts...))
 }
 
 // Archives entities in bulk for the given customer by id.
-func (r *V1EventBetaCustomerEntityService) Archive(ctx context.Context, id string, body V1EventBetaCustomerEntityArchiveParams, opts ...option.RequestOption) (res *V1EventBetaCustomerEntityArchiveResponse, err error) {
+func (r *V1EventBetaCustomerEntityService) Archive(ctx context.Context, id string, params V1EventBetaCustomerEntityArchiveParams, opts ...option.RequestOption) (res *V1EventBetaCustomerEntityArchiveResponse, err error) {
+	if !param.IsOmitted(params.XAccountID) {
+		opts = append(opts, option.WithHeader("X-ACCOUNT-ID", fmt.Sprintf("%v", params.XAccountID.Value)))
+	}
+	if !param.IsOmitted(params.XEnvironmentID) {
+		opts = append(opts, option.WithHeader("X-ENVIRONMENT-ID", fmt.Sprintf("%v", params.XEnvironmentID.Value)))
+	}
 	opts = slices.Concat(r.Options, opts)
 	if id == "" {
 		err = errors.New("missing required id parameter")
 		return nil, err
 	}
 	path := fmt.Sprintf("api/v1-beta/customers/%s/entities/archive", id)
-	err = requestconfig.ExecuteNewRequest(ctx, http.MethodPost, path, body, &res, opts...)
+	err = requestconfig.ExecuteNewRequest(ctx, http.MethodPost, path, params, &res, opts...)
 	return res, err
 }
 
 // Restores previously archived entities in bulk for the given customer by id.
-func (r *V1EventBetaCustomerEntityService) Unarchive(ctx context.Context, id string, body V1EventBetaCustomerEntityUnarchiveParams, opts ...option.RequestOption) (res *V1EventBetaCustomerEntityUnarchiveResponse, err error) {
+func (r *V1EventBetaCustomerEntityService) Unarchive(ctx context.Context, id string, params V1EventBetaCustomerEntityUnarchiveParams, opts ...option.RequestOption) (res *V1EventBetaCustomerEntityUnarchiveResponse, err error) {
+	if !param.IsOmitted(params.XAccountID) {
+		opts = append(opts, option.WithHeader("X-ACCOUNT-ID", fmt.Sprintf("%v", params.XAccountID.Value)))
+	}
+	if !param.IsOmitted(params.XEnvironmentID) {
+		opts = append(opts, option.WithHeader("X-ENVIRONMENT-ID", fmt.Sprintf("%v", params.XEnvironmentID.Value)))
+	}
 	opts = slices.Concat(r.Options, opts)
 	if id == "" {
 		err = errors.New("missing required id parameter")
 		return nil, err
 	}
 	path := fmt.Sprintf("api/v1-beta/customers/%s/entities/unarchive", id)
-	err = requestconfig.ExecuteNewRequest(ctx, http.MethodPost, path, body, &res, opts...)
+	err = requestconfig.ExecuteNewRequest(ctx, http.MethodPost, path, params, &res, opts...)
 	return res, err
 }
 
 // Creates or updates entities in bulk for the given customer. Existing entities
 // matched by id are updated; new ids are created.
-func (r *V1EventBetaCustomerEntityService) Upsert(ctx context.Context, id string, body V1EventBetaCustomerEntityUpsertParams, opts ...option.RequestOption) (res *V1EventBetaCustomerEntityUpsertResponse, err error) {
+func (r *V1EventBetaCustomerEntityService) Upsert(ctx context.Context, id string, params V1EventBetaCustomerEntityUpsertParams, opts ...option.RequestOption) (res *V1EventBetaCustomerEntityUpsertResponse, err error) {
+	if !param.IsOmitted(params.XAccountID) {
+		opts = append(opts, option.WithHeader("X-ACCOUNT-ID", fmt.Sprintf("%v", params.XAccountID.Value)))
+	}
+	if !param.IsOmitted(params.XEnvironmentID) {
+		opts = append(opts, option.WithHeader("X-ENVIRONMENT-ID", fmt.Sprintf("%v", params.XEnvironmentID.Value)))
+	}
 	opts = slices.Concat(r.Options, opts)
 	if id == "" {
 		err = errors.New("missing required id parameter")
 		return nil, err
 	}
 	path := fmt.Sprintf("api/v1-beta/customers/%s/entities", id)
-	err = requestconfig.ExecuteNewRequest(ctx, http.MethodPut, path, body, &res, opts...)
+	err = requestconfig.ExecuteNewRequest(ctx, http.MethodPut, path, params, &res, opts...)
 	return res, err
 }
 
@@ -326,7 +356,9 @@ func (r *V1EventBetaCustomerEntityUpsertResponseData) UnmarshalJSON(data []byte)
 }
 
 type V1EventBetaCustomerEntityGetParams struct {
-	ID string `path:"id" api:"required" json:"-"`
+	ID             string            `path:"id" api:"required" json:"-"`
+	XAccountID     param.Opt[string] `header:"X-ACCOUNT-ID,omitzero" json:"-"`
+	XEnvironmentID param.Opt[string] `header:"X-ENVIRONMENT-ID,omitzero" json:"-"`
 	paramObj
 }
 
@@ -338,7 +370,9 @@ type V1EventBetaCustomerEntityListParams struct {
 	// Maximum number of items to return
 	Limit param.Opt[int64] `query:"limit,omitzero" json:"-"`
 	// Filter results to entities of a specific entity type, by the type's refId
-	TypeRefID param.Opt[string] `query:"typeRefId,omitzero" json:"-"`
+	TypeRefID      param.Opt[string] `query:"typeRefId,omitzero" json:"-"`
+	XAccountID     param.Opt[string] `header:"X-ACCOUNT-ID,omitzero" json:"-"`
+	XEnvironmentID param.Opt[string] `header:"X-ENVIRONMENT-ID,omitzero" json:"-"`
 	// Whether to include archived entities. One of: true, false
 	//
 	// Any of "true", "false".
@@ -365,7 +399,9 @@ const (
 
 type V1EventBetaCustomerEntityArchiveParams struct {
 	// Entity identifiers to act on
-	IDs []string `json:"ids,omitzero" api:"required"`
+	IDs            []string          `json:"ids,omitzero" api:"required"`
+	XAccountID     param.Opt[string] `header:"X-ACCOUNT-ID,omitzero" json:"-"`
+	XEnvironmentID param.Opt[string] `header:"X-ENVIRONMENT-ID,omitzero" json:"-"`
 	paramObj
 }
 
@@ -379,7 +415,9 @@ func (r *V1EventBetaCustomerEntityArchiveParams) UnmarshalJSON(data []byte) erro
 
 type V1EventBetaCustomerEntityUnarchiveParams struct {
 	// Entity identifiers to act on
-	IDs []string `json:"ids,omitzero" api:"required"`
+	IDs            []string          `json:"ids,omitzero" api:"required"`
+	XAccountID     param.Opt[string] `header:"X-ACCOUNT-ID,omitzero" json:"-"`
+	XEnvironmentID param.Opt[string] `header:"X-ENVIRONMENT-ID,omitzero" json:"-"`
 	paramObj
 }
 
@@ -393,7 +431,9 @@ func (r *V1EventBetaCustomerEntityUnarchiveParams) UnmarshalJSON(data []byte) er
 
 type V1EventBetaCustomerEntityUpsertParams struct {
 	// List of entities to create or update (1-100 entries)
-	Entities []V1EventBetaCustomerEntityUpsertParamsEntity `json:"entities,omitzero" api:"required"`
+	Entities       []V1EventBetaCustomerEntityUpsertParamsEntity `json:"entities,omitzero" api:"required"`
+	XAccountID     param.Opt[string]                             `header:"X-ACCOUNT-ID,omitzero" json:"-"`
+	XEnvironmentID param.Opt[string]                             `header:"X-ENVIRONMENT-ID,omitzero" json:"-"`
 	paramObj
 }
 

@@ -37,8 +37,10 @@ func TestV1AddonNewWithOptionalParams(t *testing.T) {
 		Metadata: map[string]string{
 			"foo": "string",
 		},
-		PricingType: stigg.V1AddonNewParamsPricingTypeFree,
-		Status:      stigg.V1AddonNewParamsStatusDraft,
+		PricingType:    stigg.V1AddonNewParamsPricingTypeFree,
+		Status:         stigg.V1AddonNewParamsStatusDraft,
+		XAccountID:     stigg.String("X-ACCOUNT-ID"),
+		XEnvironmentID: stigg.String("X-ENVIRONMENT-ID"),
 	})
 	if err != nil {
 		var apierr *stigg.Error
@@ -49,7 +51,7 @@ func TestV1AddonNewWithOptionalParams(t *testing.T) {
 	}
 }
 
-func TestV1AddonGet(t *testing.T) {
+func TestV1AddonGetWithOptionalParams(t *testing.T) {
 	t.Skip("Mock server tests are disabled")
 	baseURL := "http://localhost:4010"
 	if envURL, ok := os.LookupEnv("TEST_API_BASE_URL"); ok {
@@ -62,7 +64,14 @@ func TestV1AddonGet(t *testing.T) {
 		option.WithBaseURL(baseURL),
 		option.WithAPIKey("My API Key"),
 	)
-	_, err := client.V1.Addons.Get(context.TODO(), "x")
+	_, err := client.V1.Addons.Get(
+		context.TODO(),
+		"x",
+		stigg.V1AddonGetParams{
+			XAccountID:     stigg.String("X-ACCOUNT-ID"),
+			XEnvironmentID: stigg.String("X-ENVIRONMENT-ID"),
+		},
+	)
 	if err != nil {
 		var apierr *stigg.Error
 		if errors.As(err, &apierr) {
@@ -202,7 +211,9 @@ func TestV1AddonUpdateWithOptionalParams(t *testing.T) {
 			Metadata: map[string]string{
 				"foo": "string",
 			},
-			Status: stigg.V1AddonUpdateParamsStatusDraft,
+			Status:         stigg.V1AddonUpdateParamsStatusDraft,
+			XAccountID:     stigg.String("X-ACCOUNT-ID"),
+			XEnvironmentID: stigg.String("X-ENVIRONMENT-ID"),
 		},
 	)
 	if err != nil {
@@ -236,9 +247,11 @@ func TestV1AddonListWithOptionalParams(t *testing.T) {
 			Lt:  stigg.Time(time.Now()),
 			Lte: stigg.Time(time.Now()),
 		},
-		Limit:     stigg.Int(1),
-		ProductID: stigg.String("productId"),
-		Status:    []string{"DRAFT"},
+		Limit:          stigg.Int(1),
+		ProductID:      stigg.String("productId"),
+		Status:         []string{"DRAFT"},
+		XAccountID:     stigg.String("X-ACCOUNT-ID"),
+		XEnvironmentID: stigg.String("X-ENVIRONMENT-ID"),
 	})
 	if err != nil {
 		var apierr *stigg.Error
@@ -249,7 +262,7 @@ func TestV1AddonListWithOptionalParams(t *testing.T) {
 	}
 }
 
-func TestV1AddonArchive(t *testing.T) {
+func TestV1AddonArchiveWithOptionalParams(t *testing.T) {
 	t.Skip("Mock server tests are disabled")
 	baseURL := "http://localhost:4010"
 	if envURL, ok := os.LookupEnv("TEST_API_BASE_URL"); ok {
@@ -262,7 +275,14 @@ func TestV1AddonArchive(t *testing.T) {
 		option.WithBaseURL(baseURL),
 		option.WithAPIKey("My API Key"),
 	)
-	_, err := client.V1.Addons.Archive(context.TODO(), "x")
+	_, err := client.V1.Addons.Archive(
+		context.TODO(),
+		"x",
+		stigg.V1AddonArchiveParams{
+			XAccountID:     stigg.String("X-ACCOUNT-ID"),
+			XEnvironmentID: stigg.String("X-ENVIRONMENT-ID"),
+		},
+	)
 	if err != nil {
 		var apierr *stigg.Error
 		if errors.As(err, &apierr) {
@@ -272,7 +292,7 @@ func TestV1AddonArchive(t *testing.T) {
 	}
 }
 
-func TestV1AddonNewDraft(t *testing.T) {
+func TestV1AddonNewDraftWithOptionalParams(t *testing.T) {
 	t.Skip("Mock server tests are disabled")
 	baseURL := "http://localhost:4010"
 	if envURL, ok := os.LookupEnv("TEST_API_BASE_URL"); ok {
@@ -285,7 +305,14 @@ func TestV1AddonNewDraft(t *testing.T) {
 		option.WithBaseURL(baseURL),
 		option.WithAPIKey("My API Key"),
 	)
-	_, err := client.V1.Addons.NewDraft(context.TODO(), "x")
+	_, err := client.V1.Addons.NewDraft(
+		context.TODO(),
+		"x",
+		stigg.V1AddonNewDraftParams{
+			XAccountID:     stigg.String("X-ACCOUNT-ID"),
+			XEnvironmentID: stigg.String("X-ENVIRONMENT-ID"),
+		},
+	)
 	if err != nil {
 		var apierr *stigg.Error
 		if errors.As(err, &apierr) {
@@ -312,9 +339,11 @@ func TestV1AddonListChargesWithOptionalParams(t *testing.T) {
 		context.TODO(),
 		"x",
 		stigg.V1AddonListChargesParams{
-			After:  stigg.String("182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e"),
-			Before: stigg.String("182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e"),
-			Limit:  stigg.Int(1),
+			After:          stigg.String("182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e"),
+			Before:         stigg.String("182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e"),
+			Limit:          stigg.Int(1),
+			XAccountID:     stigg.String("X-ACCOUNT-ID"),
+			XEnvironmentID: stigg.String("X-ENVIRONMENT-ID"),
 		},
 	)
 	if err != nil {
@@ -326,7 +355,7 @@ func TestV1AddonListChargesWithOptionalParams(t *testing.T) {
 	}
 }
 
-func TestV1AddonPublish(t *testing.T) {
+func TestV1AddonPublishWithOptionalParams(t *testing.T) {
 	t.Skip("Mock server tests are disabled")
 	baseURL := "http://localhost:4010"
 	if envURL, ok := os.LookupEnv("TEST_API_BASE_URL"); ok {
@@ -343,7 +372,9 @@ func TestV1AddonPublish(t *testing.T) {
 		context.TODO(),
 		"x",
 		stigg.V1AddonPublishParams{
-			MigrationType: stigg.V1AddonPublishParamsMigrationTypeNewCustomers,
+			MigrationType:  stigg.V1AddonPublishParamsMigrationTypeNewCustomers,
+			XAccountID:     stigg.String("X-ACCOUNT-ID"),
+			XEnvironmentID: stigg.String("X-ENVIRONMENT-ID"),
 		},
 	)
 	if err != nil {
@@ -355,7 +386,7 @@ func TestV1AddonPublish(t *testing.T) {
 	}
 }
 
-func TestV1AddonRemoveDraft(t *testing.T) {
+func TestV1AddonRemoveDraftWithOptionalParams(t *testing.T) {
 	t.Skip("Mock server tests are disabled")
 	baseURL := "http://localhost:4010"
 	if envURL, ok := os.LookupEnv("TEST_API_BASE_URL"); ok {
@@ -368,7 +399,14 @@ func TestV1AddonRemoveDraft(t *testing.T) {
 		option.WithBaseURL(baseURL),
 		option.WithAPIKey("My API Key"),
 	)
-	_, err := client.V1.Addons.RemoveDraft(context.TODO(), "x")
+	_, err := client.V1.Addons.RemoveDraft(
+		context.TODO(),
+		"x",
+		stigg.V1AddonRemoveDraftParams{
+			XAccountID:     stigg.String("X-ACCOUNT-ID"),
+			XEnvironmentID: stigg.String("X-ENVIRONMENT-ID"),
+		},
+	)
 	if err != nil {
 		var apierr *stigg.Error
 		if errors.As(err, &apierr) {
