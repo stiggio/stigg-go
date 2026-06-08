@@ -1,5 +1,13 @@
 # Changelog
 
+## 0.1.0-beta.19 (2026-06-08)
+
+Full Changelog: [v0.1.0-beta.18...v0.1.0-beta.19](https://github.com/stiggio/stigg-go/compare/v0.1.0-beta.18...v0.1.0-beta.19)
+
+### Features
+
+* **api:** add connectionStatus and lastSyncStatus to event data export destination ([83e8b3d](https://github.com/stiggio/stigg-go/commit/83e8b3d814b19a486c19d0b60b35cb7dd11d9b93))
+
 ## 0.1.0-beta.18 (2026-06-07)
 
 Full Changelog: [v0.1.0-beta.17...v0.1.0-beta.18](https://github.com/stiggio/stigg-go/compare/v0.1.0-beta.17...v0.1.0-beta.18)
