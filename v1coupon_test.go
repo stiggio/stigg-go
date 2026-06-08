@@ -14,7 +14,7 @@ import (
 	"github.com/stiggio/stigg-go/option"
 )
 
-func TestV1CouponNew(t *testing.T) {
+func TestV1CouponNewWithOptionalParams(t *testing.T) {
 	t.Skip("Mock server tests are disabled")
 	baseURL := "http://localhost:4010"
 	if envURL, ok := os.LookupEnv("TEST_API_BASE_URL"); ok {
@@ -38,8 +38,10 @@ func TestV1CouponNew(t *testing.T) {
 		Metadata: map[string]string{
 			"foo": "string",
 		},
-		Name:       "name",
-		PercentOff: stigg.Float(1),
+		Name:           "name",
+		PercentOff:     stigg.Float(1),
+		XAccountID:     stigg.String("X-ACCOUNT-ID"),
+		XEnvironmentID: stigg.String("X-ENVIRONMENT-ID"),
 	})
 	if err != nil {
 		var apierr *stigg.Error
@@ -50,7 +52,7 @@ func TestV1CouponNew(t *testing.T) {
 	}
 }
 
-func TestV1CouponGet(t *testing.T) {
+func TestV1CouponGetWithOptionalParams(t *testing.T) {
 	t.Skip("Mock server tests are disabled")
 	baseURL := "http://localhost:4010"
 	if envURL, ok := os.LookupEnv("TEST_API_BASE_URL"); ok {
@@ -63,7 +65,14 @@ func TestV1CouponGet(t *testing.T) {
 		option.WithBaseURL(baseURL),
 		option.WithAPIKey("My API Key"),
 	)
-	_, err := client.V1.Coupons.Get(context.TODO(), "x")
+	_, err := client.V1.Coupons.Get(
+		context.TODO(),
+		"x",
+		stigg.V1CouponGetParams{
+			XAccountID:     stigg.String("X-ACCOUNT-ID"),
+			XEnvironmentID: stigg.String("X-ENVIRONMENT-ID"),
+		},
+	)
 	if err != nil {
 		var apierr *stigg.Error
 		if errors.As(err, &apierr) {
@@ -96,9 +105,11 @@ func TestV1CouponListWithOptionalParams(t *testing.T) {
 			Lt:  stigg.Time(time.Now()),
 			Lte: stigg.Time(time.Now()),
 		},
-		Limit:  stigg.Int(1),
-		Status: []string{"ACTIVE"},
-		Type:   stigg.V1CouponListParamsTypeFixed,
+		Limit:          stigg.Int(1),
+		Status:         []string{"ACTIVE"},
+		Type:           stigg.V1CouponListParamsTypeFixed,
+		XAccountID:     stigg.String("X-ACCOUNT-ID"),
+		XEnvironmentID: stigg.String("X-ENVIRONMENT-ID"),
 	})
 	if err != nil {
 		var apierr *stigg.Error
@@ -109,7 +120,7 @@ func TestV1CouponListWithOptionalParams(t *testing.T) {
 	}
 }
 
-func TestV1CouponArchiveCoupon(t *testing.T) {
+func TestV1CouponArchiveCouponWithOptionalParams(t *testing.T) {
 	t.Skip("Mock server tests are disabled")
 	baseURL := "http://localhost:4010"
 	if envURL, ok := os.LookupEnv("TEST_API_BASE_URL"); ok {
@@ -122,7 +133,14 @@ func TestV1CouponArchiveCoupon(t *testing.T) {
 		option.WithBaseURL(baseURL),
 		option.WithAPIKey("My API Key"),
 	)
-	_, err := client.V1.Coupons.ArchiveCoupon(context.TODO(), "x")
+	_, err := client.V1.Coupons.ArchiveCoupon(
+		context.TODO(),
+		"x",
+		stigg.V1CouponArchiveCouponParams{
+			XAccountID:     stigg.String("X-ACCOUNT-ID"),
+			XEnvironmentID: stigg.String("X-ENVIRONMENT-ID"),
+		},
+	)
 	if err != nil {
 		var apierr *stigg.Error
 		if errors.As(err, &apierr) {
@@ -153,7 +171,9 @@ func TestV1CouponUpdateCouponWithOptionalParams(t *testing.T) {
 			Metadata: map[string]string{
 				"foo": "string",
 			},
-			Name: stigg.String("name"),
+			Name:           stigg.String("name"),
+			XAccountID:     stigg.String("X-ACCOUNT-ID"),
+			XEnvironmentID: stigg.String("X-ENVIRONMENT-ID"),
 		},
 	)
 	if err != nil {

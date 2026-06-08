@@ -4,6 +4,7 @@ package stigg
 
 import (
 	"context"
+	"fmt"
 	"net/http"
 	"slices"
 	"time"
@@ -42,10 +43,16 @@ func NewV1EventService(opts ...option.RequestOption) (r V1EventService) {
 
 // Reports raw usage events for event-based metering. Events are ingested
 // asynchronously and aggregated into usage totals.
-func (r *V1EventService) Report(ctx context.Context, body V1EventReportParams, opts ...option.RequestOption) (res *V1EventReportResponse, err error) {
+func (r *V1EventService) Report(ctx context.Context, params V1EventReportParams, opts ...option.RequestOption) (res *V1EventReportResponse, err error) {
+	if !param.IsOmitted(params.XAccountID) {
+		opts = append(opts, option.WithHeader("X-ACCOUNT-ID", fmt.Sprintf("%v", params.XAccountID.Value)))
+	}
+	if !param.IsOmitted(params.XEnvironmentID) {
+		opts = append(opts, option.WithHeader("X-ENVIRONMENT-ID", fmt.Sprintf("%v", params.XEnvironmentID.Value)))
+	}
 	opts = slices.Concat(r.Options, opts)
 	path := "api/v1/events"
-	err = requestconfig.ExecuteNewRequest(ctx, http.MethodPost, path, body, &res, opts...)
+	err = requestconfig.ExecuteNewRequest(ctx, http.MethodPost, path, params, &res, opts...)
 	return res, err
 }
 
@@ -70,7 +77,9 @@ func (r *V1EventReportResponse) UnmarshalJSON(data []byte) error {
 
 type V1EventReportParams struct {
 	// A list of usage events to report
-	Events []V1EventReportParamsEvent `json:"events,omitzero" api:"required"`
+	Events         []V1EventReportParamsEvent `json:"events,omitzero" api:"required"`
+	XAccountID     param.Opt[string]          `header:"X-ACCOUNT-ID,omitzero" json:"-"`
+	XEnvironmentID param.Opt[string]          `header:"X-ENVIRONMENT-ID,omitzero" json:"-"`
 	paramObj
 }
 

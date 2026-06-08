@@ -13,7 +13,7 @@ import (
 	"github.com/stiggio/stigg-go/option"
 )
 
-func TestV1CustomerIntegrationGet(t *testing.T) {
+func TestV1CustomerIntegrationGetWithOptionalParams(t *testing.T) {
 	t.Skip("Mock server tests are disabled")
 	baseURL := "http://localhost:4010"
 	if envURL, ok := os.LookupEnv("TEST_API_BASE_URL"); ok {
@@ -30,7 +30,9 @@ func TestV1CustomerIntegrationGet(t *testing.T) {
 		context.TODO(),
 		"integrationId",
 		stigg.V1CustomerIntegrationGetParams{
-			ID: "id",
+			ID:             "id",
+			XAccountID:     stigg.String("X-ACCOUNT-ID"),
+			XEnvironmentID: stigg.String("X-ENVIRONMENT-ID"),
 		},
 	)
 	if err != nil {
@@ -42,7 +44,7 @@ func TestV1CustomerIntegrationGet(t *testing.T) {
 	}
 }
 
-func TestV1CustomerIntegrationUpdate(t *testing.T) {
+func TestV1CustomerIntegrationUpdateWithOptionalParams(t *testing.T) {
 	t.Skip("Mock server tests are disabled")
 	baseURL := "http://localhost:4010"
 	if envURL, ok := os.LookupEnv("TEST_API_BASE_URL"); ok {
@@ -61,6 +63,8 @@ func TestV1CustomerIntegrationUpdate(t *testing.T) {
 		stigg.V1CustomerIntegrationUpdateParams{
 			ID:             "id",
 			SyncedEntityID: stigg.String("syncedEntityId"),
+			XAccountID:     stigg.String("X-ACCOUNT-ID"),
+			XEnvironmentID: stigg.String("X-ENVIRONMENT-ID"),
 		},
 	)
 	if err != nil {
@@ -93,6 +97,8 @@ func TestV1CustomerIntegrationListWithOptionalParams(t *testing.T) {
 			Before:           stigg.String("182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e"),
 			Limit:            stigg.Int(1),
 			VendorIdentifier: []string{"AUTH0"},
+			XAccountID:       stigg.String("X-ACCOUNT-ID"),
+			XEnvironmentID:   stigg.String("X-ENVIRONMENT-ID"),
 		},
 	)
 	if err != nil {
@@ -104,7 +110,7 @@ func TestV1CustomerIntegrationListWithOptionalParams(t *testing.T) {
 	}
 }
 
-func TestV1CustomerIntegrationLink(t *testing.T) {
+func TestV1CustomerIntegrationLinkWithOptionalParams(t *testing.T) {
 	t.Skip("Mock server tests are disabled")
 	baseURL := "http://localhost:4010"
 	if envURL, ok := os.LookupEnv("TEST_API_BASE_URL"); ok {
@@ -124,6 +130,8 @@ func TestV1CustomerIntegrationLink(t *testing.T) {
 			ID:               "id",
 			SyncedEntityID:   "syncedEntityId",
 			VendorIdentifier: stigg.V1CustomerIntegrationLinkParamsVendorIdentifierAuth0,
+			XAccountID:       stigg.String("X-ACCOUNT-ID"),
+			XEnvironmentID:   stigg.String("X-ENVIRONMENT-ID"),
 		},
 	)
 	if err != nil {
@@ -135,7 +143,7 @@ func TestV1CustomerIntegrationLink(t *testing.T) {
 	}
 }
 
-func TestV1CustomerIntegrationUnlink(t *testing.T) {
+func TestV1CustomerIntegrationUnlinkWithOptionalParams(t *testing.T) {
 	t.Skip("Mock server tests are disabled")
 	baseURL := "http://localhost:4010"
 	if envURL, ok := os.LookupEnv("TEST_API_BASE_URL"); ok {
@@ -152,7 +160,9 @@ func TestV1CustomerIntegrationUnlink(t *testing.T) {
 		context.TODO(),
 		"integrationId",
 		stigg.V1CustomerIntegrationUnlinkParams{
-			ID: "id",
+			ID:             "id",
+			XAccountID:     stigg.String("X-ACCOUNT-ID"),
+			XEnvironmentID: stigg.String("X-ENVIRONMENT-ID"),
 		},
 	)
 	if err != nil {

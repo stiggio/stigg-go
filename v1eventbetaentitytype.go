@@ -4,6 +4,7 @@ package stigg
 
 import (
 	"context"
+	"fmt"
 	"net/http"
 	"net/url"
 	"slices"
@@ -40,12 +41,18 @@ func NewV1EventBetaEntityTypeService(opts ...option.RequestOption) (r V1EventBet
 // Returns a cursor-paginated list of entity types defined in the environment.
 // Entity types are vendor-defined categories of resource that can be governed
 // (e.g. Org, Team, User).
-func (r *V1EventBetaEntityTypeService) List(ctx context.Context, query V1EventBetaEntityTypeListParams, opts ...option.RequestOption) (res *pagination.MyCursorIDPage[V1EventBetaEntityTypeListResponse], err error) {
+func (r *V1EventBetaEntityTypeService) List(ctx context.Context, params V1EventBetaEntityTypeListParams, opts ...option.RequestOption) (res *pagination.MyCursorIDPage[V1EventBetaEntityTypeListResponse], err error) {
 	var raw *http.Response
+	if !param.IsOmitted(params.XAccountID) {
+		opts = append(opts, option.WithHeader("X-ACCOUNT-ID", fmt.Sprintf("%v", params.XAccountID.Value)))
+	}
+	if !param.IsOmitted(params.XEnvironmentID) {
+		opts = append(opts, option.WithHeader("X-ENVIRONMENT-ID", fmt.Sprintf("%v", params.XEnvironmentID.Value)))
+	}
 	opts = slices.Concat(r.Options, opts)
 	opts = append([]option.RequestOption{option.WithResponseInto(&raw)}, opts...)
 	path := "api/v1-beta/entity-types"
-	cfg, err := requestconfig.NewRequestConfig(ctx, http.MethodGet, path, query, &res, opts...)
+	cfg, err := requestconfig.NewRequestConfig(ctx, http.MethodGet, path, params, &res, opts...)
 	if err != nil {
 		return nil, err
 	}
@@ -60,17 +67,23 @@ func (r *V1EventBetaEntityTypeService) List(ctx context.Context, query V1EventBe
 // Returns a cursor-paginated list of entity types defined in the environment.
 // Entity types are vendor-defined categories of resource that can be governed
 // (e.g. Org, Team, User).
-func (r *V1EventBetaEntityTypeService) ListAutoPaging(ctx context.Context, query V1EventBetaEntityTypeListParams, opts ...option.RequestOption) *pagination.MyCursorIDPageAutoPager[V1EventBetaEntityTypeListResponse] {
-	return pagination.NewMyCursorIDPageAutoPager(r.List(ctx, query, opts...))
+func (r *V1EventBetaEntityTypeService) ListAutoPaging(ctx context.Context, params V1EventBetaEntityTypeListParams, opts ...option.RequestOption) *pagination.MyCursorIDPageAutoPager[V1EventBetaEntityTypeListResponse] {
+	return pagination.NewMyCursorIDPageAutoPager(r.List(ctx, params, opts...))
 }
 
 // Batched create-or-update of entity types. Existing types matched by id are
 // updated; new ids are created. Idempotent — re-submitting the same payload
 // converges to the same state.
-func (r *V1EventBetaEntityTypeService) Upsert(ctx context.Context, body V1EventBetaEntityTypeUpsertParams, opts ...option.RequestOption) (res *V1EventBetaEntityTypeUpsertResponse, err error) {
+func (r *V1EventBetaEntityTypeService) Upsert(ctx context.Context, params V1EventBetaEntityTypeUpsertParams, opts ...option.RequestOption) (res *V1EventBetaEntityTypeUpsertResponse, err error) {
+	if !param.IsOmitted(params.XAccountID) {
+		opts = append(opts, option.WithHeader("X-ACCOUNT-ID", fmt.Sprintf("%v", params.XAccountID.Value)))
+	}
+	if !param.IsOmitted(params.XEnvironmentID) {
+		opts = append(opts, option.WithHeader("X-ENVIRONMENT-ID", fmt.Sprintf("%v", params.XEnvironmentID.Value)))
+	}
 	opts = slices.Concat(r.Options, opts)
 	path := "api/v1-beta/entity-types"
-	err = requestconfig.ExecuteNewRequest(ctx, http.MethodPut, path, body, &res, opts...)
+	err = requestconfig.ExecuteNewRequest(ctx, http.MethodPut, path, params, &res, opts...)
 	return res, err
 }
 
@@ -165,7 +178,9 @@ type V1EventBetaEntityTypeListParams struct {
 	// Return items that come before this cursor
 	Before param.Opt[string] `query:"before,omitzero" format:"uuid" json:"-"`
 	// Maximum number of items to return
-	Limit param.Opt[int64] `query:"limit,omitzero" json:"-"`
+	Limit          param.Opt[int64]  `query:"limit,omitzero" json:"-"`
+	XAccountID     param.Opt[string] `header:"X-ACCOUNT-ID,omitzero" json:"-"`
+	XEnvironmentID param.Opt[string] `header:"X-ENVIRONMENT-ID,omitzero" json:"-"`
 	paramObj
 }
 
@@ -180,7 +195,9 @@ func (r V1EventBetaEntityTypeListParams) URLQuery() (v url.Values, err error) {
 
 type V1EventBetaEntityTypeUpsertParams struct {
 	// Entity types to upsert (1–100 per request)
-	Types []V1EventBetaEntityTypeUpsertParamsType `json:"types,omitzero" api:"required"`
+	Types          []V1EventBetaEntityTypeUpsertParamsType `json:"types,omitzero" api:"required"`
+	XAccountID     param.Opt[string]                       `header:"X-ACCOUNT-ID,omitzero" json:"-"`
+	XEnvironmentID param.Opt[string]                       `header:"X-ENVIRONMENT-ID,omitzero" json:"-"`
 	paramObj
 }
 

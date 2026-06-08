@@ -42,7 +42,13 @@ func NewV1FeatureService(opts ...option.RequestOption) (r V1FeatureService) {
 }
 
 // Archives a feature, preventing it from being used in new entitlements.
-func (r *V1FeatureService) ArchiveFeature(ctx context.Context, id string, opts ...option.RequestOption) (res *Feature, err error) {
+func (r *V1FeatureService) ArchiveFeature(ctx context.Context, id string, body V1FeatureArchiveFeatureParams, opts ...option.RequestOption) (res *Feature, err error) {
+	if !param.IsOmitted(body.XAccountID) {
+		opts = append(opts, option.WithHeader("X-ACCOUNT-ID", fmt.Sprintf("%v", body.XAccountID.Value)))
+	}
+	if !param.IsOmitted(body.XEnvironmentID) {
+		opts = append(opts, option.WithHeader("X-ENVIRONMENT-ID", fmt.Sprintf("%v", body.XEnvironmentID.Value)))
+	}
 	opts = slices.Concat(r.Options, opts)
 	if id == "" {
 		err = errors.New("missing required id parameter")
@@ -54,20 +60,32 @@ func (r *V1FeatureService) ArchiveFeature(ctx context.Context, id string, opts .
 }
 
 // Creates a new feature with the specified type, metering, and configuration.
-func (r *V1FeatureService) NewFeature(ctx context.Context, body V1FeatureNewFeatureParams, opts ...option.RequestOption) (res *Feature, err error) {
+func (r *V1FeatureService) NewFeature(ctx context.Context, params V1FeatureNewFeatureParams, opts ...option.RequestOption) (res *Feature, err error) {
+	if !param.IsOmitted(params.XAccountID) {
+		opts = append(opts, option.WithHeader("X-ACCOUNT-ID", fmt.Sprintf("%v", params.XAccountID.Value)))
+	}
+	if !param.IsOmitted(params.XEnvironmentID) {
+		opts = append(opts, option.WithHeader("X-ENVIRONMENT-ID", fmt.Sprintf("%v", params.XEnvironmentID.Value)))
+	}
 	opts = slices.Concat(r.Options, opts)
 	path := "api/v1/features"
-	err = requestconfig.ExecuteNewRequest(ctx, http.MethodPost, path, body, &res, opts...)
+	err = requestconfig.ExecuteNewRequest(ctx, http.MethodPost, path, params, &res, opts...)
 	return res, err
 }
 
 // Retrieves a paginated list of features in the environment.
-func (r *V1FeatureService) ListFeatures(ctx context.Context, query V1FeatureListFeaturesParams, opts ...option.RequestOption) (res *pagination.MyCursorIDPage[V1FeatureListFeaturesResponse], err error) {
+func (r *V1FeatureService) ListFeatures(ctx context.Context, params V1FeatureListFeaturesParams, opts ...option.RequestOption) (res *pagination.MyCursorIDPage[V1FeatureListFeaturesResponse], err error) {
 	var raw *http.Response
+	if !param.IsOmitted(params.XAccountID) {
+		opts = append(opts, option.WithHeader("X-ACCOUNT-ID", fmt.Sprintf("%v", params.XAccountID.Value)))
+	}
+	if !param.IsOmitted(params.XEnvironmentID) {
+		opts = append(opts, option.WithHeader("X-ENVIRONMENT-ID", fmt.Sprintf("%v", params.XEnvironmentID.Value)))
+	}
 	opts = slices.Concat(r.Options, opts)
 	opts = append([]option.RequestOption{option.WithResponseInto(&raw)}, opts...)
 	path := "api/v1/features"
-	cfg, err := requestconfig.NewRequestConfig(ctx, http.MethodGet, path, query, &res, opts...)
+	cfg, err := requestconfig.NewRequestConfig(ctx, http.MethodGet, path, params, &res, opts...)
 	if err != nil {
 		return nil, err
 	}
@@ -80,12 +98,18 @@ func (r *V1FeatureService) ListFeatures(ctx context.Context, query V1FeatureList
 }
 
 // Retrieves a paginated list of features in the environment.
-func (r *V1FeatureService) ListFeaturesAutoPaging(ctx context.Context, query V1FeatureListFeaturesParams, opts ...option.RequestOption) *pagination.MyCursorIDPageAutoPager[V1FeatureListFeaturesResponse] {
-	return pagination.NewMyCursorIDPageAutoPager(r.ListFeatures(ctx, query, opts...))
+func (r *V1FeatureService) ListFeaturesAutoPaging(ctx context.Context, params V1FeatureListFeaturesParams, opts ...option.RequestOption) *pagination.MyCursorIDPageAutoPager[V1FeatureListFeaturesResponse] {
+	return pagination.NewMyCursorIDPageAutoPager(r.ListFeatures(ctx, params, opts...))
 }
 
 // Retrieves a feature by its unique identifier.
-func (r *V1FeatureService) GetFeature(ctx context.Context, id string, opts ...option.RequestOption) (res *Feature, err error) {
+func (r *V1FeatureService) GetFeature(ctx context.Context, id string, query V1FeatureGetFeatureParams, opts ...option.RequestOption) (res *Feature, err error) {
+	if !param.IsOmitted(query.XAccountID) {
+		opts = append(opts, option.WithHeader("X-ACCOUNT-ID", fmt.Sprintf("%v", query.XAccountID.Value)))
+	}
+	if !param.IsOmitted(query.XEnvironmentID) {
+		opts = append(opts, option.WithHeader("X-ENVIRONMENT-ID", fmt.Sprintf("%v", query.XEnvironmentID.Value)))
+	}
 	opts = slices.Concat(r.Options, opts)
 	if id == "" {
 		err = errors.New("missing required id parameter")
@@ -97,7 +121,13 @@ func (r *V1FeatureService) GetFeature(ctx context.Context, id string, opts ...op
 }
 
 // Restores an archived feature, allowing it to be used in entitlements again.
-func (r *V1FeatureService) UnarchiveFeature(ctx context.Context, id string, opts ...option.RequestOption) (res *Feature, err error) {
+func (r *V1FeatureService) UnarchiveFeature(ctx context.Context, id string, body V1FeatureUnarchiveFeatureParams, opts ...option.RequestOption) (res *Feature, err error) {
+	if !param.IsOmitted(body.XAccountID) {
+		opts = append(opts, option.WithHeader("X-ACCOUNT-ID", fmt.Sprintf("%v", body.XAccountID.Value)))
+	}
+	if !param.IsOmitted(body.XEnvironmentID) {
+		opts = append(opts, option.WithHeader("X-ENVIRONMENT-ID", fmt.Sprintf("%v", body.XEnvironmentID.Value)))
+	}
 	opts = slices.Concat(r.Options, opts)
 	if id == "" {
 		err = errors.New("missing required id parameter")
@@ -110,14 +140,20 @@ func (r *V1FeatureService) UnarchiveFeature(ctx context.Context, id string, opts
 
 // Updates an existing feature's properties such as display name, description, and
 // configuration.
-func (r *V1FeatureService) UpdateFeature(ctx context.Context, id string, body V1FeatureUpdateFeatureParams, opts ...option.RequestOption) (res *Feature, err error) {
+func (r *V1FeatureService) UpdateFeature(ctx context.Context, id string, params V1FeatureUpdateFeatureParams, opts ...option.RequestOption) (res *Feature, err error) {
+	if !param.IsOmitted(params.XAccountID) {
+		opts = append(opts, option.WithHeader("X-ACCOUNT-ID", fmt.Sprintf("%v", params.XAccountID.Value)))
+	}
+	if !param.IsOmitted(params.XEnvironmentID) {
+		opts = append(opts, option.WithHeader("X-ENVIRONMENT-ID", fmt.Sprintf("%v", params.XEnvironmentID.Value)))
+	}
 	opts = slices.Concat(r.Options, opts)
 	if id == "" {
 		err = errors.New("missing required id parameter")
 		return nil, err
 	}
 	path := fmt.Sprintf("api/v1/features/%s", id)
-	err = requestconfig.ExecuteNewRequest(ctx, http.MethodPatch, path, body, &res, opts...)
+	err = requestconfig.ExecuteNewRequest(ctx, http.MethodPatch, path, params, &res, opts...)
 	return res, err
 }
 
@@ -384,6 +420,12 @@ func (r *V1FeatureListFeaturesResponseUnitTransformation) UnmarshalJSON(data []b
 	return apijson.UnmarshalRoot(data, r)
 }
 
+type V1FeatureArchiveFeatureParams struct {
+	XAccountID     param.Opt[string] `header:"X-ACCOUNT-ID,omitzero" json:"-"`
+	XEnvironmentID param.Opt[string] `header:"X-ENVIRONMENT-ID,omitzero" json:"-"`
+	paramObj
+}
+
 type V1FeatureNewFeatureParams struct {
 	// The unique identifier for the feature
 	ID string `json:"id" api:"required"`
@@ -399,6 +441,8 @@ type V1FeatureNewFeatureParams struct {
 	FeatureUnits param.Opt[string] `json:"featureUnits,omitzero"`
 	// The plural units for the feature
 	FeatureUnitsPlural param.Opt[string] `json:"featureUnitsPlural,omitzero"`
+	XAccountID         param.Opt[string] `header:"X-ACCOUNT-ID,omitzero" json:"-"`
+	XEnvironmentID     param.Opt[string] `header:"X-ENVIRONMENT-ID,omitzero" json:"-"`
 	// Unit transformation to be applied to the reported usage
 	UnitTransformation V1FeatureNewFeatureParamsUnitTransformation `json:"unitTransformation,omitzero"`
 	// The configuration data for the feature
@@ -507,7 +551,9 @@ type V1FeatureListFeaturesParams struct {
 	// Return items that come before this cursor
 	Before param.Opt[string] `query:"before,omitzero" format:"uuid" json:"-"`
 	// Maximum number of items to return
-	Limit param.Opt[int64] `query:"limit,omitzero" json:"-"`
+	Limit          param.Opt[int64]  `query:"limit,omitzero" json:"-"`
+	XAccountID     param.Opt[string] `header:"X-ACCOUNT-ID,omitzero" json:"-"`
+	XEnvironmentID param.Opt[string] `header:"X-ENVIRONMENT-ID,omitzero" json:"-"`
 	// Filter by creation date using range operators: gt, gte, lt, lte
 	CreatedAt V1FeatureListFeaturesParamsCreatedAt `query:"createdAt,omitzero" json:"-"`
 	// Filter by feature type. Supports comma-separated values for multiple types
@@ -556,6 +602,18 @@ func (r V1FeatureListFeaturesParamsCreatedAt) URLQuery() (v url.Values, err erro
 	})
 }
 
+type V1FeatureGetFeatureParams struct {
+	XAccountID     param.Opt[string] `header:"X-ACCOUNT-ID,omitzero" json:"-"`
+	XEnvironmentID param.Opt[string] `header:"X-ENVIRONMENT-ID,omitzero" json:"-"`
+	paramObj
+}
+
+type V1FeatureUnarchiveFeatureParams struct {
+	XAccountID     param.Opt[string] `header:"X-ACCOUNT-ID,omitzero" json:"-"`
+	XEnvironmentID param.Opt[string] `header:"X-ENVIRONMENT-ID,omitzero" json:"-"`
+	paramObj
+}
+
 type V1FeatureUpdateFeatureParams struct {
 	// The description for the feature
 	Description param.Opt[string] `json:"description,omitzero"`
@@ -565,6 +623,8 @@ type V1FeatureUpdateFeatureParams struct {
 	FeatureUnits param.Opt[string] `json:"featureUnits,omitzero"`
 	// The plural units for the feature
 	FeatureUnitsPlural param.Opt[string] `json:"featureUnitsPlural,omitzero"`
+	XAccountID         param.Opt[string] `header:"X-ACCOUNT-ID,omitzero" json:"-"`
+	XEnvironmentID     param.Opt[string] `header:"X-ENVIRONMENT-ID,omitzero" json:"-"`
 	// Unit transformation to be applied to the reported usage
 	UnitTransformation V1FeatureUpdateFeatureParamsUnitTransformation `json:"unitTransformation,omitzero"`
 	// The configuration data for the feature

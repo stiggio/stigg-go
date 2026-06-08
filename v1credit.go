@@ -4,6 +4,7 @@ package stigg
 
 import (
 	"context"
+	"fmt"
 	"net/http"
 	"net/url"
 	"slices"
@@ -45,29 +46,47 @@ func NewV1CreditService(opts ...option.RequestOption) (r V1CreditService) {
 
 // Retrieves the automatic recharge configuration for a customer and currency.
 // Returns default settings if no configuration exists.
-func (r *V1CreditService) GetAutoRecharge(ctx context.Context, query V1CreditGetAutoRechargeParams, opts ...option.RequestOption) (res *V1CreditGetAutoRechargeResponse, err error) {
+func (r *V1CreditService) GetAutoRecharge(ctx context.Context, params V1CreditGetAutoRechargeParams, opts ...option.RequestOption) (res *V1CreditGetAutoRechargeResponse, err error) {
+	if !param.IsOmitted(params.XAccountID) {
+		opts = append(opts, option.WithHeader("X-ACCOUNT-ID", fmt.Sprintf("%v", params.XAccountID.Value)))
+	}
+	if !param.IsOmitted(params.XEnvironmentID) {
+		opts = append(opts, option.WithHeader("X-ENVIRONMENT-ID", fmt.Sprintf("%v", params.XEnvironmentID.Value)))
+	}
 	opts = slices.Concat(r.Options, opts)
 	path := "api/v1/credits/auto-recharge"
-	err = requestconfig.ExecuteNewRequest(ctx, http.MethodGet, path, query, &res, opts...)
+	err = requestconfig.ExecuteNewRequest(ctx, http.MethodGet, path, params, &res, opts...)
 	return res, err
 }
 
 // Retrieves credit usage time-series data for a customer, grouped by feature, over
 // a specified time range.
-func (r *V1CreditService) GetUsage(ctx context.Context, query V1CreditGetUsageParams, opts ...option.RequestOption) (res *V1CreditGetUsageResponse, err error) {
+func (r *V1CreditService) GetUsage(ctx context.Context, params V1CreditGetUsageParams, opts ...option.RequestOption) (res *V1CreditGetUsageResponse, err error) {
+	if !param.IsOmitted(params.XAccountID) {
+		opts = append(opts, option.WithHeader("X-ACCOUNT-ID", fmt.Sprintf("%v", params.XAccountID.Value)))
+	}
+	if !param.IsOmitted(params.XEnvironmentID) {
+		opts = append(opts, option.WithHeader("X-ENVIRONMENT-ID", fmt.Sprintf("%v", params.XEnvironmentID.Value)))
+	}
 	opts = slices.Concat(r.Options, opts)
 	path := "api/v1/credits/usage"
-	err = requestconfig.ExecuteNewRequest(ctx, http.MethodGet, path, query, &res, opts...)
+	err = requestconfig.ExecuteNewRequest(ctx, http.MethodGet, path, params, &res, opts...)
 	return res, err
 }
 
 // Retrieves a paginated list of credit ledger events for a customer.
-func (r *V1CreditService) ListLedger(ctx context.Context, query V1CreditListLedgerParams, opts ...option.RequestOption) (res *pagination.MyCursorIDPage[V1CreditListLedgerResponse], err error) {
+func (r *V1CreditService) ListLedger(ctx context.Context, params V1CreditListLedgerParams, opts ...option.RequestOption) (res *pagination.MyCursorIDPage[V1CreditListLedgerResponse], err error) {
 	var raw *http.Response
+	if !param.IsOmitted(params.XAccountID) {
+		opts = append(opts, option.WithHeader("X-ACCOUNT-ID", fmt.Sprintf("%v", params.XAccountID.Value)))
+	}
+	if !param.IsOmitted(params.XEnvironmentID) {
+		opts = append(opts, option.WithHeader("X-ENVIRONMENT-ID", fmt.Sprintf("%v", params.XEnvironmentID.Value)))
+	}
 	opts = slices.Concat(r.Options, opts)
 	opts = append([]option.RequestOption{option.WithResponseInto(&raw)}, opts...)
 	path := "api/v1/credits/ledger"
-	cfg, err := requestconfig.NewRequestConfig(ctx, http.MethodGet, path, query, &res, opts...)
+	cfg, err := requestconfig.NewRequestConfig(ctx, http.MethodGet, path, params, &res, opts...)
 	if err != nil {
 		return nil, err
 	}
@@ -80,8 +99,8 @@ func (r *V1CreditService) ListLedger(ctx context.Context, query V1CreditListLedg
 }
 
 // Retrieves a paginated list of credit ledger events for a customer.
-func (r *V1CreditService) ListLedgerAutoPaging(ctx context.Context, query V1CreditListLedgerParams, opts ...option.RequestOption) *pagination.MyCursorIDPageAutoPager[V1CreditListLedgerResponse] {
-	return pagination.NewMyCursorIDPageAutoPager(r.ListLedger(ctx, query, opts...))
+func (r *V1CreditService) ListLedgerAutoPaging(ctx context.Context, params V1CreditListLedgerParams, opts ...option.RequestOption) *pagination.MyCursorIDPageAutoPager[V1CreditListLedgerResponse] {
+	return pagination.NewMyCursorIDPageAutoPager(r.ListLedger(ctx, params, opts...))
 }
 
 // Response object
@@ -387,7 +406,9 @@ type V1CreditGetAutoRechargeParams struct {
 	// Filter by currency ID (required)
 	CurrencyID string `query:"currencyId" api:"required" json:"-"`
 	// Filter by customer ID (required)
-	CustomerID string `query:"customerId" api:"required" json:"-"`
+	CustomerID     string            `query:"customerId" api:"required" json:"-"`
+	XAccountID     param.Opt[string] `header:"X-ACCOUNT-ID,omitzero" json:"-"`
+	XEnvironmentID param.Opt[string] `header:"X-ENVIRONMENT-ID,omitzero" json:"-"`
 	paramObj
 }
 
@@ -421,7 +442,9 @@ type V1CreditGetUsageParams struct {
 	ResourceID param.Opt[string] `query:"resourceId,omitzero" json:"-"`
 	// Start date for the credit usage time range (ISO 8601). Takes precedence over
 	// timeRange when provided
-	StartDate param.Opt[time.Time] `query:"startDate,omitzero" format:"date-time" json:"-"`
+	StartDate      param.Opt[time.Time] `query:"startDate,omitzero" format:"date-time" json:"-"`
+	XAccountID     param.Opt[string]    `header:"X-ACCOUNT-ID,omitzero" json:"-"`
+	XEnvironmentID param.Opt[string]    `header:"X-ENVIRONMENT-ID,omitzero" json:"-"`
 	// Time range for usage data (LAST_DAY, LAST_WEEK, LAST_MONTH, LAST_YEAR). Defaults
 	// to LAST_MONTH
 	//
@@ -461,7 +484,9 @@ type V1CreditListLedgerParams struct {
 	// Maximum number of items to return
 	Limit param.Opt[int64] `query:"limit,omitzero" json:"-"`
 	// Filter by resource ID
-	ResourceID param.Opt[string] `query:"resourceId,omitzero" json:"-"`
+	ResourceID     param.Opt[string] `query:"resourceId,omitzero" json:"-"`
+	XAccountID     param.Opt[string] `header:"X-ACCOUNT-ID,omitzero" json:"-"`
+	XEnvironmentID param.Opt[string] `header:"X-ENVIRONMENT-ID,omitzero" json:"-"`
 	paramObj
 }
 

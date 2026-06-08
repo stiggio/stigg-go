@@ -42,8 +42,14 @@ func NewV1EventBetaCustomerAssignmentService(opts ...option.RequestOption) (r V1
 // Returns a cursor-paginated list of capability assignments for the given
 // customer. An assignment ties an entity to a capability with a usage limit and
 // reset cadence.
-func (r *V1EventBetaCustomerAssignmentService) List(ctx context.Context, id string, query V1EventBetaCustomerAssignmentListParams, opts ...option.RequestOption) (res *pagination.MyCursorIDPage[V1EventBetaCustomerAssignmentListResponse], err error) {
+func (r *V1EventBetaCustomerAssignmentService) List(ctx context.Context, id string, params V1EventBetaCustomerAssignmentListParams, opts ...option.RequestOption) (res *pagination.MyCursorIDPage[V1EventBetaCustomerAssignmentListResponse], err error) {
 	var raw *http.Response
+	if !param.IsOmitted(params.XAccountID) {
+		opts = append(opts, option.WithHeader("X-ACCOUNT-ID", fmt.Sprintf("%v", params.XAccountID.Value)))
+	}
+	if !param.IsOmitted(params.XEnvironmentID) {
+		opts = append(opts, option.WithHeader("X-ENVIRONMENT-ID", fmt.Sprintf("%v", params.XEnvironmentID.Value)))
+	}
 	opts = slices.Concat(r.Options, opts)
 	opts = append([]option.RequestOption{option.WithResponseInto(&raw)}, opts...)
 	if id == "" {
@@ -51,7 +57,7 @@ func (r *V1EventBetaCustomerAssignmentService) List(ctx context.Context, id stri
 		return nil, err
 	}
 	path := fmt.Sprintf("api/v1-beta/customers/%s/assignments", id)
-	cfg, err := requestconfig.NewRequestConfig(ctx, http.MethodGet, path, query, &res, opts...)
+	cfg, err := requestconfig.NewRequestConfig(ctx, http.MethodGet, path, params, &res, opts...)
 	if err != nil {
 		return nil, err
 	}
@@ -66,22 +72,28 @@ func (r *V1EventBetaCustomerAssignmentService) List(ctx context.Context, id stri
 // Returns a cursor-paginated list of capability assignments for the given
 // customer. An assignment ties an entity to a capability with a usage limit and
 // reset cadence.
-func (r *V1EventBetaCustomerAssignmentService) ListAutoPaging(ctx context.Context, id string, query V1EventBetaCustomerAssignmentListParams, opts ...option.RequestOption) *pagination.MyCursorIDPageAutoPager[V1EventBetaCustomerAssignmentListResponse] {
-	return pagination.NewMyCursorIDPageAutoPager(r.List(ctx, id, query, opts...))
+func (r *V1EventBetaCustomerAssignmentService) ListAutoPaging(ctx context.Context, id string, params V1EventBetaCustomerAssignmentListParams, opts ...option.RequestOption) *pagination.MyCursorIDPageAutoPager[V1EventBetaCustomerAssignmentListResponse] {
+	return pagination.NewMyCursorIDPageAutoPager(r.List(ctx, id, params, opts...))
 }
 
 // Batched create-or-update of capability assignments. Existing assignments matched
 // by (entityId, capabilityId) are updated; new pairs are created. On update,
 // omitted fields (usageLimit, cadence) are preserved; on create both are required
 // by the governance service.
-func (r *V1EventBetaCustomerAssignmentService) Upsert(ctx context.Context, id string, body V1EventBetaCustomerAssignmentUpsertParams, opts ...option.RequestOption) (res *V1EventBetaCustomerAssignmentUpsertResponse, err error) {
+func (r *V1EventBetaCustomerAssignmentService) Upsert(ctx context.Context, id string, params V1EventBetaCustomerAssignmentUpsertParams, opts ...option.RequestOption) (res *V1EventBetaCustomerAssignmentUpsertResponse, err error) {
+	if !param.IsOmitted(params.XAccountID) {
+		opts = append(opts, option.WithHeader("X-ACCOUNT-ID", fmt.Sprintf("%v", params.XAccountID.Value)))
+	}
+	if !param.IsOmitted(params.XEnvironmentID) {
+		opts = append(opts, option.WithHeader("X-ENVIRONMENT-ID", fmt.Sprintf("%v", params.XEnvironmentID.Value)))
+	}
 	opts = slices.Concat(r.Options, opts)
 	if id == "" {
 		err = errors.New("missing required id parameter")
 		return nil, err
 	}
 	path := fmt.Sprintf("api/v1-beta/customers/%s/assignments", id)
-	err = requestconfig.ExecuteNewRequest(ctx, http.MethodPut, path, body, &res, opts...)
+	err = requestconfig.ExecuteNewRequest(ctx, http.MethodPut, path, params, &res, opts...)
 	return res, err
 }
 
@@ -199,7 +211,9 @@ type V1EventBetaCustomerAssignmentListParams struct {
 	// Filter assignments to a specific entity refId
 	EntityID param.Opt[string] `query:"entityId,omitzero" json:"-"`
 	// Maximum number of items to return
-	Limit param.Opt[int64] `query:"limit,omitzero" json:"-"`
+	Limit          param.Opt[int64]  `query:"limit,omitzero" json:"-"`
+	XAccountID     param.Opt[string] `header:"X-ACCOUNT-ID,omitzero" json:"-"`
+	XEnvironmentID param.Opt[string] `header:"X-ENVIRONMENT-ID,omitzero" json:"-"`
 	paramObj
 }
 
@@ -214,7 +228,9 @@ func (r V1EventBetaCustomerAssignmentListParams) URLQuery() (v url.Values, err e
 
 type V1EventBetaCustomerAssignmentUpsertParams struct {
 	// Assignments to upsert (1–100 per request)
-	Assignments []V1EventBetaCustomerAssignmentUpsertParamsAssignment `json:"assignments,omitzero" api:"required"`
+	Assignments    []V1EventBetaCustomerAssignmentUpsertParamsAssignment `json:"assignments,omitzero" api:"required"`
+	XAccountID     param.Opt[string]                                     `header:"X-ACCOUNT-ID,omitzero" json:"-"`
+	XEnvironmentID param.Opt[string]                                     `header:"X-ENVIRONMENT-ID,omitzero" json:"-"`
 	paramObj
 }
 

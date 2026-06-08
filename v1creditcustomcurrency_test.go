@@ -38,6 +38,8 @@ func TestV1CreditCustomCurrencyNewWithOptionalParams(t *testing.T) {
 			Plural:   "plural",
 			Singular: "singular",
 		},
+		XAccountID:     stigg.String("X-ACCOUNT-ID"),
+		XEnvironmentID: stigg.String("X-ENVIRONMENT-ID"),
 	})
 	if err != nil {
 		var apierr *stigg.Error
@@ -75,6 +77,8 @@ func TestV1CreditCustomCurrencyUpdateWithOptionalParams(t *testing.T) {
 				Plural:   "plural",
 				Singular: "singular",
 			},
+			XAccountID:     stigg.String("X-ACCOUNT-ID"),
+			XEnvironmentID: stigg.String("X-ENVIRONMENT-ID"),
 		},
 	)
 	if err != nil {
@@ -100,10 +104,12 @@ func TestV1CreditCustomCurrencyListWithOptionalParams(t *testing.T) {
 		option.WithAPIKey("My API Key"),
 	)
 	_, err := client.V1.Credits.CustomCurrencies.List(context.TODO(), stigg.V1CreditCustomCurrencyListParams{
-		After:  stigg.String("182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e"),
-		Before: stigg.String("182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e"),
-		Limit:  stigg.Int(1),
-		Status: []string{"ACTIVE"},
+		After:          stigg.String("182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e"),
+		Before:         stigg.String("182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e"),
+		Limit:          stigg.Int(1),
+		Status:         []string{"ACTIVE"},
+		XAccountID:     stigg.String("X-ACCOUNT-ID"),
+		XEnvironmentID: stigg.String("X-ENVIRONMENT-ID"),
 	})
 	if err != nil {
 		var apierr *stigg.Error
@@ -114,7 +120,7 @@ func TestV1CreditCustomCurrencyListWithOptionalParams(t *testing.T) {
 	}
 }
 
-func TestV1CreditCustomCurrencyArchive(t *testing.T) {
+func TestV1CreditCustomCurrencyArchiveWithOptionalParams(t *testing.T) {
 	t.Skip("Mock server tests are disabled")
 	baseURL := "http://localhost:4010"
 	if envURL, ok := os.LookupEnv("TEST_API_BASE_URL"); ok {
@@ -127,7 +133,14 @@ func TestV1CreditCustomCurrencyArchive(t *testing.T) {
 		option.WithBaseURL(baseURL),
 		option.WithAPIKey("My API Key"),
 	)
-	_, err := client.V1.Credits.CustomCurrencies.Archive(context.TODO(), "currencyId")
+	_, err := client.V1.Credits.CustomCurrencies.Archive(
+		context.TODO(),
+		"currencyId",
+		stigg.V1CreditCustomCurrencyArchiveParams{
+			XAccountID:     stigg.String("X-ACCOUNT-ID"),
+			XEnvironmentID: stigg.String("X-ENVIRONMENT-ID"),
+		},
+	)
 	if err != nil {
 		var apierr *stigg.Error
 		if errors.As(err, &apierr) {
@@ -137,7 +150,7 @@ func TestV1CreditCustomCurrencyArchive(t *testing.T) {
 	}
 }
 
-func TestV1CreditCustomCurrencyListAssociatedEntities(t *testing.T) {
+func TestV1CreditCustomCurrencyListAssociatedEntitiesWithOptionalParams(t *testing.T) {
 	t.Skip("Mock server tests are disabled")
 	baseURL := "http://localhost:4010"
 	if envURL, ok := os.LookupEnv("TEST_API_BASE_URL"); ok {
@@ -150,7 +163,14 @@ func TestV1CreditCustomCurrencyListAssociatedEntities(t *testing.T) {
 		option.WithBaseURL(baseURL),
 		option.WithAPIKey("My API Key"),
 	)
-	_, err := client.V1.Credits.CustomCurrencies.ListAssociatedEntities(context.TODO(), "currencyId")
+	_, err := client.V1.Credits.CustomCurrencies.ListAssociatedEntities(
+		context.TODO(),
+		"currencyId",
+		stigg.V1CreditCustomCurrencyListAssociatedEntitiesParams{
+			XAccountID:     stigg.String("X-ACCOUNT-ID"),
+			XEnvironmentID: stigg.String("X-ENVIRONMENT-ID"),
+		},
+	)
 	if err != nil {
 		var apierr *stigg.Error
 		if errors.As(err, &apierr) {
@@ -160,7 +180,7 @@ func TestV1CreditCustomCurrencyListAssociatedEntities(t *testing.T) {
 	}
 }
 
-func TestV1CreditCustomCurrencyUnarchive(t *testing.T) {
+func TestV1CreditCustomCurrencyUnarchiveWithOptionalParams(t *testing.T) {
 	t.Skip("Mock server tests are disabled")
 	baseURL := "http://localhost:4010"
 	if envURL, ok := os.LookupEnv("TEST_API_BASE_URL"); ok {
@@ -173,7 +193,14 @@ func TestV1CreditCustomCurrencyUnarchive(t *testing.T) {
 		option.WithBaseURL(baseURL),
 		option.WithAPIKey("My API Key"),
 	)
-	_, err := client.V1.Credits.CustomCurrencies.Unarchive(context.TODO(), "currencyId")
+	_, err := client.V1.Credits.CustomCurrencies.Unarchive(
+		context.TODO(),
+		"currencyId",
+		stigg.V1CreditCustomCurrencyUnarchiveParams{
+			XAccountID:     stigg.String("X-ACCOUNT-ID"),
+			XEnvironmentID: stigg.String("X-ENVIRONMENT-ID"),
+		},
+	)
 	if err != nil {
 		var apierr *stigg.Error
 		if errors.As(err, &apierr) {

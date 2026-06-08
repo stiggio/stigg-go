@@ -44,16 +44,28 @@ func NewV1AddonService(opts ...option.RequestOption) (r V1AddonService) {
 }
 
 // Creates a new addon in draft status, associated with a specific product.
-func (r *V1AddonService) New(ctx context.Context, body V1AddonNewParams, opts ...option.RequestOption) (res *Addon, err error) {
+func (r *V1AddonService) New(ctx context.Context, params V1AddonNewParams, opts ...option.RequestOption) (res *Addon, err error) {
+	if !param.IsOmitted(params.XAccountID) {
+		opts = append(opts, option.WithHeader("X-ACCOUNT-ID", fmt.Sprintf("%v", params.XAccountID.Value)))
+	}
+	if !param.IsOmitted(params.XEnvironmentID) {
+		opts = append(opts, option.WithHeader("X-ENVIRONMENT-ID", fmt.Sprintf("%v", params.XEnvironmentID.Value)))
+	}
 	opts = slices.Concat(r.Options, opts)
 	path := "api/v1/addons"
-	err = requestconfig.ExecuteNewRequest(ctx, http.MethodPost, path, body, &res, opts...)
+	err = requestconfig.ExecuteNewRequest(ctx, http.MethodPost, path, params, &res, opts...)
 	return res, err
 }
 
 // Retrieves an addon by its unique identifier, including entitlements and pricing
 // details.
-func (r *V1AddonService) Get(ctx context.Context, id string, opts ...option.RequestOption) (res *Addon, err error) {
+func (r *V1AddonService) Get(ctx context.Context, id string, query V1AddonGetParams, opts ...option.RequestOption) (res *Addon, err error) {
+	if !param.IsOmitted(query.XAccountID) {
+		opts = append(opts, option.WithHeader("X-ACCOUNT-ID", fmt.Sprintf("%v", query.XAccountID.Value)))
+	}
+	if !param.IsOmitted(query.XEnvironmentID) {
+		opts = append(opts, option.WithHeader("X-ENVIRONMENT-ID", fmt.Sprintf("%v", query.XEnvironmentID.Value)))
+	}
 	opts = slices.Concat(r.Options, opts)
 	if id == "" {
 		err = errors.New("missing required id parameter")
@@ -66,24 +78,36 @@ func (r *V1AddonService) Get(ctx context.Context, id string, opts ...option.Requ
 
 // Updates an existing addon's properties such as display name, description, and
 // metadata.
-func (r *V1AddonService) Update(ctx context.Context, id string, body V1AddonUpdateParams, opts ...option.RequestOption) (res *Addon, err error) {
+func (r *V1AddonService) Update(ctx context.Context, id string, params V1AddonUpdateParams, opts ...option.RequestOption) (res *Addon, err error) {
+	if !param.IsOmitted(params.XAccountID) {
+		opts = append(opts, option.WithHeader("X-ACCOUNT-ID", fmt.Sprintf("%v", params.XAccountID.Value)))
+	}
+	if !param.IsOmitted(params.XEnvironmentID) {
+		opts = append(opts, option.WithHeader("X-ENVIRONMENT-ID", fmt.Sprintf("%v", params.XEnvironmentID.Value)))
+	}
 	opts = slices.Concat(r.Options, opts)
 	if id == "" {
 		err = errors.New("missing required id parameter")
 		return nil, err
 	}
 	path := fmt.Sprintf("api/v1/addons/%s", id)
-	err = requestconfig.ExecuteNewRequest(ctx, http.MethodPatch, path, body, &res, opts...)
+	err = requestconfig.ExecuteNewRequest(ctx, http.MethodPatch, path, params, &res, opts...)
 	return res, err
 }
 
 // Retrieves a paginated list of addons in the environment.
-func (r *V1AddonService) List(ctx context.Context, query V1AddonListParams, opts ...option.RequestOption) (res *pagination.MyCursorIDPage[V1AddonListResponse], err error) {
+func (r *V1AddonService) List(ctx context.Context, params V1AddonListParams, opts ...option.RequestOption) (res *pagination.MyCursorIDPage[V1AddonListResponse], err error) {
 	var raw *http.Response
+	if !param.IsOmitted(params.XAccountID) {
+		opts = append(opts, option.WithHeader("X-ACCOUNT-ID", fmt.Sprintf("%v", params.XAccountID.Value)))
+	}
+	if !param.IsOmitted(params.XEnvironmentID) {
+		opts = append(opts, option.WithHeader("X-ENVIRONMENT-ID", fmt.Sprintf("%v", params.XEnvironmentID.Value)))
+	}
 	opts = slices.Concat(r.Options, opts)
 	opts = append([]option.RequestOption{option.WithResponseInto(&raw)}, opts...)
 	path := "api/v1/addons"
-	cfg, err := requestconfig.NewRequestConfig(ctx, http.MethodGet, path, query, &res, opts...)
+	cfg, err := requestconfig.NewRequestConfig(ctx, http.MethodGet, path, params, &res, opts...)
 	if err != nil {
 		return nil, err
 	}
@@ -96,12 +120,18 @@ func (r *V1AddonService) List(ctx context.Context, query V1AddonListParams, opts
 }
 
 // Retrieves a paginated list of addons in the environment.
-func (r *V1AddonService) ListAutoPaging(ctx context.Context, query V1AddonListParams, opts ...option.RequestOption) *pagination.MyCursorIDPageAutoPager[V1AddonListResponse] {
-	return pagination.NewMyCursorIDPageAutoPager(r.List(ctx, query, opts...))
+func (r *V1AddonService) ListAutoPaging(ctx context.Context, params V1AddonListParams, opts ...option.RequestOption) *pagination.MyCursorIDPageAutoPager[V1AddonListResponse] {
+	return pagination.NewMyCursorIDPageAutoPager(r.List(ctx, params, opts...))
 }
 
 // Archives an addon, preventing it from being used in new subscriptions.
-func (r *V1AddonService) Archive(ctx context.Context, id string, opts ...option.RequestOption) (res *Addon, err error) {
+func (r *V1AddonService) Archive(ctx context.Context, id string, body V1AddonArchiveParams, opts ...option.RequestOption) (res *Addon, err error) {
+	if !param.IsOmitted(body.XAccountID) {
+		opts = append(opts, option.WithHeader("X-ACCOUNT-ID", fmt.Sprintf("%v", body.XAccountID.Value)))
+	}
+	if !param.IsOmitted(body.XEnvironmentID) {
+		opts = append(opts, option.WithHeader("X-ENVIRONMENT-ID", fmt.Sprintf("%v", body.XEnvironmentID.Value)))
+	}
 	opts = slices.Concat(r.Options, opts)
 	if id == "" {
 		err = errors.New("missing required id parameter")
@@ -113,7 +143,13 @@ func (r *V1AddonService) Archive(ctx context.Context, id string, opts ...option.
 }
 
 // Creates a draft version of an existing addon for modification before publishing.
-func (r *V1AddonService) NewDraft(ctx context.Context, id string, opts ...option.RequestOption) (res *Addon, err error) {
+func (r *V1AddonService) NewDraft(ctx context.Context, id string, body V1AddonNewDraftParams, opts ...option.RequestOption) (res *Addon, err error) {
+	if !param.IsOmitted(body.XAccountID) {
+		opts = append(opts, option.WithHeader("X-ACCOUNT-ID", fmt.Sprintf("%v", body.XAccountID.Value)))
+	}
+	if !param.IsOmitted(body.XEnvironmentID) {
+		opts = append(opts, option.WithHeader("X-ENVIRONMENT-ID", fmt.Sprintf("%v", body.XEnvironmentID.Value)))
+	}
 	opts = slices.Concat(r.Options, opts)
 	if id == "" {
 		err = errors.New("missing required id parameter")
@@ -125,8 +161,14 @@ func (r *V1AddonService) NewDraft(ctx context.Context, id string, opts ...option
 }
 
 // Retrieves the list of charges configured on an addon.
-func (r *V1AddonService) ListCharges(ctx context.Context, id string, query V1AddonListChargesParams, opts ...option.RequestOption) (res *pagination.MyCursorIDPage[V1AddonListChargesResponse], err error) {
+func (r *V1AddonService) ListCharges(ctx context.Context, id string, params V1AddonListChargesParams, opts ...option.RequestOption) (res *pagination.MyCursorIDPage[V1AddonListChargesResponse], err error) {
 	var raw *http.Response
+	if !param.IsOmitted(params.XAccountID) {
+		opts = append(opts, option.WithHeader("X-ACCOUNT-ID", fmt.Sprintf("%v", params.XAccountID.Value)))
+	}
+	if !param.IsOmitted(params.XEnvironmentID) {
+		opts = append(opts, option.WithHeader("X-ENVIRONMENT-ID", fmt.Sprintf("%v", params.XEnvironmentID.Value)))
+	}
 	opts = slices.Concat(r.Options, opts)
 	opts = append([]option.RequestOption{option.WithResponseInto(&raw)}, opts...)
 	if id == "" {
@@ -134,7 +176,7 @@ func (r *V1AddonService) ListCharges(ctx context.Context, id string, query V1Add
 		return nil, err
 	}
 	path := fmt.Sprintf("api/v1/addons/%s/charges", id)
-	cfg, err := requestconfig.NewRequestConfig(ctx, http.MethodGet, path, query, &res, opts...)
+	cfg, err := requestconfig.NewRequestConfig(ctx, http.MethodGet, path, params, &res, opts...)
 	if err != nil {
 		return nil, err
 	}
@@ -147,24 +189,36 @@ func (r *V1AddonService) ListCharges(ctx context.Context, id string, query V1Add
 }
 
 // Retrieves the list of charges configured on an addon.
-func (r *V1AddonService) ListChargesAutoPaging(ctx context.Context, id string, query V1AddonListChargesParams, opts ...option.RequestOption) *pagination.MyCursorIDPageAutoPager[V1AddonListChargesResponse] {
-	return pagination.NewMyCursorIDPageAutoPager(r.ListCharges(ctx, id, query, opts...))
+func (r *V1AddonService) ListChargesAutoPaging(ctx context.Context, id string, params V1AddonListChargesParams, opts ...option.RequestOption) *pagination.MyCursorIDPageAutoPager[V1AddonListChargesResponse] {
+	return pagination.NewMyCursorIDPageAutoPager(r.ListCharges(ctx, id, params, opts...))
 }
 
 // Publishes a draft addon, making it available for use in subscriptions.
-func (r *V1AddonService) Publish(ctx context.Context, id string, body V1AddonPublishParams, opts ...option.RequestOption) (res *V1AddonPublishResponse, err error) {
+func (r *V1AddonService) Publish(ctx context.Context, id string, params V1AddonPublishParams, opts ...option.RequestOption) (res *V1AddonPublishResponse, err error) {
+	if !param.IsOmitted(params.XAccountID) {
+		opts = append(opts, option.WithHeader("X-ACCOUNT-ID", fmt.Sprintf("%v", params.XAccountID.Value)))
+	}
+	if !param.IsOmitted(params.XEnvironmentID) {
+		opts = append(opts, option.WithHeader("X-ENVIRONMENT-ID", fmt.Sprintf("%v", params.XEnvironmentID.Value)))
+	}
 	opts = slices.Concat(r.Options, opts)
 	if id == "" {
 		err = errors.New("missing required id parameter")
 		return nil, err
 	}
 	path := fmt.Sprintf("api/v1/addons/%s/publish", id)
-	err = requestconfig.ExecuteNewRequest(ctx, http.MethodPost, path, body, &res, opts...)
+	err = requestconfig.ExecuteNewRequest(ctx, http.MethodPost, path, params, &res, opts...)
 	return res, err
 }
 
 // Removes a draft version of an addon.
-func (r *V1AddonService) RemoveDraft(ctx context.Context, id string, opts ...option.RequestOption) (res *V1AddonRemoveDraftResponse, err error) {
+func (r *V1AddonService) RemoveDraft(ctx context.Context, id string, body V1AddonRemoveDraftParams, opts ...option.RequestOption) (res *V1AddonRemoveDraftResponse, err error) {
+	if !param.IsOmitted(body.XAccountID) {
+		opts = append(opts, option.WithHeader("X-ACCOUNT-ID", fmt.Sprintf("%v", body.XAccountID.Value)))
+	}
+	if !param.IsOmitted(body.XEnvironmentID) {
+		opts = append(opts, option.WithHeader("X-ENVIRONMENT-ID", fmt.Sprintf("%v", body.XEnvironmentID.Value)))
+	}
 	opts = slices.Concat(r.Options, opts)
 	if id == "" {
 		err = errors.New("missing required id parameter")
@@ -738,7 +792,9 @@ type V1AddonNewParams struct {
 	// The description of the package
 	Description param.Opt[string] `json:"description,omitzero"`
 	// The maximum quantity of this addon that can be added to a subscription
-	MaxQuantity param.Opt[int64] `json:"maxQuantity,omitzero"`
+	MaxQuantity    param.Opt[int64]  `json:"maxQuantity,omitzero"`
+	XAccountID     param.Opt[string] `header:"X-ACCOUNT-ID,omitzero" json:"-"`
+	XEnvironmentID param.Opt[string] `header:"X-ENVIRONMENT-ID,omitzero" json:"-"`
 	// The pricing type of the package
 	//
 	// Any of "FREE", "PAID", "CUSTOM".
@@ -778,6 +834,12 @@ const (
 	V1AddonNewParamsStatusArchived  V1AddonNewParamsStatus = "ARCHIVED"
 )
 
+type V1AddonGetParams struct {
+	XAccountID     param.Opt[string] `header:"X-ACCOUNT-ID,omitzero" json:"-"`
+	XEnvironmentID param.Opt[string] `header:"X-ENVIRONMENT-ID,omitzero" json:"-"`
+	paramObj
+}
+
 type V1AddonUpdateParams struct {
 	// The unique identifier for the entity in the billing provider
 	BillingID param.Opt[string] `json:"billingId,omitzero"`
@@ -786,7 +848,9 @@ type V1AddonUpdateParams struct {
 	// The maximum quantity of this addon that can be added to a subscription
 	MaxQuantity param.Opt[int64] `json:"maxQuantity,omitzero"`
 	// The display name of the package
-	DisplayName param.Opt[string] `json:"displayName,omitzero"`
+	DisplayName    param.Opt[string] `json:"displayName,omitzero"`
+	XAccountID     param.Opt[string] `header:"X-ACCOUNT-ID,omitzero" json:"-"`
+	XEnvironmentID param.Opt[string] `header:"X-ENVIRONMENT-ID,omitzero" json:"-"`
 	// List of addons the addon is dependant on
 	Dependencies []string `json:"dependencies,omitzero"`
 	// Pricing configuration to set on the addon draft
@@ -1608,7 +1672,9 @@ type V1AddonListParams struct {
 	// Maximum number of items to return
 	Limit param.Opt[int64] `query:"limit,omitzero" json:"-"`
 	// Filter by product ID
-	ProductID param.Opt[string] `query:"productId,omitzero" json:"-"`
+	ProductID      param.Opt[string] `query:"productId,omitzero" json:"-"`
+	XAccountID     param.Opt[string] `header:"X-ACCOUNT-ID,omitzero" json:"-"`
+	XEnvironmentID param.Opt[string] `header:"X-ENVIRONMENT-ID,omitzero" json:"-"`
 	// Filter by creation date using range operators: gt, gte, lt, lte
 	CreatedAt V1AddonListParamsCreatedAt `query:"createdAt,omitzero" json:"-"`
 	// Filter by status. Supports comma-separated values for multiple statuses
@@ -1648,13 +1714,27 @@ func (r V1AddonListParamsCreatedAt) URLQuery() (v url.Values, err error) {
 	})
 }
 
+type V1AddonArchiveParams struct {
+	XAccountID     param.Opt[string] `header:"X-ACCOUNT-ID,omitzero" json:"-"`
+	XEnvironmentID param.Opt[string] `header:"X-ENVIRONMENT-ID,omitzero" json:"-"`
+	paramObj
+}
+
+type V1AddonNewDraftParams struct {
+	XAccountID     param.Opt[string] `header:"X-ACCOUNT-ID,omitzero" json:"-"`
+	XEnvironmentID param.Opt[string] `header:"X-ENVIRONMENT-ID,omitzero" json:"-"`
+	paramObj
+}
+
 type V1AddonListChargesParams struct {
 	// Return items that come after this cursor
 	After param.Opt[string] `query:"after,omitzero" format:"uuid" json:"-"`
 	// Return items that come before this cursor
 	Before param.Opt[string] `query:"before,omitzero" format:"uuid" json:"-"`
 	// Maximum number of items to return
-	Limit param.Opt[int64] `query:"limit,omitzero" json:"-"`
+	Limit          param.Opt[int64]  `query:"limit,omitzero" json:"-"`
+	XAccountID     param.Opt[string] `header:"X-ACCOUNT-ID,omitzero" json:"-"`
+	XEnvironmentID param.Opt[string] `header:"X-ENVIRONMENT-ID,omitzero" json:"-"`
 	paramObj
 }
 
@@ -1671,7 +1751,9 @@ type V1AddonPublishParams struct {
 	// The migration type of the package
 	//
 	// Any of "NEW_CUSTOMERS", "ALL_CUSTOMERS".
-	MigrationType V1AddonPublishParamsMigrationType `json:"migrationType,omitzero" api:"required"`
+	MigrationType  V1AddonPublishParamsMigrationType `json:"migrationType,omitzero" api:"required"`
+	XAccountID     param.Opt[string]                 `header:"X-ACCOUNT-ID,omitzero" json:"-"`
+	XEnvironmentID param.Opt[string]                 `header:"X-ENVIRONMENT-ID,omitzero" json:"-"`
 	paramObj
 }
 
@@ -1690,3 +1772,9 @@ const (
 	V1AddonPublishParamsMigrationTypeNewCustomers V1AddonPublishParamsMigrationType = "NEW_CUSTOMERS"
 	V1AddonPublishParamsMigrationTypeAllCustomers V1AddonPublishParamsMigrationType = "ALL_CUSTOMERS"
 )
+
+type V1AddonRemoveDraftParams struct {
+	XAccountID     param.Opt[string] `header:"X-ACCOUNT-ID,omitzero" json:"-"`
+	XEnvironmentID param.Opt[string] `header:"X-ENVIRONMENT-ID,omitzero" json:"-"`
+	paramObj
+}

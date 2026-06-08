@@ -25,7 +25,11 @@ func TestUsage(t *testing.T) {
 		option.WithBaseURL(baseURL),
 		option.WithAPIKey("My API Key"),
 	)
-	customerResponse, err := client.V1.Customers.Get(context.TODO(), "REPLACE_ME")
+	customerResponse, err := client.V1.Customers.Get(
+		context.TODO(),
+		"REPLACE_ME",
+		stigg.V1CustomerGetParams{},
+	)
 	if err != nil {
 		t.Fatalf("err should be nil: %s", err.Error())
 	}

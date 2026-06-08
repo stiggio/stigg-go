@@ -14,7 +14,7 @@ import (
 	"github.com/stiggio/stigg-go/option"
 )
 
-func TestV1CreditGetAutoRecharge(t *testing.T) {
+func TestV1CreditGetAutoRechargeWithOptionalParams(t *testing.T) {
 	t.Skip("Mock server tests are disabled")
 	baseURL := "http://localhost:4010"
 	if envURL, ok := os.LookupEnv("TEST_API_BASE_URL"); ok {
@@ -28,8 +28,10 @@ func TestV1CreditGetAutoRecharge(t *testing.T) {
 		option.WithAPIKey("My API Key"),
 	)
 	_, err := client.V1.Credits.GetAutoRecharge(context.TODO(), stigg.V1CreditGetAutoRechargeParams{
-		CurrencyID: "currencyId",
-		CustomerID: "customerId",
+		CurrencyID:     "currencyId",
+		CustomerID:     "customerId",
+		XAccountID:     stigg.String("X-ACCOUNT-ID"),
+		XEnvironmentID: stigg.String("X-ENVIRONMENT-ID"),
 	})
 	if err != nil {
 		var apierr *stigg.Error
@@ -54,16 +56,18 @@ func TestV1CreditGetUsageWithOptionalParams(t *testing.T) {
 		option.WithAPIKey("My API Key"),
 	)
 	_, err := client.V1.Credits.GetUsage(context.TODO(), stigg.V1CreditGetUsageParams{
-		CustomerID: "customerId",
-		After:      stigg.String("after"),
-		Before:     stigg.String("before"),
-		CurrencyID: stigg.String("currencyId"),
-		EndDate:    stigg.Time(time.Now()),
-		GroupBy:    stigg.String("groupBy"),
-		Limit:      stigg.Int(1),
-		ResourceID: stigg.String("resourceId"),
-		StartDate:  stigg.Time(time.Now()),
-		TimeRange:  stigg.V1CreditGetUsageParamsTimeRangeLastDay,
+		CustomerID:     "customerId",
+		After:          stigg.String("after"),
+		Before:         stigg.String("before"),
+		CurrencyID:     stigg.String("currencyId"),
+		EndDate:        stigg.Time(time.Now()),
+		GroupBy:        stigg.String("groupBy"),
+		Limit:          stigg.Int(1),
+		ResourceID:     stigg.String("resourceId"),
+		StartDate:      stigg.Time(time.Now()),
+		TimeRange:      stigg.V1CreditGetUsageParamsTimeRangeLastDay,
+		XAccountID:     stigg.String("X-ACCOUNT-ID"),
+		XEnvironmentID: stigg.String("X-ENVIRONMENT-ID"),
 	})
 	if err != nil {
 		var apierr *stigg.Error
@@ -88,12 +92,14 @@ func TestV1CreditListLedgerWithOptionalParams(t *testing.T) {
 		option.WithAPIKey("My API Key"),
 	)
 	_, err := client.V1.Credits.ListLedger(context.TODO(), stigg.V1CreditListLedgerParams{
-		CustomerID: "customerId",
-		After:      stigg.String("after"),
-		Before:     stigg.String("before"),
-		CurrencyID: stigg.String("currencyId"),
-		Limit:      stigg.Int(1),
-		ResourceID: stigg.String("resourceId"),
+		CustomerID:     "customerId",
+		After:          stigg.String("after"),
+		Before:         stigg.String("before"),
+		CurrencyID:     stigg.String("currencyId"),
+		Limit:          stigg.Int(1),
+		ResourceID:     stigg.String("resourceId"),
+		XAccountID:     stigg.String("X-ACCOUNT-ID"),
+		XEnvironmentID: stigg.String("X-ENVIRONMENT-ID"),
 	})
 	if err != nil {
 		var apierr *stigg.Error

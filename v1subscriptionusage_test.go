@@ -31,7 +31,9 @@ func TestV1SubscriptionUsageChargeUsageWithOptionalParams(t *testing.T) {
 		context.TODO(),
 		"x",
 		stigg.V1SubscriptionUsageChargeUsageParams{
-			UntilDate: stigg.Time(time.Now()),
+			UntilDate:      stigg.Time(time.Now()),
+			XAccountID:     stigg.String("X-ACCOUNT-ID"),
+			XEnvironmentID: stigg.String("X-ENVIRONMENT-ID"),
 		},
 	)
 	if err != nil {
@@ -43,7 +45,7 @@ func TestV1SubscriptionUsageChargeUsageWithOptionalParams(t *testing.T) {
 	}
 }
 
-func TestV1SubscriptionUsageSync(t *testing.T) {
+func TestV1SubscriptionUsageSyncWithOptionalParams(t *testing.T) {
 	t.Skip("Mock server tests are disabled")
 	baseURL := "http://localhost:4010"
 	if envURL, ok := os.LookupEnv("TEST_API_BASE_URL"); ok {
@@ -56,7 +58,14 @@ func TestV1SubscriptionUsageSync(t *testing.T) {
 		option.WithBaseURL(baseURL),
 		option.WithAPIKey("My API Key"),
 	)
-	_, err := client.V1.Subscriptions.Usage.Sync(context.TODO(), "x")
+	_, err := client.V1.Subscriptions.Usage.Sync(
+		context.TODO(),
+		"x",
+		stigg.V1SubscriptionUsageSyncParams{
+			XAccountID:     stigg.String("X-ACCOUNT-ID"),
+			XEnvironmentID: stigg.String("X-ENVIRONMENT-ID"),
+		},
+	)
 	if err != nil {
 		var apierr *stigg.Error
 		if errors.As(err, &apierr) {
