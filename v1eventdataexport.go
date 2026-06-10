@@ -4,6 +4,7 @@ package stigg
 
 import (
 	"context"
+	"fmt"
 	"net/http"
 	"slices"
 
@@ -37,19 +38,31 @@ func NewV1EventDataExportService(opts ...option.RequestOption) (r V1EventDataExp
 
 // Mint a scoped JWT for the FE embedded SDK. Lazy-creates the DATA_EXPORT
 // integration if needed.
-func (r *V1EventDataExportService) MintScopedToken(ctx context.Context, body V1EventDataExportMintScopedTokenParams, opts ...option.RequestOption) (res *V1EventDataExportMintScopedTokenResponse, err error) {
+func (r *V1EventDataExportService) MintScopedToken(ctx context.Context, params V1EventDataExportMintScopedTokenParams, opts ...option.RequestOption) (res *V1EventDataExportMintScopedTokenResponse, err error) {
+	if !param.IsOmitted(params.XAccountID) {
+		opts = append(opts, option.WithHeader("X-ACCOUNT-ID", fmt.Sprintf("%v", params.XAccountID.Value)))
+	}
+	if !param.IsOmitted(params.XEnvironmentID) {
+		opts = append(opts, option.WithHeader("X-ENVIRONMENT-ID", fmt.Sprintf("%v", params.XEnvironmentID.Value)))
+	}
 	opts = slices.Concat(r.Options, opts)
 	path := "api/v1/data-export/scoped-token"
-	err = requestconfig.ExecuteNewRequest(ctx, http.MethodPost, path, body, &res, opts...)
+	err = requestconfig.ExecuteNewRequest(ctx, http.MethodPost, path, params, &res, opts...)
 	return res, err
 }
 
 // Trigger a sync for one destination or all destinations under the provider
 // entity.
-func (r *V1EventDataExportService) TriggerSync(ctx context.Context, body V1EventDataExportTriggerSyncParams, opts ...option.RequestOption) (res *V1EventDataExportTriggerSyncResponse, err error) {
+func (r *V1EventDataExportService) TriggerSync(ctx context.Context, params V1EventDataExportTriggerSyncParams, opts ...option.RequestOption) (res *V1EventDataExportTriggerSyncResponse, err error) {
+	if !param.IsOmitted(params.XAccountID) {
+		opts = append(opts, option.WithHeader("X-ACCOUNT-ID", fmt.Sprintf("%v", params.XAccountID.Value)))
+	}
+	if !param.IsOmitted(params.XEnvironmentID) {
+		opts = append(opts, option.WithHeader("X-ENVIRONMENT-ID", fmt.Sprintf("%v", params.XEnvironmentID.Value)))
+	}
 	opts = slices.Concat(r.Options, opts)
 	path := "api/v1/data-export/sync"
-	err = requestconfig.ExecuteNewRequest(ctx, http.MethodPost, path, body, &res, opts...)
+	err = requestconfig.ExecuteNewRequest(ctx, http.MethodPost, path, params, &res, opts...)
 	return res, err
 }
 
@@ -163,6 +176,8 @@ type V1EventDataExportMintScopedTokenParams struct {
 	ApplicationOrigin string `json:"applicationOrigin" api:"required"`
 	// Pin the token to a specific warehouse connect flow
 	DestinationType param.Opt[string] `json:"destinationType,omitzero"`
+	XAccountID      param.Opt[string] `header:"X-ACCOUNT-ID,omitzero" json:"-"`
+	XEnvironmentID  param.Opt[string] `header:"X-ENVIRONMENT-ID,omitzero" json:"-"`
 	paramObj
 }
 
@@ -176,7 +191,9 @@ func (r *V1EventDataExportMintScopedTokenParams) UnmarshalJSON(data []byte) erro
 
 type V1EventDataExportTriggerSyncParams struct {
 	// Provider destination ID to sync. Omit to sync all destinations.
-	DestinationID param.Opt[string] `json:"destinationId,omitzero"`
+	DestinationID  param.Opt[string] `json:"destinationId,omitzero"`
+	XAccountID     param.Opt[string] `header:"X-ACCOUNT-ID,omitzero" json:"-"`
+	XEnvironmentID param.Opt[string] `header:"X-ENVIRONMENT-ID,omitzero" json:"-"`
 	paramObj
 }
 

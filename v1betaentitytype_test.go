@@ -13,7 +13,7 @@ import (
 	"github.com/stiggio/stigg-go/option"
 )
 
-func TestV1EventBetaEntityTypeListWithOptionalParams(t *testing.T) {
+func TestV1BetaEntityTypeListWithOptionalParams(t *testing.T) {
 	t.Skip("Mock server tests are disabled")
 	baseURL := "http://localhost:4010"
 	if envURL, ok := os.LookupEnv("TEST_API_BASE_URL"); ok {
@@ -26,7 +26,7 @@ func TestV1EventBetaEntityTypeListWithOptionalParams(t *testing.T) {
 		option.WithBaseURL(baseURL),
 		option.WithAPIKey("My API Key"),
 	)
-	_, err := client.V1.Events.Beta.EntityTypes.List(context.TODO(), stigg.V1EventBetaEntityTypeListParams{
+	_, err := client.V1Beta.EntityTypes.List(context.TODO(), stigg.V1BetaEntityTypeListParams{
 		After:          stigg.String("182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e"),
 		Before:         stigg.String("182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e"),
 		Limit:          stigg.Int(1),
@@ -42,7 +42,7 @@ func TestV1EventBetaEntityTypeListWithOptionalParams(t *testing.T) {
 	}
 }
 
-func TestV1EventBetaEntityTypeUpsertWithOptionalParams(t *testing.T) {
+func TestV1BetaEntityTypeUpsertWithOptionalParams(t *testing.T) {
 	t.Skip("Mock server tests are disabled")
 	baseURL := "http://localhost:4010"
 	if envURL, ok := os.LookupEnv("TEST_API_BASE_URL"); ok {
@@ -55,8 +55,8 @@ func TestV1EventBetaEntityTypeUpsertWithOptionalParams(t *testing.T) {
 		option.WithBaseURL(baseURL),
 		option.WithAPIKey("My API Key"),
 	)
-	_, err := client.V1.Events.Beta.EntityTypes.Upsert(context.TODO(), stigg.V1EventBetaEntityTypeUpsertParams{
-		Types: []stigg.V1EventBetaEntityTypeUpsertParamsType{{
+	_, err := client.V1Beta.EntityTypes.Upsert(context.TODO(), stigg.V1BetaEntityTypeUpsertParams{
+		Types: []stigg.V1BetaEntityTypeUpsertParamsType{{
 			ID:              "org",
 			AttributionKeys: []string{"organizationId"},
 			DisplayName:     "Organization",
