@@ -1,5 +1,13 @@
 # Changelog
 
+## 0.1.0-beta.21 (2026-06-10)
+
+Full Changelog: [v0.1.0-beta.20...v0.1.0-beta.21](https://github.com/stiggio/stigg-go/compare/v0.1.0-beta.20...v0.1.0-beta.21)
+
+### Features
+
+* **api:** add parentId/scopeEntityIds fields, remove capabilityId in customer assignments ([86eaa20](https://github.com/stiggio/stigg-go/commit/86eaa207e6cbf1f22609fe3ceea095a298897d46))
+
 ## 0.1.0-beta.20 (2026-06-08)
 
 Full Changelog: [v0.1.0-beta.19...v0.1.0-beta.20](https://github.com/stiggio/stigg-go/compare/v0.1.0-beta.19...v0.1.0-beta.20)
