@@ -38,15 +38,27 @@ func NewV1EventDataExportDestinationService(opts ...option.RequestOption) (r V1E
 // Register a destination on the environment's DATA_EXPORT integration.
 // Lazy-creates the integration row + provider recipient on first call. Idempotent
 // on destinationId.
-func (r *V1EventDataExportDestinationService) New(ctx context.Context, body V1EventDataExportDestinationNewParams, opts ...option.RequestOption) (res *V1EventDataExportDestinationNewResponse, err error) {
+func (r *V1EventDataExportDestinationService) New(ctx context.Context, params V1EventDataExportDestinationNewParams, opts ...option.RequestOption) (res *V1EventDataExportDestinationNewResponse, err error) {
+	if !param.IsOmitted(params.XAccountID) {
+		opts = append(opts, option.WithHeader("X-ACCOUNT-ID", fmt.Sprintf("%v", params.XAccountID.Value)))
+	}
+	if !param.IsOmitted(params.XEnvironmentID) {
+		opts = append(opts, option.WithHeader("X-ENVIRONMENT-ID", fmt.Sprintf("%v", params.XEnvironmentID.Value)))
+	}
 	opts = slices.Concat(r.Options, opts)
 	path := "api/v1/data-export/destinations"
-	err = requestconfig.ExecuteNewRequest(ctx, http.MethodPost, path, body, &res, opts...)
+	err = requestconfig.ExecuteNewRequest(ctx, http.MethodPost, path, params, &res, opts...)
 	return res, err
 }
 
 // Remove a destination from the DATA_EXPORT integration metadata. Idempotent.
-func (r *V1EventDataExportDestinationService) Delete(ctx context.Context, destinationID string, opts ...option.RequestOption) (res *V1EventDataExportDestinationDeleteResponse, err error) {
+func (r *V1EventDataExportDestinationService) Delete(ctx context.Context, destinationID string, body V1EventDataExportDestinationDeleteParams, opts ...option.RequestOption) (res *V1EventDataExportDestinationDeleteResponse, err error) {
+	if !param.IsOmitted(body.XAccountID) {
+		opts = append(opts, option.WithHeader("X-ACCOUNT-ID", fmt.Sprintf("%v", body.XAccountID.Value)))
+	}
+	if !param.IsOmitted(body.XEnvironmentID) {
+		opts = append(opts, option.WithHeader("X-ENVIRONMENT-ID", fmt.Sprintf("%v", body.XEnvironmentID.Value)))
+	}
 	opts = slices.Concat(r.Options, opts)
 	if destinationID == "" {
 		err = errors.New("missing required destinationId parameter")
@@ -265,7 +277,9 @@ type V1EventDataExportDestinationNewParams struct {
 	// The provider destination ID returned by the embedded SDK on connect
 	DestinationID string `json:"destinationId" api:"required"`
 	// The destination type (e.g. snowflake, bigquery)
-	DestinationType string `json:"destinationType" api:"required"`
+	DestinationType string            `json:"destinationType" api:"required"`
+	XAccountID      param.Opt[string] `header:"X-ACCOUNT-ID,omitzero" json:"-"`
+	XEnvironmentID  param.Opt[string] `header:"X-ENVIRONMENT-ID,omitzero" json:"-"`
 	paramObj
 }
 
@@ -275,4 +289,10 @@ func (r V1EventDataExportDestinationNewParams) MarshalJSON() (data []byte, err e
 }
 func (r *V1EventDataExportDestinationNewParams) UnmarshalJSON(data []byte) error {
 	return apijson.UnmarshalRoot(data, r)
+}
+
+type V1EventDataExportDestinationDeleteParams struct {
+	XAccountID     param.Opt[string] `header:"X-ACCOUNT-ID,omitzero" json:"-"`
+	XEnvironmentID param.Opt[string] `header:"X-ENVIRONMENT-ID,omitzero" json:"-"`
+	paramObj
 }
