@@ -29,6 +29,8 @@ func TestV1EventDataExportMintScopedTokenWithOptionalParams(t *testing.T) {
 	_, err := client.V1.Events.DataExport.MintScopedToken(context.TODO(), stigg.V1EventDataExportMintScopedTokenParams{
 		ApplicationOrigin: "x",
 		DestinationType:   stigg.String("destinationType"),
+		XAccountID:        stigg.String("X-ACCOUNT-ID"),
+		XEnvironmentID:    stigg.String("X-ENVIRONMENT-ID"),
 	})
 	if err != nil {
 		var apierr *stigg.Error
@@ -53,7 +55,9 @@ func TestV1EventDataExportTriggerSyncWithOptionalParams(t *testing.T) {
 		option.WithAPIKey("My API Key"),
 	)
 	_, err := client.V1.Events.DataExport.TriggerSync(context.TODO(), stigg.V1EventDataExportTriggerSyncParams{
-		DestinationID: stigg.String("destinationId"),
+		DestinationID:  stigg.String("destinationId"),
+		XAccountID:     stigg.String("X-ACCOUNT-ID"),
+		XEnvironmentID: stigg.String("X-ENVIRONMENT-ID"),
 	})
 	if err != nil {
 		var apierr *stigg.Error

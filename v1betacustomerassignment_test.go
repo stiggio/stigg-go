@@ -13,7 +13,7 @@ import (
 	"github.com/stiggio/stigg-go/option"
 )
 
-func TestV1EventBetaCustomerAssignmentListWithOptionalParams(t *testing.T) {
+func TestV1BetaCustomerAssignmentListWithOptionalParams(t *testing.T) {
 	t.Skip("Mock server tests are disabled")
 	baseURL := "http://localhost:4010"
 	if envURL, ok := os.LookupEnv("TEST_API_BASE_URL"); ok {
@@ -26,10 +26,10 @@ func TestV1EventBetaCustomerAssignmentListWithOptionalParams(t *testing.T) {
 		option.WithBaseURL(baseURL),
 		option.WithAPIKey("My API Key"),
 	)
-	_, err := client.V1.Events.Beta.Customers.Assignments.List(
+	_, err := client.V1Beta.Customers.Assignments.List(
 		context.TODO(),
 		"id",
-		stigg.V1EventBetaCustomerAssignmentListParams{
+		stigg.V1BetaCustomerAssignmentListParams{
 			After:          stigg.String("182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e"),
 			Before:         stigg.String("182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e"),
 			CapabilityID:   stigg.String("capabilityId"),
@@ -48,7 +48,7 @@ func TestV1EventBetaCustomerAssignmentListWithOptionalParams(t *testing.T) {
 	}
 }
 
-func TestV1EventBetaCustomerAssignmentUpsertWithOptionalParams(t *testing.T) {
+func TestV1BetaCustomerAssignmentUpsertWithOptionalParams(t *testing.T) {
 	t.Skip("Mock server tests are disabled")
 	baseURL := "http://localhost:4010"
 	if envURL, ok := os.LookupEnv("TEST_API_BASE_URL"); ok {
@@ -61,20 +61,26 @@ func TestV1EventBetaCustomerAssignmentUpsertWithOptionalParams(t *testing.T) {
 		option.WithBaseURL(baseURL),
 		option.WithAPIKey("My API Key"),
 	)
-	_, err := client.V1.Events.Beta.Customers.Assignments.Upsert(
+	_, err := client.V1Beta.Customers.Assignments.Upsert(
 		context.TODO(),
 		"id",
-		stigg.V1EventBetaCustomerAssignmentUpsertParams{
-			Assignments: []stigg.V1EventBetaCustomerAssignmentUpsertParamsAssignment{{
-				CapabilityID: "compute-minutes",
-				EntityID:     "workspace-001",
-				Cadence:      "MONTH",
-				UsageLimit:   stigg.Float(1000),
+		stigg.V1BetaCustomerAssignmentUpsertParams{
+			Assignments: []stigg.V1BetaCustomerAssignmentUpsertParamsAssignment{{
+				EntityID:       "workspace-001",
+				Cadence:        "MONTH",
+				CurrencyID:     stigg.String("currencyId"),
+				FeatureID:      stigg.String("compute-minutes"),
+				ParentID:       stigg.String("parentId"),
+				ScopeEntityIDs: []string{"NxI"},
+				UsageLimit:     stigg.Float(1000),
 			}, {
-				CapabilityID: "compute-minutes",
-				EntityID:     "workspace-002",
-				Cadence:      "MONTH",
-				UsageLimit:   stigg.Float(2000),
+				EntityID:       "workspace-002",
+				Cadence:        "MONTH",
+				CurrencyID:     stigg.String("cred-type-tokens"),
+				FeatureID:      stigg.String("featureId"),
+				ParentID:       stigg.String("workspace-001"),
+				ScopeEntityIDs: []string{"user-1"},
+				UsageLimit:     stigg.Float(2000),
 			}},
 			XAccountID:     stigg.String("X-ACCOUNT-ID"),
 			XEnvironmentID: stigg.String("X-ENVIRONMENT-ID"),
