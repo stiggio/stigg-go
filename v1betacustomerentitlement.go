@@ -275,16 +275,21 @@ type V1BetaCustomerEntitlementCheckResponseDataFeatureChain struct {
 	EntityID string `json:"entityId" api:"required"`
 	// Whether this node alone permits the requested usage.
 	IsGranted bool `json:"isGranted" api:"required"`
+	// External ids of the entities this budget is scoped to. Empty (`[]`) is the
+	// node-wide budget; a non-empty set is the dimension-scoped budget that matched
+	// this request — use it to tell apart multiple budgets on the same entity.
+	ScopeEntityIDs []string `json:"scopeEntityIds" api:"required"`
 	// Hard usage limit for this node; null when no assignment is configured.
 	UsageLimit float64 `json:"usageLimit" api:"required"`
 	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
 	JSON struct {
-		CurrentUsage respjson.Field
-		EntityID     respjson.Field
-		IsGranted    respjson.Field
-		UsageLimit   respjson.Field
-		ExtraFields  map[string]respjson.Field
-		raw          string
+		CurrentUsage   respjson.Field
+		EntityID       respjson.Field
+		IsGranted      respjson.Field
+		ScopeEntityIDs respjson.Field
+		UsageLimit     respjson.Field
+		ExtraFields    map[string]respjson.Field
+		raw            string
 	} `json:"-"`
 }
 
@@ -415,16 +420,21 @@ type V1BetaCustomerEntitlementCheckResponseDataCreditChain struct {
 	EntityID string `json:"entityId" api:"required"`
 	// Whether this node alone permits the requested usage.
 	IsGranted bool `json:"isGranted" api:"required"`
+	// External ids of the entities this budget is scoped to. Empty (`[]`) is the
+	// node-wide budget; a non-empty set is the dimension-scoped budget that matched
+	// this request — use it to tell apart multiple budgets on the same entity.
+	ScopeEntityIDs []string `json:"scopeEntityIds" api:"required"`
 	// Hard usage limit for this node; null when no assignment is configured.
 	UsageLimit float64 `json:"usageLimit" api:"required"`
 	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
 	JSON struct {
-		CurrentUsage respjson.Field
-		EntityID     respjson.Field
-		IsGranted    respjson.Field
-		UsageLimit   respjson.Field
-		ExtraFields  map[string]respjson.Field
-		raw          string
+		CurrentUsage   respjson.Field
+		EntityID       respjson.Field
+		IsGranted      respjson.Field
+		ScopeEntityIDs respjson.Field
+		UsageLimit     respjson.Field
+		ExtraFields    map[string]respjson.Field
+		raw            string
 	} `json:"-"`
 }
 
