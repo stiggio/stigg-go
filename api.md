@@ -165,6 +165,18 @@ Methods:
 - <code title="post /api/v1/data-export/destinations">client.V1.Events.DataExport.Destinations.<a href="https://pkg.go.dev/github.com/stiggio/stigg-go#V1EventDataExportDestinationService.New">New</a>(ctx <a href="https://pkg.go.dev/context">context</a>.<a href="https://pkg.go.dev/context#Context">Context</a>, params <a href="https://pkg.go.dev/github.com/stiggio/stigg-go">stigg</a>.<a href="https://pkg.go.dev/github.com/stiggio/stigg-go#V1EventDataExportDestinationNewParams">V1EventDataExportDestinationNewParams</a>) (\*<a href="https://pkg.go.dev/github.com/stiggio/stigg-go">stigg</a>.<a href="https://pkg.go.dev/github.com/stiggio/stigg-go#V1EventDataExportDestinationNewResponse">V1EventDataExportDestinationNewResponse</a>, <a href="https://pkg.go.dev/builtin#error">error</a>)</code>
 - <code title="delete /api/v1/data-export/destinations/{destinationId}">client.V1.Events.DataExport.Destinations.<a href="https://pkg.go.dev/github.com/stiggio/stigg-go#V1EventDataExportDestinationService.Delete">Delete</a>(ctx <a href="https://pkg.go.dev/context">context</a>.<a href="https://pkg.go.dev/context#Context">Context</a>, destinationID <a href="https://pkg.go.dev/builtin#string">string</a>, body <a href="https://pkg.go.dev/github.com/stiggio/stigg-go">stigg</a>.<a href="https://pkg.go.dev/github.com/stiggio/stigg-go#V1EventDataExportDestinationDeleteParams">V1EventDataExportDestinationDeleteParams</a>) (\*<a href="https://pkg.go.dev/github.com/stiggio/stigg-go">stigg</a>.<a href="https://pkg.go.dev/github.com/stiggio/stigg-go#V1EventDataExportDestinationDeleteResponse">V1EventDataExportDestinationDeleteResponse</a>, <a href="https://pkg.go.dev/builtin#error">error</a>)</code>
 
+### Beta
+
+#### Customers
+
+Response Types:
+
+- <a href="https://pkg.go.dev/github.com/stiggio/stigg-go">stigg</a>.<a href="https://pkg.go.dev/github.com/stiggio/stigg-go#V1EventBetaCustomerGetGovernanceResponse">V1EventBetaCustomerGetGovernanceResponse</a>
+
+Methods:
+
+- <code title="get /api/v1-beta/customers/{id}/governance">client.V1.Events.Beta.Customers.<a href="https://pkg.go.dev/github.com/stiggio/stigg-go#V1EventBetaCustomerService.GetGovernance">GetGovernance</a>(ctx <a href="https://pkg.go.dev/context">context</a>.<a href="https://pkg.go.dev/context#Context">Context</a>, id <a href="https://pkg.go.dev/builtin#string">string</a>, params <a href="https://pkg.go.dev/github.com/stiggio/stigg-go">stigg</a>.<a href="https://pkg.go.dev/github.com/stiggio/stigg-go#V1EventBetaCustomerGetGovernanceParams">V1EventBetaCustomerGetGovernanceParams</a>) (\*<a href="https://pkg.go.dev/github.com/stiggio/stigg-go">stigg</a>.<a href="https://pkg.go.dev/github.com/stiggio/stigg-go#V1EventBetaCustomerGetGovernanceResponse">V1EventBetaCustomerGetGovernanceResponse</a>, <a href="https://pkg.go.dev/builtin#error">error</a>)</code>
+
 ## Credits
 
 Response Types:
