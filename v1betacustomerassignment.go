@@ -280,13 +280,13 @@ type V1BetaCustomerAssignmentUpsertParamsAssignment struct {
 	// (a new node defaults to a root); `null` detaches to a root; a refId sets or
 	// changes the parent. Reparenting an existing node is leaf-only.
 	ParentID param.Opt[string] `json:"parentId,omitzero"`
+	// Maximum usage allowed within one cadence window (required on create)
+	UsageLimit param.Opt[float64] `json:"usageLimit,omitzero"`
 	// Currency refId this assignment grants (credit budgets). Mutually exclusive with
 	// `featureId`.
 	CurrencyID param.Opt[string] `json:"currencyId,omitzero"`
 	// Feature refId this assignment grants. Mutually exclusive with `currencyId`.
 	FeatureID param.Opt[string] `json:"featureId,omitzero"`
-	// Maximum usage allowed within one cadence window (required on create)
-	UsageLimit param.Opt[float64] `json:"usageLimit,omitzero"`
 	// Usage-reset cadence (required on create). Currently only `MONTH` is supported
 	//
 	// Any of "MONTH".
