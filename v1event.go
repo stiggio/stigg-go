@@ -27,6 +27,7 @@ import (
 type V1EventService struct {
 	Options    []option.RequestOption
 	DataExport V1EventDataExportService
+	Beta       V1EventBetaService
 }
 
 // NewV1EventService generates a new service that applies the given options to each
@@ -36,6 +37,7 @@ func NewV1EventService(opts ...option.RequestOption) (r V1EventService) {
 	r = V1EventService{}
 	r.Options = opts
 	r.DataExport = NewV1EventDataExportService(opts...)
+	r.Beta = NewV1EventBetaService(opts...)
 	return
 }
 
