@@ -1,5 +1,13 @@
 # Changelog
 
+## 0.1.0-beta.23 (2026-06-18)
+
+Full Changelog: [v0.1.0-beta.22...v0.1.0-beta.23](https://github.com/stiggio/stigg-go/compare/v0.1.0-beta.22...v0.1.0-beta.23)
+
+### Features
+
+* **api:** add GetGovernance endpoint to beta customers ([bb81812](https://github.com/stiggio/stigg-go/commit/bb818129cfa8acf76590950993f74a4df714a8b4))
+
 ## 0.1.0-beta.22 (2026-06-11)
 
 Full Changelog: [v0.1.0-beta.21...v0.1.0-beta.22](https://github.com/stiggio/stigg-go/compare/v0.1.0-beta.21...v0.1.0-beta.22)
