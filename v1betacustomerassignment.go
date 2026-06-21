@@ -103,10 +103,9 @@ func (r *V1BetaCustomerAssignmentService) Upsert(ctx context.Context, id string,
 type V1BetaCustomerAssignmentListResponse struct {
 	// Synthetic UUID identifier — also the cursor anchor for paginated lists
 	ID string `json:"id" api:"required" format:"uuid"`
-	// Usage-reset cadence. Currently only `MONTH` is supported
-	//
-	// Any of "MONTH".
-	Cadence V1BetaCustomerAssignmentListResponseCadence `json:"cadence" api:"required"`
+	// Usage-reset cadence as an ISO-8601 single-unit duration, e.g. `P1M`, `P30D`,
+	// `PT1M`.
+	Cadence string `json:"cadence" api:"required"`
 	// Timestamp of when the record was created
 	CreatedAt time.Time `json:"createdAt" api:"required" format:"date-time"`
 	// The entity refId this assignment is attached to
@@ -149,13 +148,6 @@ func (r *V1BetaCustomerAssignmentListResponse) UnmarshalJSON(data []byte) error 
 	return apijson.UnmarshalRoot(data, r)
 }
 
-// Usage-reset cadence. Currently only `MONTH` is supported
-type V1BetaCustomerAssignmentListResponseCadence string
-
-const (
-	V1BetaCustomerAssignmentListResponseCadenceMonth V1BetaCustomerAssignmentListResponseCadence = "MONTH"
-)
-
 // Assignments after upsert.
 type V1BetaCustomerAssignmentUpsertResponse struct {
 	Data []V1BetaCustomerAssignmentUpsertResponseData `json:"data" api:"required"`
@@ -179,9 +171,8 @@ func (r *V1BetaCustomerAssignmentUpsertResponse) UnmarshalJSON(data []byte) erro
 type V1BetaCustomerAssignmentUpsertResponseData struct {
 	// Synthetic UUID identifier — also the cursor anchor for paginated lists
 	ID string `json:"id" api:"required" format:"uuid"`
-	// Usage-reset cadence. Currently only `MONTH` is supported
-	//
-	// Any of "MONTH".
+	// Usage-reset cadence as an ISO-8601 single-unit duration, e.g. `P1M`, `P30D`,
+	// `PT1M`.
 	Cadence string `json:"cadence" api:"required"`
 	// Timestamp of when the record was created
 	CreatedAt time.Time `json:"createdAt" api:"required" format:"date-time"`
@@ -282,16 +273,15 @@ type V1BetaCustomerAssignmentUpsertParamsAssignment struct {
 	ParentID param.Opt[string] `json:"parentId,omitzero"`
 	// Maximum usage allowed within one cadence window (required on create)
 	UsageLimit param.Opt[float64] `json:"usageLimit,omitzero"`
+	// Usage-reset cadence (required on create) as an ISO-8601 single-unit duration,
+	// e.g. `P1M`, `P30D`, `PT1M`.
+	Cadence param.Opt[string] `json:"cadence,omitzero"`
 	// Currency refId this assignment grants (credit budgets). Mutually exclusive with
 	// `featureId`.
 	CurrencyID param.Opt[string] `json:"currencyId,omitzero"`
 	// Feature refId this assignment grants. Mutually exclusive with `currencyId`.
-	FeatureID param.Opt[string] `json:"featureId,omitzero"`
-	// Usage-reset cadence (required on create). Currently only `MONTH` is supported
-	//
-	// Any of "MONTH".
-	Cadence        string   `json:"cadence,omitzero"`
-	ScopeEntityIDs []string `json:"scopeEntityIds,omitzero"`
+	FeatureID      param.Opt[string] `json:"featureId,omitzero"`
+	ScopeEntityIDs []string          `json:"scopeEntityIds,omitzero"`
 	paramObj
 }
 
@@ -301,10 +291,4 @@ func (r V1BetaCustomerAssignmentUpsertParamsAssignment) MarshalJSON() (data []by
 }
 func (r *V1BetaCustomerAssignmentUpsertParamsAssignment) UnmarshalJSON(data []byte) error {
 	return apijson.UnmarshalRoot(data, r)
-}
-
-func init() {
-	apijson.RegisterFieldValidator[V1BetaCustomerAssignmentUpsertParamsAssignment](
-		"cadence", "MONTH",
-	)
 }

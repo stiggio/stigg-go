@@ -67,7 +67,7 @@ func TestV1BetaCustomerAssignmentUpsertWithOptionalParams(t *testing.T) {
 		stigg.V1BetaCustomerAssignmentUpsertParams{
 			Assignments: []stigg.V1BetaCustomerAssignmentUpsertParamsAssignment{{
 				EntityID:       "workspace-001",
-				Cadence:        "MONTH",
+				Cadence:        stigg.String("P1M"),
 				CurrencyID:     stigg.String("currencyId"),
 				FeatureID:      stigg.String("compute-minutes"),
 				ParentID:       stigg.String("parentId"),
@@ -75,7 +75,7 @@ func TestV1BetaCustomerAssignmentUpsertWithOptionalParams(t *testing.T) {
 				UsageLimit:     stigg.Float(1000),
 			}, {
 				EntityID:       "workspace-002",
-				Cadence:        "MONTH",
+				Cadence:        stigg.String("P1M"),
 				CurrencyID:     stigg.String("cred-type-tokens"),
 				FeatureID:      stigg.String("featureId"),
 				ParentID:       stigg.String("workspace-001"),
