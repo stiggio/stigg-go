@@ -114,7 +114,8 @@ type V1EventDataExportDestinationNewResponseDataDestination struct {
 	// Destination type (snowflake, bigquery, ...)
 	Type string `json:"type" api:"required"`
 	// Connection status of the destination (connected, failed)
-	ConnectionStatus string `json:"connectionStatus"`
+	ConnectionStatus string   `json:"connectionStatus"`
+	EnabledModels    []string `json:"enabledModels"`
 	// Latest sync snapshot for the destination, refreshed by the provider webhook
 	LastSyncStatus V1EventDataExportDestinationNewResponseDataDestinationLastSyncStatus `json:"lastSyncStatus"`
 	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
@@ -123,6 +124,7 @@ type V1EventDataExportDestinationNewResponseDataDestination struct {
 		DestinationID    respjson.Field
 		Type             respjson.Field
 		ConnectionStatus respjson.Field
+		EnabledModels    respjson.Field
 		LastSyncStatus   respjson.Field
 		ExtraFields      map[string]respjson.Field
 		raw              string
@@ -215,7 +217,8 @@ type V1EventDataExportDestinationDeleteResponseDataDestination struct {
 	// Destination type (snowflake, bigquery, ...)
 	Type string `json:"type" api:"required"`
 	// Connection status of the destination (connected, failed)
-	ConnectionStatus string `json:"connectionStatus"`
+	ConnectionStatus string   `json:"connectionStatus"`
+	EnabledModels    []string `json:"enabledModels"`
 	// Latest sync snapshot for the destination, refreshed by the provider webhook
 	LastSyncStatus V1EventDataExportDestinationDeleteResponseDataDestinationLastSyncStatus `json:"lastSyncStatus"`
 	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
@@ -224,6 +227,7 @@ type V1EventDataExportDestinationDeleteResponseDataDestination struct {
 		DestinationID    respjson.Field
 		Type             respjson.Field
 		ConnectionStatus respjson.Field
+		EnabledModels    respjson.Field
 		LastSyncStatus   respjson.Field
 		ExtraFields      map[string]respjson.Field
 		raw              string
@@ -280,6 +284,7 @@ type V1EventDataExportDestinationNewParams struct {
 	DestinationType string            `json:"destinationType" api:"required"`
 	XAccountID      param.Opt[string] `header:"X-ACCOUNT-ID,omitzero" json:"-"`
 	XEnvironmentID  param.Opt[string] `header:"X-ENVIRONMENT-ID,omitzero" json:"-"`
+	EnabledModels   []string          `json:"enabledModels,omitzero"`
 	paramObj
 }
 

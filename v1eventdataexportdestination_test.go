@@ -29,6 +29,7 @@ func TestV1EventDataExportDestinationNewWithOptionalParams(t *testing.T) {
 	_, err := client.V1.Events.DataExport.Destinations.New(context.TODO(), stigg.V1EventDataExportDestinationNewParams{
 		DestinationID:   "x",
 		DestinationType: "x",
+		EnabledModels:   []string{"x"},
 		XAccountID:      stigg.String("X-ACCOUNT-ID"),
 		XEnvironmentID:  stigg.String("X-ENVIRONMENT-ID"),
 	})
