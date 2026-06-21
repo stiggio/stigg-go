@@ -36,6 +36,21 @@ func NewV1EventDataExportService(opts ...option.RequestOption) (r V1EventDataExp
 	return
 }
 
+// List the catalog of data-export models the customer can opt into when connecting
+// a destination.
+func (r *V1EventDataExportService) ListModels(ctx context.Context, query V1EventDataExportListModelsParams, opts ...option.RequestOption) (res *V1EventDataExportListModelsResponse, err error) {
+	if !param.IsOmitted(query.XAccountID) {
+		opts = append(opts, option.WithHeader("X-ACCOUNT-ID", fmt.Sprintf("%v", query.XAccountID.Value)))
+	}
+	if !param.IsOmitted(query.XEnvironmentID) {
+		opts = append(opts, option.WithHeader("X-ENVIRONMENT-ID", fmt.Sprintf("%v", query.XEnvironmentID.Value)))
+	}
+	opts = slices.Concat(r.Options, opts)
+	path := "api/v1/data-export/models"
+	err = requestconfig.ExecuteNewRequest(ctx, http.MethodGet, path, nil, &res, opts...)
+	return res, err
+}
+
 // Mint a scoped JWT for the FE embedded SDK. Lazy-creates the DATA_EXPORT
 // integration if needed.
 func (r *V1EventDataExportService) MintScopedToken(ctx context.Context, params V1EventDataExportMintScopedTokenParams, opts ...option.RequestOption) (res *V1EventDataExportMintScopedTokenResponse, err error) {
@@ -64,6 +79,88 @@ func (r *V1EventDataExportService) TriggerSync(ctx context.Context, params V1Eve
 	path := "api/v1/data-export/sync"
 	err = requestconfig.ExecuteNewRequest(ctx, http.MethodPost, path, params, &res, opts...)
 	return res, err
+}
+
+// Response object
+type V1EventDataExportListModelsResponse struct {
+	// Grouped catalog of every data-export model a destination can opt into.
+	Data V1EventDataExportListModelsResponseData `json:"data" api:"required"`
+	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
+	JSON struct {
+		Data        respjson.Field
+		ExtraFields map[string]respjson.Field
+		raw         string
+	} `json:"-"`
+}
+
+// Returns the unmodified JSON received from the API
+func (r V1EventDataExportListModelsResponse) RawJSON() string { return r.JSON.raw }
+func (r *V1EventDataExportListModelsResponse) UnmarshalJSON(data []byte) error {
+	return apijson.UnmarshalRoot(data, r)
+}
+
+// Grouped catalog of every data-export model a destination can opt into.
+type V1EventDataExportListModelsResponseData struct {
+	// Groups of data-export models, in display order
+	Groups []V1EventDataExportListModelsResponseDataGroup `json:"groups" api:"required"`
+	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
+	JSON struct {
+		Groups      respjson.Field
+		ExtraFields map[string]respjson.Field
+		raw         string
+	} `json:"-"`
+}
+
+// Returns the unmodified JSON received from the API
+func (r V1EventDataExportListModelsResponseData) RawJSON() string { return r.JSON.raw }
+func (r *V1EventDataExportListModelsResponseData) UnmarshalJSON(data []byte) error {
+	return apijson.UnmarshalRoot(data, r)
+}
+
+// A group of related data-export models, mirroring the public docs taxonomy.
+type V1EventDataExportListModelsResponseDataGroup struct {
+	// Stable group identifier
+	ID string `json:"id" api:"required"`
+	// Customer-facing group label
+	DisplayName string `json:"displayName" api:"required"`
+	// Models in this group
+	Models []V1EventDataExportListModelsResponseDataGroupModel `json:"models" api:"required"`
+	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
+	JSON struct {
+		ID          respjson.Field
+		DisplayName respjson.Field
+		Models      respjson.Field
+		ExtraFields map[string]respjson.Field
+		raw         string
+	} `json:"-"`
+}
+
+// Returns the unmodified JSON received from the API
+func (r V1EventDataExportListModelsResponseDataGroup) RawJSON() string { return r.JSON.raw }
+func (r *V1EventDataExportListModelsResponseDataGroup) UnmarshalJSON(data []byte) error {
+	return apijson.UnmarshalRoot(data, r)
+}
+
+// A single data-export model the customer can opt into.
+type V1EventDataExportListModelsResponseDataGroupModel struct {
+	// Wire identifier — what gets persisted on the destination and registered with the
+	// provider
+	ID string `json:"id" api:"required"`
+	// Customer-facing label for the model
+	DisplayName string `json:"displayName" api:"required"`
+	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
+	JSON struct {
+		ID          respjson.Field
+		DisplayName respjson.Field
+		ExtraFields map[string]respjson.Field
+		raw         string
+	} `json:"-"`
+}
+
+// Returns the unmodified JSON received from the API
+func (r V1EventDataExportListModelsResponseDataGroupModel) RawJSON() string { return r.JSON.raw }
+func (r *V1EventDataExportListModelsResponseDataGroupModel) UnmarshalJSON(data []byte) error {
+	return apijson.UnmarshalRoot(data, r)
 }
 
 // Response object
@@ -171,6 +268,12 @@ func (r *V1EventDataExportTriggerSyncResponseDataResult) UnmarshalJSON(data []by
 	return apijson.UnmarshalRoot(data, r)
 }
 
+type V1EventDataExportListModelsParams struct {
+	XAccountID     param.Opt[string] `header:"X-ACCOUNT-ID,omitzero" json:"-"`
+	XEnvironmentID param.Opt[string] `header:"X-ENVIRONMENT-ID,omitzero" json:"-"`
+	paramObj
+}
+
 type V1EventDataExportMintScopedTokenParams struct {
 	// FE origin the resulting JWT is bound to (provider-side anti-fraud)
 	ApplicationOrigin string `json:"applicationOrigin" api:"required"`
@@ -178,6 +281,7 @@ type V1EventDataExportMintScopedTokenParams struct {
 	DestinationType param.Opt[string] `json:"destinationType,omitzero"`
 	XAccountID      param.Opt[string] `header:"X-ACCOUNT-ID,omitzero" json:"-"`
 	XEnvironmentID  param.Opt[string] `header:"X-ENVIRONMENT-ID,omitzero" json:"-"`
+	EnabledModels   []string          `json:"enabledModels,omitzero"`
 	paramObj
 }
 
