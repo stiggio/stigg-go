@@ -1,5 +1,18 @@
 # Changelog
 
+## 0.1.0-beta.24 (2026-06-21)
+
+Full Changelog: [v0.1.0-beta.23...v0.1.0-beta.24](https://github.com/stiggio/stigg-go/compare/v0.1.0-beta.23...v0.1.0-beta.24)
+
+### Bug Fixes
+
+* **types:** make cadence optional, remove enum in customer assignment ([d2a15d8](https://github.com/stiggio/stigg-go/commit/d2a15d8a1e8a8ef7f712e383880df3166d77cfbb))
+
+
+### Chores
+
+* **internal:** regenerate SDK with no functional changes ([0870629](https://github.com/stiggio/stigg-go/commit/087062968e4cd86e1feb7e5bb6551f814327b427))
+
 ## 0.1.0-beta.23 (2026-06-18)
 
 Full Changelog: [v0.1.0-beta.22...v0.1.0-beta.23](https://github.com/stiggio/stigg-go/compare/v0.1.0-beta.22...v0.1.0-beta.23)
