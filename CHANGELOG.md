@@ -1,5 +1,13 @@
 # Changelog
 
+## 0.1.0-beta.25 (2026-06-21)
+
+Full Changelog: [v0.1.0-beta.24...v0.1.0-beta.25](https://github.com/stiggio/stigg-go/compare/v0.1.0-beta.24...v0.1.0-beta.25)
+
+### Features
+
+* **api:** add ListModels method and EnabledModels field to data-export ([54c7f8d](https://github.com/stiggio/stigg-go/commit/54c7f8d2fa748b3ea5f5905eee8f7ad6d2f7616f))
+
 ## 0.1.0-beta.24 (2026-06-21)
 
 Full Changelog: [v0.1.0-beta.23...v0.1.0-beta.24](https://github.com/stiggio/stigg-go/compare/v0.1.0-beta.23...v0.1.0-beta.24)
