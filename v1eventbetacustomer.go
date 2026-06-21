@@ -85,9 +85,8 @@ func (r *V1EventBetaCustomerGetGovernanceResponse) UnmarshalJSON(data []byte) er
 // read model and may lag the live counter by a short interval; it never gates
 // access.
 type V1EventBetaCustomerGetGovernanceResponseData struct {
-	// Usage-reset cadence. Currently only `MONTH` is supported.
-	//
-	// Any of "MONTH".
+	// Usage-reset cadence as an ISO-8601 single-unit duration, e.g. `P1M`, `P30D`,
+	// `PT1M`; `null` when the node has no usage configuration.
 	Cadence string `json:"cadence" api:"required"`
 	// Usage consumed in the current cadence period (may lag the live counter by a
 	// short interval).
