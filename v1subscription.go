@@ -2668,6 +2668,8 @@ type V1SubscriptionGetParams struct {
 type V1SubscriptionUpdateParams struct {
 	// Subscription cancellation date
 	CancellationDate param.Opt[time.Time] `json:"cancellationDate,omitzero" format:"date-time"`
+	// Salesforce ID
+	SalesforceID param.Opt[string] `json:"salesforceId,omitzero"`
 	// Await payment confirmation
 	AwaitPaymentConfirmation param.Opt[bool] `json:"awaitPaymentConfirmation,omitzero"`
 	// Promotion code

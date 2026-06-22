@@ -156,6 +156,7 @@ func TestV1SubscriptionUpdateWithOptionalParams(t *testing.T) {
 				FeatureID:  stigg.String("featureId"),
 			}},
 			PromotionCode:    stigg.String("promotionCode"),
+			SalesforceID:     stigg.String("salesforceId"),
 			ScheduleStrategy: stigg.V1SubscriptionUpdateParamsScheduleStrategyEndOfBillingPeriod,
 			TrialEndDate:     stigg.Time(time.Now()),
 			XAccountID:       stigg.String("X-ACCOUNT-ID"),
