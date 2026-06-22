@@ -238,6 +238,8 @@ type V1UsageReportResponseData struct {
 	Timestamp time.Time `json:"timestamp" api:"required" format:"date-time"`
 	// The usage measurement record
 	Value int64 `json:"value" api:"required"`
+	// Optimistic credit balance for a credit-backed feature
+	Credit V1UsageReportResponseDataCredit `json:"credit" api:"nullable"`
 	// The current measured usage value
 	CurrentUsage float64 `json:"currentUsage" api:"nullable"`
 	// The date when the next usage reset will occur
@@ -258,6 +260,7 @@ type V1UsageReportResponseData struct {
 		FeatureID        respjson.Field
 		Timestamp        respjson.Field
 		Value            respjson.Field
+		Credit           respjson.Field
 		CurrentUsage     respjson.Field
 		NextResetDate    respjson.Field
 		ResourceID       respjson.Field
@@ -271,6 +274,34 @@ type V1UsageReportResponseData struct {
 // Returns the unmodified JSON received from the API
 func (r V1UsageReportResponseData) RawJSON() string { return r.JSON.raw }
 func (r *V1UsageReportResponseData) UnmarshalJSON(data []byte) error {
+	return apijson.UnmarshalRoot(data, r)
+}
+
+// Optimistic credit balance for a credit-backed feature
+type V1UsageReportResponseDataCredit struct {
+	// The credit currency identifier
+	CurrencyID string `json:"currencyId" api:"required"`
+	// The credits consumed (optimistic — includes not-yet-reconciled usage)
+	CurrentUsage float64 `json:"currentUsage" api:"required"`
+	// The grant-version timestamp of this balance, used by the SDK for last-write-wins
+	// reconciliation
+	Timestamp time.Time `json:"timestamp" api:"required" format:"date-time"`
+	// The total credits granted
+	UsageLimit float64 `json:"usageLimit" api:"required"`
+	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
+	JSON struct {
+		CurrencyID   respjson.Field
+		CurrentUsage respjson.Field
+		Timestamp    respjson.Field
+		UsageLimit   respjson.Field
+		ExtraFields  map[string]respjson.Field
+		raw          string
+	} `json:"-"`
+}
+
+// Returns the unmodified JSON received from the API
+func (r V1UsageReportResponseDataCredit) RawJSON() string { return r.JSON.raw }
+func (r *V1UsageReportResponseDataCredit) UnmarshalJSON(data []byte) error {
 	return apijson.UnmarshalRoot(data, r)
 }
 
