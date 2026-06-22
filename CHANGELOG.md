@@ -1,5 +1,13 @@
 # Changelog
 
+## 0.1.0-beta.26 (2026-06-22)
+
+Full Changelog: [v0.1.0-beta.25...v0.1.0-beta.26](https://github.com/stiggio/stigg-go/compare/v0.1.0-beta.25...v0.1.0-beta.26)
+
+### Features
+
+* **api:** add credit field to usage report response ([3b63a54](https://github.com/stiggio/stigg-go/commit/3b63a54b869ae41d96be8b0fc6beecccdd9ae9cd))
+
 ## 0.1.0-beta.25 (2026-06-21)
 
 Full Changelog: [v0.1.0-beta.24...v0.1.0-beta.25](https://github.com/stiggio/stigg-go/compare/v0.1.0-beta.24...v0.1.0-beta.25)
