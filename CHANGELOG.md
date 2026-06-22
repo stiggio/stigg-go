@@ -1,5 +1,13 @@
 # Changelog
 
+## 0.1.0-beta.27 (2026-06-22)
+
+Full Changelog: [v0.1.0-beta.26...v0.1.0-beta.27](https://github.com/stiggio/stigg-go/compare/v0.1.0-beta.26...v0.1.0-beta.27)
+
+### Features
+
+* **api:** add salesforce_id parameter to v1subscription update ([8810f4f](https://github.com/stiggio/stigg-go/commit/8810f4f947dd875231da42434c67292afe24e7da))
+
 ## 0.1.0-beta.26 (2026-06-22)
 
 Full Changelog: [v0.1.0-beta.25...v0.1.0-beta.26](https://github.com/stiggio/stigg-go/compare/v0.1.0-beta.25...v0.1.0-beta.26)
