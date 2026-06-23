@@ -1,5 +1,13 @@
 # Changelog
 
+## 0.1.0-beta.28 (2026-06-23)
+
+Full Changelog: [v0.1.0-beta.27...v0.1.0-beta.28](https://github.com/stiggio/stigg-go/compare/v0.1.0-beta.27...v0.1.0-beta.28)
+
+### Features
+
+* **api:** add HasSoftLimit to addon/plan credit entitlements ([7d4699e](https://github.com/stiggio/stigg-go/commit/7d4699e8a06344d24798667cad2ec71f6b1bbff9))
+
 ## 0.1.0-beta.27 (2026-06-22)
 
 Full Changelog: [v0.1.0-beta.26...v0.1.0-beta.27](https://github.com/stiggio/stigg-go/compare/v0.1.0-beta.26...v0.1.0-beta.27)
