@@ -1,5 +1,13 @@
 # Changelog
 
+## 0.1.0-beta.30 (2026-06-23)
+
+Full Changelog: [v0.1.0-beta.29...v0.1.0-beta.30](https://github.com/stiggio/stigg-go/compare/v0.1.0-beta.29...v0.1.0-beta.30)
+
+### Features
+
+* **api:** add update method to data export destinations ([3600e32](https://github.com/stiggio/stigg-go/commit/3600e32fa80ac67af14d029bba704a6964456402))
+
 ## 0.1.0-beta.29 (2026-06-23)
 
 Full Changelog: [v0.1.0-beta.28...v0.1.0-beta.29](https://github.com/stiggio/stigg-go/compare/v0.1.0-beta.28...v0.1.0-beta.29)
