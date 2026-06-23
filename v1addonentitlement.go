@@ -150,9 +150,8 @@ type AddonPackageEntitlementDataUnion struct {
 	Description         string    `json:"description"`
 	DisplayNameOverride string    `json:"displayNameOverride"`
 	// This field is from variant [AddonPackageEntitlementDataFeature].
-	EnumValues []string `json:"enumValues"`
-	// This field is from variant [AddonPackageEntitlementDataFeature].
-	HasSoftLimit bool `json:"hasSoftLimit"`
+	EnumValues   []string `json:"enumValues"`
+	HasSoftLimit bool     `json:"hasSoftLimit"`
 	// This field is from variant [AddonPackageEntitlementDataFeature].
 	HasUnlimitedUsage bool     `json:"hasUnlimitedUsage"`
 	HiddenFromWidgets []string `json:"hiddenFromWidgets"`
@@ -442,6 +441,10 @@ type AddonPackageEntitlementDataCredit struct {
 	Description string `json:"description" api:"required"`
 	// Override display name for the entitlement
 	DisplayNameOverride string `json:"displayNameOverride" api:"required"`
+	// Whether the credit wallet is soft-limited. When true, getEntitlement returns
+	// hasAccess=true past the limit; vendors decide whether to enforce. Defaults to
+	// false.
+	HasSoftLimit bool `json:"hasSoftLimit" api:"required"`
 	// Widget types where this entitlement is hidden
 	//
 	// Any of "PAYWALL", "CUSTOMER_PORTAL", "CHECKOUT".
@@ -469,6 +472,7 @@ type AddonPackageEntitlementDataCredit struct {
 		CreatedAt           respjson.Field
 		Description         respjson.Field
 		DisplayNameOverride respjson.Field
+		HasSoftLimit        respjson.Field
 		HiddenFromWidgets   respjson.Field
 		IsCustom            respjson.Field
 		IsGranted           respjson.Field
@@ -519,9 +523,8 @@ type V1AddonEntitlementNewResponseDataUnion struct {
 	Description         string    `json:"description"`
 	DisplayNameOverride string    `json:"displayNameOverride"`
 	// This field is from variant [V1AddonEntitlementNewResponseDataFeature].
-	EnumValues []string `json:"enumValues"`
-	// This field is from variant [V1AddonEntitlementNewResponseDataFeature].
-	HasSoftLimit bool `json:"hasSoftLimit"`
+	EnumValues   []string `json:"enumValues"`
+	HasSoftLimit bool     `json:"hasSoftLimit"`
 	// This field is from variant [V1AddonEntitlementNewResponseDataFeature].
 	HasUnlimitedUsage bool     `json:"hasUnlimitedUsage"`
 	HiddenFromWidgets []string `json:"hiddenFromWidgets"`
@@ -811,6 +814,10 @@ type V1AddonEntitlementNewResponseDataCredit struct {
 	Description string `json:"description" api:"required"`
 	// Override display name for the entitlement
 	DisplayNameOverride string `json:"displayNameOverride" api:"required"`
+	// Whether the credit wallet is soft-limited. When true, getEntitlement returns
+	// hasAccess=true past the limit; vendors decide whether to enforce. Defaults to
+	// false.
+	HasSoftLimit bool `json:"hasSoftLimit" api:"required"`
 	// Widget types where this entitlement is hidden
 	//
 	// Any of "PAYWALL", "CUSTOMER_PORTAL", "CHECKOUT".
@@ -838,6 +845,7 @@ type V1AddonEntitlementNewResponseDataCredit struct {
 		CreatedAt           respjson.Field
 		Description         respjson.Field
 		DisplayNameOverride respjson.Field
+		HasSoftLimit        respjson.Field
 		HiddenFromWidgets   respjson.Field
 		IsCustom            respjson.Field
 		IsGranted           respjson.Field
@@ -891,9 +899,8 @@ type V1AddonEntitlementListResponseDataUnion struct {
 	Description         string    `json:"description"`
 	DisplayNameOverride string    `json:"displayNameOverride"`
 	// This field is from variant [V1AddonEntitlementListResponseDataFeature].
-	EnumValues []string `json:"enumValues"`
-	// This field is from variant [V1AddonEntitlementListResponseDataFeature].
-	HasSoftLimit bool `json:"hasSoftLimit"`
+	EnumValues   []string `json:"enumValues"`
+	HasSoftLimit bool     `json:"hasSoftLimit"`
 	// This field is from variant [V1AddonEntitlementListResponseDataFeature].
 	HasUnlimitedUsage bool     `json:"hasUnlimitedUsage"`
 	HiddenFromWidgets []string `json:"hiddenFromWidgets"`
@@ -1183,6 +1190,10 @@ type V1AddonEntitlementListResponseDataCredit struct {
 	Description string `json:"description" api:"required"`
 	// Override display name for the entitlement
 	DisplayNameOverride string `json:"displayNameOverride" api:"required"`
+	// Whether the credit wallet is soft-limited. When true, getEntitlement returns
+	// hasAccess=true past the limit; vendors decide whether to enforce. Defaults to
+	// false.
+	HasSoftLimit bool `json:"hasSoftLimit" api:"required"`
 	// Widget types where this entitlement is hidden
 	//
 	// Any of "PAYWALL", "CUSTOMER_PORTAL", "CHECKOUT".
@@ -1210,6 +1221,7 @@ type V1AddonEntitlementListResponseDataCredit struct {
 		CreatedAt           respjson.Field
 		Description         respjson.Field
 		DisplayNameOverride respjson.Field
+		HasSoftLimit        respjson.Field
 		HiddenFromWidgets   respjson.Field
 		IsCustom            respjson.Field
 		IsGranted           respjson.Field
@@ -1295,14 +1307,6 @@ func (u *V1AddonEntitlementNewParamsEntitlementUnion) asAny() any {
 func (u V1AddonEntitlementNewParamsEntitlementUnion) GetEnumValues() []string {
 	if vt := u.OfFeature; vt != nil {
 		return vt.EnumValues
-	}
-	return nil
-}
-
-// Returns a pointer to the underlying variant's property, if present.
-func (u V1AddonEntitlementNewParamsEntitlementUnion) GetHasSoftLimit() *bool {
-	if vt := u.OfFeature; vt != nil && vt.HasSoftLimit.Valid() {
-		return &vt.HasSoftLimit.Value
 	}
 	return nil
 }
@@ -1425,6 +1429,16 @@ func (u V1AddonEntitlementNewParamsEntitlementUnion) GetDisplayNameOverride() *s
 		return &vt.DisplayNameOverride.Value
 	} else if vt := u.OfCredit; vt != nil && vt.DisplayNameOverride.Valid() {
 		return &vt.DisplayNameOverride.Value
+	}
+	return nil
+}
+
+// Returns a pointer to the underlying variant's property, if present.
+func (u V1AddonEntitlementNewParamsEntitlementUnion) GetHasSoftLimit() *bool {
+	if vt := u.OfFeature; vt != nil && vt.HasSoftLimit.Valid() {
+		return &vt.HasSoftLimit.Value
+	} else if vt := u.OfCredit; vt != nil && vt.HasSoftLimit.Valid() {
+		return &vt.HasSoftLimit.Value
 	}
 	return nil
 }
@@ -1639,6 +1653,10 @@ type V1AddonEntitlementNewParamsEntitlementCredit struct {
 	Description param.Opt[string] `json:"description,omitzero"`
 	// Override display name for the entitlement
 	DisplayNameOverride param.Opt[string] `json:"displayNameOverride,omitzero"`
+	// Whether the credit wallet is soft-limited. When true, getEntitlement returns
+	// hasAccess=true past the limit; vendors decide whether to enforce. Defaults to
+	// false.
+	HasSoftLimit param.Opt[bool] `json:"hasSoftLimit,omitzero"`
 	// Whether this is a custom entitlement
 	IsCustom param.Opt[bool] `json:"isCustom,omitzero"`
 	// Whether the entitlement is granted
@@ -1856,6 +1874,10 @@ type V1AddonEntitlementUpdateParamsBodyCredit struct {
 	Description param.Opt[string] `json:"description,omitzero"`
 	// Override display name for the entitlement
 	DisplayNameOverride param.Opt[string] `json:"displayNameOverride,omitzero"`
+	// Whether the credit wallet is soft-limited. When true, getEntitlement returns
+	// hasAccess=true past the limit; vendors decide whether to enforce. Defaults to
+	// false.
+	HasSoftLimit param.Opt[bool] `json:"hasSoftLimit,omitzero"`
 	// Whether this is a custom entitlement
 	IsCustom param.Opt[bool] `json:"isCustom,omitzero"`
 	// Whether the entitlement is granted
