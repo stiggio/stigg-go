@@ -1,5 +1,13 @@
 # Changelog
 
+## 0.1.0-beta.29 (2026-06-23)
+
+Full Changelog: [v0.1.0-beta.28...v0.1.0-beta.29](https://github.com/stiggio/stigg-go/compare/v0.1.0-beta.28...v0.1.0-beta.29)
+
+### Features
+
+* **api:** add usagePeriodEnd field to usage report credit response ([8173c8f](https://github.com/stiggio/stigg-go/commit/8173c8fc8d63bce11c3aeb660a0c2c0a80af047f))
+
 ## 0.1.0-beta.28 (2026-06-23)
 
 Full Changelog: [v0.1.0-beta.27...v0.1.0-beta.28](https://github.com/stiggio/stigg-go/compare/v0.1.0-beta.27...v0.1.0-beta.28)
