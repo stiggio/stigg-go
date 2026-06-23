@@ -288,14 +288,18 @@ type V1UsageReportResponseDataCredit struct {
 	Timestamp time.Time `json:"timestamp" api:"required" format:"date-time"`
 	// The total credits granted
 	UsageLimit float64 `json:"usageLimit" api:"required"`
+	// End of the current credit grant period (when recurring credits reset), if
+	// applicable
+	UsagePeriodEnd time.Time `json:"usagePeriodEnd" api:"nullable" format:"date-time"`
 	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
 	JSON struct {
-		CurrencyID   respjson.Field
-		CurrentUsage respjson.Field
-		Timestamp    respjson.Field
-		UsageLimit   respjson.Field
-		ExtraFields  map[string]respjson.Field
-		raw          string
+		CurrencyID     respjson.Field
+		CurrentUsage   respjson.Field
+		Timestamp      respjson.Field
+		UsageLimit     respjson.Field
+		UsagePeriodEnd respjson.Field
+		ExtraFields    map[string]respjson.Field
+		raw            string
 	} `json:"-"`
 }
 
