@@ -51,6 +51,26 @@ func (r *V1EventDataExportDestinationService) New(ctx context.Context, params V1
 	return res, err
 }
 
+// Update a destination's entity selection. Pushes the new enabled_models to the
+// provider first, then persists the selection. Applies on the next scheduled
+// transfer.
+func (r *V1EventDataExportDestinationService) Update(ctx context.Context, destinationID string, params V1EventDataExportDestinationUpdateParams, opts ...option.RequestOption) (res *V1EventDataExportDestinationUpdateResponse, err error) {
+	if !param.IsOmitted(params.XAccountID) {
+		opts = append(opts, option.WithHeader("X-ACCOUNT-ID", fmt.Sprintf("%v", params.XAccountID.Value)))
+	}
+	if !param.IsOmitted(params.XEnvironmentID) {
+		opts = append(opts, option.WithHeader("X-ENVIRONMENT-ID", fmt.Sprintf("%v", params.XEnvironmentID.Value)))
+	}
+	opts = slices.Concat(r.Options, opts)
+	if destinationID == "" {
+		err = errors.New("missing required destinationId parameter")
+		return nil, err
+	}
+	path := fmt.Sprintf("api/v1/data-export/destinations/%s", destinationID)
+	err = requestconfig.ExecuteNewRequest(ctx, http.MethodPatch, path, params, &res, opts...)
+	return res, err
+}
+
 // Remove a destination from the DATA_EXPORT integration metadata. Idempotent.
 func (r *V1EventDataExportDestinationService) Delete(ctx context.Context, destinationID string, body V1EventDataExportDestinationDeleteParams, opts ...option.RequestOption) (res *V1EventDataExportDestinationDeleteResponse, err error) {
 	if !param.IsOmitted(body.XAccountID) {
@@ -169,6 +189,111 @@ func (r V1EventDataExportDestinationNewResponseDataDestinationLastSyncStatus) Ra
 	return r.JSON.raw
 }
 func (r *V1EventDataExportDestinationNewResponseDataDestinationLastSyncStatus) UnmarshalJSON(data []byte) error {
+	return apijson.UnmarshalRoot(data, r)
+}
+
+// Response object
+type V1EventDataExportDestinationUpdateResponse struct {
+	// Current destinations under the DATA_EXPORT integration.
+	Data V1EventDataExportDestinationUpdateResponseData `json:"data" api:"required"`
+	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
+	JSON struct {
+		Data        respjson.Field
+		ExtraFields map[string]respjson.Field
+		raw         string
+	} `json:"-"`
+}
+
+// Returns the unmodified JSON received from the API
+func (r V1EventDataExportDestinationUpdateResponse) RawJSON() string { return r.JSON.raw }
+func (r *V1EventDataExportDestinationUpdateResponse) UnmarshalJSON(data []byte) error {
+	return apijson.UnmarshalRoot(data, r)
+}
+
+// Current destinations under the DATA_EXPORT integration.
+type V1EventDataExportDestinationUpdateResponseData struct {
+	// Current destinations under the DATA_EXPORT integration
+	Destinations []V1EventDataExportDestinationUpdateResponseDataDestination `json:"destinations" api:"required"`
+	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
+	JSON struct {
+		Destinations respjson.Field
+		ExtraFields  map[string]respjson.Field
+		raw          string
+	} `json:"-"`
+}
+
+// Returns the unmodified JSON received from the API
+func (r V1EventDataExportDestinationUpdateResponseData) RawJSON() string { return r.JSON.raw }
+func (r *V1EventDataExportDestinationUpdateResponseData) UnmarshalJSON(data []byte) error {
+	return apijson.UnmarshalRoot(data, r)
+}
+
+// A single destination entry under the DATA_EXPORT integration.
+type V1EventDataExportDestinationUpdateResponseDataDestination struct {
+	// ISO8601 timestamp of when the destination was connected
+	ConnectedAt string `json:"connectedAt" api:"required"`
+	// Provider destination ID
+	DestinationID string `json:"destinationId" api:"required"`
+	// Destination type (snowflake, bigquery, ...)
+	Type string `json:"type" api:"required"`
+	// Connection status of the destination (connected, failed)
+	ConnectionStatus string   `json:"connectionStatus"`
+	EnabledModels    []string `json:"enabledModels"`
+	// Latest sync snapshot for the destination, refreshed by the provider webhook
+	LastSyncStatus V1EventDataExportDestinationUpdateResponseDataDestinationLastSyncStatus `json:"lastSyncStatus"`
+	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
+	JSON struct {
+		ConnectedAt      respjson.Field
+		DestinationID    respjson.Field
+		Type             respjson.Field
+		ConnectionStatus respjson.Field
+		EnabledModels    respjson.Field
+		LastSyncStatus   respjson.Field
+		ExtraFields      map[string]respjson.Field
+		raw              string
+	} `json:"-"`
+}
+
+// Returns the unmodified JSON received from the API
+func (r V1EventDataExportDestinationUpdateResponseDataDestination) RawJSON() string {
+	return r.JSON.raw
+}
+func (r *V1EventDataExportDestinationUpdateResponseDataDestination) UnmarshalJSON(data []byte) error {
+	return apijson.UnmarshalRoot(data, r)
+}
+
+// Latest sync snapshot for the destination, refreshed by the provider webhook
+type V1EventDataExportDestinationUpdateResponseDataDestinationLastSyncStatus struct {
+	// ISO8601 timestamp of when the latest sync finished
+	FinishedAt string `json:"finishedAt" api:"required"`
+	// Sync status (PENDING, RUNNING, INCOMPLETE, FAILED, SUCCEEDED, CANCELLED)
+	Status string `json:"status" api:"required"`
+	// Provider transfer ID of the latest sync
+	TransferID string `json:"transferId" api:"required"`
+	// Party responsible for a failed sync, as reported by the data-export provider
+	BlamedParty string `json:"blamedParty"`
+	// Customer-friendly failure message, when the latest sync failed
+	FailureMessage string `json:"failureMessage"`
+	// Number of rows transferred in the latest sync
+	RowsTransferred float64 `json:"rowsTransferred"`
+	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
+	JSON struct {
+		FinishedAt      respjson.Field
+		Status          respjson.Field
+		TransferID      respjson.Field
+		BlamedParty     respjson.Field
+		FailureMessage  respjson.Field
+		RowsTransferred respjson.Field
+		ExtraFields     map[string]respjson.Field
+		raw             string
+	} `json:"-"`
+}
+
+// Returns the unmodified JSON received from the API
+func (r V1EventDataExportDestinationUpdateResponseDataDestinationLastSyncStatus) RawJSON() string {
+	return r.JSON.raw
+}
+func (r *V1EventDataExportDestinationUpdateResponseDataDestinationLastSyncStatus) UnmarshalJSON(data []byte) error {
 	return apijson.UnmarshalRoot(data, r)
 }
 
@@ -293,6 +418,23 @@ func (r V1EventDataExportDestinationNewParams) MarshalJSON() (data []byte, err e
 	return param.MarshalObject(r, (*shadow)(&r))
 }
 func (r *V1EventDataExportDestinationNewParams) UnmarshalJSON(data []byte) error {
+	return apijson.UnmarshalRoot(data, r)
+}
+
+type V1EventDataExportDestinationUpdateParams struct {
+	EnabledModels []string `json:"enabledModels,omitzero" api:"required"`
+	// Target integration row hosting the destination
+	IntegrationID  string            `json:"integrationId" api:"required"`
+	XAccountID     param.Opt[string] `header:"X-ACCOUNT-ID,omitzero" json:"-"`
+	XEnvironmentID param.Opt[string] `header:"X-ENVIRONMENT-ID,omitzero" json:"-"`
+	paramObj
+}
+
+func (r V1EventDataExportDestinationUpdateParams) MarshalJSON() (data []byte, err error) {
+	type shadow V1EventDataExportDestinationUpdateParams
+	return param.MarshalObject(r, (*shadow)(&r))
+}
+func (r *V1EventDataExportDestinationUpdateParams) UnmarshalJSON(data []byte) error {
 	return apijson.UnmarshalRoot(data, r)
 }
 
