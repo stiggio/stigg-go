@@ -1,5 +1,13 @@
 # Changelog
 
+## 0.1.0-beta.31 (2026-06-28)
+
+Full Changelog: [v0.1.0-beta.30...v0.1.0-beta.31](https://github.com/stiggio/stigg-go/compare/v0.1.0-beta.30...v0.1.0-beta.31)
+
+### Features
+
+* **stainless:** update production server to edge.api.stigg.io ([0614854](https://github.com/stiggio/stigg-go/commit/0614854b6408b96c904aa9f9c5397a321e2ede1f))
+
 ## 0.1.0-beta.30 (2026-06-23)
 
 Full Changelog: [v0.1.0-beta.29...v0.1.0-beta.30](https://github.com/stiggio/stigg-go/compare/v0.1.0-beta.29...v0.1.0-beta.30)
