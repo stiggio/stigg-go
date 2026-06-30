@@ -82,7 +82,8 @@ type V1CustomerPaymentMethodAttachParams struct {
 	// The vendor identifier of integration
 	//
 	// Any of "AUTH0", "ZUORA", "STRIPE", "HUBSPOT", "AWS_MARKETPLACE", "SNOWFLAKE",
-	// "SALESFORCE", "BIG_QUERY", "OPEN_FGA", "APP_STORE", "RECEIVED", "PREQUEL".
+	// "SALESFORCE", "BIG_QUERY", "OPEN_FGA", "APP_STORE", "RECEIVED", "PREQUEL",
+	// "AIRWALLEX".
 	VendorIdentifier V1CustomerPaymentMethodAttachParamsVendorIdentifier `json:"vendorIdentifier,omitzero" api:"required"`
 	XAccountID       param.Opt[string]                                   `header:"X-ACCOUNT-ID,omitzero" json:"-"`
 	XEnvironmentID   param.Opt[string]                                   `header:"X-ENVIRONMENT-ID,omitzero" json:"-"`
@@ -127,6 +128,7 @@ const (
 	V1CustomerPaymentMethodAttachParamsVendorIdentifierAppStore       V1CustomerPaymentMethodAttachParamsVendorIdentifier = "APP_STORE"
 	V1CustomerPaymentMethodAttachParamsVendorIdentifierReceived       V1CustomerPaymentMethodAttachParamsVendorIdentifier = "RECEIVED"
 	V1CustomerPaymentMethodAttachParamsVendorIdentifierPrequel        V1CustomerPaymentMethodAttachParamsVendorIdentifier = "PREQUEL"
+	V1CustomerPaymentMethodAttachParamsVendorIdentifierAirwallex      V1CustomerPaymentMethodAttachParamsVendorIdentifier = "AIRWALLEX"
 )
 
 // Customers selected currency
