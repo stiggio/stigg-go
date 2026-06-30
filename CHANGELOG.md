@@ -1,5 +1,13 @@
 # Changelog
 
+## 0.1.0-beta.32 (2026-06-30)
+
+Full Changelog: [v0.1.0-beta.31...v0.1.0-beta.32](https://github.com/stiggio/stigg-go/compare/v0.1.0-beta.31...v0.1.0-beta.32)
+
+### Features
+
+* **api:** add AIRWALLEX vendor identifier to customer integration types ([77d4ef4](https://github.com/stiggio/stigg-go/commit/77d4ef4a06dbc837c43a97c1aebc92cbd61aa549))
+
 ## 0.1.0-beta.31 (2026-06-28)
 
 Full Changelog: [v0.1.0-beta.30...v0.1.0-beta.31](https://github.com/stiggio/stigg-go/compare/v0.1.0-beta.30...v0.1.0-beta.31)
