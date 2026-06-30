@@ -292,7 +292,8 @@ type CustomerIntegrationResponseData struct {
 	// The vendor identifier of integration
 	//
 	// Any of "AUTH0", "ZUORA", "STRIPE", "HUBSPOT", "AWS_MARKETPLACE", "SNOWFLAKE",
-	// "SALESFORCE", "BIG_QUERY", "OPEN_FGA", "APP_STORE", "RECEIVED", "PREQUEL".
+	// "SALESFORCE", "BIG_QUERY", "OPEN_FGA", "APP_STORE", "RECEIVED", "PREQUEL",
+	// "AIRWALLEX".
 	VendorIdentifier string `json:"vendorIdentifier" api:"required"`
 	// Price billing sync revision data containing billing ID, link URL, and price
 	// group package billing ID
@@ -562,7 +563,8 @@ type CustomerResponseDataIntegration struct {
 	// The vendor identifier of integration
 	//
 	// Any of "AUTH0", "ZUORA", "STRIPE", "HUBSPOT", "AWS_MARKETPLACE", "SNOWFLAKE",
-	// "SALESFORCE", "BIG_QUERY", "OPEN_FGA", "APP_STORE", "RECEIVED", "PREQUEL".
+	// "SALESFORCE", "BIG_QUERY", "OPEN_FGA", "APP_STORE", "RECEIVED", "PREQUEL",
+	// "AIRWALLEX".
 	VendorIdentifier string `json:"vendorIdentifier" api:"required"`
 	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
 	JSON struct {
@@ -1038,7 +1040,8 @@ type V1CustomerListResponseIntegration struct {
 	// The vendor identifier of integration
 	//
 	// Any of "AUTH0", "ZUORA", "STRIPE", "HUBSPOT", "AWS_MARKETPLACE", "SNOWFLAKE",
-	// "SALESFORCE", "BIG_QUERY", "OPEN_FGA", "APP_STORE", "RECEIVED", "PREQUEL".
+	// "SALESFORCE", "BIG_QUERY", "OPEN_FGA", "APP_STORE", "RECEIVED", "PREQUEL",
+	// "AIRWALLEX".
 	VendorIdentifier string `json:"vendorIdentifier" api:"required"`
 	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
 	JSON struct {
@@ -2115,7 +2118,8 @@ type V1CustomerUpdateParamsIntegration struct {
 	// The vendor identifier of integration
 	//
 	// Any of "AUTH0", "ZUORA", "STRIPE", "HUBSPOT", "AWS_MARKETPLACE", "SNOWFLAKE",
-	// "SALESFORCE", "BIG_QUERY", "OPEN_FGA", "APP_STORE", "RECEIVED", "PREQUEL".
+	// "SALESFORCE", "BIG_QUERY", "OPEN_FGA", "APP_STORE", "RECEIVED", "PREQUEL",
+	// "AIRWALLEX".
 	VendorIdentifier string `json:"vendorIdentifier,omitzero" api:"required"`
 	paramObj
 }
@@ -2130,7 +2134,7 @@ func (r *V1CustomerUpdateParamsIntegration) UnmarshalJSON(data []byte) error {
 
 func init() {
 	apijson.RegisterFieldValidator[V1CustomerUpdateParamsIntegration](
-		"vendorIdentifier", "AUTH0", "ZUORA", "STRIPE", "HUBSPOT", "AWS_MARKETPLACE", "SNOWFLAKE", "SALESFORCE", "BIG_QUERY", "OPEN_FGA", "APP_STORE", "RECEIVED", "PREQUEL",
+		"vendorIdentifier", "AUTH0", "ZUORA", "STRIPE", "HUBSPOT", "AWS_MARKETPLACE", "SNOWFLAKE", "SALESFORCE", "BIG_QUERY", "OPEN_FGA", "APP_STORE", "RECEIVED", "PREQUEL", "AIRWALLEX",
 	)
 }
 
@@ -2684,7 +2688,8 @@ type V1CustomerProvisionParamsIntegration struct {
 	// The vendor identifier of integration
 	//
 	// Any of "AUTH0", "ZUORA", "STRIPE", "HUBSPOT", "AWS_MARKETPLACE", "SNOWFLAKE",
-	// "SALESFORCE", "BIG_QUERY", "OPEN_FGA", "APP_STORE", "RECEIVED", "PREQUEL".
+	// "SALESFORCE", "BIG_QUERY", "OPEN_FGA", "APP_STORE", "RECEIVED", "PREQUEL",
+	// "AIRWALLEX".
 	VendorIdentifier string `json:"vendorIdentifier,omitzero" api:"required"`
 	paramObj
 }
@@ -2699,7 +2704,7 @@ func (r *V1CustomerProvisionParamsIntegration) UnmarshalJSON(data []byte) error 
 
 func init() {
 	apijson.RegisterFieldValidator[V1CustomerProvisionParamsIntegration](
-		"vendorIdentifier", "AUTH0", "ZUORA", "STRIPE", "HUBSPOT", "AWS_MARKETPLACE", "SNOWFLAKE", "SALESFORCE", "BIG_QUERY", "OPEN_FGA", "APP_STORE", "RECEIVED", "PREQUEL",
+		"vendorIdentifier", "AUTH0", "ZUORA", "STRIPE", "HUBSPOT", "AWS_MARKETPLACE", "SNOWFLAKE", "SALESFORCE", "BIG_QUERY", "OPEN_FGA", "APP_STORE", "RECEIVED", "PREQUEL", "AIRWALLEX",
 	)
 }
 
