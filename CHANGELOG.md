@@ -1,5 +1,13 @@
 # Changelog
 
+## 0.1.0-beta.33 (2026-07-01)
+
+Full Changelog: [v0.1.0-beta.32...v0.1.0-beta.33](https://github.com/stiggio/stigg-go/compare/v0.1.0-beta.32...v0.1.0-beta.33)
+
+### Features
+
+* **api:** add consumption resource with consume/async methods to credits ([5098274](https://github.com/stiggio/stigg-go/commit/5098274d3e65b672f840f3b6e724c58c787141c6))
+
 ## 0.1.0-beta.32 (2026-06-30)
 
 Full Changelog: [v0.1.0-beta.31...v0.1.0-beta.32](https://github.com/stiggio/stigg-go/compare/v0.1.0-beta.31...v0.1.0-beta.32)
