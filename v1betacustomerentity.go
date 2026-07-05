@@ -175,22 +175,22 @@ type V1BetaCustomerEntityGetResponseData struct {
 	ArchivedAt time.Time `json:"archivedAt" api:"required" format:"date-time"`
 	// Timestamp of when the record was created
 	CreatedAt time.Time `json:"createdAt" api:"required" format:"date-time"`
+	// The entity type identifier this entity instantiates
+	EntityTypeID string `json:"entityTypeId" api:"required"`
 	// Free-form key/value metadata attached to the entity
 	Metadata map[string]string `json:"metadata" api:"required"`
-	// The entity type identifier this entity instantiates
-	TypeID string `json:"typeId" api:"required"`
 	// Timestamp of when the record was last updated
 	UpdatedAt time.Time `json:"updatedAt" api:"required" format:"date-time"`
 	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
 	JSON struct {
-		ID          respjson.Field
-		ArchivedAt  respjson.Field
-		CreatedAt   respjson.Field
-		Metadata    respjson.Field
-		TypeID      respjson.Field
-		UpdatedAt   respjson.Field
-		ExtraFields map[string]respjson.Field
-		raw         string
+		ID           respjson.Field
+		ArchivedAt   respjson.Field
+		CreatedAt    respjson.Field
+		EntityTypeID respjson.Field
+		Metadata     respjson.Field
+		UpdatedAt    respjson.Field
+		ExtraFields  map[string]respjson.Field
+		raw          string
 	} `json:"-"`
 }
 
@@ -208,22 +208,22 @@ type V1BetaCustomerEntityListResponse struct {
 	ArchivedAt time.Time `json:"archivedAt" api:"required" format:"date-time"`
 	// Timestamp of when the record was created
 	CreatedAt time.Time `json:"createdAt" api:"required" format:"date-time"`
+	// The entity type identifier this entity instantiates
+	EntityTypeID string `json:"entityTypeId" api:"required"`
 	// Free-form key/value metadata attached to the entity
 	Metadata map[string]string `json:"metadata" api:"required"`
-	// The entity type identifier this entity instantiates
-	TypeID string `json:"typeId" api:"required"`
 	// Timestamp of when the record was last updated
 	UpdatedAt time.Time `json:"updatedAt" api:"required" format:"date-time"`
 	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
 	JSON struct {
-		ID          respjson.Field
-		ArchivedAt  respjson.Field
-		CreatedAt   respjson.Field
-		Metadata    respjson.Field
-		TypeID      respjson.Field
-		UpdatedAt   respjson.Field
-		ExtraFields map[string]respjson.Field
-		raw         string
+		ID           respjson.Field
+		ArchivedAt   respjson.Field
+		CreatedAt    respjson.Field
+		EntityTypeID respjson.Field
+		Metadata     respjson.Field
+		UpdatedAt    respjson.Field
+		ExtraFields  map[string]respjson.Field
+		raw          string
 	} `json:"-"`
 }
 
@@ -330,22 +330,22 @@ type V1BetaCustomerEntityUpsertResponseData struct {
 	ArchivedAt time.Time `json:"archivedAt" api:"required" format:"date-time"`
 	// Timestamp of when the record was created
 	CreatedAt time.Time `json:"createdAt" api:"required" format:"date-time"`
+	// The entity type identifier this entity instantiates
+	EntityTypeID string `json:"entityTypeId" api:"required"`
 	// Free-form key/value metadata attached to the entity
 	Metadata map[string]string `json:"metadata" api:"required"`
-	// The entity type identifier this entity instantiates
-	TypeID string `json:"typeId" api:"required"`
 	// Timestamp of when the record was last updated
 	UpdatedAt time.Time `json:"updatedAt" api:"required" format:"date-time"`
 	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
 	JSON struct {
-		ID          respjson.Field
-		ArchivedAt  respjson.Field
-		CreatedAt   respjson.Field
-		Metadata    respjson.Field
-		TypeID      respjson.Field
-		UpdatedAt   respjson.Field
-		ExtraFields map[string]respjson.Field
-		raw         string
+		ID           respjson.Field
+		ArchivedAt   respjson.Field
+		CreatedAt    respjson.Field
+		EntityTypeID respjson.Field
+		Metadata     respjson.Field
+		UpdatedAt    respjson.Field
+		ExtraFields  map[string]respjson.Field
+		raw          string
 	} `json:"-"`
 }
 
@@ -367,10 +367,10 @@ type V1BetaCustomerEntityListParams struct {
 	After param.Opt[string] `query:"after,omitzero" format:"uuid" json:"-"`
 	// Return items that come before this cursor
 	Before param.Opt[string] `query:"before,omitzero" format:"uuid" json:"-"`
+	// Filter results to entities of a specific entity type, by the type's ID
+	EntityTypeID param.Opt[string] `query:"entityTypeId,omitzero" json:"-"`
 	// Maximum number of items to return
-	Limit param.Opt[int64] `query:"limit,omitzero" json:"-"`
-	// Filter results to entities of a specific entity type, by the type's refId
-	TypeRefID      param.Opt[string] `query:"typeRefId,omitzero" json:"-"`
+	Limit          param.Opt[int64]  `query:"limit,omitzero" json:"-"`
 	XAccountID     param.Opt[string] `header:"X-ACCOUNT-ID,omitzero" json:"-"`
 	XEnvironmentID param.Opt[string] `header:"X-ENVIRONMENT-ID,omitzero" json:"-"`
 	// Whether to include archived entities. One of: true, false
@@ -451,10 +451,10 @@ func (r *V1BetaCustomerEntityUpsertParams) UnmarshalJSON(data []byte) error {
 type V1BetaCustomerEntityUpsertParamsEntity struct {
 	// The unique identifier for the entity
 	ID string `json:"id" api:"required"`
-	// The entity type refId this entity instantiates. Required when creating a new
+	// The entity type ID this entity instantiates. Required when creating a new
 	// entity; on a re-upsert may be omitted to preserve the existing type. Governance
 	// returns 400 if missing on create.
-	TypeRefID param.Opt[string] `json:"typeRefId,omitzero"`
+	EntityTypeID param.Opt[string] `json:"entityTypeId,omitzero"`
 	// Free-form key/value metadata. Patch semantics: empty-string value removes a key,
 	// omitted keys are preserved.
 	Metadata map[string]string `json:"metadata,omitzero"`
