@@ -1,5 +1,13 @@
 # Changelog
 
+## 0.1.0-beta.34 (2026-07-05)
+
+Full Changelog: [v0.1.0-beta.33...v0.1.0-beta.34](https://github.com/stiggio/stigg-go/compare/v0.1.0-beta.33...v0.1.0-beta.34)
+
+### Bug Fixes
+
+* **types:** rename TypeID to EntityTypeID in customer entity/event types ([4d98b4b](https://github.com/stiggio/stigg-go/commit/4d98b4bafce2de9772eb0d85bd1837d301f3ff3b))
+
 ## 0.1.0-beta.33 (2026-07-01)
 
 Full Changelog: [v0.1.0-beta.32...v0.1.0-beta.33](https://github.com/stiggio/stigg-go/compare/v0.1.0-beta.32...v0.1.0-beta.33)
