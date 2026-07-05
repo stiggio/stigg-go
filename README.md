@@ -37,7 +37,7 @@ Or to pin the version:
 <!-- x-release-please-start-version -->
 
 ```sh
-go get -u 'github.com/stiggio/stigg-go@v0.1.0-beta.34'
+go get -u 'github.com/stiggio/stigg-go@v0.1.0-beta.35'
 ```
 
 <!-- x-release-please-end -->
