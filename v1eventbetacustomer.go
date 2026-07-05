@@ -94,7 +94,7 @@ type V1EventBetaCustomerGetGovernanceResponseData struct {
 	// External id of the entity at this node.
 	EntityID string `json:"entityId" api:"required"`
 	// External id of the entity type (e.g. `team`, `user`).
-	EntityType string `json:"entityType" api:"required"`
+	EntityTypeID string `json:"entityTypeId" api:"required"`
 	// External id of the parent entity in the tree; `null` for a root. Use it to
 	// rebuild the tree.
 	ParentID string `json:"parentId" api:"required"`
@@ -112,17 +112,17 @@ type V1EventBetaCustomerGetGovernanceResponseData struct {
 	// `currentUsage / usageLimit` (1 when usageLimit is 0 — always at limit). The
 	// cross-capability-safe sort key.
 	Utilization float64 `json:"utilization" api:"required"`
-	// The metered currency refId (present when the configured capability is a credit
+	// The metered currency ID (present when the configured capability is a credit
 	// currency).
 	CurrencyID string `json:"currencyId"`
-	// The metered feature refId (present when the configured capability is a feature).
+	// The metered feature ID (present when the configured capability is a feature).
 	FeatureID string `json:"featureId"`
 	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
 	JSON struct {
 		Cadence          respjson.Field
 		CurrentUsage     respjson.Field
 		EntityID         respjson.Field
-		EntityType       respjson.Field
+		EntityTypeID     respjson.Field
 		ParentID         respjson.Field
 		ScopeEntityIDs   respjson.Field
 		UsageLimit       respjson.Field

@@ -63,9 +63,9 @@ func TestV1BetaCustomerEntityListWithOptionalParams(t *testing.T) {
 		stigg.V1BetaCustomerEntityListParams{
 			After:           stigg.String("182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e"),
 			Before:          stigg.String("182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e"),
+			EntityTypeID:    stigg.String("entityTypeId"),
 			IncludeArchived: stigg.V1BetaCustomerEntityListParamsIncludeArchivedTrue,
 			Limit:           stigg.Int(1),
-			TypeRefID:       stigg.String("typeRefId"),
 			XAccountID:      stigg.String("X-ACCOUNT-ID"),
 			XEnvironmentID:  stigg.String("X-ENVIRONMENT-ID"),
 		},
@@ -159,18 +159,18 @@ func TestV1BetaCustomerEntityUpsertWithOptionalParams(t *testing.T) {
 		"id",
 		stigg.V1BetaCustomerEntityUpsertParams{
 			Entities: []stigg.V1BetaCustomerEntityUpsertParamsEntity{{
-				ID: "user-7f3a0c1d",
+				ID:           "user-7f3a0c1d",
+				EntityTypeID: stigg.String("user"),
 				Metadata: map[string]string{
 					"email": "jane@acme.com",
 					"role":  "admin",
 				},
-				TypeRefID: stigg.String("user"),
 			}, {
-				ID: "user-c4d1b2e9",
+				ID:           "user-c4d1b2e9",
+				EntityTypeID: stigg.String("user"),
 				Metadata: map[string]string{
 					"email": "john@acme.com",
 				},
-				TypeRefID: stigg.String("user"),
 			}},
 			XAccountID:     stigg.String("X-ACCOUNT-ID"),
 			XEnvironmentID: stigg.String("X-ENVIRONMENT-ID"),

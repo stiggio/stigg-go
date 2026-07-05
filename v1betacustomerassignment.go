@@ -108,22 +108,21 @@ type V1BetaCustomerAssignmentListResponse struct {
 	Cadence string `json:"cadence" api:"required"`
 	// Timestamp of when the record was created
 	CreatedAt time.Time `json:"createdAt" api:"required" format:"date-time"`
-	// The entity refId this assignment is attached to
+	// The entity ID this assignment is attached to
 	EntityID string `json:"entityId" api:"required"`
-	// Parent entity refId in the hierarchy, or `null` for a root.
+	// Parent entity ID in the hierarchy, or `null` for a root.
 	ParentID string `json:"parentId" api:"required"`
-	// Dimension-scoped sub-budget key: the set of entity refIds this budget applies
-	// to. Empty is the node-wide budget that always matches; a non-empty set only
-	// applies when every listed entity is present in the resolved set
-	// (order-insensitive).
+	// Dimension-scoped sub-budget key: the set of entity IDs this budget applies to.
+	// Empty is the node-wide budget that always matches; a non-empty set only applies
+	// when every listed entity is present in the resolved set (order-insensitive).
 	ScopeEntityIDs []string `json:"scopeEntityIds" api:"required"`
 	// Timestamp of when the record was last updated
 	UpdatedAt time.Time `json:"updatedAt" api:"required" format:"date-time"`
 	// Maximum usage allowed within one cadence window
 	UsageLimit float64 `json:"usageLimit" api:"required"`
-	// Currency refId this assignment grants (present for credit capabilities).
+	// Currency ID this assignment grants (present for credit capabilities).
 	CurrencyID string `json:"currencyId"`
-	// Feature refId this assignment grants (present for feature capabilities).
+	// Feature ID this assignment grants (present for feature capabilities).
 	FeatureID string `json:"featureId"`
 	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
 	JSON struct {
@@ -176,22 +175,21 @@ type V1BetaCustomerAssignmentUpsertResponseData struct {
 	Cadence string `json:"cadence" api:"required"`
 	// Timestamp of when the record was created
 	CreatedAt time.Time `json:"createdAt" api:"required" format:"date-time"`
-	// The entity refId this assignment is attached to
+	// The entity ID this assignment is attached to
 	EntityID string `json:"entityId" api:"required"`
-	// Parent entity refId in the hierarchy, or `null` for a root.
+	// Parent entity ID in the hierarchy, or `null` for a root.
 	ParentID string `json:"parentId" api:"required"`
-	// Dimension-scoped sub-budget key: the set of entity refIds this budget applies
-	// to. Empty is the node-wide budget that always matches; a non-empty set only
-	// applies when every listed entity is present in the resolved set
-	// (order-insensitive).
+	// Dimension-scoped sub-budget key: the set of entity IDs this budget applies to.
+	// Empty is the node-wide budget that always matches; a non-empty set only applies
+	// when every listed entity is present in the resolved set (order-insensitive).
 	ScopeEntityIDs []string `json:"scopeEntityIds" api:"required"`
 	// Timestamp of when the record was last updated
 	UpdatedAt time.Time `json:"updatedAt" api:"required" format:"date-time"`
 	// Maximum usage allowed within one cadence window
 	UsageLimit float64 `json:"usageLimit" api:"required"`
-	// Currency refId this assignment grants (present for credit capabilities).
+	// Currency ID this assignment grants (present for credit capabilities).
 	CurrencyID string `json:"currencyId"`
-	// Feature refId this assignment grants (present for feature capabilities).
+	// Feature ID this assignment grants (present for feature capabilities).
 	FeatureID string `json:"featureId"`
 	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
 	JSON struct {
@@ -221,9 +219,9 @@ type V1BetaCustomerAssignmentListParams struct {
 	After param.Opt[string] `query:"after,omitzero" format:"uuid" json:"-"`
 	// Return items that come before this cursor
 	Before param.Opt[string] `query:"before,omitzero" format:"uuid" json:"-"`
-	// Filter assignments to a specific capability refId
+	// Filter assignments to a specific capability ID
 	CapabilityID param.Opt[string] `query:"capabilityId,omitzero" json:"-"`
-	// Filter assignments to a specific entity refId
+	// Filter assignments to a specific entity ID
 	EntityID param.Opt[string] `query:"entityId,omitzero" json:"-"`
 	// Maximum number of items to return
 	Limit          param.Opt[int64]  `query:"limit,omitzero" json:"-"`
@@ -265,21 +263,21 @@ func (r *V1BetaCustomerAssignmentUpsertParams) UnmarshalJSON(data []byte) error 
 //
 // The property EntityID is required.
 type V1BetaCustomerAssignmentUpsertParamsAssignment struct {
-	// The entity refId this assignment is attached to
+	// The entity ID this assignment is attached to
 	EntityID string `json:"entityId" api:"required"`
-	// Parent entity refId in the hierarchy. Omit to leave the current parent untouched
-	// (a new node defaults to a root); `null` detaches to a root; a refId sets or
-	// changes the parent. Reparenting an existing node is leaf-only.
+	// Parent entity ID in the hierarchy. Omit to leave the current parent untouched (a
+	// new node defaults to a root); `null` detaches to a root; an ID sets or changes
+	// the parent. Reparenting an existing node is leaf-only.
 	ParentID param.Opt[string] `json:"parentId,omitzero"`
 	// Maximum usage allowed within one cadence window (required on create)
 	UsageLimit param.Opt[float64] `json:"usageLimit,omitzero"`
 	// Usage-reset cadence (required on create) as an ISO-8601 single-unit duration,
 	// e.g. `P1M`, `P30D`, `PT1M`.
 	Cadence param.Opt[string] `json:"cadence,omitzero"`
-	// Currency refId this assignment grants (credit budgets). Mutually exclusive with
+	// Currency ID this assignment grants (credit budgets). Mutually exclusive with
 	// `featureId`.
 	CurrencyID param.Opt[string] `json:"currencyId,omitzero"`
-	// Feature refId this assignment grants. Mutually exclusive with `currencyId`.
+	// Feature ID this assignment grants. Mutually exclusive with `currencyId`.
 	FeatureID      param.Opt[string] `json:"featureId,omitzero"`
 	ScopeEntityIDs []string          `json:"scopeEntityIds,omitzero"`
 	paramObj
