@@ -219,10 +219,14 @@ type V1BetaCustomerAssignmentListParams struct {
 	After param.Opt[string] `query:"after,omitzero" format:"uuid" json:"-"`
 	// Return items that come before this cursor
 	Before param.Opt[string] `query:"before,omitzero" format:"uuid" json:"-"`
-	// Filter assignments to a specific capability ID
-	CapabilityID param.Opt[string] `query:"capabilityId,omitzero" json:"-"`
+	// Filter assignments to a specific currency, by its ID. Mutually exclusive with
+	// `featureId`.
+	CurrencyID param.Opt[string] `query:"currencyId,omitzero" json:"-"`
 	// Filter assignments to a specific entity ID
 	EntityID param.Opt[string] `query:"entityId,omitzero" json:"-"`
+	// Filter assignments to a specific feature, by its ID. Mutually exclusive with
+	// `currencyId`.
+	FeatureID param.Opt[string] `query:"featureId,omitzero" json:"-"`
 	// Maximum number of items to return
 	Limit          param.Opt[int64]  `query:"limit,omitzero" json:"-"`
 	XAccountID     param.Opt[string] `header:"X-ACCOUNT-ID,omitzero" json:"-"`
