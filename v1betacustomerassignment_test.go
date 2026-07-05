@@ -32,8 +32,9 @@ func TestV1BetaCustomerAssignmentListWithOptionalParams(t *testing.T) {
 		stigg.V1BetaCustomerAssignmentListParams{
 			After:          stigg.String("182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e"),
 			Before:         stigg.String("182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e"),
-			CapabilityID:   stigg.String("capabilityId"),
+			CurrencyID:     stigg.String("currencyId"),
 			EntityID:       stigg.String("entityId"),
+			FeatureID:      stigg.String("featureId"),
 			Limit:          stigg.Int(1),
 			XAccountID:     stigg.String("X-ACCOUNT-ID"),
 			XEnvironmentID: stigg.String("X-ENVIRONMENT-ID"),
