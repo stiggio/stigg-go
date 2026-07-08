@@ -33,7 +33,7 @@ func TestV1AddonNewWithOptionalParams(t *testing.T) {
 		ProductID:   "productId",
 		BillingID:   stigg.String("billingId"),
 		Description: stigg.String("description"),
-		MaxQuantity: stigg.Int(0),
+		MaxQuantity: stigg.Int(1),
 		Metadata: map[string]string{
 			"foo": "string",
 		},
@@ -207,7 +207,7 @@ func TestV1AddonUpdateWithOptionalParams(t *testing.T) {
 			Dependencies: []string{"string"},
 			Description:  stigg.String("description"),
 			DisplayName:  stigg.String("displayName"),
-			MaxQuantity:  stigg.Int(0),
+			MaxQuantity:  stigg.Int(1),
 			Metadata: map[string]string{
 				"foo": "string",
 			},
