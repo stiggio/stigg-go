@@ -362,6 +362,8 @@ type V1UsageReportParamsUsage struct {
 	ResourceID param.Opt[string] `json:"resourceId,omitzero"`
 	// Timestamp of when the record was created
 	CreatedAt param.Opt[time.Time] `json:"createdAt,omitzero" format:"date-time"`
+	// Idempotency key
+	IdempotencyKey param.Opt[string] `json:"idempotencyKey,omitzero"`
 	// Additional dimensions for the usage report
 	Dimensions map[string]V1UsageReportParamsUsageDimensionUnion `json:"dimensions,omitzero"`
 	// The method by which the usage value should be updated
