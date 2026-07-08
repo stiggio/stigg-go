@@ -1,5 +1,19 @@
 # Changelog
 
+## 0.1.0-beta.36 (2026-07-08)
+
+Full Changelog: [v0.1.0-beta.35...v0.1.0-beta.36](https://github.com/stiggio/stigg-go/compare/v0.1.0-beta.35...v0.1.0-beta.36)
+
+### Features
+
+* **api:** add idempotency_key parameter to usage report method ([30af328](https://github.com/stiggio/stigg-go/commit/30af328f62053705dd882eae13eb6a8ea2323d84))
+
+
+### Chores
+
+* **internal:** regenerate SDK with no functional changes ([3298548](https://github.com/stiggio/stigg-go/commit/32985488743a1c1bce2e6a2f149752a8edf59e7d))
+* **tests:** update MaxQuantity test value in v1addon ([56c818e](https://github.com/stiggio/stigg-go/commit/56c818edc8c8cbb1b13cb3b43a0deb0d5749cd37))
+
 ## 0.1.0-beta.35 (2026-07-05)
 
 Full Changelog: [v0.1.0-beta.34...v0.1.0-beta.35](https://github.com/stiggio/stigg-go/compare/v0.1.0-beta.34...v0.1.0-beta.35)
