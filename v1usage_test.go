@@ -73,6 +73,7 @@ func TestV1UsageReportWithOptionalParams(t *testing.T) {
 					OfString: stigg.String("string"),
 				},
 			},
+			IdempotencyKey: stigg.String("x"),
 			ResourceID:     stigg.String("resourceId"),
 			UpdateBehavior: "DELTA",
 		}},
