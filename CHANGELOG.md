@@ -1,5 +1,13 @@
 # Changelog
 
+## 0.1.0-beta.37 (2026-07-12)
+
+Full Changelog: [v0.1.0-beta.36...v0.1.0-beta.37](https://github.com/stiggio/stigg-go/compare/v0.1.0-beta.36...v0.1.0-beta.37)
+
+### Features
+
+* **api:** add consumed field to credit_consumption/usage responses ([5d5d0b5](https://github.com/stiggio/stigg-go/commit/5d5d0b51d64d3ab19ef2bac5d46ef503ea5e63d5))
+
 ## 0.1.0-beta.36 (2026-07-08)
 
 Full Changelog: [v0.1.0-beta.35...v0.1.0-beta.36](https://github.com/stiggio/stigg-go/compare/v0.1.0-beta.35...v0.1.0-beta.36)
