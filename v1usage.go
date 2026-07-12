@@ -279,9 +279,17 @@ func (r *V1UsageReportResponseData) UnmarshalJSON(data []byte) error {
 
 // Optimistic credit balance for a credit-backed feature
 type V1UsageReportResponseDataCredit struct {
+	// The credits this single reportUsage call deducted, in credit units — scoped to
+	// this one measurement (0 for idempotency duplicates). Contrast `currentUsage`,
+	// which is the wallet-wide running total shared across all features on this
+	// currency. Use it to reconcile expected per-call deductions.
+	Consumed float64 `json:"consumed" api:"required"`
 	// The credit currency identifier
 	CurrencyID string `json:"currencyId" api:"required"`
-	// The credits consumed (optimistic — includes not-yet-reconciled usage)
+	// The wallet's total consumed credits for this currency (optimistic — includes
+	// not-yet-reconciled usage), shared across every feature that draws on the
+	// currency. This is the running balance, not this call's deduction — see
+	// `consumed` for that.
 	CurrentUsage float64 `json:"currentUsage" api:"required"`
 	// The grant-version timestamp of this balance, used by the SDK for last-write-wins
 	// reconciliation
@@ -293,6 +301,7 @@ type V1UsageReportResponseDataCredit struct {
 	UsagePeriodEnd time.Time `json:"usagePeriodEnd" api:"nullable" format:"date-time"`
 	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
 	JSON struct {
+		Consumed       respjson.Field
 		CurrencyID     respjson.Field
 		CurrentUsage   respjson.Field
 		Timestamp      respjson.Field
