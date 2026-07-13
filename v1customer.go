@@ -208,8 +208,7 @@ func (r *V1CustomerService) ListResourcesAutoPaging(ctx context.Context, id stri
 	return pagination.NewMyCursorIDPageAutoPager(r.ListResources(ctx, id, params, opts...))
 }
 
-// Creates a new customer and optionally provisions an initial subscription in a
-// single operation.
+// Creates a new customer.
 func (r *V1CustomerService) Provision(ctx context.Context, params V1CustomerProvisionParams, opts ...option.RequestOption) (res *CustomerResponse, err error) {
 	if !param.IsOmitted(params.XAccountID) {
 		opts = append(opts, option.WithHeader("X-ACCOUNT-ID", fmt.Sprintf("%v", params.XAccountID.Value)))
