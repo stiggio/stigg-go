@@ -71,7 +71,9 @@ func (r *V1EventDataExportDestinationService) Update(ctx context.Context, destin
 	return res, err
 }
 
-// Remove a destination from the DATA_EXPORT integration metadata. Idempotent.
+// Disconnect a destination: stops the provider sync (deletes the provider
+// destination) and removes it from the DATA_EXPORT integration. Non-destructive —
+// the warehouse table is left intact. Idempotent.
 func (r *V1EventDataExportDestinationService) Delete(ctx context.Context, destinationID string, body V1EventDataExportDestinationDeleteParams, opts ...option.RequestOption) (res *V1EventDataExportDestinationDeleteResponse, err error) {
 	if !param.IsOmitted(body.XAccountID) {
 		opts = append(opts, option.WithHeader("X-ACCOUNT-ID", fmt.Sprintf("%v", body.XAccountID.Value)))
