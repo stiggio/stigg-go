@@ -60,6 +60,10 @@ Methods:
 - <code title="post /api/v1/customers/{id}/integrations">client.V1.Customers.Integrations.<a href="https://pkg.go.dev/github.com/stiggio/stigg-go#V1CustomerIntegrationService.Link">Link</a>(ctx <a href="https://pkg.go.dev/context">context</a>.<a href="https://pkg.go.dev/context#Context">Context</a>, id <a href="https://pkg.go.dev/builtin#string">string</a>, params <a href="https://pkg.go.dev/github.com/stiggio/stigg-go">stigg</a>.<a href="https://pkg.go.dev/github.com/stiggio/stigg-go#V1CustomerIntegrationLinkParams">V1CustomerIntegrationLinkParams</a>) (\*<a href="https://pkg.go.dev/github.com/stiggio/stigg-go">stigg</a>.<a href="https://pkg.go.dev/github.com/stiggio/stigg-go#CustomerIntegrationResponse">CustomerIntegrationResponse</a>, <a href="https://pkg.go.dev/builtin#error">error</a>)</code>
 - <code title="delete /api/v1/customers/{id}/integrations/{integrationId}">client.V1.Customers.Integrations.<a href="https://pkg.go.dev/github.com/stiggio/stigg-go#V1CustomerIntegrationService.Unlink">Unlink</a>(ctx <a href="https://pkg.go.dev/context">context</a>.<a href="https://pkg.go.dev/context#Context">Context</a>, integrationID <a href="https://pkg.go.dev/builtin#string">string</a>, params <a href="https://pkg.go.dev/github.com/stiggio/stigg-go">stigg</a>.<a href="https://pkg.go.dev/github.com/stiggio/stigg-go#V1CustomerIntegrationUnlinkParams">V1CustomerIntegrationUnlinkParams</a>) (\*<a href="https://pkg.go.dev/github.com/stiggio/stigg-go">stigg</a>.<a href="https://pkg.go.dev/github.com/stiggio/stigg-go#CustomerIntegrationResponse">CustomerIntegrationResponse</a>, <a href="https://pkg.go.dev/builtin#error">error</a>)</code>
 
+### Events
+
+### Usage
+
 ## Subscriptions
 
 Response Types:
@@ -135,10 +139,12 @@ Methods:
 
 Response Types:
 
+- <a href="https://pkg.go.dev/github.com/stiggio/stigg-go">stigg</a>.<a href="https://pkg.go.dev/github.com/stiggio/stigg-go#V1EventEstimateCostResponse">V1EventEstimateCostResponse</a>
 - <a href="https://pkg.go.dev/github.com/stiggio/stigg-go">stigg</a>.<a href="https://pkg.go.dev/github.com/stiggio/stigg-go#V1EventReportResponse">V1EventReportResponse</a>
 
 Methods:
 
+- <code title="post /api/v1/events/estimate">client.V1.Events.<a href="https://pkg.go.dev/github.com/stiggio/stigg-go#V1EventService.EstimateCost">EstimateCost</a>(ctx <a href="https://pkg.go.dev/context">context</a>.<a href="https://pkg.go.dev/context#Context">Context</a>, params <a href="https://pkg.go.dev/github.com/stiggio/stigg-go">stigg</a>.<a href="https://pkg.go.dev/github.com/stiggio/stigg-go#V1EventEstimateCostParams">V1EventEstimateCostParams</a>) (\*<a href="https://pkg.go.dev/github.com/stiggio/stigg-go">stigg</a>.<a href="https://pkg.go.dev/github.com/stiggio/stigg-go#V1EventEstimateCostResponse">V1EventEstimateCostResponse</a>, <a href="https://pkg.go.dev/builtin#error">error</a>)</code>
 - <code title="post /api/v1/events">client.V1.Events.<a href="https://pkg.go.dev/github.com/stiggio/stigg-go#V1EventService.Report">Report</a>(ctx <a href="https://pkg.go.dev/context">context</a>.<a href="https://pkg.go.dev/context#Context">Context</a>, params <a href="https://pkg.go.dev/github.com/stiggio/stigg-go">stigg</a>.<a href="https://pkg.go.dev/github.com/stiggio/stigg-go#V1EventReportParams">V1EventReportParams</a>) (\*<a href="https://pkg.go.dev/github.com/stiggio/stigg-go">stigg</a>.<a href="https://pkg.go.dev/github.com/stiggio/stigg-go#V1EventReportResponse">V1EventReportResponse</a>, <a href="https://pkg.go.dev/builtin#error">error</a>)</code>
 
 ### DataExport
@@ -333,11 +339,13 @@ Methods:
 
 Response Types:
 
+- <a href="https://pkg.go.dev/github.com/stiggio/stigg-go">stigg</a>.<a href="https://pkg.go.dev/github.com/stiggio/stigg-go#V1UsageEstimateCostResponse">V1UsageEstimateCostResponse</a>
 - <a href="https://pkg.go.dev/github.com/stiggio/stigg-go">stigg</a>.<a href="https://pkg.go.dev/github.com/stiggio/stigg-go#V1UsageHistoryResponse">V1UsageHistoryResponse</a>
 - <a href="https://pkg.go.dev/github.com/stiggio/stigg-go">stigg</a>.<a href="https://pkg.go.dev/github.com/stiggio/stigg-go#V1UsageReportResponse">V1UsageReportResponse</a>
 
 Methods:
 
+- <code title="post /api/v1/usage/estimate">client.V1.Usage.<a href="https://pkg.go.dev/github.com/stiggio/stigg-go#V1UsageService.EstimateCost">EstimateCost</a>(ctx <a href="https://pkg.go.dev/context">context</a>.<a href="https://pkg.go.dev/context#Context">Context</a>, params <a href="https://pkg.go.dev/github.com/stiggio/stigg-go">stigg</a>.<a href="https://pkg.go.dev/github.com/stiggio/stigg-go#V1UsageEstimateCostParams">V1UsageEstimateCostParams</a>) (\*<a href="https://pkg.go.dev/github.com/stiggio/stigg-go">stigg</a>.<a href="https://pkg.go.dev/github.com/stiggio/stigg-go#V1UsageEstimateCostResponse">V1UsageEstimateCostResponse</a>, <a href="https://pkg.go.dev/builtin#error">error</a>)</code>
 - <code title="get /api/v1/usage/{customerId}/history/{featureId}">client.V1.Usage.<a href="https://pkg.go.dev/github.com/stiggio/stigg-go#V1UsageService.History">History</a>(ctx <a href="https://pkg.go.dev/context">context</a>.<a href="https://pkg.go.dev/context#Context">Context</a>, featureID <a href="https://pkg.go.dev/builtin#string">string</a>, params <a href="https://pkg.go.dev/github.com/stiggio/stigg-go">stigg</a>.<a href="https://pkg.go.dev/github.com/stiggio/stigg-go#V1UsageHistoryParams">V1UsageHistoryParams</a>) (\*<a href="https://pkg.go.dev/github.com/stiggio/stigg-go">stigg</a>.<a href="https://pkg.go.dev/github.com/stiggio/stigg-go#V1UsageHistoryResponse">V1UsageHistoryResponse</a>, <a href="https://pkg.go.dev/builtin#error">error</a>)</code>
 - <code title="post /api/v1/usage">client.V1.Usage.<a href="https://pkg.go.dev/github.com/stiggio/stigg-go#V1UsageService.Report">Report</a>(ctx <a href="https://pkg.go.dev/context">context</a>.<a href="https://pkg.go.dev/context#Context">Context</a>, params <a href="https://pkg.go.dev/github.com/stiggio/stigg-go">stigg</a>.<a href="https://pkg.go.dev/github.com/stiggio/stigg-go#V1UsageReportParams">V1UsageReportParams</a>) (\*<a href="https://pkg.go.dev/github.com/stiggio/stigg-go">stigg</a>.<a href="https://pkg.go.dev/github.com/stiggio/stigg-go#V1UsageReportResponse">V1UsageReportResponse</a>, <a href="https://pkg.go.dev/builtin#error">error</a>)</code>
 
