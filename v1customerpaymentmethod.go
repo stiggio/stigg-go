@@ -83,7 +83,7 @@ type V1CustomerPaymentMethodAttachParams struct {
 	//
 	// Any of "AUTH0", "ZUORA", "STRIPE", "HUBSPOT", "AWS_MARKETPLACE", "SNOWFLAKE",
 	// "SALESFORCE", "BIG_QUERY", "OPEN_FGA", "APP_STORE", "RECEIVED", "PREQUEL",
-	// "AIRWALLEX".
+	// "AIRWALLEX", "STRIPE_INVOICING".
 	VendorIdentifier V1CustomerPaymentMethodAttachParamsVendorIdentifier `json:"vendorIdentifier,omitzero" api:"required"`
 	XAccountID       param.Opt[string]                                   `header:"X-ACCOUNT-ID,omitzero" json:"-"`
 	XEnvironmentID   param.Opt[string]                                   `header:"X-ENVIRONMENT-ID,omitzero" json:"-"`
@@ -116,19 +116,20 @@ func (r *V1CustomerPaymentMethodAttachParams) UnmarshalJSON(data []byte) error {
 type V1CustomerPaymentMethodAttachParamsVendorIdentifier string
 
 const (
-	V1CustomerPaymentMethodAttachParamsVendorIdentifierAuth0          V1CustomerPaymentMethodAttachParamsVendorIdentifier = "AUTH0"
-	V1CustomerPaymentMethodAttachParamsVendorIdentifierZuora          V1CustomerPaymentMethodAttachParamsVendorIdentifier = "ZUORA"
-	V1CustomerPaymentMethodAttachParamsVendorIdentifierStripe         V1CustomerPaymentMethodAttachParamsVendorIdentifier = "STRIPE"
-	V1CustomerPaymentMethodAttachParamsVendorIdentifierHubspot        V1CustomerPaymentMethodAttachParamsVendorIdentifier = "HUBSPOT"
-	V1CustomerPaymentMethodAttachParamsVendorIdentifierAwsMarketplace V1CustomerPaymentMethodAttachParamsVendorIdentifier = "AWS_MARKETPLACE"
-	V1CustomerPaymentMethodAttachParamsVendorIdentifierSnowflake      V1CustomerPaymentMethodAttachParamsVendorIdentifier = "SNOWFLAKE"
-	V1CustomerPaymentMethodAttachParamsVendorIdentifierSalesforce     V1CustomerPaymentMethodAttachParamsVendorIdentifier = "SALESFORCE"
-	V1CustomerPaymentMethodAttachParamsVendorIdentifierBigQuery       V1CustomerPaymentMethodAttachParamsVendorIdentifier = "BIG_QUERY"
-	V1CustomerPaymentMethodAttachParamsVendorIdentifierOpenFga        V1CustomerPaymentMethodAttachParamsVendorIdentifier = "OPEN_FGA"
-	V1CustomerPaymentMethodAttachParamsVendorIdentifierAppStore       V1CustomerPaymentMethodAttachParamsVendorIdentifier = "APP_STORE"
-	V1CustomerPaymentMethodAttachParamsVendorIdentifierReceived       V1CustomerPaymentMethodAttachParamsVendorIdentifier = "RECEIVED"
-	V1CustomerPaymentMethodAttachParamsVendorIdentifierPrequel        V1CustomerPaymentMethodAttachParamsVendorIdentifier = "PREQUEL"
-	V1CustomerPaymentMethodAttachParamsVendorIdentifierAirwallex      V1CustomerPaymentMethodAttachParamsVendorIdentifier = "AIRWALLEX"
+	V1CustomerPaymentMethodAttachParamsVendorIdentifierAuth0           V1CustomerPaymentMethodAttachParamsVendorIdentifier = "AUTH0"
+	V1CustomerPaymentMethodAttachParamsVendorIdentifierZuora           V1CustomerPaymentMethodAttachParamsVendorIdentifier = "ZUORA"
+	V1CustomerPaymentMethodAttachParamsVendorIdentifierStripe          V1CustomerPaymentMethodAttachParamsVendorIdentifier = "STRIPE"
+	V1CustomerPaymentMethodAttachParamsVendorIdentifierHubspot         V1CustomerPaymentMethodAttachParamsVendorIdentifier = "HUBSPOT"
+	V1CustomerPaymentMethodAttachParamsVendorIdentifierAwsMarketplace  V1CustomerPaymentMethodAttachParamsVendorIdentifier = "AWS_MARKETPLACE"
+	V1CustomerPaymentMethodAttachParamsVendorIdentifierSnowflake       V1CustomerPaymentMethodAttachParamsVendorIdentifier = "SNOWFLAKE"
+	V1CustomerPaymentMethodAttachParamsVendorIdentifierSalesforce      V1CustomerPaymentMethodAttachParamsVendorIdentifier = "SALESFORCE"
+	V1CustomerPaymentMethodAttachParamsVendorIdentifierBigQuery        V1CustomerPaymentMethodAttachParamsVendorIdentifier = "BIG_QUERY"
+	V1CustomerPaymentMethodAttachParamsVendorIdentifierOpenFga         V1CustomerPaymentMethodAttachParamsVendorIdentifier = "OPEN_FGA"
+	V1CustomerPaymentMethodAttachParamsVendorIdentifierAppStore        V1CustomerPaymentMethodAttachParamsVendorIdentifier = "APP_STORE"
+	V1CustomerPaymentMethodAttachParamsVendorIdentifierReceived        V1CustomerPaymentMethodAttachParamsVendorIdentifier = "RECEIVED"
+	V1CustomerPaymentMethodAttachParamsVendorIdentifierPrequel         V1CustomerPaymentMethodAttachParamsVendorIdentifier = "PREQUEL"
+	V1CustomerPaymentMethodAttachParamsVendorIdentifierAirwallex       V1CustomerPaymentMethodAttachParamsVendorIdentifier = "AIRWALLEX"
+	V1CustomerPaymentMethodAttachParamsVendorIdentifierStripeInvoicing V1CustomerPaymentMethodAttachParamsVendorIdentifier = "STRIPE_INVOICING"
 )
 
 // Customers selected currency

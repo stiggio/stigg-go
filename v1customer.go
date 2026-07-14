@@ -35,8 +35,6 @@ type V1CustomerService struct {
 	// Operations related to promotional entitlements
 	PromotionalEntitlements V1CustomerPromotionalEntitlementService
 	Integrations            V1CustomerIntegrationService
-	Events                  V1CustomerEventService
-	Usage                   V1CustomerUsageService
 }
 
 // NewV1CustomerService generates a new service that applies the given options to
@@ -48,8 +46,6 @@ func NewV1CustomerService(opts ...option.RequestOption) (r V1CustomerService) {
 	r.PaymentMethod = NewV1CustomerPaymentMethodService(opts...)
 	r.PromotionalEntitlements = NewV1CustomerPromotionalEntitlementService(opts...)
 	r.Integrations = NewV1CustomerIntegrationService(opts...)
-	r.Events = NewV1CustomerEventService(opts...)
-	r.Usage = NewV1CustomerUsageService(opts...)
 	return
 }
 
@@ -296,7 +292,7 @@ type CustomerIntegrationResponseData struct {
 	//
 	// Any of "AUTH0", "ZUORA", "STRIPE", "HUBSPOT", "AWS_MARKETPLACE", "SNOWFLAKE",
 	// "SALESFORCE", "BIG_QUERY", "OPEN_FGA", "APP_STORE", "RECEIVED", "PREQUEL",
-	// "AIRWALLEX".
+	// "AIRWALLEX", "STRIPE_INVOICING".
 	VendorIdentifier string `json:"vendorIdentifier" api:"required"`
 	// Price billing sync revision data containing billing ID, link URL, and price
 	// group package billing ID
@@ -567,7 +563,7 @@ type CustomerResponseDataIntegration struct {
 	//
 	// Any of "AUTH0", "ZUORA", "STRIPE", "HUBSPOT", "AWS_MARKETPLACE", "SNOWFLAKE",
 	// "SALESFORCE", "BIG_QUERY", "OPEN_FGA", "APP_STORE", "RECEIVED", "PREQUEL",
-	// "AIRWALLEX".
+	// "AIRWALLEX", "STRIPE_INVOICING".
 	VendorIdentifier string `json:"vendorIdentifier" api:"required"`
 	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
 	JSON struct {
@@ -1044,7 +1040,7 @@ type V1CustomerListResponseIntegration struct {
 	//
 	// Any of "AUTH0", "ZUORA", "STRIPE", "HUBSPOT", "AWS_MARKETPLACE", "SNOWFLAKE",
 	// "SALESFORCE", "BIG_QUERY", "OPEN_FGA", "APP_STORE", "RECEIVED", "PREQUEL",
-	// "AIRWALLEX".
+	// "AIRWALLEX", "STRIPE_INVOICING".
 	VendorIdentifier string `json:"vendorIdentifier" api:"required"`
 	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
 	JSON struct {
@@ -2122,7 +2118,7 @@ type V1CustomerUpdateParamsIntegration struct {
 	//
 	// Any of "AUTH0", "ZUORA", "STRIPE", "HUBSPOT", "AWS_MARKETPLACE", "SNOWFLAKE",
 	// "SALESFORCE", "BIG_QUERY", "OPEN_FGA", "APP_STORE", "RECEIVED", "PREQUEL",
-	// "AIRWALLEX".
+	// "AIRWALLEX", "STRIPE_INVOICING".
 	VendorIdentifier string `json:"vendorIdentifier,omitzero" api:"required"`
 	paramObj
 }
@@ -2137,7 +2133,7 @@ func (r *V1CustomerUpdateParamsIntegration) UnmarshalJSON(data []byte) error {
 
 func init() {
 	apijson.RegisterFieldValidator[V1CustomerUpdateParamsIntegration](
-		"vendorIdentifier", "AUTH0", "ZUORA", "STRIPE", "HUBSPOT", "AWS_MARKETPLACE", "SNOWFLAKE", "SALESFORCE", "BIG_QUERY", "OPEN_FGA", "APP_STORE", "RECEIVED", "PREQUEL", "AIRWALLEX",
+		"vendorIdentifier", "AUTH0", "ZUORA", "STRIPE", "HUBSPOT", "AWS_MARKETPLACE", "SNOWFLAKE", "SALESFORCE", "BIG_QUERY", "OPEN_FGA", "APP_STORE", "RECEIVED", "PREQUEL", "AIRWALLEX", "STRIPE_INVOICING",
 	)
 }
 
@@ -2692,7 +2688,7 @@ type V1CustomerProvisionParamsIntegration struct {
 	//
 	// Any of "AUTH0", "ZUORA", "STRIPE", "HUBSPOT", "AWS_MARKETPLACE", "SNOWFLAKE",
 	// "SALESFORCE", "BIG_QUERY", "OPEN_FGA", "APP_STORE", "RECEIVED", "PREQUEL",
-	// "AIRWALLEX".
+	// "AIRWALLEX", "STRIPE_INVOICING".
 	VendorIdentifier string `json:"vendorIdentifier,omitzero" api:"required"`
 	paramObj
 }
@@ -2707,7 +2703,7 @@ func (r *V1CustomerProvisionParamsIntegration) UnmarshalJSON(data []byte) error 
 
 func init() {
 	apijson.RegisterFieldValidator[V1CustomerProvisionParamsIntegration](
-		"vendorIdentifier", "AUTH0", "ZUORA", "STRIPE", "HUBSPOT", "AWS_MARKETPLACE", "SNOWFLAKE", "SALESFORCE", "BIG_QUERY", "OPEN_FGA", "APP_STORE", "RECEIVED", "PREQUEL", "AIRWALLEX",
+		"vendorIdentifier", "AUTH0", "ZUORA", "STRIPE", "HUBSPOT", "AWS_MARKETPLACE", "SNOWFLAKE", "SALESFORCE", "BIG_QUERY", "OPEN_FGA", "APP_STORE", "RECEIVED", "PREQUEL", "AIRWALLEX", "STRIPE_INVOICING",
 	)
 }
 
