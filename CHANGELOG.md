@@ -1,5 +1,19 @@
 # Changelog
 
+## 0.1.0-beta.38 (2026-07-14)
+
+Full Changelog: [v0.1.0-beta.37...v0.1.0-beta.38](https://github.com/stiggio/stigg-go/compare/v0.1.0-beta.37...v0.1.0-beta.38)
+
+### Features
+
+* **api:** add events/usage estimate endpoints to customers ([9cb123c](https://github.com/stiggio/stigg-go/commit/9cb123c7c7ce780429e4095e9a620cfceed47ab1))
+
+
+### Documentation
+
+* **api:** clarify Delete method behavior in event data export destination ([aef67cf](https://github.com/stiggio/stigg-go/commit/aef67cfee9808dddfc948eddb9d1c88c75fbe91a))
+* **api:** update customer provision method documentation ([267209a](https://github.com/stiggio/stigg-go/commit/267209a227fcb4a4060fcfcd8c4ef4b7ffc71f1b))
+
 ## 0.1.0-beta.37 (2026-07-12)
 
 Full Changelog: [v0.1.0-beta.36...v0.1.0-beta.37](https://github.com/stiggio/stigg-go/compare/v0.1.0-beta.36...v0.1.0-beta.37)
