@@ -60,10 +60,6 @@ Methods:
 - <code title="post /api/v1/customers/{id}/integrations">client.V1.Customers.Integrations.<a href="https://pkg.go.dev/github.com/stiggio/stigg-go#V1CustomerIntegrationService.Link">Link</a>(ctx <a href="https://pkg.go.dev/context">context</a>.<a href="https://pkg.go.dev/context#Context">Context</a>, id <a href="https://pkg.go.dev/builtin#string">string</a>, params <a href="https://pkg.go.dev/github.com/stiggio/stigg-go">stigg</a>.<a href="https://pkg.go.dev/github.com/stiggio/stigg-go#V1CustomerIntegrationLinkParams">V1CustomerIntegrationLinkParams</a>) (\*<a href="https://pkg.go.dev/github.com/stiggio/stigg-go">stigg</a>.<a href="https://pkg.go.dev/github.com/stiggio/stigg-go#CustomerIntegrationResponse">CustomerIntegrationResponse</a>, <a href="https://pkg.go.dev/builtin#error">error</a>)</code>
 - <code title="delete /api/v1/customers/{id}/integrations/{integrationId}">client.V1.Customers.Integrations.<a href="https://pkg.go.dev/github.com/stiggio/stigg-go#V1CustomerIntegrationService.Unlink">Unlink</a>(ctx <a href="https://pkg.go.dev/context">context</a>.<a href="https://pkg.go.dev/context#Context">Context</a>, integrationID <a href="https://pkg.go.dev/builtin#string">string</a>, params <a href="https://pkg.go.dev/github.com/stiggio/stigg-go">stigg</a>.<a href="https://pkg.go.dev/github.com/stiggio/stigg-go#V1CustomerIntegrationUnlinkParams">V1CustomerIntegrationUnlinkParams</a>) (\*<a href="https://pkg.go.dev/github.com/stiggio/stigg-go">stigg</a>.<a href="https://pkg.go.dev/github.com/stiggio/stigg-go#CustomerIntegrationResponse">CustomerIntegrationResponse</a>, <a href="https://pkg.go.dev/builtin#error">error</a>)</code>
 
-### Events
-
-### Usage
-
 ## Subscriptions
 
 Response Types:
