@@ -171,18 +171,6 @@ Methods:
 - <code title="patch /api/v1/data-export/destinations/{destinationId}">client.V1.Events.DataExport.Destinations.<a href="https://pkg.go.dev/github.com/stiggio/stigg-go#V1EventDataExportDestinationService.Update">Update</a>(ctx <a href="https://pkg.go.dev/context">context</a>.<a href="https://pkg.go.dev/context#Context">Context</a>, destinationID <a href="https://pkg.go.dev/builtin#string">string</a>, params <a href="https://pkg.go.dev/github.com/stiggio/stigg-go">stigg</a>.<a href="https://pkg.go.dev/github.com/stiggio/stigg-go#V1EventDataExportDestinationUpdateParams">V1EventDataExportDestinationUpdateParams</a>) (\*<a href="https://pkg.go.dev/github.com/stiggio/stigg-go">stigg</a>.<a href="https://pkg.go.dev/github.com/stiggio/stigg-go#V1EventDataExportDestinationUpdateResponse">V1EventDataExportDestinationUpdateResponse</a>, <a href="https://pkg.go.dev/builtin#error">error</a>)</code>
 - <code title="delete /api/v1/data-export/destinations/{destinationId}">client.V1.Events.DataExport.Destinations.<a href="https://pkg.go.dev/github.com/stiggio/stigg-go#V1EventDataExportDestinationService.Delete">Delete</a>(ctx <a href="https://pkg.go.dev/context">context</a>.<a href="https://pkg.go.dev/context#Context">Context</a>, destinationID <a href="https://pkg.go.dev/builtin#string">string</a>, body <a href="https://pkg.go.dev/github.com/stiggio/stigg-go">stigg</a>.<a href="https://pkg.go.dev/github.com/stiggio/stigg-go#V1EventDataExportDestinationDeleteParams">V1EventDataExportDestinationDeleteParams</a>) (\*<a href="https://pkg.go.dev/github.com/stiggio/stigg-go">stigg</a>.<a href="https://pkg.go.dev/github.com/stiggio/stigg-go#V1EventDataExportDestinationDeleteResponse">V1EventDataExportDestinationDeleteResponse</a>, <a href="https://pkg.go.dev/builtin#error">error</a>)</code>
 
-### Beta
-
-#### Customers
-
-Response Types:
-
-- <a href="https://pkg.go.dev/github.com/stiggio/stigg-go">stigg</a>.<a href="https://pkg.go.dev/github.com/stiggio/stigg-go#V1EventBetaCustomerGetGovernanceResponse">V1EventBetaCustomerGetGovernanceResponse</a>
-
-Methods:
-
-- <code title="get /api/v1-beta/customers/{id}/governance">client.V1.Events.Beta.Customers.<a href="https://pkg.go.dev/github.com/stiggio/stigg-go#V1EventBetaCustomerService.GetGovernance">GetGovernance</a>(ctx <a href="https://pkg.go.dev/context">context</a>.<a href="https://pkg.go.dev/context#Context">Context</a>, id <a href="https://pkg.go.dev/builtin#string">string</a>, params <a href="https://pkg.go.dev/github.com/stiggio/stigg-go">stigg</a>.<a href="https://pkg.go.dev/github.com/stiggio/stigg-go#V1EventBetaCustomerGetGovernanceParams">V1EventBetaCustomerGetGovernanceParams</a>) (\*<a href="https://pkg.go.dev/github.com/stiggio/stigg-go">stigg</a>.<a href="https://pkg.go.dev/github.com/stiggio/stigg-go#V1EventBetaCustomerGetGovernanceResponse">V1EventBetaCustomerGetGovernanceResponse</a>, <a href="https://pkg.go.dev/builtin#error">error</a>)</code>
-
 ## Credits
 
 Response Types:
@@ -364,6 +352,14 @@ Methods:
 # V1Beta
 
 ## Customers
+
+Response Types:
+
+- <a href="https://pkg.go.dev/github.com/stiggio/stigg-go">stigg</a>.<a href="https://pkg.go.dev/github.com/stiggio/stigg-go#V1BetaCustomerGetGovernanceResponse">V1BetaCustomerGetGovernanceResponse</a>
+
+Methods:
+
+- <code title="get /api/v1-beta/customers/{id}/governance">client.V1Beta.Customers.<a href="https://pkg.go.dev/github.com/stiggio/stigg-go#V1BetaCustomerService.GetGovernance">GetGovernance</a>(ctx <a href="https://pkg.go.dev/context">context</a>.<a href="https://pkg.go.dev/context#Context">Context</a>, id <a href="https://pkg.go.dev/builtin#string">string</a>, params <a href="https://pkg.go.dev/github.com/stiggio/stigg-go">stigg</a>.<a href="https://pkg.go.dev/github.com/stiggio/stigg-go#V1BetaCustomerGetGovernanceParams">V1BetaCustomerGetGovernanceParams</a>) (\*<a href="https://pkg.go.dev/github.com/stiggio/stigg-go">stigg</a>.<a href="https://pkg.go.dev/github.com/stiggio/stigg-go#V1BetaCustomerGetGovernanceResponse">V1BetaCustomerGetGovernanceResponse</a>, <a href="https://pkg.go.dev/builtin#error">error</a>)</code>
 
 ### Entitlements
 
