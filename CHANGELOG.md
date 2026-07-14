@@ -1,5 +1,13 @@
 # Changelog
 
+## 0.1.0-beta.39 (2026-07-14)
+
+Full Changelog: [v0.1.0-beta.38...v0.1.0-beta.39](https://github.com/stiggio/stigg-go/compare/v0.1.0-beta.38...v0.1.0-beta.39)
+
+### Features
+
+* **api:** add STRIPE_INVOICING vendor identifier to customer integration types ([f1cf481](https://github.com/stiggio/stigg-go/commit/f1cf48128f549af02ba21a52f1e7f8df28afa951))
+
 ## 0.1.0-beta.38 (2026-07-14)
 
 Full Changelog: [v0.1.0-beta.37...v0.1.0-beta.38](https://github.com/stiggio/stigg-go/compare/v0.1.0-beta.37...v0.1.0-beta.38)
