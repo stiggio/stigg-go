@@ -1,5 +1,18 @@
 # Changelog
 
+## 0.1.0-beta.40 (2026-07-18)
+
+Full Changelog: [v0.1.0-beta.39...v0.1.0-beta.40](https://github.com/stiggio/stigg-go/compare/v0.1.0-beta.39...v0.1.0-beta.40)
+
+### Features
+
+* **stlc:** configurable CI runner and private-production-repo support in workflow templates ([1768420](https://github.com/stiggio/stigg-go/commit/17684204368e091d3d012a7aa9e50d96c937be9b))
+
+
+### Chores
+
+* **api:** move beta customers from events namespace to v1-beta ([900a6c9](https://github.com/stiggio/stigg-go/commit/900a6c9c66f85a730561d1d5e18d01a6fb630b69))
+
 ## 0.1.0-beta.39 (2026-07-14)
 
 Full Changelog: [v0.1.0-beta.38...v0.1.0-beta.39](https://github.com/stiggio/stigg-go/compare/v0.1.0-beta.38...v0.1.0-beta.39)
