@@ -96,6 +96,7 @@ func TestV1CreditListLedgerWithOptionalParams(t *testing.T) {
 		After:          stigg.String("after"),
 		Before:         stigg.String("before"),
 		CurrencyID:     stigg.String("currencyId"),
+		EventType:      stigg.String("eventType"),
 		Limit:          stigg.Int(1),
 		ResourceID:     stigg.String("resourceId"),
 		XAccountID:     stigg.String("X-ACCOUNT-ID"),

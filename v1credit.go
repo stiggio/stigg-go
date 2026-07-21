@@ -483,6 +483,8 @@ type V1CreditListLedgerParams struct {
 	Before param.Opt[string] `query:"before,omitzero" json:"-"`
 	// Filter by currency ID
 	CurrencyID param.Opt[string] `query:"currencyId,omitzero" json:"-"`
+	// Filter by event type(s), comma-separated
+	EventType param.Opt[string] `query:"eventType,omitzero" json:"-"`
 	// Maximum number of items to return
 	Limit param.Opt[int64] `query:"limit,omitzero" json:"-"`
 	// Filter by resource ID
