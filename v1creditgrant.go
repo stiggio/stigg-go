@@ -172,6 +172,8 @@ type CreditGrantResponseData struct {
 	//
 	// Any of "PAYMENT_PENDING", "ACTIVE", "EXPIRED", "VOIDED", "SCHEDULED".
 	Status string `json:"status" api:"required"`
+	// The synchronization states of the entity with external systems
+	SyncStates []CreditGrantResponseDataSyncState `json:"syncStates" api:"required"`
 	// Timestamp of when the record was last updated
 	UpdatedAt time.Time `json:"updatedAt" api:"required" format:"date-time"`
 	// The date when the credit grant was voided
@@ -198,6 +200,7 @@ type CreditGrantResponseData struct {
 		ResourceID        respjson.Field
 		SourceType        respjson.Field
 		Status            respjson.Field
+		SyncStates        respjson.Field
 		UpdatedAt         respjson.Field
 		VoidedAt          respjson.Field
 		ExtraFields       map[string]respjson.Field
@@ -293,6 +296,35 @@ func (r *CreditGrantResponseDataLatestInvoice) UnmarshalJSON(data []byte) error 
 	return apijson.UnmarshalRoot(data, r)
 }
 
+type CreditGrantResponseDataSyncState struct {
+	// Status of the integration sync
+	//
+	// Any of "PENDING", "ERROR", "SUCCESS", "NO_SYNC_REQUIRED".
+	Status string `json:"status" api:"required"`
+	// Synced entity id
+	SyncedEntityID string `json:"syncedEntityId" api:"required"`
+	// The vendor identifier of integration
+	//
+	// Any of "AUTH0", "ZUORA", "STRIPE", "HUBSPOT", "AWS_MARKETPLACE", "SNOWFLAKE",
+	// "SALESFORCE", "BIG_QUERY", "OPEN_FGA", "APP_STORE", "RECEIVED", "PREQUEL",
+	// "AIRWALLEX", "STRIPE_INVOICING".
+	VendorIdentifier string `json:"vendorIdentifier" api:"required"`
+	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
+	JSON struct {
+		Status           respjson.Field
+		SyncedEntityID   respjson.Field
+		VendorIdentifier respjson.Field
+		ExtraFields      map[string]respjson.Field
+		raw              string
+	} `json:"-"`
+}
+
+// Returns the unmodified JSON received from the API
+func (r CreditGrantResponseDataSyncState) RawJSON() string { return r.JSON.raw }
+func (r *CreditGrantResponseDataSyncState) UnmarshalJSON(data []byte) error {
+	return apijson.UnmarshalRoot(data, r)
+}
+
 // Credit grant object representing allocated credits for a customer
 type V1CreditGrantListResponse struct {
 	// The unique readable identifier of the credit grant
@@ -343,6 +375,8 @@ type V1CreditGrantListResponse struct {
 	//
 	// Any of "PAYMENT_PENDING", "ACTIVE", "EXPIRED", "VOIDED", "SCHEDULED".
 	Status V1CreditGrantListResponseStatus `json:"status" api:"required"`
+	// The synchronization states of the entity with external systems
+	SyncStates []V1CreditGrantListResponseSyncState `json:"syncStates" api:"required"`
 	// Timestamp of when the record was last updated
 	UpdatedAt time.Time `json:"updatedAt" api:"required" format:"date-time"`
 	// The date when the credit grant was voided
@@ -369,6 +403,7 @@ type V1CreditGrantListResponse struct {
 		ResourceID        respjson.Field
 		SourceType        respjson.Field
 		Status            respjson.Field
+		SyncStates        respjson.Field
 		UpdatedAt         respjson.Field
 		VoidedAt          respjson.Field
 		ExtraFields       map[string]respjson.Field
@@ -503,6 +538,35 @@ const (
 	V1CreditGrantListResponseStatusVoided         V1CreditGrantListResponseStatus = "VOIDED"
 	V1CreditGrantListResponseStatusScheduled      V1CreditGrantListResponseStatus = "SCHEDULED"
 )
+
+type V1CreditGrantListResponseSyncState struct {
+	// Status of the integration sync
+	//
+	// Any of "PENDING", "ERROR", "SUCCESS", "NO_SYNC_REQUIRED".
+	Status string `json:"status" api:"required"`
+	// Synced entity id
+	SyncedEntityID string `json:"syncedEntityId" api:"required"`
+	// The vendor identifier of integration
+	//
+	// Any of "AUTH0", "ZUORA", "STRIPE", "HUBSPOT", "AWS_MARKETPLACE", "SNOWFLAKE",
+	// "SALESFORCE", "BIG_QUERY", "OPEN_FGA", "APP_STORE", "RECEIVED", "PREQUEL",
+	// "AIRWALLEX", "STRIPE_INVOICING".
+	VendorIdentifier string `json:"vendorIdentifier" api:"required"`
+	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
+	JSON struct {
+		Status           respjson.Field
+		SyncedEntityID   respjson.Field
+		VendorIdentifier respjson.Field
+		ExtraFields      map[string]respjson.Field
+		raw              string
+	} `json:"-"`
+}
+
+// Returns the unmodified JSON received from the API
+func (r V1CreditGrantListResponseSyncState) RawJSON() string { return r.JSON.raw }
+func (r *V1CreditGrantListResponseSyncState) UnmarshalJSON(data []byte) error {
+	return apijson.UnmarshalRoot(data, r)
+}
 
 type V1CreditGrantNewParams struct {
 	// The credit amount to grant
