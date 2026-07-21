@@ -1,5 +1,13 @@
 # Changelog
 
+## 0.1.0-beta.42 (2026-07-21)
+
+Full Changelog: [v0.1.0-beta.41...v0.1.0-beta.42](https://github.com/stiggio/stigg-go/compare/v0.1.0-beta.41...v0.1.0-beta.42)
+
+### Features
+
+* **api:** add syncStates field to credit grant response models ([3f28ce0](https://github.com/stiggio/stigg-go/commit/3f28ce00a2ca5110f31202675cdcc9fdc00c7571))
+
 ## 0.1.0-beta.41 (2026-07-21)
 
 Full Changelog: [v0.1.0-beta.40...v0.1.0-beta.41](https://github.com/stiggio/stigg-go/compare/v0.1.0-beta.40...v0.1.0-beta.41)
