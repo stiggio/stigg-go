@@ -43,7 +43,7 @@ func NewV1UsageService(opts ...option.RequestOption) (r V1UsageService) {
 // Estimates the credit cost of a usage report without recording it. Returns the
 // estimated cost per credit currency, the current balance, and the balance after
 // the estimated consumption.
-func (r *V1UsageService) EstimateCost(ctx context.Context, params V1UsageEstimateCostParams, opts ...option.RequestOption) (res *V1UsageEstimateCostResponse, err error) {
+func (r *V1UsageService) Estimate(ctx context.Context, params V1UsageEstimateParams, opts ...option.RequestOption) (res *V1UsageEstimateResponse, err error) {
 	if !param.IsOmitted(params.XAccountID) {
 		opts = append(opts, option.WithHeader("X-ACCOUNT-ID", fmt.Sprintf("%v", params.XAccountID.Value)))
 	}
@@ -94,9 +94,9 @@ func (r *V1UsageService) Report(ctx context.Context, params V1UsageReportParams,
 }
 
 // Response object
-type V1UsageEstimateCostResponse struct {
+type V1UsageEstimateResponse struct {
 	// Estimated credit cost, current balance and balance after
-	Data V1UsageEstimateCostResponseData `json:"data" api:"required"`
+	Data V1UsageEstimateResponseData `json:"data" api:"required"`
 	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
 	JSON struct {
 		Data        respjson.Field
@@ -106,15 +106,15 @@ type V1UsageEstimateCostResponse struct {
 }
 
 // Returns the unmodified JSON received from the API
-func (r V1UsageEstimateCostResponse) RawJSON() string { return r.JSON.raw }
-func (r *V1UsageEstimateCostResponse) UnmarshalJSON(data []byte) error {
+func (r V1UsageEstimateResponse) RawJSON() string { return r.JSON.raw }
+func (r *V1UsageEstimateResponse) UnmarshalJSON(data []byte) error {
 	return apijson.UnmarshalRoot(data, r)
 }
 
 // Estimated credit cost, current balance and balance after
-type V1UsageEstimateCostResponseData struct {
+type V1UsageEstimateResponseData struct {
 	// Per-currency cost estimates
-	Estimates []V1UsageEstimateCostResponseDataEstimate `json:"estimates" api:"required"`
+	Estimates []V1UsageEstimateResponseDataEstimate `json:"estimates" api:"required"`
 	// Request-level warnings about the estimation context
 	//
 	// Any of "RESOURCE_SCOPED_SUBSCRIPTION_EXISTS", "FEATURE_NOT_FOUND",
@@ -130,16 +130,16 @@ type V1UsageEstimateCostResponseData struct {
 }
 
 // Returns the unmodified JSON received from the API
-func (r V1UsageEstimateCostResponseData) RawJSON() string { return r.JSON.raw }
-func (r *V1UsageEstimateCostResponseData) UnmarshalJSON(data []byte) error {
+func (r V1UsageEstimateResponseData) RawJSON() string { return r.JSON.raw }
+func (r *V1UsageEstimateResponseData) UnmarshalJSON(data []byte) error {
 	return apijson.UnmarshalRoot(data, r)
 }
 
-type V1UsageEstimateCostResponseDataEstimate struct {
+type V1UsageEstimateResponseDataEstimate struct {
 	// The credit balance after subtracting the estimated cost
 	BalanceAfterEstimate float64 `json:"balanceAfterEstimate" api:"required"`
 	// Estimated cost contribution per feature
-	Breakdown []V1UsageEstimateCostResponseDataEstimateBreakdown `json:"breakdown" api:"required"`
+	Breakdown []V1UsageEstimateResponseDataEstimateBreakdown `json:"breakdown" api:"required"`
 	// The credit currency identifier
 	CurrencyID string `json:"currencyId" api:"required"`
 	// The current credit balance, including not-yet-reconciled consumption
@@ -162,12 +162,12 @@ type V1UsageEstimateCostResponseDataEstimate struct {
 }
 
 // Returns the unmodified JSON received from the API
-func (r V1UsageEstimateCostResponseDataEstimate) RawJSON() string { return r.JSON.raw }
-func (r *V1UsageEstimateCostResponseDataEstimate) UnmarshalJSON(data []byte) error {
+func (r V1UsageEstimateResponseDataEstimate) RawJSON() string { return r.JSON.raw }
+func (r *V1UsageEstimateResponseDataEstimate) UnmarshalJSON(data []byte) error {
 	return apijson.UnmarshalRoot(data, r)
 }
 
-type V1UsageEstimateCostResponseDataEstimateBreakdown struct {
+type V1UsageEstimateResponseDataEstimateBreakdown struct {
 	// The estimated credit cost contributed by this feature
 	Cost float64 `json:"cost" api:"required"`
 	// The feature whose meter contributed this cost
@@ -187,8 +187,8 @@ type V1UsageEstimateCostResponseDataEstimateBreakdown struct {
 }
 
 // Returns the unmodified JSON received from the API
-func (r V1UsageEstimateCostResponseDataEstimateBreakdown) RawJSON() string { return r.JSON.raw }
-func (r *V1UsageEstimateCostResponseDataEstimateBreakdown) UnmarshalJSON(data []byte) error {
+func (r V1UsageEstimateResponseDataEstimateBreakdown) RawJSON() string { return r.JSON.raw }
+func (r *V1UsageEstimateResponseDataEstimateBreakdown) UnmarshalJSON(data []byte) error {
 	return apijson.UnmarshalRoot(data, r)
 }
 
@@ -433,7 +433,7 @@ func (r *V1UsageReportResponseDataCredit) UnmarshalJSON(data []byte) error {
 	return apijson.UnmarshalRoot(data, r)
 }
 
-type V1UsageEstimateCostParams struct {
+type V1UsageEstimateParams struct {
 	// Customer id
 	CustomerID string `json:"customerId" api:"required"`
 	// Feature id
@@ -445,40 +445,40 @@ type V1UsageEstimateCostParams struct {
 	XAccountID     param.Opt[string] `header:"X-ACCOUNT-ID,omitzero" json:"-"`
 	XEnvironmentID param.Opt[string] `header:"X-ENVIRONMENT-ID,omitzero" json:"-"`
 	// Additional dimensions for the usage report
-	Dimensions map[string]V1UsageEstimateCostParamsDimensionUnion `json:"dimensions,omitzero"`
+	Dimensions map[string]V1UsageEstimateParamsDimensionUnion `json:"dimensions,omitzero"`
 	// The method by which the usage value should be updated
 	//
 	// Any of "DELTA", "SET".
-	UpdateBehavior V1UsageEstimateCostParamsUpdateBehavior `json:"updateBehavior,omitzero"`
+	UpdateBehavior V1UsageEstimateParamsUpdateBehavior `json:"updateBehavior,omitzero"`
 	paramObj
 }
 
-func (r V1UsageEstimateCostParams) MarshalJSON() (data []byte, err error) {
-	type shadow V1UsageEstimateCostParams
+func (r V1UsageEstimateParams) MarshalJSON() (data []byte, err error) {
+	type shadow V1UsageEstimateParams
 	return param.MarshalObject(r, (*shadow)(&r))
 }
-func (r *V1UsageEstimateCostParams) UnmarshalJSON(data []byte) error {
+func (r *V1UsageEstimateParams) UnmarshalJSON(data []byte) error {
 	return apijson.UnmarshalRoot(data, r)
 }
 
 // Only one field can be non-zero.
 //
 // Use [param.IsOmitted] to confirm if a field is set.
-type V1UsageEstimateCostParamsDimensionUnion struct {
+type V1UsageEstimateParamsDimensionUnion struct {
 	OfString param.Opt[string]  `json:",omitzero,inline"`
 	OfFloat  param.Opt[float64] `json:",omitzero,inline"`
 	OfBool   param.Opt[bool]    `json:",omitzero,inline"`
 	paramUnion
 }
 
-func (u V1UsageEstimateCostParamsDimensionUnion) MarshalJSON() ([]byte, error) {
+func (u V1UsageEstimateParamsDimensionUnion) MarshalJSON() ([]byte, error) {
 	return param.MarshalUnion(u, u.OfString, u.OfFloat, u.OfBool)
 }
-func (u *V1UsageEstimateCostParamsDimensionUnion) UnmarshalJSON(data []byte) error {
+func (u *V1UsageEstimateParamsDimensionUnion) UnmarshalJSON(data []byte) error {
 	return apijson.UnmarshalRoot(data, u)
 }
 
-func (u *V1UsageEstimateCostParamsDimensionUnion) asAny() any {
+func (u *V1UsageEstimateParamsDimensionUnion) asAny() any {
 	if !param.IsOmitted(u.OfString) {
 		return &u.OfString.Value
 	} else if !param.IsOmitted(u.OfFloat) {
@@ -490,11 +490,11 @@ func (u *V1UsageEstimateCostParamsDimensionUnion) asAny() any {
 }
 
 // The method by which the usage value should be updated
-type V1UsageEstimateCostParamsUpdateBehavior string
+type V1UsageEstimateParamsUpdateBehavior string
 
 const (
-	V1UsageEstimateCostParamsUpdateBehaviorDelta V1UsageEstimateCostParamsUpdateBehavior = "DELTA"
-	V1UsageEstimateCostParamsUpdateBehaviorSet   V1UsageEstimateCostParamsUpdateBehavior = "SET"
+	V1UsageEstimateParamsUpdateBehaviorDelta V1UsageEstimateParamsUpdateBehavior = "DELTA"
+	V1UsageEstimateParamsUpdateBehaviorSet   V1UsageEstimateParamsUpdateBehavior = "SET"
 )
 
 type V1UsageHistoryParams struct {
