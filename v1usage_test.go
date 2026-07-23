@@ -14,7 +14,7 @@ import (
 	"github.com/stiggio/stigg-go/option"
 )
 
-func TestV1UsageEstimateCostWithOptionalParams(t *testing.T) {
+func TestV1UsageEstimateWithOptionalParams(t *testing.T) {
 	t.Skip("Mock server tests are disabled")
 	baseURL := "http://localhost:4010"
 	if envURL, ok := os.LookupEnv("TEST_API_BASE_URL"); ok {
@@ -27,17 +27,17 @@ func TestV1UsageEstimateCostWithOptionalParams(t *testing.T) {
 		option.WithBaseURL(baseURL),
 		option.WithAPIKey("My API Key"),
 	)
-	_, err := client.V1.Usage.EstimateCost(context.TODO(), stigg.V1UsageEstimateCostParams{
+	_, err := client.V1.Usage.Estimate(context.TODO(), stigg.V1UsageEstimateParams{
 		CustomerID: "customerId",
 		FeatureID:  "featureId",
 		Value:      -9007199254740991,
-		Dimensions: map[string]stigg.V1UsageEstimateCostParamsDimensionUnion{
+		Dimensions: map[string]stigg.V1UsageEstimateParamsDimensionUnion{
 			"foo": {
 				OfString: stigg.String("string"),
 			},
 		},
 		ResourceID:     stigg.String("resourceId"),
-		UpdateBehavior: stigg.V1UsageEstimateCostParamsUpdateBehaviorDelta,
+		UpdateBehavior: stigg.V1UsageEstimateParamsUpdateBehaviorDelta,
 		XAccountID:     stigg.String("X-ACCOUNT-ID"),
 		XEnvironmentID: stigg.String("X-ENVIRONMENT-ID"),
 	})

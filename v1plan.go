@@ -1458,10 +1458,10 @@ type V1PlanUpdateParamsChargesOveragePricingModel struct {
 	BillingModel string `json:"billingModel,omitzero" api:"required"`
 	// Price periods for overage pricing
 	PricePeriods []V1PlanUpdateParamsChargesOveragePricingModelPricePeriod `json:"pricePeriods,omitzero" api:"required"`
+	// The refId of the custom currency this credit overage applies to
+	CurrencyID param.Opt[string] `json:"currencyId,omitzero"`
 	// The feature ID for overage pricing
 	FeatureID param.Opt[string] `json:"featureId,omitzero"`
-	// Custom currency ID for overage top-up
-	TopUpCustomCurrencyID param.Opt[string] `json:"topUpCustomCurrencyId,omitzero"`
 	// The billing cadence for overages
 	//
 	// Any of "RECURRING", "ONE_OFF".
