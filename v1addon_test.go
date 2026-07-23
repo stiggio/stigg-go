@@ -139,6 +139,7 @@ func TestV1AddonUpdateWithOptionalParams(t *testing.T) {
 						}},
 					}},
 					BillingCadence: "RECURRING",
+					CurrencyID:     stigg.String("currencyId"),
 					Entitlement: stigg.V1AddonUpdateParamsChargesOveragePricingModelEntitlement{
 						FeatureID:         "featureId",
 						HasSoftLimit:      stigg.Bool(true),
@@ -155,8 +156,7 @@ func TestV1AddonUpdateWithOptionalParams(t *testing.T) {
 							AccordingTo: "SubscriptionStart",
 						},
 					},
-					FeatureID:             stigg.String("featureId"),
-					TopUpCustomCurrencyID: stigg.String("topUpCustomCurrencyId"),
+					FeatureID: stigg.String("featureId"),
 				}},
 				PricingModels: []stigg.V1AddonUpdateParamsChargesPricingModel{{
 					BillingModel: "FLAT_FEE",

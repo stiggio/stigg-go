@@ -27,6 +27,7 @@ import (
 type V1EventService struct {
 	Options    []option.RequestOption
 	DataExport V1EventDataExportService
+	Beta       V1EventBetaService
 }
 
 // NewV1EventService generates a new service that applies the given options to each
@@ -36,13 +37,14 @@ func NewV1EventService(opts ...option.RequestOption) (r V1EventService) {
 	r = V1EventService{}
 	r.Options = opts
 	r.DataExport = NewV1EventDataExportService(opts...)
+	r.Beta = NewV1EventBetaService(opts...)
 	return
 }
 
 // Estimates the credit cost of a usage event without ingesting it. Returns the
 // estimated cost per credit currency, the current balance, and the balance after
 // the estimated consumption.
-func (r *V1EventService) EstimateCost(ctx context.Context, params V1EventEstimateCostParams, opts ...option.RequestOption) (res *V1EventEstimateCostResponse, err error) {
+func (r *V1EventService) Estimate(ctx context.Context, params V1EventEstimateParams, opts ...option.RequestOption) (res *V1EventEstimateResponse, err error) {
 	if !param.IsOmitted(params.XAccountID) {
 		opts = append(opts, option.WithHeader("X-ACCOUNT-ID", fmt.Sprintf("%v", params.XAccountID.Value)))
 	}
@@ -71,9 +73,9 @@ func (r *V1EventService) Report(ctx context.Context, params V1EventReportParams,
 }
 
 // Response object
-type V1EventEstimateCostResponse struct {
+type V1EventEstimateResponse struct {
 	// Estimated credit cost, current balance and balance after
-	Data V1EventEstimateCostResponseData `json:"data" api:"required"`
+	Data V1EventEstimateResponseData `json:"data" api:"required"`
 	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
 	JSON struct {
 		Data        respjson.Field
@@ -83,15 +85,15 @@ type V1EventEstimateCostResponse struct {
 }
 
 // Returns the unmodified JSON received from the API
-func (r V1EventEstimateCostResponse) RawJSON() string { return r.JSON.raw }
-func (r *V1EventEstimateCostResponse) UnmarshalJSON(data []byte) error {
+func (r V1EventEstimateResponse) RawJSON() string { return r.JSON.raw }
+func (r *V1EventEstimateResponse) UnmarshalJSON(data []byte) error {
 	return apijson.UnmarshalRoot(data, r)
 }
 
 // Estimated credit cost, current balance and balance after
-type V1EventEstimateCostResponseData struct {
+type V1EventEstimateResponseData struct {
 	// Per-currency cost estimates
-	Estimates []V1EventEstimateCostResponseDataEstimate `json:"estimates" api:"required"`
+	Estimates []V1EventEstimateResponseDataEstimate `json:"estimates" api:"required"`
 	// Request-level warnings about the estimation context
 	//
 	// Any of "RESOURCE_SCOPED_SUBSCRIPTION_EXISTS", "FEATURE_NOT_FOUND",
@@ -107,16 +109,16 @@ type V1EventEstimateCostResponseData struct {
 }
 
 // Returns the unmodified JSON received from the API
-func (r V1EventEstimateCostResponseData) RawJSON() string { return r.JSON.raw }
-func (r *V1EventEstimateCostResponseData) UnmarshalJSON(data []byte) error {
+func (r V1EventEstimateResponseData) RawJSON() string { return r.JSON.raw }
+func (r *V1EventEstimateResponseData) UnmarshalJSON(data []byte) error {
 	return apijson.UnmarshalRoot(data, r)
 }
 
-type V1EventEstimateCostResponseDataEstimate struct {
+type V1EventEstimateResponseDataEstimate struct {
 	// The credit balance after subtracting the estimated cost
 	BalanceAfterEstimate float64 `json:"balanceAfterEstimate" api:"required"`
 	// Estimated cost contribution per feature
-	Breakdown []V1EventEstimateCostResponseDataEstimateBreakdown `json:"breakdown" api:"required"`
+	Breakdown []V1EventEstimateResponseDataEstimateBreakdown `json:"breakdown" api:"required"`
 	// The credit currency identifier
 	CurrencyID string `json:"currencyId" api:"required"`
 	// The current credit balance, including not-yet-reconciled consumption
@@ -139,12 +141,12 @@ type V1EventEstimateCostResponseDataEstimate struct {
 }
 
 // Returns the unmodified JSON received from the API
-func (r V1EventEstimateCostResponseDataEstimate) RawJSON() string { return r.JSON.raw }
-func (r *V1EventEstimateCostResponseDataEstimate) UnmarshalJSON(data []byte) error {
+func (r V1EventEstimateResponseDataEstimate) RawJSON() string { return r.JSON.raw }
+func (r *V1EventEstimateResponseDataEstimate) UnmarshalJSON(data []byte) error {
 	return apijson.UnmarshalRoot(data, r)
 }
 
-type V1EventEstimateCostResponseDataEstimateBreakdown struct {
+type V1EventEstimateResponseDataEstimateBreakdown struct {
 	// The estimated credit cost contributed by this feature
 	Cost float64 `json:"cost" api:"required"`
 	// The feature whose meter contributed this cost
@@ -164,8 +166,8 @@ type V1EventEstimateCostResponseDataEstimateBreakdown struct {
 }
 
 // Returns the unmodified JSON received from the API
-func (r V1EventEstimateCostResponseDataEstimateBreakdown) RawJSON() string { return r.JSON.raw }
-func (r *V1EventEstimateCostResponseDataEstimateBreakdown) UnmarshalJSON(data []byte) error {
+func (r V1EventEstimateResponseDataEstimateBreakdown) RawJSON() string { return r.JSON.raw }
+func (r *V1EventEstimateResponseDataEstimateBreakdown) UnmarshalJSON(data []byte) error {
 	return apijson.UnmarshalRoot(data, r)
 }
 
@@ -188,7 +190,7 @@ func (r *V1EventReportResponse) UnmarshalJSON(data []byte) error {
 	return apijson.UnmarshalRoot(data, r)
 }
 
-type V1EventEstimateCostParams struct {
+type V1EventEstimateParams struct {
 	// Customer id
 	CustomerID string `json:"customerId" api:"required"`
 	// The name of the usage event
@@ -198,36 +200,36 @@ type V1EventEstimateCostParams struct {
 	XAccountID     param.Opt[string] `header:"X-ACCOUNT-ID,omitzero" json:"-"`
 	XEnvironmentID param.Opt[string] `header:"X-ENVIRONMENT-ID,omitzero" json:"-"`
 	// Dimensions associated with the usage event
-	Dimensions map[string]V1EventEstimateCostParamsDimensionUnion `json:"dimensions,omitzero"`
+	Dimensions map[string]V1EventEstimateParamsDimensionUnion `json:"dimensions,omitzero"`
 	paramObj
 }
 
-func (r V1EventEstimateCostParams) MarshalJSON() (data []byte, err error) {
-	type shadow V1EventEstimateCostParams
+func (r V1EventEstimateParams) MarshalJSON() (data []byte, err error) {
+	type shadow V1EventEstimateParams
 	return param.MarshalObject(r, (*shadow)(&r))
 }
-func (r *V1EventEstimateCostParams) UnmarshalJSON(data []byte) error {
+func (r *V1EventEstimateParams) UnmarshalJSON(data []byte) error {
 	return apijson.UnmarshalRoot(data, r)
 }
 
 // Only one field can be non-zero.
 //
 // Use [param.IsOmitted] to confirm if a field is set.
-type V1EventEstimateCostParamsDimensionUnion struct {
+type V1EventEstimateParamsDimensionUnion struct {
 	OfString param.Opt[string]  `json:",omitzero,inline"`
 	OfFloat  param.Opt[float64] `json:",omitzero,inline"`
 	OfBool   param.Opt[bool]    `json:",omitzero,inline"`
 	paramUnion
 }
 
-func (u V1EventEstimateCostParamsDimensionUnion) MarshalJSON() ([]byte, error) {
+func (u V1EventEstimateParamsDimensionUnion) MarshalJSON() ([]byte, error) {
 	return param.MarshalUnion(u, u.OfString, u.OfFloat, u.OfBool)
 }
-func (u *V1EventEstimateCostParamsDimensionUnion) UnmarshalJSON(data []byte) error {
+func (u *V1EventEstimateParamsDimensionUnion) UnmarshalJSON(data []byte) error {
 	return apijson.UnmarshalRoot(data, u)
 }
 
-func (u *V1EventEstimateCostParamsDimensionUnion) asAny() any {
+func (u *V1EventEstimateParamsDimensionUnion) asAny() any {
 	if !param.IsOmitted(u.OfString) {
 		return &u.OfString.Value
 	} else if !param.IsOmitted(u.OfFloat) {
