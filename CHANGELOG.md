@@ -1,5 +1,13 @@
 # Changelog
 
+## 0.1.0-beta.43 (2026-07-23)
+
+Full Changelog: [v0.1.0-beta.42...v0.1.0-beta.43](https://github.com/stiggio/stigg-go/compare/v0.1.0-beta.42...v0.1.0-beta.43)
+
+### Chores
+
+* **internal:** regenerate SDK with no functional changes ([ef171c9](https://github.com/stiggio/stigg-go/commit/ef171c90210297a7a3d4333152994e128fd4be76))
+
 ## 0.1.0-beta.42 (2026-07-21)
 
 Full Changelog: [v0.1.0-beta.41...v0.1.0-beta.42](https://github.com/stiggio/stigg-go/compare/v0.1.0-beta.41...v0.1.0-beta.42)
