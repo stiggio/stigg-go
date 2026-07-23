@@ -14,7 +14,7 @@ import (
 	"github.com/stiggio/stigg-go/option"
 )
 
-func TestV1EventEstimateCostWithOptionalParams(t *testing.T) {
+func TestV1EventEstimateWithOptionalParams(t *testing.T) {
 	t.Skip("Mock server tests are disabled")
 	baseURL := "http://localhost:4010"
 	if envURL, ok := os.LookupEnv("TEST_API_BASE_URL"); ok {
@@ -27,10 +27,10 @@ func TestV1EventEstimateCostWithOptionalParams(t *testing.T) {
 		option.WithBaseURL(baseURL),
 		option.WithAPIKey("My API Key"),
 	)
-	_, err := client.V1.Events.EstimateCost(context.TODO(), stigg.V1EventEstimateCostParams{
+	_, err := client.V1.Events.Estimate(context.TODO(), stigg.V1EventEstimateParams{
 		CustomerID: "customerId",
 		EventName:  "x",
-		Dimensions: map[string]stigg.V1EventEstimateCostParamsDimensionUnion{
+		Dimensions: map[string]stigg.V1EventEstimateParamsDimensionUnion{
 			"foo": {
 				OfString: stigg.String("string"),
 			},

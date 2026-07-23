@@ -13,7 +13,7 @@ import (
 	"github.com/stiggio/stigg-go/option"
 )
 
-func TestV1BetaCustomerGetGovernanceWithOptionalParams(t *testing.T) {
+func TestV1EventBetaCustomerGetGovernanceWithOptionalParams(t *testing.T) {
 	t.Skip("Mock server tests are disabled")
 	baseURL := "http://localhost:4010"
 	if envURL, ok := os.LookupEnv("TEST_API_BASE_URL"); ok {
@@ -26,10 +26,10 @@ func TestV1BetaCustomerGetGovernanceWithOptionalParams(t *testing.T) {
 		option.WithBaseURL(baseURL),
 		option.WithAPIKey("My API Key"),
 	)
-	_, err := client.V1Beta.Customers.GetGovernance(
+	_, err := client.V1.Events.Beta.Customers.GetGovernance(
 		context.TODO(),
 		"id",
-		stigg.V1BetaCustomerGetGovernanceParams{
+		stigg.V1EventBetaCustomerGetGovernanceParams{
 			After:          stigg.String("after"),
 			CurrencyIDs:    []string{"string"},
 			EntityIDSearch: stigg.String("x"),
@@ -37,9 +37,9 @@ func TestV1BetaCustomerGetGovernanceWithOptionalParams(t *testing.T) {
 			FeatureIDs:     []string{"string"},
 			Limit:          stigg.Int(1),
 			MinUtilization: stigg.Float(0),
-			Order:          stigg.V1BetaCustomerGetGovernanceParamsOrderAsc,
-			Scope:          stigg.V1BetaCustomerGetGovernanceParamsScopeAll,
-			SortBy:         stigg.V1BetaCustomerGetGovernanceParamsSortByUtilization,
+			Order:          stigg.V1EventBetaCustomerGetGovernanceParamsOrderAsc,
+			Scope:          stigg.V1EventBetaCustomerGetGovernanceParamsScopeAll,
+			SortBy:         stigg.V1EventBetaCustomerGetGovernanceParamsSortByUtilization,
 			XAccountID:     stigg.String("X-ACCOUNT-ID"),
 			XEnvironmentID: stigg.String("X-ENVIRONMENT-ID"),
 		},
