@@ -139,7 +139,12 @@ func TestV1AddonUpdateWithOptionalParams(t *testing.T) {
 						}},
 					}},
 					BillingCadence: "RECURRING",
-					CurrencyID:     stigg.String("currencyId"),
+					CreditEntitlement: stigg.V1AddonUpdateParamsChargesOveragePricingModelCreditEntitlement{
+						Amount:           1,
+						Cadence:          "MONTH",
+						CustomCurrencyID: "customCurrencyId",
+					},
+					CurrencyID: stigg.String("currencyId"),
 					Entitlement: stigg.V1AddonUpdateParamsChargesOveragePricingModelEntitlement{
 						FeatureID:         "featureId",
 						HasSoftLimit:      stigg.Bool(true),
