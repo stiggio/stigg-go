@@ -1,5 +1,13 @@
 # Changelog
 
+## 0.1.0-beta.44 (2026-07-28)
+
+Full Changelog: [v0.1.0-beta.43...v0.1.0-beta.44](https://github.com/stiggio/stigg-go/compare/v0.1.0-beta.43...v0.1.0-beta.44)
+
+### Features
+
+* **api:** add contracts resource, customers.GetContracts, syncStates to credit grants ([9233c85](https://github.com/stiggio/stigg-go/commit/9233c854bf0860ef92bbf4379b2c0092bba1d018))
+
 ## 0.1.0-beta.43 (2026-07-26)
 
 Full Changelog: [v0.1.0-beta.42...v0.1.0-beta.43](https://github.com/stiggio/stigg-go/compare/v0.1.0-beta.42...v0.1.0-beta.43)
