@@ -277,6 +277,75 @@ func TestV1CustomerImportWithOptionalParams(t *testing.T) {
 	}
 }
 
+func TestV1CustomerListContractsWithOptionalParams(t *testing.T) {
+	t.Skip("Mock server tests are disabled")
+	baseURL := "http://localhost:4010"
+	if envURL, ok := os.LookupEnv("TEST_API_BASE_URL"); ok {
+		baseURL = envURL
+	}
+	if !testutil.CheckTestServer(t, baseURL) {
+		return
+	}
+	client := stigg.NewClient(
+		option.WithBaseURL(baseURL),
+		option.WithAPIKey("My API Key"),
+	)
+	_, err := client.V1.Customers.ListContracts(
+		context.TODO(),
+		"id",
+		stigg.V1CustomerListContractsParams{
+			XAccountID:     stigg.String("X-ACCOUNT-ID"),
+			XEnvironmentID: stigg.String("X-ENVIRONMENT-ID"),
+		},
+	)
+	if err != nil {
+		var apierr *stigg.Error
+		if errors.As(err, &apierr) {
+			t.Log(string(apierr.DumpRequest(true)))
+		}
+		t.Fatalf("err should be nil: %s", err.Error())
+	}
+}
+
+func TestV1CustomerListInvoicesWithOptionalParams(t *testing.T) {
+	t.Skip("Mock server tests are disabled")
+	baseURL := "http://localhost:4010"
+	if envURL, ok := os.LookupEnv("TEST_API_BASE_URL"); ok {
+		baseURL = envURL
+	}
+	if !testutil.CheckTestServer(t, baseURL) {
+		return
+	}
+	client := stigg.NewClient(
+		option.WithBaseURL(baseURL),
+		option.WithAPIKey("My API Key"),
+	)
+	_, err := client.V1.Customers.ListInvoices(
+		context.TODO(),
+		"id",
+		stigg.V1CustomerListInvoicesParams{
+			After:              stigg.String("after"),
+			Before:             stigg.String("before"),
+			ContractExternalID: stigg.String("contractExternalId"),
+			IssuedAfter:        stigg.Time(time.Now()),
+			IssuedBefore:       stigg.Time(time.Now()),
+			Limit:              stigg.Int(1),
+			OrderBy:            stigg.V1CustomerListInvoicesParamsOrderByIssueDate,
+			OrderDir:           stigg.V1CustomerListInvoicesParamsOrderDirAsc,
+			StateIn:            stigg.String("stateIn"),
+			XAccountID:         stigg.String("X-ACCOUNT-ID"),
+			XEnvironmentID:     stigg.String("X-ENVIRONMENT-ID"),
+		},
+	)
+	if err != nil {
+		var apierr *stigg.Error
+		if errors.As(err, &apierr) {
+			t.Log(string(apierr.DumpRequest(true)))
+		}
+		t.Fatalf("err should be nil: %s", err.Error())
+	}
+}
+
 func TestV1CustomerListResourcesWithOptionalParams(t *testing.T) {
 	t.Skip("Mock server tests are disabled")
 	baseURL := "http://localhost:4010"
