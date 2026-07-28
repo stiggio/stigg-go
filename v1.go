@@ -30,7 +30,8 @@ type V1Service struct {
 	// Operations related to usage & metering
 	Usage V1UsageService
 	// Operations related to products
-	Products V1ProductService
+	Products  V1ProductService
+	Contracts V1ContractService
 }
 
 // NewV1Service generates a new service that applies the given options to each
@@ -49,5 +50,6 @@ func NewV1Service(opts ...option.RequestOption) (r V1Service) {
 	r.Plans = NewV1PlanService(opts...)
 	r.Usage = NewV1UsageService(opts...)
 	r.Products = NewV1ProductService(opts...)
+	r.Contracts = NewV1ContractService(opts...)
 	return
 }

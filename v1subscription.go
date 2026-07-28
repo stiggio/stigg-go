@@ -299,6 +299,8 @@ type SubscriptionData struct {
 	// "PENDING_PAYMENT_EXPIRED", "ScheduledCancellation", "CustomerArchived",
 	// "AutoCancellationRule".
 	CancelReason string `json:"cancelReason" api:"nullable"`
+	// The Stigg contract this subscription is linked to, when any
+	ContractID string `json:"contractId" api:"nullable"`
 	// Coupons applied to the subscription
 	Coupons []SubscriptionDataCoupon `json:"coupons"`
 	// End of the current billing period
@@ -348,6 +350,7 @@ type SubscriptionData struct {
 		Budget                    respjson.Field
 		CancellationDate          respjson.Field
 		CancelReason              respjson.Field
+		ContractID                respjson.Field
 		Coupons                   respjson.Field
 		CurrentBillingPeriodEnd   respjson.Field
 		CurrentBillingPeriodStart respjson.Field
@@ -835,6 +838,8 @@ type V1SubscriptionListResponse struct {
 	// "PENDING_PAYMENT_EXPIRED", "ScheduledCancellation", "CustomerArchived",
 	// "AutoCancellationRule".
 	CancelReason V1SubscriptionListResponseCancelReason `json:"cancelReason" api:"nullable"`
+	// The Stigg contract this subscription is linked to, when any
+	ContractID string `json:"contractId" api:"nullable"`
 	// Coupons applied to the subscription
 	Coupons []V1SubscriptionListResponseCoupon `json:"coupons"`
 	// End of the current billing period
@@ -884,6 +889,7 @@ type V1SubscriptionListResponse struct {
 		Budget                    respjson.Field
 		CancellationDate          respjson.Field
 		CancelReason              respjson.Field
+		ContractID                respjson.Field
 		Coupons                   respjson.Field
 		CurrentBillingPeriodEnd   respjson.Field
 		CurrentBillingPeriodStart respjson.Field
@@ -2148,6 +2154,8 @@ type V1SubscriptionProvisionResponseDataSubscription struct {
 	// "PENDING_PAYMENT_EXPIRED", "ScheduledCancellation", "CustomerArchived",
 	// "AutoCancellationRule".
 	CancelReason string `json:"cancelReason" api:"nullable"`
+	// The Stigg contract this subscription is linked to, when any
+	ContractID string `json:"contractId" api:"nullable"`
 	// Coupons applied to the subscription
 	Coupons []V1SubscriptionProvisionResponseDataSubscriptionCoupon `json:"coupons"`
 	// End of the current billing period
@@ -2197,6 +2205,7 @@ type V1SubscriptionProvisionResponseDataSubscription struct {
 		Budget                    respjson.Field
 		CancellationDate          respjson.Field
 		CancelReason              respjson.Field
+		ContractID                respjson.Field
 		Coupons                   respjson.Field
 		CurrentBillingPeriodEnd   respjson.Field
 		CurrentBillingPeriodStart respjson.Field
