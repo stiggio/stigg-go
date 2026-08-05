@@ -146,7 +146,7 @@ type CreditGrantResponseData struct {
 	EffectiveAt time.Time `json:"effectiveAt" api:"required" format:"date-time"`
 	// The date when the credit grant expires
 	ExpireAt time.Time `json:"expireAt" api:"required" format:"date-time"`
-	// The type of credit grant (PAID, PROMOTIONAL, RECURRING)
+	// The type of credit grant (PAID, PROMOTIONAL, RECURRING, OVERDRAFT)
 	//
 	// Any of "PAID", "PROMOTIONAL", "RECURRING", "OVERDRAFT".
 	GrantType string `json:"grantType" api:"required"`
@@ -349,7 +349,7 @@ type V1CreditGrantListResponse struct {
 	EffectiveAt time.Time `json:"effectiveAt" api:"required" format:"date-time"`
 	// The date when the credit grant expires
 	ExpireAt time.Time `json:"expireAt" api:"required" format:"date-time"`
-	// The type of credit grant (PAID, PROMOTIONAL, RECURRING)
+	// The type of credit grant (PAID, PROMOTIONAL, RECURRING, OVERDRAFT)
 	//
 	// Any of "PAID", "PROMOTIONAL", "RECURRING", "OVERDRAFT".
 	GrantType V1CreditGrantListResponseGrantType `json:"grantType" api:"required"`
@@ -438,7 +438,7 @@ func (r *V1CreditGrantListResponseCost) UnmarshalJSON(data []byte) error {
 	return apijson.UnmarshalRoot(data, r)
 }
 
-// The type of credit grant (PAID, PROMOTIONAL, RECURRING)
+// The type of credit grant (PAID, PROMOTIONAL, RECURRING, OVERDRAFT)
 type V1CreditGrantListResponseGrantType string
 
 const (

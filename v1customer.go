@@ -175,6 +175,70 @@ func (r *V1CustomerService) Import(ctx context.Context, params V1CustomerImportP
 	return res, err
 }
 
+// Retrieves a customer's contracts, fetched live from the connected billing
+// provider, each enriched with a preview of its upcoming (next) invoice when
+// available. Returns an empty list when no billing provider is connected or the
+// customer is not synced.
+func (r *V1CustomerService) ListContracts(ctx context.Context, id string, query V1CustomerListContractsParams, opts ...option.RequestOption) (res *V1CustomerListContractsResponse, err error) {
+	if !param.IsOmitted(query.XAccountID) {
+		opts = append(opts, option.WithHeader("X-ACCOUNT-ID", fmt.Sprintf("%v", query.XAccountID.Value)))
+	}
+	if !param.IsOmitted(query.XEnvironmentID) {
+		opts = append(opts, option.WithHeader("X-ENVIRONMENT-ID", fmt.Sprintf("%v", query.XEnvironmentID.Value)))
+	}
+	opts = slices.Concat(r.Options, opts)
+	if id == "" {
+		err = errors.New("missing required id parameter")
+		return nil, err
+	}
+	path := fmt.Sprintf("api/v1/customers/%s/contracts", id)
+	err = requestconfig.ExecuteNewRequest(ctx, http.MethodGet, path, nil, &res, opts...)
+	return res, err
+}
+
+// Retrieves a cursor-paginated list of a customer's invoices, fetched live from
+// the connected billing provider. Ordered by issue date ascending by default;
+// override with orderBy (issueDate | dueDate | total) and orderDir (ASC | DESC).
+// Optionally narrowed to one contract, an issue-date range, and/or a set of
+// invoice states. Returns an empty list when no billing provider is connected or
+// the customer is not synced.
+func (r *V1CustomerService) ListInvoices(ctx context.Context, id string, params V1CustomerListInvoicesParams, opts ...option.RequestOption) (res *pagination.MyCursorIDPage[V1CustomerListInvoicesResponse], err error) {
+	var raw *http.Response
+	if !param.IsOmitted(params.XAccountID) {
+		opts = append(opts, option.WithHeader("X-ACCOUNT-ID", fmt.Sprintf("%v", params.XAccountID.Value)))
+	}
+	if !param.IsOmitted(params.XEnvironmentID) {
+		opts = append(opts, option.WithHeader("X-ENVIRONMENT-ID", fmt.Sprintf("%v", params.XEnvironmentID.Value)))
+	}
+	opts = slices.Concat(r.Options, opts)
+	opts = append([]option.RequestOption{option.WithResponseInto(&raw)}, opts...)
+	if id == "" {
+		err = errors.New("missing required id parameter")
+		return nil, err
+	}
+	path := fmt.Sprintf("api/v1/customers/%s/invoices", id)
+	cfg, err := requestconfig.NewRequestConfig(ctx, http.MethodGet, path, params, &res, opts...)
+	if err != nil {
+		return nil, err
+	}
+	err = cfg.Execute()
+	if err != nil {
+		return nil, err
+	}
+	res.SetPageConfig(cfg, raw)
+	return res, nil
+}
+
+// Retrieves a cursor-paginated list of a customer's invoices, fetched live from
+// the connected billing provider. Ordered by issue date ascending by default;
+// override with orderBy (issueDate | dueDate | total) and orderDir (ASC | DESC).
+// Optionally narrowed to one contract, an issue-date range, and/or a set of
+// invoice states. Returns an empty list when no billing provider is connected or
+// the customer is not synced.
+func (r *V1CustomerService) ListInvoicesAutoPaging(ctx context.Context, id string, params V1CustomerListInvoicesParams, opts ...option.RequestOption) *pagination.MyCursorIDPageAutoPager[V1CustomerListInvoicesResponse] {
+	return pagination.NewMyCursorIDPageAutoPager(r.ListInvoices(ctx, id, params, opts...))
+}
+
 // Retrieves a paginated list of resources within the same customer.
 func (r *V1CustomerService) ListResources(ctx context.Context, id string, params V1CustomerListResourcesParams, opts ...option.RequestOption) (res *pagination.MyCursorIDPage[V1CustomerListResourcesResponse], err error) {
 	var raw *http.Response
@@ -1587,6 +1651,331 @@ func (r *V1CustomerImportResponseData) UnmarshalJSON(data []byte) error {
 	return apijson.UnmarshalRoot(data, r)
 }
 
+// A list of a customer's contracts
+type V1CustomerListContractsResponse struct {
+	Data []V1CustomerListContractsResponseData `json:"data" api:"required"`
+	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
+	JSON struct {
+		Data        respjson.Field
+		ExtraFields map[string]respjson.Field
+		raw         string
+	} `json:"-"`
+}
+
+// Returns the unmodified JSON received from the API
+func (r V1CustomerListContractsResponse) RawJSON() string { return r.JSON.raw }
+func (r *V1CustomerListContractsResponse) UnmarshalJSON(data []byte) error {
+	return apijson.UnmarshalRoot(data, r)
+}
+
+// A billing contract as reported by the connected billing provider.
+type V1CustomerListContractsResponseData struct {
+	// The persisted Stigg contract id (matches a subscription’s contractId; present
+	// for Stigg-managed contracts)
+	ID string `json:"id" api:"required"`
+	// The date the contract activation ends
+	ActivationEndDate time.Time `json:"activationEndDate" api:"required" format:"date-time"`
+	// The date the contract becomes active
+	ActivationStartDate time.Time `json:"activationStartDate" api:"required" format:"date-time"`
+	// The billing provider (Received) contract ID; null until the contract has synced
+	// to the billing provider
+	BillingID string `json:"billingId" api:"required"`
+	// The current state of the contract
+	//
+	// Any of "DRAFT", "ACTIVE", "CANCELED", "END_BILLING".
+	BillingState string `json:"billingState" api:"required"`
+	// The Stigg contract ref ID (the key used to fetch/update/delete this contract)
+	ContractID string `json:"contractId" api:"required"`
+	// The date the contract was created
+	CreatedAt time.Time `json:"createdAt" api:"required" format:"date-time"`
+	// The external identifier of the customer the contract belongs to
+	CustomerExternalID string `json:"customerExternalId" api:"required"`
+	// The external identifier of the contract
+	ExternalID string `json:"externalId" api:"required"`
+	// The most recent non-draft invoice for this contract (open, paid, or canceled),
+	// or null when none exists
+	LatestInvoice V1CustomerListContractsResponseDataLatestInvoice `json:"latestInvoice" api:"required"`
+	// The contract name (the purchase-order number when set, otherwise the
+	// contract/customer name)
+	Name string `json:"name" api:"required"`
+	// A preview of the contract's upcoming invoice, or null when none is available
+	NextInvoice V1CustomerListContractsResponseDataNextInvoice `json:"nextInvoice" api:"required"`
+	// Purchase-order number, when set on the contract
+	PoNumber string `json:"poNumber" api:"required"`
+	// The Stigg contract ref ID (present for Stigg-managed contracts; the key used to
+	// update/delete)
+	RefID string `json:"refId" api:"required"`
+	// The current state of the contract
+	//
+	// Any of "DRAFT", "ACTIVE", "CANCELED", "END_BILLING".
+	State string `json:"state" api:"required"`
+	// The custom subscriptions attached to this contract (empty when none)
+	Subscriptions []V1CustomerListContractsResponseDataSubscription `json:"subscriptions" api:"required"`
+	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
+	JSON struct {
+		ID                  respjson.Field
+		ActivationEndDate   respjson.Field
+		ActivationStartDate respjson.Field
+		BillingID           respjson.Field
+		BillingState        respjson.Field
+		ContractID          respjson.Field
+		CreatedAt           respjson.Field
+		CustomerExternalID  respjson.Field
+		ExternalID          respjson.Field
+		LatestInvoice       respjson.Field
+		Name                respjson.Field
+		NextInvoice         respjson.Field
+		PoNumber            respjson.Field
+		RefID               respjson.Field
+		State               respjson.Field
+		Subscriptions       respjson.Field
+		ExtraFields         map[string]respjson.Field
+		raw                 string
+	} `json:"-"`
+}
+
+// Returns the unmodified JSON received from the API
+func (r V1CustomerListContractsResponseData) RawJSON() string { return r.JSON.raw }
+func (r *V1CustomerListContractsResponseData) UnmarshalJSON(data []byte) error {
+	return apijson.UnmarshalRoot(data, r)
+}
+
+// The most recent non-draft invoice for this contract (open, paid, or canceled),
+// or null when none exists
+type V1CustomerListContractsResponseDataLatestInvoice struct {
+	// Invoice billing ID
+	BillingID string `json:"billingId" api:"required"`
+	// Invoice creation date
+	CreatedAt time.Time `json:"createdAt" api:"required" format:"date-time"`
+	// Whether payment requires action
+	RequiresAction bool `json:"requiresAction" api:"required"`
+	// Invoice status
+	//
+	// Any of "OPEN", "CANCELED", "PAID".
+	Status string `json:"status" api:"required"`
+	// Amount due
+	AmountDue float64 `json:"amountDue" api:"nullable"`
+	// Billing reason
+	//
+	// Any of "BILLING_CYCLE", "SUBSCRIPTION_CREATION", "SUBSCRIPTION_UPDATE",
+	// "MANUAL", "MINIMUM_INVOICE_AMOUNT_EXCEEDED", "OTHER".
+	BillingReason string `json:"billingReason" api:"nullable"`
+	// Invoice currency
+	Currency string `json:"currency" api:"nullable"`
+	// Invoice PDF URL
+	PdfURL string `json:"pdfUrl" api:"nullable"`
+	// Total amount
+	Total float64 `json:"total" api:"nullable"`
+	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
+	JSON struct {
+		BillingID      respjson.Field
+		CreatedAt      respjson.Field
+		RequiresAction respjson.Field
+		Status         respjson.Field
+		AmountDue      respjson.Field
+		BillingReason  respjson.Field
+		Currency       respjson.Field
+		PdfURL         respjson.Field
+		Total          respjson.Field
+		ExtraFields    map[string]respjson.Field
+		raw            string
+	} `json:"-"`
+}
+
+// Returns the unmodified JSON received from the API
+func (r V1CustomerListContractsResponseDataLatestInvoice) RawJSON() string { return r.JSON.raw }
+func (r *V1CustomerListContractsResponseDataLatestInvoice) UnmarshalJSON(data []byte) error {
+	return apijson.UnmarshalRoot(data, r)
+}
+
+// A preview of the contract's upcoming invoice, or null when none is available
+type V1CustomerListContractsResponseDataNextInvoice struct {
+	// The total amount of the upcoming invoice
+	Amount V1CustomerListContractsResponseDataNextInvoiceAmount `json:"amount" api:"required"`
+	// The date the upcoming invoice is due
+	DueDate time.Time `json:"dueDate" api:"required" format:"date-time"`
+	// The end of the billing period the upcoming invoice covers
+	PeriodEnd time.Time `json:"periodEnd" api:"required" format:"date-time"`
+	// The start of the billing period the upcoming invoice covers
+	PeriodStart time.Time `json:"periodStart" api:"required" format:"date-time"`
+	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
+	JSON struct {
+		Amount      respjson.Field
+		DueDate     respjson.Field
+		PeriodEnd   respjson.Field
+		PeriodStart respjson.Field
+		ExtraFields map[string]respjson.Field
+		raw         string
+	} `json:"-"`
+}
+
+// Returns the unmodified JSON received from the API
+func (r V1CustomerListContractsResponseDataNextInvoice) RawJSON() string { return r.JSON.raw }
+func (r *V1CustomerListContractsResponseDataNextInvoice) UnmarshalJSON(data []byte) error {
+	return apijson.UnmarshalRoot(data, r)
+}
+
+// The total amount of the upcoming invoice
+type V1CustomerListContractsResponseDataNextInvoiceAmount struct {
+	// The price amount
+	Amount float64 `json:"amount" api:"required"`
+	// ISO 4217 currency code
+	//
+	// Any of "usd", "aed", "all", "amd", "ang", "aud", "awg", "azn", "bam", "bbd",
+	// "bdt", "bgn", "bif", "bmd", "bnd", "bsd", "bwp", "byn", "bzd", "brl", "cad",
+	// "cdf", "chf", "cny", "czk", "dkk", "dop", "dzd", "egp", "etb", "eur", "fjd",
+	// "gbp", "gel", "gip", "gmd", "gyd", "hkd", "hrk", "htg", "idr", "ils", "inr",
+	// "isk", "jmd", "jpy", "kes", "kgs", "khr", "kmf", "krw", "kyd", "kzt", "lbp",
+	// "lkr", "lrd", "lsl", "mad", "mdl", "mga", "mkd", "mmk", "mnt", "mop", "mro",
+	// "mvr", "mwk", "mxn", "myr", "mzn", "nad", "ngn", "nok", "npr", "nzd", "pgk",
+	// "php", "pkr", "pln", "qar", "ron", "rsd", "rub", "rwf", "sar", "sbd", "scr",
+	// "sek", "sgd", "sle", "sll", "sos", "szl", "thb", "tjs", "top", "try", "ttd",
+	// "tzs", "uah", "uzs", "vnd", "vuv", "wst", "xaf", "xcd", "yer", "zar", "zmw",
+	// "clp", "djf", "gnf", "ugx", "pyg", "xof", "xpf".
+	Currency string `json:"currency" api:"required"`
+	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
+	JSON struct {
+		Amount      respjson.Field
+		Currency    respjson.Field
+		ExtraFields map[string]respjson.Field
+		raw         string
+	} `json:"-"`
+}
+
+// Returns the unmodified JSON received from the API
+func (r V1CustomerListContractsResponseDataNextInvoiceAmount) RawJSON() string { return r.JSON.raw }
+func (r *V1CustomerListContractsResponseDataNextInvoiceAmount) UnmarshalJSON(data []byte) error {
+	return apijson.UnmarshalRoot(data, r)
+}
+
+// A custom subscription attached to a contract.
+type V1CustomerListContractsResponseDataSubscription struct {
+	// Display name of the subscription plan
+	PlanDisplayName string `json:"planDisplayName" api:"required"`
+	// Display name of the product the subscription plan belongs to
+	ProductDisplayName string `json:"productDisplayName" api:"required"`
+	// The subscription ref ID (use it to deep-link to the subscription)
+	SubscriptionID string `json:"subscriptionId" api:"required"`
+	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
+	JSON struct {
+		PlanDisplayName    respjson.Field
+		ProductDisplayName respjson.Field
+		SubscriptionID     respjson.Field
+		ExtraFields        map[string]respjson.Field
+		raw                string
+	} `json:"-"`
+}
+
+// Returns the unmodified JSON received from the API
+func (r V1CustomerListContractsResponseDataSubscription) RawJSON() string { return r.JSON.raw }
+func (r *V1CustomerListContractsResponseDataSubscription) UnmarshalJSON(data []byte) error {
+	return apijson.UnmarshalRoot(data, r)
+}
+
+// A customer invoice as reported by the connected billing provider.
+type V1CustomerListInvoicesResponse struct {
+	// External ID of the contract the invoice belongs to: your contract ref when
+	// mapped, otherwise the Received contract ID
+	ContractExternalID string `json:"contractExternalId" api:"required"`
+	// The ISO-4217 currency code of the invoice
+	Currency string `json:"currency" api:"required"`
+	// External ID of the customer the invoice belongs to: your customer ref when
+	// mapped, otherwise the Received customer ID
+	CustomerExternalID string `json:"customerExternalId" api:"required"`
+	// The total discount amount
+	Discount float64 `json:"discount" api:"required"`
+	// The date payment is due
+	DueDate time.Time `json:"dueDate" api:"required" format:"date-time"`
+	// External ID for the invoice: the mapped external ID when one exists, otherwise
+	// the invoice ID
+	InvoiceExternalID string `json:"invoiceExternalId" api:"required"`
+	// The billing provider (Received) invoice ID
+	InvoiceID string `json:"invoiceId" api:"required"`
+	// The invoice document number (or draft number while the invoice is unissued)
+	InvoiceNumber string `json:"invoiceNumber" api:"required"`
+	// The date the invoice was issued
+	IssueDate time.Time `json:"issueDate" api:"required" format:"date-time"`
+	// The invoice line items
+	LineItems []V1CustomerListInvoicesResponseLineItem `json:"lineItems" api:"required"`
+	// The date the invoice was reconciled as paid; present once reconciled
+	PaidDate time.Time `json:"paidDate" api:"required" format:"date-time"`
+	// The invoice status (open, paid, or canceled)
+	//
+	// Any of "OPEN", "CANCELED", "PAID".
+	State V1CustomerListInvoicesResponseState `json:"state" api:"required"`
+	// The pre-tax subtotal
+	Subtotal float64 `json:"subtotal" api:"required"`
+	// The total tax amount
+	Tax float64 `json:"tax" api:"required"`
+	// The total amount due
+	Total float64 `json:"total" api:"required"`
+	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
+	JSON struct {
+		ContractExternalID respjson.Field
+		Currency           respjson.Field
+		CustomerExternalID respjson.Field
+		Discount           respjson.Field
+		DueDate            respjson.Field
+		InvoiceExternalID  respjson.Field
+		InvoiceID          respjson.Field
+		InvoiceNumber      respjson.Field
+		IssueDate          respjson.Field
+		LineItems          respjson.Field
+		PaidDate           respjson.Field
+		State              respjson.Field
+		Subtotal           respjson.Field
+		Tax                respjson.Field
+		Total              respjson.Field
+		ExtraFields        map[string]respjson.Field
+		raw                string
+	} `json:"-"`
+}
+
+// Returns the unmodified JSON received from the API
+func (r V1CustomerListInvoicesResponse) RawJSON() string { return r.JSON.raw }
+func (r *V1CustomerListInvoicesResponse) UnmarshalJSON(data []byte) error {
+	return apijson.UnmarshalRoot(data, r)
+}
+
+// A single line item on an invoice.
+type V1CustomerListInvoicesResponseLineItem struct {
+	// Total amount for this line (unit price × quantity)
+	Amount float64 `json:"amount" api:"required"`
+	// Human-readable description of the line item
+	Description string `json:"description" api:"required"`
+	// External ID of the product this line item relates to, when one is mapped
+	ProductExternalID string `json:"productExternalId" api:"required"`
+	// Quantity billed on this line
+	Quantity float64 `json:"quantity" api:"required"`
+	// Price per unit for this line
+	UnitPrice float64 `json:"unitPrice" api:"required"`
+	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
+	JSON struct {
+		Amount            respjson.Field
+		Description       respjson.Field
+		ProductExternalID respjson.Field
+		Quantity          respjson.Field
+		UnitPrice         respjson.Field
+		ExtraFields       map[string]respjson.Field
+		raw               string
+	} `json:"-"`
+}
+
+// Returns the unmodified JSON received from the API
+func (r V1CustomerListInvoicesResponseLineItem) RawJSON() string { return r.JSON.raw }
+func (r *V1CustomerListInvoicesResponseLineItem) UnmarshalJSON(data []byte) error {
+	return apijson.UnmarshalRoot(data, r)
+}
+
+// The invoice status (open, paid, or canceled)
+type V1CustomerListInvoicesResponseState string
+
+const (
+	V1CustomerListInvoicesResponseStateOpen     V1CustomerListInvoicesResponseState = "OPEN"
+	V1CustomerListInvoicesResponseStateCanceled V1CustomerListInvoicesResponseState = "CANCELED"
+	V1CustomerListInvoicesResponseStatePaid     V1CustomerListInvoicesResponseState = "PAID"
+)
+
 // Resource object that belongs to a customer
 type V1CustomerListResourcesResponse struct {
 	// Resource slug
@@ -2441,6 +2830,67 @@ func (r V1CustomerImportParamsCustomer) MarshalJSON() (data []byte, err error) {
 func (r *V1CustomerImportParamsCustomer) UnmarshalJSON(data []byte) error {
 	return apijson.UnmarshalRoot(data, r)
 }
+
+type V1CustomerListContractsParams struct {
+	XAccountID     param.Opt[string] `header:"X-ACCOUNT-ID,omitzero" json:"-"`
+	XEnvironmentID param.Opt[string] `header:"X-ENVIRONMENT-ID,omitzero" json:"-"`
+	paramObj
+}
+
+type V1CustomerListInvoicesParams struct {
+	// Return items that come after this cursor
+	After param.Opt[string] `query:"after,omitzero" json:"-"`
+	// Return items that come before this cursor
+	Before param.Opt[string] `query:"before,omitzero" json:"-"`
+	// Filter to invoices for this contract only (contract external ID or Received
+	// contract ID). Omit for all contracts.
+	ContractExternalID param.Opt[string] `query:"contractExternalId,omitzero" json:"-"`
+	// Filter to invoices issued on or after this date, inclusive (ISO 8601)
+	IssuedAfter param.Opt[time.Time] `query:"issuedAfter,omitzero" format:"date-time" json:"-"`
+	// Filter to invoices issued on or before this date, inclusive (ISO 8601)
+	IssuedBefore param.Opt[time.Time] `query:"issuedBefore,omitzero" format:"date-time" json:"-"`
+	// Maximum number of items to return
+	Limit param.Opt[int64] `query:"limit,omitzero" json:"-"`
+	// Filter by invoice state. Supports comma-separated values for multiple states
+	StateIn        param.Opt[string] `query:"stateIn,omitzero" json:"-"`
+	XAccountID     param.Opt[string] `header:"X-ACCOUNT-ID,omitzero" json:"-"`
+	XEnvironmentID param.Opt[string] `header:"X-ENVIRONMENT-ID,omitzero" json:"-"`
+	// Field to sort by: issueDate (default), dueDate, or total
+	//
+	// Any of "issueDate", "dueDate", "total".
+	OrderBy V1CustomerListInvoicesParamsOrderBy `query:"orderBy,omitzero" json:"-"`
+	// Sort direction: ASC (default) or DESC
+	//
+	// Any of "ASC", "DESC".
+	OrderDir V1CustomerListInvoicesParamsOrderDir `query:"orderDir,omitzero" json:"-"`
+	paramObj
+}
+
+// URLQuery serializes [V1CustomerListInvoicesParams]'s query parameters as
+// `url.Values`.
+func (r V1CustomerListInvoicesParams) URLQuery() (v url.Values, err error) {
+	return apiquery.MarshalWithSettings(r, apiquery.QuerySettings{
+		ArrayFormat:  apiquery.ArrayQueryFormatComma,
+		NestedFormat: apiquery.NestedQueryFormatBrackets,
+	})
+}
+
+// Field to sort by: issueDate (default), dueDate, or total
+type V1CustomerListInvoicesParamsOrderBy string
+
+const (
+	V1CustomerListInvoicesParamsOrderByIssueDate V1CustomerListInvoicesParamsOrderBy = "issueDate"
+	V1CustomerListInvoicesParamsOrderByDueDate   V1CustomerListInvoicesParamsOrderBy = "dueDate"
+	V1CustomerListInvoicesParamsOrderByTotal     V1CustomerListInvoicesParamsOrderBy = "total"
+)
+
+// Sort direction: ASC (default) or DESC
+type V1CustomerListInvoicesParamsOrderDir string
+
+const (
+	V1CustomerListInvoicesParamsOrderDirAsc  V1CustomerListInvoicesParamsOrderDir = "ASC"
+	V1CustomerListInvoicesParamsOrderDirDesc V1CustomerListInvoicesParamsOrderDir = "DESC"
+)
 
 type V1CustomerListResourcesParams struct {
 	// Return items that come after this cursor

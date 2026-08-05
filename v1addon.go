@@ -986,14 +986,17 @@ type V1AddonUpdateParamsChargesOveragePricingModel struct {
 	BillingModel string `json:"billingModel,omitzero" api:"required"`
 	// Price periods for overage pricing
 	PricePeriods []V1AddonUpdateParamsChargesOveragePricingModelPricePeriod `json:"pricePeriods,omitzero" api:"required"`
+	// The refId of the custom currency this credit overage applies to
+	CurrencyID param.Opt[string] `json:"currencyId,omitzero"`
 	// The feature ID for overage pricing
 	FeatureID param.Opt[string] `json:"featureId,omitzero"`
-	// Custom currency ID for overage top-up
-	TopUpCustomCurrencyID param.Opt[string] `json:"topUpCustomCurrencyId,omitzero"`
 	// The billing cadence for overages
 	//
 	// Any of "RECURRING", "ONE_OFF".
 	BillingCadence string `json:"billingCadence,omitzero"`
+	// Credit entitlement to grant when a credit overage targets a currency not yet
+	// granted on the plan
+	CreditEntitlement V1AddonUpdateParamsChargesOveragePricingModelCreditEntitlement `json:"creditEntitlement,omitzero"`
 	// Entitlement configuration for the overage feature
 	Entitlement V1AddonUpdateParamsChargesOveragePricingModelEntitlement `json:"entitlement,omitzero"`
 	paramObj
@@ -1206,6 +1209,36 @@ func (r *V1AddonUpdateParamsChargesOveragePricingModelPricePeriodTierUnitPrice) 
 func init() {
 	apijson.RegisterFieldValidator[V1AddonUpdateParamsChargesOveragePricingModelPricePeriodTierUnitPrice](
 		"currency", "usd", "aed", "all", "amd", "ang", "aud", "awg", "azn", "bam", "bbd", "bdt", "bgn", "bif", "bmd", "bnd", "bsd", "bwp", "byn", "bzd", "brl", "cad", "cdf", "chf", "cny", "czk", "dkk", "dop", "dzd", "egp", "etb", "eur", "fjd", "gbp", "gel", "gip", "gmd", "gyd", "hkd", "hrk", "htg", "idr", "ils", "inr", "isk", "jmd", "jpy", "kes", "kgs", "khr", "kmf", "krw", "kyd", "kzt", "lbp", "lkr", "lrd", "lsl", "mad", "mdl", "mga", "mkd", "mmk", "mnt", "mop", "mro", "mvr", "mwk", "mxn", "myr", "mzn", "nad", "ngn", "nok", "npr", "nzd", "pgk", "php", "pkr", "pln", "qar", "ron", "rsd", "rub", "rwf", "sar", "sbd", "scr", "sek", "sgd", "sle", "sll", "sos", "szl", "thb", "tjs", "top", "try", "ttd", "tzs", "uah", "uzs", "vnd", "vuv", "wst", "xaf", "xcd", "yer", "zar", "zmw", "clp", "djf", "gnf", "ugx", "pyg", "xof", "xpf",
+	)
+}
+
+// Credit entitlement to grant when a credit overage targets a currency not yet
+// granted on the plan
+//
+// The properties Amount, Cadence, CustomCurrencyID are required.
+type V1AddonUpdateParamsChargesOveragePricingModelCreditEntitlement struct {
+	// The base credit balance granted per cadence
+	Amount float64 `json:"amount" api:"required"`
+	// The credit grant cadence (MONTH or YEAR)
+	//
+	// Any of "MONTH", "YEAR".
+	Cadence string `json:"cadence,omitzero" api:"required"`
+	// The refId of the custom currency to grant
+	CustomCurrencyID string `json:"customCurrencyId" api:"required"`
+	paramObj
+}
+
+func (r V1AddonUpdateParamsChargesOveragePricingModelCreditEntitlement) MarshalJSON() (data []byte, err error) {
+	type shadow V1AddonUpdateParamsChargesOveragePricingModelCreditEntitlement
+	return param.MarshalObject(r, (*shadow)(&r))
+}
+func (r *V1AddonUpdateParamsChargesOveragePricingModelCreditEntitlement) UnmarshalJSON(data []byte) error {
+	return apijson.UnmarshalRoot(data, r)
+}
+
+func init() {
+	apijson.RegisterFieldValidator[V1AddonUpdateParamsChargesOveragePricingModelCreditEntitlement](
+		"cadence", "MONTH", "YEAR",
 	)
 }
 

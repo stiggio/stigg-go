@@ -275,6 +275,10 @@ func (r *V1CreditGetUsageResponseDataPagination) UnmarshalJSON(data []byte) erro
 
 // Credit usage data for a single feature
 type V1CreditGetUsageResponseDataSeries struct {
+	// Number of distinct usage events that consumed credits in this series. This count
+	// is not additive across series, because an event matched by several meters
+	// appears in more than one series.
+	EventCount float64 `json:"eventCount" api:"required"`
 	// The feature ID; null when grouping by dimensions only
 	FeatureID string `json:"featureId" api:"required"`
 	// The display name of the feature; null when grouping by dimensions only
@@ -287,6 +291,7 @@ type V1CreditGetUsageResponseDataSeries struct {
 	Tags []V1CreditGetUsageResponseDataSeriesTag `json:"tags"`
 	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
 	JSON struct {
+		EventCount   respjson.Field
 		FeatureID    respjson.Field
 		FeatureName  respjson.Field
 		Points       respjson.Field
@@ -305,12 +310,15 @@ func (r *V1CreditGetUsageResponseDataSeries) UnmarshalJSON(data []byte) error {
 
 // A single data point in the credit usage time series
 type V1CreditGetUsageResponseDataSeriesPoint struct {
+	// Number of distinct usage events that consumed credits in this time bucket
+	EventCount float64 `json:"eventCount" api:"required"`
 	// The timestamp of the data point
 	Timestamp time.Time `json:"timestamp" api:"required" format:"date-time"`
 	// The credit usage value at this point
 	Value float64 `json:"value" api:"required"`
 	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
 	JSON struct {
+		EventCount  respjson.Field
 		Timestamp   respjson.Field
 		Value       respjson.Field
 		ExtraFields map[string]respjson.Field
