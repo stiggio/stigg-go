@@ -91,23 +91,30 @@ type V1EventBetaCustomerGetGovernanceResponseData struct {
 	// Usage consumed in the current cadence period (may lag the live counter by a
 	// short interval).
 	CurrentUsage float64 `json:"currentUsage" api:"required"`
+	// Human-readable name of the entity, or null when none is set (display the entity
+	// id instead).
+	DisplayName string `json:"displayName" api:"required"`
 	// External id of the entity at this node.
 	EntityID string `json:"entityId" api:"required"`
 	// External id of the entity type (e.g. `team`, `user`).
 	EntityTypeID string `json:"entityTypeId" api:"required"`
-	// External id of the parent entity in the tree; `null` for a root. Use it to
-	// rebuild the tree.
+	// External id of the parent entity in the tree. `null` means the entity is either
+	// a root or not yet placed in the hierarchy — placement rides on an assignment, so
+	// an entity with no limits set has no parent yet. Both render at the top level;
+	// use it to rebuild the tree.
 	ParentID string `json:"parentId" api:"required"`
 	// The configuration scope (entity ids). Empty is the node-wide configuration; a
 	// non-empty set is a dimension-scoped sub-configuration.
 	ScopeEntityIDs []string `json:"scopeEntityIds" api:"required"`
 	// Hard usage limit for this node per cadence period.
 	UsageLimit float64 `json:"usageLimit" api:"required"`
-	// Exclusive end of the cadence period — when usage resets; `null` once the period
-	// has rolled over.
+	// Exclusive end of the cadence period in progress now — when usage resets. `null`
+	// when the node has no usage configuration, or when a stored cadence cannot be
+	// parsed.
 	UsagePeriodEnd time.Time `json:"usagePeriodEnd" api:"required" format:"date-time"`
-	// Start of the cadence period the usage snapshot belongs to; `null` once the
-	// period has rolled over.
+	// Start of the cadence period in progress now, derived from the cadence and the
+	// assignment anchor — it stays correct across a rollover. `null` when the node has
+	// no usage configuration, or when a stored cadence cannot be parsed.
 	UsagePeriodStart time.Time `json:"usagePeriodStart" api:"required" format:"date-time"`
 	// `currentUsage / usageLimit` (1 when usageLimit is 0 — always at limit). The
 	// cross-capability-safe sort key.
@@ -121,6 +128,7 @@ type V1EventBetaCustomerGetGovernanceResponseData struct {
 	JSON struct {
 		Cadence          respjson.Field
 		CurrentUsage     respjson.Field
+		DisplayName      respjson.Field
 		EntityID         respjson.Field
 		EntityTypeID     respjson.Field
 		ParentID         respjson.Field
@@ -163,7 +171,8 @@ func (r *V1EventBetaCustomerGetGovernanceResponsePagination) UnmarshalJSON(data 
 type V1EventBetaCustomerGetGovernanceParams struct {
 	// Return items that come after this cursor
 	After param.Opt[string] `query:"after,omitzero" json:"-"`
-	// Case-insensitive substring match on the entity id (`%`/`_` matched literally).
+	// Case-insensitive substring match on the entity id or its display name (`%`/`_`
+	// matched literally).
 	EntityIDSearch param.Opt[string] `query:"entityIdSearch,omitzero" json:"-"`
 	// Maximum number of items to return
 	Limit param.Opt[int64] `query:"limit,omitzero" json:"-"`

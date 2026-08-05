@@ -99,6 +99,9 @@ type V1BetaEntityTypeListResponse struct {
 	AttributionKeys []string `json:"attributionKeys" api:"required"`
 	// Timestamp of when the record was created
 	CreatedAt time.Time `json:"createdAt" api:"required" format:"date-time"`
+	// What this entity type represents and what it is for governing, or null when none
+	// is set
+	Description string `json:"description" api:"required"`
 	// The display name for the entity type
 	DisplayName string `json:"displayName" api:"required"`
 	// Timestamp of when the record was last updated
@@ -108,6 +111,7 @@ type V1BetaEntityTypeListResponse struct {
 		ID              respjson.Field
 		AttributionKeys respjson.Field
 		CreatedAt       respjson.Field
+		Description     respjson.Field
 		DisplayName     respjson.Field
 		UpdatedAt       respjson.Field
 		ExtraFields     map[string]respjson.Field
@@ -150,6 +154,9 @@ type V1BetaEntityTypeUpsertResponseData struct {
 	AttributionKeys []string `json:"attributionKeys" api:"required"`
 	// Timestamp of when the record was created
 	CreatedAt time.Time `json:"createdAt" api:"required" format:"date-time"`
+	// What this entity type represents and what it is for governing, or null when none
+	// is set
+	Description string `json:"description" api:"required"`
 	// The display name for the entity type
 	DisplayName string `json:"displayName" api:"required"`
 	// Timestamp of when the record was last updated
@@ -159,6 +166,7 @@ type V1BetaEntityTypeUpsertResponseData struct {
 		ID              respjson.Field
 		AttributionKeys respjson.Field
 		CreatedAt       respjson.Field
+		Description     respjson.Field
 		DisplayName     respjson.Field
 		UpdatedAt       respjson.Field
 		ExtraFields     map[string]respjson.Field
@@ -220,6 +228,9 @@ type V1BetaEntityTypeUpsertParamsType struct {
 	AttributionKeys []string `json:"attributionKeys,omitzero" api:"required"`
 	// The display name for the entity type
 	DisplayName string `json:"displayName" api:"required"`
+	// What this entity type represents and what it is for governing. Omit to preserve
+	// the stored value, or send an empty string or null to clear it.
+	Description param.Opt[string] `json:"description,omitzero"`
 	paramObj
 }
 
