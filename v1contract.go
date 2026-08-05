@@ -184,6 +184,10 @@ type V1ContractNewResponseData struct {
 	// The billing provider (Received) contract ID; null until the contract has synced
 	// to the billing provider
 	BillingID string `json:"billingId" api:"required"`
+	// The current state of the contract
+	//
+	// Any of "DRAFT", "ACTIVE", "CANCELED", "END_BILLING".
+	BillingState string `json:"billingState" api:"required"`
 	// The Stigg contract ref ID (the key used to fetch/update/delete this contract)
 	ContractID string `json:"contractId" api:"required"`
 	// The date the contract was created
@@ -217,6 +221,7 @@ type V1ContractNewResponseData struct {
 		ActivationEndDate   respjson.Field
 		ActivationStartDate respjson.Field
 		BillingID           respjson.Field
+		BillingState        respjson.Field
 		ContractID          respjson.Field
 		CreatedAt           respjson.Field
 		CustomerExternalID  respjson.Field
@@ -401,6 +406,10 @@ type V1ContractGetResponseData struct {
 	// The billing provider (Received) contract ID; null until the contract has synced
 	// to the billing provider
 	BillingID string `json:"billingId" api:"required"`
+	// The current state of the contract
+	//
+	// Any of "DRAFT", "ACTIVE", "CANCELED", "END_BILLING".
+	BillingState string `json:"billingState" api:"required"`
 	// The Stigg contract ref ID (the key used to fetch/update/delete this contract)
 	ContractID string `json:"contractId" api:"required"`
 	// The date the contract was created
@@ -434,6 +443,7 @@ type V1ContractGetResponseData struct {
 		ActivationEndDate   respjson.Field
 		ActivationStartDate respjson.Field
 		BillingID           respjson.Field
+		BillingState        respjson.Field
 		ContractID          respjson.Field
 		CreatedAt           respjson.Field
 		CustomerExternalID  respjson.Field
@@ -618,6 +628,10 @@ type V1ContractUpdateResponseData struct {
 	// The billing provider (Received) contract ID; null until the contract has synced
 	// to the billing provider
 	BillingID string `json:"billingId" api:"required"`
+	// The current state of the contract
+	//
+	// Any of "DRAFT", "ACTIVE", "CANCELED", "END_BILLING".
+	BillingState string `json:"billingState" api:"required"`
 	// The Stigg contract ref ID (the key used to fetch/update/delete this contract)
 	ContractID string `json:"contractId" api:"required"`
 	// The date the contract was created
@@ -651,6 +665,7 @@ type V1ContractUpdateResponseData struct {
 		ActivationEndDate   respjson.Field
 		ActivationStartDate respjson.Field
 		BillingID           respjson.Field
+		BillingState        respjson.Field
 		ContractID          respjson.Field
 		CreatedAt           respjson.Field
 		CustomerExternalID  respjson.Field
@@ -817,6 +832,10 @@ type V1ContractListResponse struct {
 	// The billing provider (Received) contract ID; null until the contract has synced
 	// to the billing provider
 	BillingID string `json:"billingId" api:"required"`
+	// The current state of the contract
+	//
+	// Any of "DRAFT", "ACTIVE", "CANCELED", "END_BILLING".
+	BillingState V1ContractListResponseBillingState `json:"billingState" api:"required"`
 	// The Stigg contract ref ID (the key used to fetch/update/delete this contract)
 	ContractID string `json:"contractId" api:"required"`
 	// The date the contract was created
@@ -850,6 +869,7 @@ type V1ContractListResponse struct {
 		ActivationEndDate   respjson.Field
 		ActivationStartDate respjson.Field
 		BillingID           respjson.Field
+		BillingState        respjson.Field
 		ContractID          respjson.Field
 		CreatedAt           respjson.Field
 		CustomerExternalID  respjson.Field
@@ -871,6 +891,16 @@ func (r V1ContractListResponse) RawJSON() string { return r.JSON.raw }
 func (r *V1ContractListResponse) UnmarshalJSON(data []byte) error {
 	return apijson.UnmarshalRoot(data, r)
 }
+
+// The current state of the contract
+type V1ContractListResponseBillingState string
+
+const (
+	V1ContractListResponseBillingStateDraft      V1ContractListResponseBillingState = "DRAFT"
+	V1ContractListResponseBillingStateActive     V1ContractListResponseBillingState = "ACTIVE"
+	V1ContractListResponseBillingStateCanceled   V1ContractListResponseBillingState = "CANCELED"
+	V1ContractListResponseBillingStateEndBilling V1ContractListResponseBillingState = "END_BILLING"
+)
 
 // The most recent non-draft invoice for this contract (open, paid, or canceled),
 // or null when none exists
@@ -1044,6 +1074,10 @@ type V1ContractDeleteResponseData struct {
 	// The billing provider (Received) contract ID; null until the contract has synced
 	// to the billing provider
 	BillingID string `json:"billingId" api:"required"`
+	// The current state of the contract
+	//
+	// Any of "DRAFT", "ACTIVE", "CANCELED", "END_BILLING".
+	BillingState string `json:"billingState" api:"required"`
 	// The Stigg contract ref ID (the key used to fetch/update/delete this contract)
 	ContractID string `json:"contractId" api:"required"`
 	// The date the contract was created
@@ -1077,6 +1111,7 @@ type V1ContractDeleteResponseData struct {
 		ActivationEndDate   respjson.Field
 		ActivationStartDate respjson.Field
 		BillingID           respjson.Field
+		BillingState        respjson.Field
 		ContractID          respjson.Field
 		CreatedAt           respjson.Field
 		CustomerExternalID  respjson.Field
