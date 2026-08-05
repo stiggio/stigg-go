@@ -1,5 +1,13 @@
 # Changelog
 
+## 0.1.0-beta.45 (2026-08-05)
+
+Full Changelog: [v0.1.0-beta.44...v0.1.0-beta.45](https://github.com/stiggio/stigg-go/compare/v0.1.0-beta.44...v0.1.0-beta.45)
+
+### Features
+
+* **api:** add eventCount field to credit usage response models ([73f977d](https://github.com/stiggio/stigg-go/commit/73f977d0ce8c1ebff7ebb4208e4a8844b0a2bf14))
+
 ## 0.1.0-beta.44 (2026-07-28)
 
 Full Changelog: [v0.1.0-beta.43...v0.1.0-beta.44](https://github.com/stiggio/stigg-go/compare/v0.1.0-beta.43...v0.1.0-beta.44)
