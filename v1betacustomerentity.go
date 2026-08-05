@@ -175,6 +175,9 @@ type V1BetaCustomerEntityGetResponseData struct {
 	ArchivedAt time.Time `json:"archivedAt" api:"required" format:"date-time"`
 	// Timestamp of when the record was created
 	CreatedAt time.Time `json:"createdAt" api:"required" format:"date-time"`
+	// Human-readable name for the entity, or null when none is set — in which case
+	// clients display the entity ID
+	DisplayName string `json:"displayName" api:"required"`
 	// The entity type identifier this entity instantiates
 	EntityTypeID string `json:"entityTypeId" api:"required"`
 	// Free-form key/value metadata attached to the entity
@@ -186,6 +189,7 @@ type V1BetaCustomerEntityGetResponseData struct {
 		ID           respjson.Field
 		ArchivedAt   respjson.Field
 		CreatedAt    respjson.Field
+		DisplayName  respjson.Field
 		EntityTypeID respjson.Field
 		Metadata     respjson.Field
 		UpdatedAt    respjson.Field
@@ -208,6 +212,9 @@ type V1BetaCustomerEntityListResponse struct {
 	ArchivedAt time.Time `json:"archivedAt" api:"required" format:"date-time"`
 	// Timestamp of when the record was created
 	CreatedAt time.Time `json:"createdAt" api:"required" format:"date-time"`
+	// Human-readable name for the entity, or null when none is set — in which case
+	// clients display the entity ID
+	DisplayName string `json:"displayName" api:"required"`
 	// The entity type identifier this entity instantiates
 	EntityTypeID string `json:"entityTypeId" api:"required"`
 	// Free-form key/value metadata attached to the entity
@@ -219,6 +226,7 @@ type V1BetaCustomerEntityListResponse struct {
 		ID           respjson.Field
 		ArchivedAt   respjson.Field
 		CreatedAt    respjson.Field
+		DisplayName  respjson.Field
 		EntityTypeID respjson.Field
 		Metadata     respjson.Field
 		UpdatedAt    respjson.Field
@@ -330,6 +338,9 @@ type V1BetaCustomerEntityUpsertResponseData struct {
 	ArchivedAt time.Time `json:"archivedAt" api:"required" format:"date-time"`
 	// Timestamp of when the record was created
 	CreatedAt time.Time `json:"createdAt" api:"required" format:"date-time"`
+	// Human-readable name for the entity, or null when none is set — in which case
+	// clients display the entity ID
+	DisplayName string `json:"displayName" api:"required"`
 	// The entity type identifier this entity instantiates
 	EntityTypeID string `json:"entityTypeId" api:"required"`
 	// Free-form key/value metadata attached to the entity
@@ -341,6 +352,7 @@ type V1BetaCustomerEntityUpsertResponseData struct {
 		ID           respjson.Field
 		ArchivedAt   respjson.Field
 		CreatedAt    respjson.Field
+		DisplayName  respjson.Field
 		EntityTypeID respjson.Field
 		Metadata     respjson.Field
 		UpdatedAt    respjson.Field
@@ -451,6 +463,9 @@ func (r *V1BetaCustomerEntityUpsertParams) UnmarshalJSON(data []byte) error {
 type V1BetaCustomerEntityUpsertParamsEntity struct {
 	// The unique identifier for the entity
 	ID string `json:"id" api:"required"`
+	// Human-readable name for the entity. Omit to preserve the stored value, or send
+	// an empty string or null to clear it.
+	DisplayName param.Opt[string] `json:"displayName,omitzero"`
 	// The entity type ID this entity instantiates. Required when creating a new
 	// entity; on a re-upsert may be omitted to preserve the existing type. Governance
 	// returns 400 if missing on create.

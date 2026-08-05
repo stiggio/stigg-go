@@ -160,6 +160,7 @@ func TestV1BetaCustomerEntityUpsertWithOptionalParams(t *testing.T) {
 		stigg.V1BetaCustomerEntityUpsertParams{
 			Entities: []stigg.V1BetaCustomerEntityUpsertParamsEntity{{
 				ID:           "user-7f3a0c1d",
+				DisplayName:  stigg.String("Jane Doe"),
 				EntityTypeID: stigg.String("user"),
 				Metadata: map[string]string{
 					"email": "jane@acme.com",
@@ -167,6 +168,7 @@ func TestV1BetaCustomerEntityUpsertWithOptionalParams(t *testing.T) {
 				},
 			}, {
 				ID:           "user-c4d1b2e9",
+				DisplayName:  stigg.String("John Roe"),
 				EntityTypeID: stigg.String("user"),
 				Metadata: map[string]string{
 					"email": "john@acme.com",
