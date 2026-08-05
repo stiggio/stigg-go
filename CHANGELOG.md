@@ -1,5 +1,13 @@
 # Changelog
 
+## 0.1.0-beta.46 (2026-08-05)
+
+Full Changelog: [v0.1.0-beta.45...v0.1.0-beta.46](https://github.com/stiggio/stigg-go/compare/v0.1.0-beta.45...v0.1.0-beta.46)
+
+### Features
+
+* **api:** add displayname field to customer entities/events, description to entity types ([618e430](https://github.com/stiggio/stigg-go/commit/618e430fc459260777d35c6332e548cfd177e25c))
+
 ## 0.1.0-beta.45 (2026-08-05)
 
 Full Changelog: [v0.1.0-beta.44...v0.1.0-beta.45](https://github.com/stiggio/stigg-go/compare/v0.1.0-beta.44...v0.1.0-beta.45)
