@@ -60,10 +60,12 @@ func TestV1BetaEntityTypeUpsertWithOptionalParams(t *testing.T) {
 			ID:              "org",
 			AttributionKeys: []string{"organizationId"},
 			DisplayName:     "Organization",
+			Description:     stigg.String("A customer organization — the top of the hierarchy, holding the account-wide budget."),
 		}, {
 			ID:              "team",
 			AttributionKeys: []string{"teamId"},
 			DisplayName:     "Team",
+			Description:     stigg.String("description"),
 		}},
 		XAccountID:     stigg.String("X-ACCOUNT-ID"),
 		XEnvironmentID: stigg.String("X-ENVIRONMENT-ID"),
