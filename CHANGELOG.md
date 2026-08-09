@@ -1,5 +1,42 @@
 # Changelog
 
+## 0.1.0-beta.46 (2026-08-05)
+
+Full Changelog: [v0.1.0-beta.45...v0.1.0-beta.46](https://github.com/stiggio/stigg-go/compare/v0.1.0-beta.45...v0.1.0-beta.46)
+
+### Features
+
+* **api:** add displayname field to customer entities/events, description to entity types ([618e430](https://github.com/stiggio/stigg-go/commit/618e430fc459260777d35c6332e548cfd177e25c))
+
+## 0.1.0-beta.45 (2026-08-05)
+
+Full Changelog: [v0.1.0-beta.44...v0.1.0-beta.45](https://github.com/stiggio/stigg-go/compare/v0.1.0-beta.44...v0.1.0-beta.45)
+
+### Features
+
+* **api:** add eventCount field to credit usage response models ([73f977d](https://github.com/stiggio/stigg-go/commit/73f977d0ce8c1ebff7ebb4208e4a8844b0a2bf14))
+
+## 0.1.0-beta.44 (2026-07-28)
+
+Full Changelog: [v0.1.0-beta.43...v0.1.0-beta.44](https://github.com/stiggio/stigg-go/compare/v0.1.0-beta.43...v0.1.0-beta.44)
+
+### Features
+
+* **api:** add contracts resource, customers.GetContracts, syncStates to credit grants ([9233c85](https://github.com/stiggio/stigg-go/commit/9233c854bf0860ef92bbf4379b2c0092bba1d018))
+
+## 0.1.0-beta.43 (2026-07-26)
+
+Full Changelog: [v0.1.0-beta.42...v0.1.0-beta.43](https://github.com/stiggio/stigg-go/compare/v0.1.0-beta.42...v0.1.0-beta.43)
+
+### Features
+
+* **api:** add creditEntitlement parameter to v1addon and v1plan update methods ([26c8ad7](https://github.com/stiggio/stigg-go/commit/26c8ad79cd9ba19b5af584fb973638ad315f86a0))
+
+
+### Chores
+
+* **internal:** regenerate SDK with no functional changes ([ef171c9](https://github.com/stiggio/stigg-go/commit/ef171c90210297a7a3d4333152994e128fd4be76))
+
 ## 0.1.0-beta.42 (2026-07-21)
 
 Full Changelog: [v0.1.0-beta.41...v0.1.0-beta.42](https://github.com/stiggio/stigg-go/compare/v0.1.0-beta.41...v0.1.0-beta.42)
