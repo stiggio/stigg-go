@@ -1450,22 +1450,14 @@ func init() {
 
 // Overage pricing model configuration.
 //
-// The properties BillingModel, PricePeriods are required.
+// The property PricePeriods is required.
 type V1PlanUpdateParamsChargesOveragePricingModel struct {
-	// The billing model for overages
-	//
-	// Any of "FLAT_FEE", "MINIMUM_SPEND", "PER_UNIT", "USAGE_BASED", "CREDIT_BASED".
-	BillingModel string `json:"billingModel,omitzero" api:"required"`
 	// Price periods for overage pricing
 	PricePeriods []V1PlanUpdateParamsChargesOveragePricingModelPricePeriod `json:"pricePeriods,omitzero" api:"required"`
 	// The refId of the custom currency this credit overage applies to
 	CurrencyID param.Opt[string] `json:"currencyId,omitzero"`
 	// The feature ID for overage pricing
 	FeatureID param.Opt[string] `json:"featureId,omitzero"`
-	// The billing cadence for overages
-	//
-	// Any of "RECURRING", "ONE_OFF".
-	BillingCadence string `json:"billingCadence,omitzero"`
 	// Credit entitlement to grant when a credit overage targets a currency not yet
 	// granted on the plan
 	CreditEntitlement V1PlanUpdateParamsChargesOveragePricingModelCreditEntitlement `json:"creditEntitlement,omitzero"`
@@ -1480,15 +1472,6 @@ func (r V1PlanUpdateParamsChargesOveragePricingModel) MarshalJSON() (data []byte
 }
 func (r *V1PlanUpdateParamsChargesOveragePricingModel) UnmarshalJSON(data []byte) error {
 	return apijson.UnmarshalRoot(data, r)
-}
-
-func init() {
-	apijson.RegisterFieldValidator[V1PlanUpdateParamsChargesOveragePricingModel](
-		"billingModel", "FLAT_FEE", "MINIMUM_SPEND", "PER_UNIT", "USAGE_BASED", "CREDIT_BASED",
-	)
-	apijson.RegisterFieldValidator[V1PlanUpdateParamsChargesOveragePricingModel](
-		"billingCadence", "RECURRING", "ONE_OFF",
-	)
 }
 
 // Price configuration for a specific billing period.
