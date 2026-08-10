@@ -111,7 +111,6 @@ func TestV1AddonUpdateWithOptionalParams(t *testing.T) {
 				}},
 				OverageBillingPeriod: "ON_SUBSCRIPTION_RENEWAL",
 				OveragePricingModels: []stigg.V1AddonUpdateParamsChargesOveragePricingModel{{
-					BillingModel: "FLAT_FEE",
 					PricePeriods: []stigg.V1AddonUpdateParamsChargesOveragePricingModelPricePeriod{{
 						BillingPeriod:      "MONTHLY",
 						BillingCountryCode: stigg.String("billingCountryCode"),
@@ -138,7 +137,6 @@ func TestV1AddonUpdateWithOptionalParams(t *testing.T) {
 							UpTo: stigg.Float(0),
 						}},
 					}},
-					BillingCadence: "RECURRING",
 					CreditEntitlement: stigg.V1AddonUpdateParamsChargesOveragePricingModelCreditEntitlement{
 						Amount:           1,
 						Cadence:          "MONTH",
