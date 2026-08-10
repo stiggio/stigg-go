@@ -1,5 +1,9 @@
 # Changelog
 
+## 0.1.0-beta.48 (2026-08-10)
+
+Full Changelog: [v0.1.0-beta.47...v0.1.0-beta.48](https://github.com/stiggio/stigg-go/compare/v0.1.0-beta.47...v0.1.0-beta.48)
+
 ## 0.1.0-beta.47 (2026-08-10)
 
 Full Changelog: [v0.1.0-beta.46...v0.1.0-beta.47](https://github.com/stiggio/stigg-go/compare/v0.1.0-beta.46...v0.1.0-beta.47)
