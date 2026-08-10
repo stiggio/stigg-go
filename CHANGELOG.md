@@ -1,5 +1,13 @@
 # Changelog
 
+## 0.1.0-beta.47 (2026-08-10)
+
+Full Changelog: [v0.1.0-beta.46...v0.1.0-beta.47](https://github.com/stiggio/stigg-go/compare/v0.1.0-beta.46...v0.1.0-beta.47)
+
+### Bug Fixes
+
+* **api:** remove billingModel/billingCadence fields from v1addon/v1plan overage pricing ([db990af](https://github.com/stiggio/stigg-go/commit/db990aff4127c970d4fb17aa3dcedbad80f5ca41))
+
 ## 0.1.0-beta.46 (2026-08-05)
 
 Full Changelog: [v0.1.0-beta.45...v0.1.0-beta.46](https://github.com/stiggio/stigg-go/compare/v0.1.0-beta.45...v0.1.0-beta.46)
