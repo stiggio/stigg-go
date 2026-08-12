@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.1.0-beta.49](https://github.com/stiggio/stigg-go/compare/v0.1.0-beta.48...v0.1.0-beta.49) (2026-08-12)
+
+
+### Styles
+
+* satisfy prettier in the trunk-sync lock ([50abef7](https://github.com/stiggio/stigg-go/commit/50abef71b6db27a922882fbc6a9c05eee145929d))
+
 ## 0.1.0-beta.48 (2026-08-10)
 
 Full Changelog: [v0.1.0-beta.47...v0.1.0-beta.48](https://github.com/stiggio/stigg-go/compare/v0.1.0-beta.47...v0.1.0-beta.48)
