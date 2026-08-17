@@ -298,6 +298,8 @@ type V1ContractNewResponseDataNextInvoice struct {
 	Amount V1ContractNewResponseDataNextInvoiceAmount `json:"amount" api:"required"`
 	// The date the upcoming invoice is due
 	DueDate time.Time `json:"dueDate" api:"required" format:"date-time"`
+	// The billing provider ID of the draft invoice this preview describes
+	InvoiceID string `json:"invoiceId" api:"required"`
 	// The end of the billing period the upcoming invoice covers
 	PeriodEnd time.Time `json:"periodEnd" api:"required" format:"date-time"`
 	// The start of the billing period the upcoming invoice covers
@@ -306,6 +308,7 @@ type V1ContractNewResponseDataNextInvoice struct {
 	JSON struct {
 		Amount      respjson.Field
 		DueDate     respjson.Field
+		InvoiceID   respjson.Field
 		PeriodEnd   respjson.Field
 		PeriodStart respjson.Field
 		ExtraFields map[string]respjson.Field
@@ -520,6 +523,8 @@ type V1ContractGetResponseDataNextInvoice struct {
 	Amount V1ContractGetResponseDataNextInvoiceAmount `json:"amount" api:"required"`
 	// The date the upcoming invoice is due
 	DueDate time.Time `json:"dueDate" api:"required" format:"date-time"`
+	// The billing provider ID of the draft invoice this preview describes
+	InvoiceID string `json:"invoiceId" api:"required"`
 	// The end of the billing period the upcoming invoice covers
 	PeriodEnd time.Time `json:"periodEnd" api:"required" format:"date-time"`
 	// The start of the billing period the upcoming invoice covers
@@ -528,6 +533,7 @@ type V1ContractGetResponseDataNextInvoice struct {
 	JSON struct {
 		Amount      respjson.Field
 		DueDate     respjson.Field
+		InvoiceID   respjson.Field
 		PeriodEnd   respjson.Field
 		PeriodStart respjson.Field
 		ExtraFields map[string]respjson.Field
@@ -742,6 +748,8 @@ type V1ContractUpdateResponseDataNextInvoice struct {
 	Amount V1ContractUpdateResponseDataNextInvoiceAmount `json:"amount" api:"required"`
 	// The date the upcoming invoice is due
 	DueDate time.Time `json:"dueDate" api:"required" format:"date-time"`
+	// The billing provider ID of the draft invoice this preview describes
+	InvoiceID string `json:"invoiceId" api:"required"`
 	// The end of the billing period the upcoming invoice covers
 	PeriodEnd time.Time `json:"periodEnd" api:"required" format:"date-time"`
 	// The start of the billing period the upcoming invoice covers
@@ -750,6 +758,7 @@ type V1ContractUpdateResponseDataNextInvoice struct {
 	JSON struct {
 		Amount      respjson.Field
 		DueDate     respjson.Field
+		InvoiceID   respjson.Field
 		PeriodEnd   respjson.Field
 		PeriodStart respjson.Field
 		ExtraFields map[string]respjson.Field
@@ -956,6 +965,8 @@ type V1ContractListResponseNextInvoice struct {
 	Amount V1ContractListResponseNextInvoiceAmount `json:"amount" api:"required"`
 	// The date the upcoming invoice is due
 	DueDate time.Time `json:"dueDate" api:"required" format:"date-time"`
+	// The billing provider ID of the draft invoice this preview describes
+	InvoiceID string `json:"invoiceId" api:"required"`
 	// The end of the billing period the upcoming invoice covers
 	PeriodEnd time.Time `json:"periodEnd" api:"required" format:"date-time"`
 	// The start of the billing period the upcoming invoice covers
@@ -964,6 +975,7 @@ type V1ContractListResponseNextInvoice struct {
 	JSON struct {
 		Amount      respjson.Field
 		DueDate     respjson.Field
+		InvoiceID   respjson.Field
 		PeriodEnd   respjson.Field
 		PeriodStart respjson.Field
 		ExtraFields map[string]respjson.Field
@@ -1188,6 +1200,8 @@ type V1ContractDeleteResponseDataNextInvoice struct {
 	Amount V1ContractDeleteResponseDataNextInvoiceAmount `json:"amount" api:"required"`
 	// The date the upcoming invoice is due
 	DueDate time.Time `json:"dueDate" api:"required" format:"date-time"`
+	// The billing provider ID of the draft invoice this preview describes
+	InvoiceID string `json:"invoiceId" api:"required"`
 	// The end of the billing period the upcoming invoice covers
 	PeriodEnd time.Time `json:"periodEnd" api:"required" format:"date-time"`
 	// The start of the billing period the upcoming invoice covers
@@ -1196,6 +1210,7 @@ type V1ContractDeleteResponseDataNextInvoice struct {
 	JSON struct {
 		Amount      respjson.Field
 		DueDate     respjson.Field
+		InvoiceID   respjson.Field
 		PeriodEnd   respjson.Field
 		PeriodStart respjson.Field
 		ExtraFields map[string]respjson.Field
