@@ -1716,14 +1716,6 @@ func (u *V1ContractNewParamsSubscriptionNewSubscriptionEntitlementUnion) asAny()
 }
 
 // Returns a pointer to the underlying variant's property, if present.
-func (u V1ContractNewParamsSubscriptionNewSubscriptionEntitlementUnion) GetHasSoftLimit() *bool {
-	if vt := u.OfFeature; vt != nil && vt.HasSoftLimit.Valid() {
-		return &vt.HasSoftLimit.Value
-	}
-	return nil
-}
-
-// Returns a pointer to the underlying variant's property, if present.
 func (u V1ContractNewParamsSubscriptionNewSubscriptionEntitlementUnion) GetHasUnlimitedUsage() *bool {
 	if vt := u.OfFeature; vt != nil && vt.HasUnlimitedUsage.Valid() {
 		return &vt.HasUnlimitedUsage.Value
@@ -1803,6 +1795,16 @@ func (u V1ContractNewParamsSubscriptionNewSubscriptionEntitlementUnion) GetType(
 		return (*string)(&vt.Type)
 	} else if vt := u.OfCredit; vt != nil {
 		return (*string)(&vt.Type)
+	}
+	return nil
+}
+
+// Returns a pointer to the underlying variant's property, if present.
+func (u V1ContractNewParamsSubscriptionNewSubscriptionEntitlementUnion) GetHasSoftLimit() *bool {
+	if vt := u.OfFeature; vt != nil && vt.HasSoftLimit.Valid() {
+		return &vt.HasSoftLimit.Value
+	} else if vt := u.OfCredit; vt != nil && vt.HasSoftLimit.Valid() {
+		return &vt.HasSoftLimit.Value
 	}
 	return nil
 }
@@ -1946,6 +1948,8 @@ type V1ContractNewParamsSubscriptionNewSubscriptionEntitlementCredit struct {
 	//
 	// Any of "MONTH", "YEAR".
 	Cadence string `json:"cadence,omitzero" api:"required"`
+	// Whether the credit balance is a soft limit
+	HasSoftLimit param.Opt[bool] `json:"hasSoftLimit,omitzero"`
 	// SubscriptionCreditEntitlementRequest
 	//
 	// This field can be elided, and will marshal its zero value as "CREDIT".
