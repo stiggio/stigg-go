@@ -138,7 +138,7 @@ func TestV1AddonUpdateWithOptionalParams(t *testing.T) {
 						}},
 					}},
 					CreditEntitlement: stigg.V1AddonUpdateParamsChargesOveragePricingModelCreditEntitlement{
-						Amount:           1,
+						Amount:           0,
 						Cadence:          "MONTH",
 						CustomCurrencyID: "customCurrencyId",
 					},

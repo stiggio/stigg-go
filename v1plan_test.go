@@ -147,7 +147,7 @@ func TestV1PlanUpdateWithOptionalParams(t *testing.T) {
 						}},
 					}},
 					CreditEntitlement: stigg.V1PlanUpdateParamsChargesOveragePricingModelCreditEntitlement{
-						Amount:           1,
+						Amount:           0,
 						Cadence:          "MONTH",
 						CustomCurrencyID: "customCurrencyId",
 					},
