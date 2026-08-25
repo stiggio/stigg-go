@@ -72,6 +72,20 @@ func TestV1FeatureNewFeatureWithOptionalParams(t *testing.T) {
 		Metadata: map[string]string{
 			"foo": "string",
 		},
+		Meter: stigg.V1FeatureNewFeatureParamsMeter{
+			Aggregation: stigg.V1FeatureNewFeatureParamsMeterAggregation{
+				Function: "SUM",
+				Field:    stigg.String("x"),
+			},
+			Filters: []stigg.V1FeatureNewFeatureParamsMeterFilter{{
+				Conditions: []stigg.V1FeatureNewFeatureParamsMeterFilterCondition{{
+					Field:     "x",
+					Operation: "EQUALS",
+					Value:     stigg.String("value"),
+					Values:    []string{"string"},
+				}},
+			}},
+		},
 		MeterType: stigg.V1FeatureNewFeatureParamsMeterTypeNone,
 		UnitTransformation: stigg.V1FeatureNewFeatureParamsUnitTransformation{
 			Divide:             0,
@@ -221,11 +235,11 @@ func TestV1FeatureUpdateFeatureWithOptionalParams(t *testing.T) {
 			Meter: stigg.V1FeatureUpdateFeatureParamsMeter{
 				Aggregation: stigg.V1FeatureUpdateFeatureParamsMeterAggregation{
 					Function: "SUM",
-					Field:    stigg.String("field"),
+					Field:    stigg.String("x"),
 				},
 				Filters: []stigg.V1FeatureUpdateFeatureParamsMeterFilter{{
 					Conditions: []stigg.V1FeatureUpdateFeatureParamsMeterFilterCondition{{
-						Field:     "field",
+						Field:     "x",
 						Operation: "EQUALS",
 						Value:     stigg.String("value"),
 						Values:    []string{"string"},

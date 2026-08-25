@@ -201,6 +201,8 @@ type FeatureData struct {
 	FeatureUnitsPlural string `json:"featureUnitsPlural" api:"required"`
 	// The additional metadata for the feature
 	Metadata map[string]string `json:"metadata" api:"required"`
+	// Event meter that turns reported events into usage for a metered feature
+	Meter FeatureDataMeter `json:"meter" api:"required"`
 	// The meter type for the feature
 	//
 	// Any of "None", "FLUCTUATING", "INCREMENTAL".
@@ -221,6 +223,7 @@ type FeatureData struct {
 		FeatureUnits       respjson.Field
 		FeatureUnitsPlural respjson.Field
 		Metadata           respjson.Field
+		Meter              respjson.Field
 		MeterType          respjson.Field
 		UnitTransformation respjson.Field
 		UpdatedAt          respjson.Field
@@ -252,6 +255,98 @@ type FeatureDataEnumConfiguration struct {
 // Returns the unmodified JSON received from the API
 func (r FeatureDataEnumConfiguration) RawJSON() string { return r.JSON.raw }
 func (r *FeatureDataEnumConfiguration) UnmarshalJSON(data []byte) error {
+	return apijson.UnmarshalRoot(data, r)
+}
+
+// Event meter that turns reported events into usage for a metered feature
+type FeatureDataMeter struct {
+	// How the matching events are aggregated into a usage value
+	Aggregation FeatureDataMeterAggregation `json:"aggregation" api:"required"`
+	// Event filters. Conditions within a filter are ANDed, and filters are ORed
+	Filters []FeatureDataMeterFilter `json:"filters" api:"required"`
+	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
+	JSON struct {
+		Aggregation respjson.Field
+		Filters     respjson.Field
+		ExtraFields map[string]respjson.Field
+		raw         string
+	} `json:"-"`
+}
+
+// Returns the unmodified JSON received from the API
+func (r FeatureDataMeter) RawJSON() string { return r.JSON.raw }
+func (r *FeatureDataMeter) UnmarshalJSON(data []byte) error {
+	return apijson.UnmarshalRoot(data, r)
+}
+
+// How the matching events are aggregated into a usage value
+type FeatureDataMeterAggregation struct {
+	// Aggregation function applied to the matching events
+	//
+	// Any of "SUM", "MAX", "MIN", "AVG", "COUNT", "UNIQUE".
+	Function string `json:"function" api:"required"`
+	// Aggregation field name
+	Field string `json:"field" api:"nullable"`
+	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
+	JSON struct {
+		Function    respjson.Field
+		Field       respjson.Field
+		ExtraFields map[string]respjson.Field
+		raw         string
+	} `json:"-"`
+}
+
+// Returns the unmodified JSON received from the API
+func (r FeatureDataMeterAggregation) RawJSON() string { return r.JSON.raw }
+func (r *FeatureDataMeterAggregation) UnmarshalJSON(data []byte) error {
+	return apijson.UnmarshalRoot(data, r)
+}
+
+// A set of conditions an event must all match
+type FeatureDataMeterFilter struct {
+	// Conditions the event must match
+	Conditions []FeatureDataMeterFilterCondition `json:"conditions" api:"required"`
+	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
+	JSON struct {
+		Conditions  respjson.Field
+		ExtraFields map[string]respjson.Field
+		raw         string
+	} `json:"-"`
+}
+
+// Returns the unmodified JSON received from the API
+func (r FeatureDataMeterFilter) RawJSON() string { return r.JSON.raw }
+func (r *FeatureDataMeterFilter) UnmarshalJSON(data []byte) error {
+	return apijson.UnmarshalRoot(data, r)
+}
+
+// Meter filter condition
+type FeatureDataMeterFilterCondition struct {
+	// Condition field name
+	Field string `json:"field" api:"required"`
+	// Comparison applied to the condition field
+	//
+	// Any of "EQUALS", "NOT_EQUALS", "GREATER_THAN", "GREATER_THAN_OR_EQUAL",
+	// "LESS_THAN", "LESS_THAN_OR_EQUAL", "IS_NULL", "IS_NOT_NULL", "CONTAINS",
+	// "STARTS_WITH", "ENDS_WITH", "IN".
+	Operation string `json:"operation" api:"required"`
+	// Condition value
+	Value  string   `json:"value" api:"nullable"`
+	Values []string `json:"values" api:"nullable"`
+	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
+	JSON struct {
+		Field       respjson.Field
+		Operation   respjson.Field
+		Value       respjson.Field
+		Values      respjson.Field
+		ExtraFields map[string]respjson.Field
+		raw         string
+	} `json:"-"`
+}
+
+// Returns the unmodified JSON received from the API
+func (r FeatureDataMeterFilterCondition) RawJSON() string { return r.JSON.raw }
+func (r *FeatureDataMeterFilterCondition) UnmarshalJSON(data []byte) error {
 	return apijson.UnmarshalRoot(data, r)
 }
 
@@ -310,6 +405,8 @@ type V1FeatureListFeaturesResponse struct {
 	FeatureUnitsPlural string `json:"featureUnitsPlural" api:"required"`
 	// The additional metadata for the feature
 	Metadata map[string]string `json:"metadata" api:"required"`
+	// Event meter that turns reported events into usage for a metered feature
+	Meter V1FeatureListFeaturesResponseMeter `json:"meter" api:"required"`
 	// The meter type for the feature
 	//
 	// Any of "None", "FLUCTUATING", "INCREMENTAL".
@@ -330,6 +427,7 @@ type V1FeatureListFeaturesResponse struct {
 		FeatureUnits       respjson.Field
 		FeatureUnitsPlural respjson.Field
 		Metadata           respjson.Field
+		Meter              respjson.Field
 		MeterType          respjson.Field
 		UnitTransformation respjson.Field
 		UpdatedAt          respjson.Field
@@ -381,6 +479,98 @@ const (
 	V1FeatureListFeaturesResponseFeatureTypeNumber  V1FeatureListFeaturesResponseFeatureType = "NUMBER"
 	V1FeatureListFeaturesResponseFeatureTypeEnum    V1FeatureListFeaturesResponseFeatureType = "ENUM"
 )
+
+// Event meter that turns reported events into usage for a metered feature
+type V1FeatureListFeaturesResponseMeter struct {
+	// How the matching events are aggregated into a usage value
+	Aggregation V1FeatureListFeaturesResponseMeterAggregation `json:"aggregation" api:"required"`
+	// Event filters. Conditions within a filter are ANDed, and filters are ORed
+	Filters []V1FeatureListFeaturesResponseMeterFilter `json:"filters" api:"required"`
+	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
+	JSON struct {
+		Aggregation respjson.Field
+		Filters     respjson.Field
+		ExtraFields map[string]respjson.Field
+		raw         string
+	} `json:"-"`
+}
+
+// Returns the unmodified JSON received from the API
+func (r V1FeatureListFeaturesResponseMeter) RawJSON() string { return r.JSON.raw }
+func (r *V1FeatureListFeaturesResponseMeter) UnmarshalJSON(data []byte) error {
+	return apijson.UnmarshalRoot(data, r)
+}
+
+// How the matching events are aggregated into a usage value
+type V1FeatureListFeaturesResponseMeterAggregation struct {
+	// Aggregation function applied to the matching events
+	//
+	// Any of "SUM", "MAX", "MIN", "AVG", "COUNT", "UNIQUE".
+	Function string `json:"function" api:"required"`
+	// Aggregation field name
+	Field string `json:"field" api:"nullable"`
+	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
+	JSON struct {
+		Function    respjson.Field
+		Field       respjson.Field
+		ExtraFields map[string]respjson.Field
+		raw         string
+	} `json:"-"`
+}
+
+// Returns the unmodified JSON received from the API
+func (r V1FeatureListFeaturesResponseMeterAggregation) RawJSON() string { return r.JSON.raw }
+func (r *V1FeatureListFeaturesResponseMeterAggregation) UnmarshalJSON(data []byte) error {
+	return apijson.UnmarshalRoot(data, r)
+}
+
+// A set of conditions an event must all match
+type V1FeatureListFeaturesResponseMeterFilter struct {
+	// Conditions the event must match
+	Conditions []V1FeatureListFeaturesResponseMeterFilterCondition `json:"conditions" api:"required"`
+	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
+	JSON struct {
+		Conditions  respjson.Field
+		ExtraFields map[string]respjson.Field
+		raw         string
+	} `json:"-"`
+}
+
+// Returns the unmodified JSON received from the API
+func (r V1FeatureListFeaturesResponseMeterFilter) RawJSON() string { return r.JSON.raw }
+func (r *V1FeatureListFeaturesResponseMeterFilter) UnmarshalJSON(data []byte) error {
+	return apijson.UnmarshalRoot(data, r)
+}
+
+// Meter filter condition
+type V1FeatureListFeaturesResponseMeterFilterCondition struct {
+	// Condition field name
+	Field string `json:"field" api:"required"`
+	// Comparison applied to the condition field
+	//
+	// Any of "EQUALS", "NOT_EQUALS", "GREATER_THAN", "GREATER_THAN_OR_EQUAL",
+	// "LESS_THAN", "LESS_THAN_OR_EQUAL", "IS_NULL", "IS_NOT_NULL", "CONTAINS",
+	// "STARTS_WITH", "ENDS_WITH", "IN".
+	Operation string `json:"operation" api:"required"`
+	// Condition value
+	Value  string   `json:"value" api:"nullable"`
+	Values []string `json:"values" api:"nullable"`
+	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
+	JSON struct {
+		Field       respjson.Field
+		Operation   respjson.Field
+		Value       respjson.Field
+		Values      respjson.Field
+		ExtraFields map[string]respjson.Field
+		raw         string
+	} `json:"-"`
+}
+
+// Returns the unmodified JSON received from the API
+func (r V1FeatureListFeaturesResponseMeterFilterCondition) RawJSON() string { return r.JSON.raw }
+func (r *V1FeatureListFeaturesResponseMeterFilterCondition) UnmarshalJSON(data []byte) error {
+	return apijson.UnmarshalRoot(data, r)
+}
 
 // The meter type for the feature
 type V1FeatureListFeaturesResponseMeterType string
@@ -453,6 +643,8 @@ type V1FeatureNewFeatureParams struct {
 	FeatureStatus V1FeatureNewFeatureParamsFeatureStatus `json:"featureStatus,omitzero"`
 	// The additional metadata for the feature
 	Metadata map[string]string `json:"metadata,omitzero"`
+	// Event meter that turns reported events into usage for a metered feature
+	Meter V1FeatureNewFeatureParamsMeter `json:"meter,omitzero"`
 	// The meter type for the feature
 	//
 	// Any of "None", "FLUCTUATING", "INCREMENTAL".
@@ -502,6 +694,97 @@ const (
 	V1FeatureNewFeatureParamsFeatureStatusSuspended V1FeatureNewFeatureParamsFeatureStatus = "SUSPENDED"
 	V1FeatureNewFeatureParamsFeatureStatusActive    V1FeatureNewFeatureParamsFeatureStatus = "ACTIVE"
 )
+
+// Event meter that turns reported events into usage for a metered feature
+//
+// The properties Aggregation, Filters are required.
+type V1FeatureNewFeatureParamsMeter struct {
+	// How the matching events are aggregated into a usage value
+	Aggregation V1FeatureNewFeatureParamsMeterAggregation `json:"aggregation,omitzero" api:"required"`
+	// Event filters. Conditions within a filter are ANDed, and filters are ORed
+	Filters []V1FeatureNewFeatureParamsMeterFilter `json:"filters,omitzero" api:"required"`
+	paramObj
+}
+
+func (r V1FeatureNewFeatureParamsMeter) MarshalJSON() (data []byte, err error) {
+	type shadow V1FeatureNewFeatureParamsMeter
+	return param.MarshalObject(r, (*shadow)(&r))
+}
+func (r *V1FeatureNewFeatureParamsMeter) UnmarshalJSON(data []byte) error {
+	return apijson.UnmarshalRoot(data, r)
+}
+
+// How the matching events are aggregated into a usage value
+//
+// The property Function is required.
+type V1FeatureNewFeatureParamsMeterAggregation struct {
+	// Aggregation function applied to the matching events
+	//
+	// Any of "SUM", "MAX", "MIN", "AVG", "COUNT", "UNIQUE".
+	Function string `json:"function,omitzero" api:"required"`
+	// Aggregation field name
+	Field param.Opt[string] `json:"field,omitzero"`
+	paramObj
+}
+
+func (r V1FeatureNewFeatureParamsMeterAggregation) MarshalJSON() (data []byte, err error) {
+	type shadow V1FeatureNewFeatureParamsMeterAggregation
+	return param.MarshalObject(r, (*shadow)(&r))
+}
+func (r *V1FeatureNewFeatureParamsMeterAggregation) UnmarshalJSON(data []byte) error {
+	return apijson.UnmarshalRoot(data, r)
+}
+
+func init() {
+	apijson.RegisterFieldValidator[V1FeatureNewFeatureParamsMeterAggregation](
+		"function", "SUM", "MAX", "MIN", "AVG", "COUNT", "UNIQUE",
+	)
+}
+
+// The property Conditions is required.
+type V1FeatureNewFeatureParamsMeterFilter struct {
+	// Conditions the event must match
+	Conditions []V1FeatureNewFeatureParamsMeterFilterCondition `json:"conditions,omitzero" api:"required"`
+	paramObj
+}
+
+func (r V1FeatureNewFeatureParamsMeterFilter) MarshalJSON() (data []byte, err error) {
+	type shadow V1FeatureNewFeatureParamsMeterFilter
+	return param.MarshalObject(r, (*shadow)(&r))
+}
+func (r *V1FeatureNewFeatureParamsMeterFilter) UnmarshalJSON(data []byte) error {
+	return apijson.UnmarshalRoot(data, r)
+}
+
+// The properties Field, Operation are required.
+type V1FeatureNewFeatureParamsMeterFilterCondition struct {
+	// Condition field name
+	Field string `json:"field" api:"required"`
+	// Comparison applied to the condition field
+	//
+	// Any of "EQUALS", "NOT_EQUALS", "GREATER_THAN", "GREATER_THAN_OR_EQUAL",
+	// "LESS_THAN", "LESS_THAN_OR_EQUAL", "IS_NULL", "IS_NOT_NULL", "CONTAINS",
+	// "STARTS_WITH", "ENDS_WITH", "IN".
+	Operation string `json:"operation,omitzero" api:"required"`
+	// Condition value
+	Value  param.Opt[string] `json:"value,omitzero"`
+	Values []string          `json:"values,omitzero"`
+	paramObj
+}
+
+func (r V1FeatureNewFeatureParamsMeterFilterCondition) MarshalJSON() (data []byte, err error) {
+	type shadow V1FeatureNewFeatureParamsMeterFilterCondition
+	return param.MarshalObject(r, (*shadow)(&r))
+}
+func (r *V1FeatureNewFeatureParamsMeterFilterCondition) UnmarshalJSON(data []byte) error {
+	return apijson.UnmarshalRoot(data, r)
+}
+
+func init() {
+	apijson.RegisterFieldValidator[V1FeatureNewFeatureParamsMeterFilterCondition](
+		"operation", "EQUALS", "NOT_EQUALS", "GREATER_THAN", "GREATER_THAN_OR_EQUAL", "LESS_THAN", "LESS_THAN_OR_EQUAL", "IS_NULL", "IS_NOT_NULL", "CONTAINS", "STARTS_WITH", "ENDS_WITH", "IN",
+	)
+}
 
 // The meter type for the feature
 type V1FeatureNewFeatureParamsMeterType string
@@ -630,8 +913,9 @@ type V1FeatureUpdateFeatureParams struct {
 	// The configuration data for the feature
 	EnumConfiguration []V1FeatureUpdateFeatureParamsEnumConfiguration `json:"enumConfiguration,omitzero"`
 	// The additional metadata for the feature
-	Metadata map[string]string                 `json:"metadata,omitzero"`
-	Meter    V1FeatureUpdateFeatureParamsMeter `json:"meter,omitzero"`
+	Metadata map[string]string `json:"metadata,omitzero"`
+	// Event meter that turns reported events into usage for a metered feature
+	Meter V1FeatureUpdateFeatureParamsMeter `json:"meter,omitzero"`
 	paramObj
 }
 
@@ -660,10 +944,14 @@ func (r *V1FeatureUpdateFeatureParamsEnumConfiguration) UnmarshalJSON(data []byt
 	return apijson.UnmarshalRoot(data, r)
 }
 
+// Event meter that turns reported events into usage for a metered feature
+//
 // The properties Aggregation, Filters are required.
 type V1FeatureUpdateFeatureParamsMeter struct {
+	// How the matching events are aggregated into a usage value
 	Aggregation V1FeatureUpdateFeatureParamsMeterAggregation `json:"aggregation,omitzero" api:"required"`
-	Filters     []V1FeatureUpdateFeatureParamsMeterFilter    `json:"filters,omitzero" api:"required"`
+	// Event filters. Conditions within a filter are ANDed, and filters are ORed
+	Filters []V1FeatureUpdateFeatureParamsMeterFilter `json:"filters,omitzero" api:"required"`
 	paramObj
 }
 
@@ -675,8 +963,12 @@ func (r *V1FeatureUpdateFeatureParamsMeter) UnmarshalJSON(data []byte) error {
 	return apijson.UnmarshalRoot(data, r)
 }
 
+// How the matching events are aggregated into a usage value
+//
 // The property Function is required.
 type V1FeatureUpdateFeatureParamsMeterAggregation struct {
+	// Aggregation function applied to the matching events
+	//
 	// Any of "SUM", "MAX", "MIN", "AVG", "COUNT", "UNIQUE".
 	Function string `json:"function,omitzero" api:"required"`
 	// Aggregation field name
@@ -700,6 +992,7 @@ func init() {
 
 // The property Conditions is required.
 type V1FeatureUpdateFeatureParamsMeterFilter struct {
+	// Conditions the event must match
 	Conditions []V1FeatureUpdateFeatureParamsMeterFilterCondition `json:"conditions,omitzero" api:"required"`
 	paramObj
 }
@@ -716,6 +1009,8 @@ func (r *V1FeatureUpdateFeatureParamsMeterFilter) UnmarshalJSON(data []byte) err
 type V1FeatureUpdateFeatureParamsMeterFilterCondition struct {
 	// Condition field name
 	Field string `json:"field" api:"required"`
+	// Comparison applied to the condition field
+	//
 	// Any of "EQUALS", "NOT_EQUALS", "GREATER_THAN", "GREATER_THAN_OR_EQUAL",
 	// "LESS_THAN", "LESS_THAN_OR_EQUAL", "IS_NULL", "IS_NOT_NULL", "CONTAINS",
 	// "STARTS_WITH", "ENDS_WITH", "IN".
