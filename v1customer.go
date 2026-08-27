@@ -137,12 +137,12 @@ func (r *V1CustomerService) Archive(ctx context.Context, id string, body V1Custo
 
 // Checks a single entitlement (feature or credit) for a customer or resource.
 // Supports `requestedUsage` and `requestedValues` to evaluate against limits or
-// enum values.
-//
-// **Warning:** This REST API endpoint lacks built-in client-side caching, fallback
-// mechanisms, and low-latency guarantees. It is not recommended for hot-path
-// entitlement checks. For production use, consider using the Stigg Node Server SDK
-// with caching or the Sidecar for low-latency cached responses.
+// enum values. Each call reaches the Stigg API directly, so latency reflects a
+// network round trip. For entitlement checks on a hot path (e.g. gating a request
+// in real time), the Stigg Node Server SDK (with its built-in cache) or the
+// Sidecar will typically respond faster and keep working through brief Stigg
+// outages; reach for this endpoint when a live HTTP call is the natural fit, such
+// as from a non-Node backend or a server-side job.
 func (r *V1CustomerService) CheckEntitlement(ctx context.Context, id string, params V1CustomerCheckEntitlementParams, opts ...option.RequestOption) (res *V1CustomerCheckEntitlementResponse, err error) {
 	if !param.IsOmitted(params.XAccountID) {
 		opts = append(opts, option.WithHeader("X-ACCOUNT-ID", fmt.Sprintf("%v", params.XAccountID.Value)))
@@ -287,12 +287,12 @@ func (r *V1CustomerService) Provision(ctx context.Context, params V1CustomerProv
 }
 
 // Retrieves the effective entitlements for a customer or resource, including
-// feature and credit entitlements.
-//
-// **Warning:** This REST API endpoint lacks built-in client-side caching, fallback
-// mechanisms, and low-latency guarantees. It is not recommended for hot-path
-// entitlement checks. For production use, consider using the Stigg Node Server SDK
-// with caching or the Sidecar for low-latency cached responses.
+// feature and credit entitlements. Each call reaches the Stigg API directly, so
+// latency reflects a network round trip. For entitlement checks on a hot path
+// (e.g. gating a request in real time), the Stigg Node Server SDK (with its
+// built-in cache) or the Sidecar will typically respond faster and keep working
+// through brief Stigg outages; reach for this endpoint when a live HTTP call is
+// the natural fit, such as from a non-Node backend or a server-side job.
 func (r *V1CustomerService) GetEntitlements(ctx context.Context, id string, params V1CustomerGetEntitlementsParams, opts ...option.RequestOption) (res *V1CustomerGetEntitlementsResponse, err error) {
 	if !param.IsOmitted(params.XAccountID) {
 		opts = append(opts, option.WithHeader("X-ACCOUNT-ID", fmt.Sprintf("%v", params.XAccountID.Value)))
@@ -330,7 +330,9 @@ func (r *V1CustomerService) Unarchive(ctx context.Context, id string, body V1Cus
 
 // Response object
 type CustomerIntegrationResponse struct {
-	// External billing or CRM integration link
+	// Links this customer to their record in a specific configured integration (e.g.
+	// their Stripe customer ID under your Stripe integration). A customer has at most
+	// one link per integration.
 	Data CustomerIntegrationResponseData `json:"data" api:"required"`
 	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
 	JSON struct {
@@ -346,13 +348,17 @@ func (r *CustomerIntegrationResponse) UnmarshalJSON(data []byte) error {
 	return apijson.UnmarshalRoot(data, r)
 }
 
-// External billing or CRM integration link
+// Links this customer to their record in a specific configured integration (e.g.
+// their Stripe customer ID under your Stripe integration). A customer has at most
+// one link per integration.
 type CustomerIntegrationResponseData struct {
-	// Integration details
+	// The internal ID of the integration this record is linked to
 	ID string `json:"id" api:"required"`
-	// Synced entity id
+	// The external entity ID this record is linked to in the vendor system (e.g. the
+	// Stripe customer ID). Null until the link has synced; required when creating the
+	// link.
 	SyncedEntityID string `json:"syncedEntityId" api:"required"`
-	// The vendor identifier of integration
+	// The vendor identifier of the integration (e.g. STRIPE, SALESFORCE, SNOWFLAKE)
 	//
 	// Any of "AUTH0", "ZUORA", "STRIPE", "HUBSPOT", "AWS_MARKETPLACE", "SNOWFLAKE",
 	// "SALESFORCE", "BIG_QUERY", "OPEN_FGA", "APP_STORE", "RECEIVED", "PREQUEL",
@@ -549,7 +555,11 @@ type CustomerResponseData struct {
 	Integrations []CustomerResponseDataIntegration `json:"integrations"`
 	// Language to use for this customer
 	Language string `json:"language" api:"nullable"`
-	// Additional metadata
+	// Custom key-value metadata to attach to the customer. When creating a customer,
+	// this sets the initial metadata. When updating a customer, this replaces the
+	// customer's existing metadata object entirely — it is not merged key by key. Omit
+	// this field on update to leave the customer's existing metadata untouched; pass
+	// an empty object to clear it.
 	Metadata map[string]string `json:"metadata"`
 	// The name of the customer
 	Name string `json:"name" api:"nullable"`
@@ -617,13 +627,17 @@ func (r *CustomerResponseDataDefaultPaymentMethod) UnmarshalJSON(data []byte) er
 	return apijson.UnmarshalRoot(data, r)
 }
 
-// External billing or CRM integration link
+// Links this customer to their record in a specific configured integration (e.g.
+// their Stripe customer ID under your Stripe integration). A customer has at most
+// one link per integration.
 type CustomerResponseDataIntegration struct {
-	// Integration details
+	// The internal ID of the integration this record is linked to
 	ID string `json:"id" api:"required"`
-	// Synced entity id
+	// The external entity ID this record is linked to in the vendor system (e.g. the
+	// Stripe customer ID). Null until the link has synced; required when creating the
+	// link.
 	SyncedEntityID string `json:"syncedEntityId" api:"required"`
-	// The vendor identifier of integration
+	// The vendor identifier of the integration (e.g. STRIPE, SALESFORCE, SNOWFLAKE)
 	//
 	// Any of "AUTH0", "ZUORA", "STRIPE", "HUBSPOT", "AWS_MARKETPLACE", "SNOWFLAKE",
 	// "SALESFORCE", "BIG_QUERY", "OPEN_FGA", "APP_STORE", "RECEIVED", "PREQUEL",
@@ -674,7 +688,9 @@ type CustomerResponseDataPassthroughStripe struct {
 	CustomerName string `json:"customerName"`
 	// Invoice custom fields
 	InvoiceCustomFields map[string]string `json:"invoiceCustomFields"`
-	// Additional metadata
+	// Additional metadata to pass through to the billing provider on the customer's
+	// record there. This is separate from the customer's own metadata field — it's
+	// stored only on the billing-provider side, not on the Stigg customer object.
 	Metadata map[string]string `json:"metadata"`
 	// Billing provider payment method id, attached to this customer
 	PaymentMethodID string `json:"paymentMethodId"`
@@ -807,7 +823,9 @@ type CustomerResponseDataPassthroughZuora struct {
 	// "tzs", "uah", "uzs", "vnd", "vuv", "wst", "xaf", "xcd", "yer", "zar", "zmw",
 	// "clp", "djf", "gnf", "ugx", "pyg", "xof", "xpf".
 	Currency string `json:"currency"`
-	// Additional metadata
+	// Additional metadata to pass through to the billing provider on the customer's
+	// record there. This is separate from the customer's own metadata field — it's
+	// stored only on the billing-provider side, not on the Stigg customer object.
 	Metadata map[string]string `json:"metadata"`
 	// Billing provider payment method id, attached to this customer
 	PaymentMethodID string `json:"paymentMethodId"`
@@ -897,7 +915,11 @@ type V1CustomerListResponse struct {
 	Integrations []V1CustomerListResponseIntegration `json:"integrations"`
 	// Language to use for this customer
 	Language string `json:"language" api:"nullable"`
-	// Additional metadata
+	// Custom key-value metadata to attach to the customer. When creating a customer,
+	// this sets the initial metadata. When updating a customer, this replaces the
+	// customer's existing metadata object entirely — it is not merged key by key. Omit
+	// this field on update to leave the customer's existing metadata untouched; pass
+	// an empty object to clear it.
 	Metadata map[string]string `json:"metadata"`
 	// The name of the customer
 	Name string `json:"name" api:"nullable"`
@@ -1094,13 +1116,17 @@ func (r *V1CustomerListResponseDefaultPaymentMethod) UnmarshalJSON(data []byte) 
 	return apijson.UnmarshalRoot(data, r)
 }
 
-// External billing or CRM integration link
+// Links this customer to their record in a specific configured integration (e.g.
+// their Stripe customer ID under your Stripe integration). A customer has at most
+// one link per integration.
 type V1CustomerListResponseIntegration struct {
-	// Integration details
+	// The internal ID of the integration this record is linked to
 	ID string `json:"id" api:"required"`
-	// Synced entity id
+	// The external entity ID this record is linked to in the vendor system (e.g. the
+	// Stripe customer ID). Null until the link has synced; required when creating the
+	// link.
 	SyncedEntityID string `json:"syncedEntityId" api:"required"`
-	// The vendor identifier of integration
+	// The vendor identifier of the integration (e.g. STRIPE, SALESFORCE, SNOWFLAKE)
 	//
 	// Any of "AUTH0", "ZUORA", "STRIPE", "HUBSPOT", "AWS_MARKETPLACE", "SNOWFLAKE",
 	// "SALESFORCE", "BIG_QUERY", "OPEN_FGA", "APP_STORE", "RECEIVED", "PREQUEL",
@@ -1151,7 +1177,9 @@ type V1CustomerListResponsePassthroughStripe struct {
 	CustomerName string `json:"customerName"`
 	// Invoice custom fields
 	InvoiceCustomFields map[string]string `json:"invoiceCustomFields"`
-	// Additional metadata
+	// Additional metadata to pass through to the billing provider on the customer's
+	// record there. This is separate from the customer's own metadata field — it's
+	// stored only on the billing-provider side, not on the Stigg customer object.
 	Metadata map[string]string `json:"metadata"`
 	// Billing provider payment method id, attached to this customer
 	PaymentMethodID string `json:"paymentMethodId"`
@@ -1284,7 +1312,9 @@ type V1CustomerListResponsePassthroughZuora struct {
 	// "tzs", "uah", "uzs", "vnd", "vuv", "wst", "xaf", "xcd", "yer", "zar", "zmw",
 	// "clp", "djf", "gnf", "ugx", "pyg", "xof", "xpf".
 	Currency string `json:"currency"`
-	// Additional metadata
+	// Additional metadata to pass through to the billing provider on the customer's
+	// record there. This is separate from the customer's own metadata field — it's
+	// stored only on the billing-provider side, not on the Stigg customer object.
 	Metadata map[string]string `json:"metadata"`
 	// Billing provider payment method id, attached to this customer
 	PaymentMethodID string `json:"paymentMethodId"`
@@ -1979,7 +2009,12 @@ const (
 	V1CustomerListInvoicesResponseStatePaid     V1CustomerListInvoicesResponseState = "PAID"
 )
 
-// Resource object that belongs to a customer
+// Resource object that belongs to a customer, used to scope subscriptions and
+// entitlements to a specific instance within the customer's account (e.g. a
+// website, project, or workspace) for multi-resource pricing. A resource is
+// identified only by its resourceId — there's no separate display name or metadata
+// field on the resource itself; if you need to attach descriptive data, keep it in
+// your own system keyed by resourceId.
 type V1CustomerListResourcesResponse struct {
 	// Resource slug
 	ID string `json:"id" api:"required"`
@@ -2354,7 +2389,11 @@ type V1CustomerUpdateParams struct {
 	CouponID V1CustomerUpdateParamsCouponID `json:"couponId,omitzero"`
 	// List of integrations
 	Integrations []V1CustomerUpdateParamsIntegration `json:"integrations,omitzero"`
-	// Additional metadata
+	// Custom key-value metadata to attach to the customer. When creating a customer,
+	// this sets the initial metadata. When updating a customer, this replaces the
+	// customer's existing metadata object entirely — it is not merged key by key. Omit
+	// this field on update to leave the customer's existing metadata untouched; pass
+	// an empty object to clear it.
 	Metadata map[string]string `json:"metadata,omitzero"`
 	// Vendor-specific billing passthrough fields.
 	Passthrough V1CustomerUpdateParamsPassthrough `json:"passthrough,omitzero"`
@@ -2498,15 +2537,19 @@ const (
 	V1CustomerUpdateParamsCouponIDEmpty V1CustomerUpdateParamsCouponID = ""
 )
 
-// External billing or CRM integration link
+// Links this customer to their record in a specific configured integration (e.g.
+// their Stripe customer ID under your Stripe integration). A customer has at most
+// one link per integration.
 //
 // The properties ID, SyncedEntityID, VendorIdentifier are required.
 type V1CustomerUpdateParamsIntegration struct {
-	// Synced entity id
+	// The external entity ID this record is linked to in the vendor system (e.g. the
+	// Stripe customer ID). Null until the link has synced; required when creating the
+	// link.
 	SyncedEntityID param.Opt[string] `json:"syncedEntityId,omitzero" api:"required"`
-	// Integration details
+	// The internal ID of the integration this record is linked to
 	ID string `json:"id" api:"required"`
-	// The vendor identifier of integration
+	// The vendor identifier of the integration (e.g. STRIPE, SALESFORCE, SNOWFLAKE)
 	//
 	// Any of "AUTH0", "ZUORA", "STRIPE", "HUBSPOT", "AWS_MARKETPLACE", "SNOWFLAKE",
 	// "SALESFORCE", "BIG_QUERY", "OPEN_FGA", "APP_STORE", "RECEIVED", "PREQUEL",
@@ -2556,7 +2599,9 @@ type V1CustomerUpdateParamsPassthroughStripe struct {
 	BillingAddress V1CustomerUpdateParamsPassthroughStripeBillingAddress `json:"billingAddress,omitzero"`
 	// Invoice custom fields
 	InvoiceCustomFields map[string]string `json:"invoiceCustomFields,omitzero"`
-	// Additional metadata
+	// Additional metadata to pass through to the billing provider on the customer's
+	// record there. This is separate from the customer's own metadata field — it's
+	// stored only on the billing-provider side, not on the Stigg customer object.
 	Metadata map[string]string `json:"metadata,omitzero"`
 	// Physical address
 	ShippingAddress V1CustomerUpdateParamsPassthroughStripeShippingAddress `json:"shippingAddress,omitzero"`
@@ -2662,7 +2707,9 @@ type V1CustomerUpdateParamsPassthroughZuora struct {
 	// "tzs", "uah", "uzs", "vnd", "vuv", "wst", "xaf", "xcd", "yer", "zar", "zmw",
 	// "clp", "djf", "gnf", "ugx", "pyg", "xof", "xpf".
 	Currency string `json:"currency,omitzero"`
-	// Additional metadata
+	// Additional metadata to pass through to the billing provider on the customer's
+	// record there. This is separate from the customer's own metadata field — it's
+	// stored only on the billing-provider side, not on the Stigg customer object.
 	Metadata map[string]string `json:"metadata,omitzero"`
 	paramObj
 }
@@ -2790,7 +2837,7 @@ func (r V1CustomerCheckEntitlementParams) URLQuery() (v url.Values, err error) {
 type V1CustomerImportParams struct {
 	// List of customer objects to import
 	Customers []V1CustomerImportParamsCustomer `json:"customers,omitzero" api:"required"`
-	// Integration details
+	// The internal ID of the integration this record is linked to
 	IntegrationID  param.Opt[string] `json:"integrationId,omitzero"`
 	XAccountID     param.Opt[string] `header:"X-ACCOUNT-ID,omitzero" json:"-"`
 	XEnvironmentID param.Opt[string] `header:"X-ENVIRONMENT-ID,omitzero" json:"-"`
@@ -2815,13 +2862,20 @@ type V1CustomerImportParamsCustomer struct {
 	ID string `json:"id" api:"required"`
 	// Id in the billing provider
 	BillingID param.Opt[string] `json:"billingId,omitzero"`
-	// Billing provider payment method id
+	// Billing provider payment method id. Attaching it makes it the customer's new
+	// default payment method for future charges; any previously attached payment
+	// method is no longer used as the default, though it is not removed from the
+	// billing provider.
 	PaymentMethodID param.Opt[string] `json:"paymentMethodId,omitzero"`
 	// The unique identifier for the customer in Salesforce integration
 	SalesforceID param.Opt[string] `json:"salesforceId,omitzero"`
 	// Timestamp of when the record was last updated
 	UpdatedAt param.Opt[time.Time] `json:"updatedAt,omitzero" format:"date-time"`
-	// Additional metadata
+	// Custom key-value metadata to attach to the customer. When creating a customer,
+	// this sets the initial metadata. When updating a customer, this replaces the
+	// customer's existing metadata object entirely — it is not merged key by key. Omit
+	// this field on update to leave the customer's existing metadata untouched; pass
+	// an empty object to clear it.
 	Metadata map[string]string `json:"metadata,omitzero"`
 	paramObj
 }
@@ -2951,7 +3005,11 @@ type V1CustomerProvisionParams struct {
 	DefaultPaymentMethod V1CustomerProvisionParamsDefaultPaymentMethod `json:"defaultPaymentMethod,omitzero"`
 	// List of integrations
 	Integrations []V1CustomerProvisionParamsIntegration `json:"integrations,omitzero"`
-	// Additional metadata
+	// Custom key-value metadata to attach to the customer. When creating a customer,
+	// this sets the initial metadata. When updating a customer, this replaces the
+	// customer's existing metadata object entirely — it is not merged key by key. Omit
+	// this field on update to leave the customer's existing metadata untouched; pass
+	// an empty object to clear it.
 	Metadata map[string]string `json:"metadata,omitzero"`
 	// Vendor-specific billing passthrough fields.
 	Passthrough V1CustomerProvisionParamsPassthrough `json:"passthrough,omitzero"`
@@ -3129,15 +3187,19 @@ func init() {
 	)
 }
 
-// External billing or CRM integration link
+// Links this customer to their record in a specific configured integration (e.g.
+// their Stripe customer ID under your Stripe integration). A customer has at most
+// one link per integration.
 //
 // The properties ID, SyncedEntityID, VendorIdentifier are required.
 type V1CustomerProvisionParamsIntegration struct {
-	// Synced entity id
+	// The external entity ID this record is linked to in the vendor system (e.g. the
+	// Stripe customer ID). Null until the link has synced; required when creating the
+	// link.
 	SyncedEntityID param.Opt[string] `json:"syncedEntityId,omitzero" api:"required"`
-	// Integration details
+	// The internal ID of the integration this record is linked to
 	ID string `json:"id" api:"required"`
-	// The vendor identifier of integration
+	// The vendor identifier of the integration (e.g. STRIPE, SALESFORCE, SNOWFLAKE)
 	//
 	// Any of "AUTH0", "ZUORA", "STRIPE", "HUBSPOT", "AWS_MARKETPLACE", "SNOWFLAKE",
 	// "SALESFORCE", "BIG_QUERY", "OPEN_FGA", "APP_STORE", "RECEIVED", "PREQUEL",
@@ -3187,7 +3249,9 @@ type V1CustomerProvisionParamsPassthroughStripe struct {
 	BillingAddress V1CustomerProvisionParamsPassthroughStripeBillingAddress `json:"billingAddress,omitzero"`
 	// Invoice custom fields
 	InvoiceCustomFields map[string]string `json:"invoiceCustomFields,omitzero"`
-	// Additional metadata
+	// Additional metadata to pass through to the billing provider on the customer's
+	// record there. This is separate from the customer's own metadata field — it's
+	// stored only on the billing-provider side, not on the Stigg customer object.
 	Metadata map[string]string `json:"metadata,omitzero"`
 	// Physical address
 	ShippingAddress V1CustomerProvisionParamsPassthroughStripeShippingAddress `json:"shippingAddress,omitzero"`
@@ -3293,7 +3357,9 @@ type V1CustomerProvisionParamsPassthroughZuora struct {
 	// "tzs", "uah", "uzs", "vnd", "vuv", "wst", "xaf", "xcd", "yer", "zar", "zmw",
 	// "clp", "djf", "gnf", "ugx", "pyg", "xof", "xpf".
 	Currency string `json:"currency,omitzero"`
-	// Additional metadata
+	// Additional metadata to pass through to the billing provider on the customer's
+	// record there. This is separate from the customer's own metadata field — it's
+	// stored only on the billing-provider side, not on the Stigg customer object.
 	Metadata map[string]string `json:"metadata,omitzero"`
 	paramObj
 }

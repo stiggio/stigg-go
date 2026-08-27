@@ -1380,7 +1380,8 @@ type V1ContractNewParamsSubscriptionNewSubscription struct {
 	// Checkout page configuration for payment collection
 	CheckoutOptions V1ContractNewParamsSubscriptionNewSubscriptionCheckoutOptions    `json:"checkoutOptions,omitzero"`
 	Entitlements    []V1ContractNewParamsSubscriptionNewSubscriptionEntitlementUnion `json:"entitlements,omitzero"`
-	// Additional metadata for the subscription
+	// Additional metadata for the subscription, stored as an arbitrary flat key-value
+	// object.
 	Metadata map[string]string `json:"metadata,omitzero"`
 	// How payments should be collected for this subscription
 	//
@@ -1549,7 +1550,8 @@ type V1ContractNewParamsSubscriptionNewSubscriptionBillingInformation struct {
 	TaxPercentage param.Opt[float64] `json:"taxPercentage,omitzero"`
 	// Billing address for the subscription
 	BillingAddress V1ContractNewParamsSubscriptionNewSubscriptionBillingInformationBillingAddress `json:"billingAddress,omitzero"`
-	// Additional metadata for the subscription
+	// Additional metadata for the subscription, stored as an arbitrary flat key-value
+	// object.
 	Metadata map[string]string `json:"metadata,omitzero"`
 	// How to handle proration for billing changes
 	//
@@ -2015,7 +2017,9 @@ type V1ContractNewParamsSubscriptionNewSubscriptionPriceOverride struct {
 	Amount param.Opt[float64] `json:"amount,omitzero"`
 	// Whether this is a base charge override
 	BaseCharge param.Opt[bool] `json:"baseCharge,omitzero"`
-	// The billing country code of the price
+	// ISO 3166-1 alpha-2 country code this price applies to. Omit for the default
+	// price shown to all countries; set one or more country-specific price periods on
+	// the same currency to localize the amount by billing country.
 	BillingCountryCode param.Opt[string] `json:"billingCountryCode,omitzero"`
 	// Block size for pricing
 	BlockSize param.Opt[float64] `json:"blockSize,omitzero"`

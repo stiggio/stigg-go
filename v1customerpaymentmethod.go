@@ -75,11 +75,14 @@ func (r *V1CustomerPaymentMethodService) Detach(ctx context.Context, id string, 
 }
 
 type V1CustomerPaymentMethodAttachParams struct {
-	// Integration details
+	// The internal ID of the integration this record is linked to
 	IntegrationID string `json:"integrationId" api:"required"`
-	// Billing provider payment method id
+	// Billing provider payment method id. Attaching it makes it the customer's new
+	// default payment method for future charges; any previously attached payment
+	// method is no longer used as the default, though it is not removed from the
+	// billing provider.
 	PaymentMethodID string `json:"paymentMethodId" api:"required"`
-	// The vendor identifier of integration
+	// The vendor identifier of the integration (e.g. STRIPE, SALESFORCE, SNOWFLAKE)
 	//
 	// Any of "AUTH0", "ZUORA", "STRIPE", "HUBSPOT", "AWS_MARKETPLACE", "SNOWFLAKE",
 	// "SALESFORCE", "BIG_QUERY", "OPEN_FGA", "APP_STORE", "RECEIVED", "PREQUEL",
@@ -112,7 +115,7 @@ func (r *V1CustomerPaymentMethodAttachParams) UnmarshalJSON(data []byte) error {
 	return apijson.UnmarshalRoot(data, r)
 }
 
-// The vendor identifier of integration
+// The vendor identifier of the integration (e.g. STRIPE, SALESFORCE, SNOWFLAKE)
 type V1CustomerPaymentMethodAttachParamsVendorIdentifier string
 
 const (

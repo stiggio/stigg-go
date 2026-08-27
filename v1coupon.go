@@ -161,7 +161,8 @@ func (r *Coupon) UnmarshalJSON(data []byte) error {
 type CouponData struct {
 	// The unique identifier for the entity
 	ID string `json:"id" api:"required"`
-	// Fixed amount discounts in different currencies
+	// Fixed amount discounts in different currencies. Provide exactly one of
+	// percentOff or amountsOff — not both, not neither.
 	AmountsOff []CouponDataAmountsOff `json:"amountsOff" api:"required"`
 	// The unique identifier for the entity in the billing provider
 	BillingID string `json:"billingId" api:"required"`
@@ -171,13 +172,15 @@ type CouponData struct {
 	CreatedAt time.Time `json:"createdAt" api:"required" format:"date-time"`
 	// Description of the coupon
 	Description string `json:"description" api:"required"`
-	// Duration of the coupon validity in months
+	// How many billing cycles the discount applies for once redeemed. Leave unset for
+	// a discount that lasts for the lifetime of the subscription.
 	DurationInMonths int64 `json:"durationInMonths" api:"required"`
 	// Metadata associated with the entity
 	Metadata map[string]string `json:"metadata" api:"required"`
 	// Name of the coupon
 	Name string `json:"name" api:"required"`
-	// Percentage discount off the original price
+	// Percentage discount off the original price. Provide exactly one of percentOff or
+	// amountsOff — not both, not neither.
 	PercentOff int64 `json:"percentOff" api:"required"`
 	// The source of the coupon
 	//
@@ -257,7 +260,8 @@ func (r *CouponDataAmountsOff) UnmarshalJSON(data []byte) error {
 type V1CouponListResponse struct {
 	// The unique identifier for the entity
 	ID string `json:"id" api:"required"`
-	// Fixed amount discounts in different currencies
+	// Fixed amount discounts in different currencies. Provide exactly one of
+	// percentOff or amountsOff — not both, not neither.
 	AmountsOff []V1CouponListResponseAmountsOff `json:"amountsOff" api:"required"`
 	// The unique identifier for the entity in the billing provider
 	BillingID string `json:"billingId" api:"required"`
@@ -267,13 +271,15 @@ type V1CouponListResponse struct {
 	CreatedAt time.Time `json:"createdAt" api:"required" format:"date-time"`
 	// Description of the coupon
 	Description string `json:"description" api:"required"`
-	// Duration of the coupon validity in months
+	// How many billing cycles the discount applies for once redeemed. Leave unset for
+	// a discount that lasts for the lifetime of the subscription.
 	DurationInMonths int64 `json:"durationInMonths" api:"required"`
 	// Metadata associated with the entity
 	Metadata map[string]string `json:"metadata" api:"required"`
 	// Name of the coupon
 	Name string `json:"name" api:"required"`
-	// Percentage discount off the original price
+	// Percentage discount off the original price. Provide exactly one of percentOff or
+	// amountsOff — not both, not neither.
 	PercentOff int64 `json:"percentOff" api:"required"`
 	// The source of the coupon
 	//
@@ -377,11 +383,14 @@ const (
 type V1CouponNewParams struct {
 	// Description of the coupon
 	Description param.Opt[string] `json:"description,omitzero" api:"required"`
-	// Duration of the coupon validity in months
+	// How many billing cycles the discount applies for once redeemed. Leave unset for
+	// a discount that lasts for the lifetime of the subscription.
 	DurationInMonths param.Opt[int64] `json:"durationInMonths,omitzero" api:"required"`
-	// Percentage discount off the original price
+	// Percentage discount off the original price. Provide exactly one of percentOff or
+	// amountsOff — not both, not neither.
 	PercentOff param.Opt[float64] `json:"percentOff,omitzero" api:"required"`
-	// Fixed amount discounts in different currencies
+	// Fixed amount discounts in different currencies. Provide exactly one of
+	// percentOff or amountsOff — not both, not neither.
 	AmountsOff []V1CouponNewParamsAmountsOff `json:"amountsOff,omitzero" api:"required"`
 	// Metadata associated with the entity
 	Metadata map[string]string `json:"metadata,omitzero" api:"required"`

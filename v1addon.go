@@ -193,7 +193,11 @@ func (r *V1AddonService) ListChargesAutoPaging(ctx context.Context, id string, p
 	return pagination.NewMyCursorIDPageAutoPager(r.ListCharges(ctx, id, params, opts...))
 }
 
-// Publishes a draft addon, making it available for use in subscriptions.
+// Publishes a draft addon, making it available for use in subscriptions. The
+// required `migrationType` field controls whether subscriptions already using this
+// addon are moved onto the new version immediately (`ALL_CUSTOMERS`) or stay on
+// the version they were using — grandfathered — until you explicitly migrate them
+// (`NEW_CUSTOMERS`).
 func (r *V1AddonService) Publish(ctx context.Context, id string, params V1AddonPublishParams, opts ...option.RequestOption) (res *V1AddonPublishResponse, err error) {
 	if !param.IsOmitted(params.XAccountID) {
 		opts = append(opts, option.WithHeader("X-ACCOUNT-ID", fmt.Sprintf("%v", params.XAccountID.Value)))
@@ -265,7 +269,8 @@ type AddonData struct {
 	Entitlements []AddonDataEntitlement `json:"entitlements" api:"required"`
 	// Indicates if the package is the latest version
 	IsLatest bool `json:"isLatest" api:"required"`
-	// The maximum quantity of this addon that can be added to a subscription
+	// The maximum quantity of this addon that can be added to a subscription. Leave
+	// unset for no upper bound.
 	MaxQuantity int64 `json:"maxQuantity" api:"required"`
 	// Metadata associated with the entity
 	Metadata map[string]string `json:"metadata" api:"required"`
@@ -350,7 +355,8 @@ type V1AddonListResponse struct {
 	Entitlements []V1AddonListResponseEntitlement `json:"entitlements" api:"required"`
 	// Indicates if the package is the latest version
 	IsLatest bool `json:"isLatest" api:"required"`
-	// The maximum quantity of this addon that can be added to a subscription
+	// The maximum quantity of this addon that can be added to a subscription. Leave
+	// unset for no upper bound.
 	MaxQuantity int64 `json:"maxQuantity" api:"required"`
 	// Metadata associated with the entity
 	Metadata map[string]string `json:"metadata" api:"required"`
@@ -791,7 +797,8 @@ type V1AddonNewParams struct {
 	BillingID param.Opt[string] `json:"billingId,omitzero"`
 	// The description of the package
 	Description param.Opt[string] `json:"description,omitzero"`
-	// The maximum quantity of this addon that can be added to a subscription
+	// The maximum quantity of this addon that can be added to a subscription. Leave
+	// unset for no upper bound.
 	MaxQuantity    param.Opt[int64]  `json:"maxQuantity,omitzero"`
 	XAccountID     param.Opt[string] `header:"X-ACCOUNT-ID,omitzero" json:"-"`
 	XEnvironmentID param.Opt[string] `header:"X-ENVIRONMENT-ID,omitzero" json:"-"`
@@ -845,7 +852,8 @@ type V1AddonUpdateParams struct {
 	BillingID param.Opt[string] `json:"billingId,omitzero"`
 	// The description of the package
 	Description param.Opt[string] `json:"description,omitzero"`
-	// The maximum quantity of this addon that can be added to a subscription
+	// The maximum quantity of this addon that can be added to a subscription. Leave
+	// unset for no upper bound.
 	MaxQuantity param.Opt[int64] `json:"maxQuantity,omitzero"`
 	// The display name of the package
 	DisplayName    param.Opt[string] `json:"displayName,omitzero"`
@@ -853,7 +861,9 @@ type V1AddonUpdateParams struct {
 	XEnvironmentID param.Opt[string] `header:"X-ENVIRONMENT-ID,omitzero" json:"-"`
 	// List of addons the addon is dependant on
 	Dependencies []string `json:"dependencies,omitzero"`
-	// Pricing configuration to set on the addon draft
+	// Pricing configuration to set on the addon draft. Unlike the rest of this
+	// request, this is a full replace of the pricing configuration, not a merge — see
+	// SetPackagePricingRequest.
 	Charges V1AddonUpdateParamsCharges `json:"charges,omitzero"`
 	// Metadata associated with the entity
 	Metadata map[string]string `json:"metadata,omitzero"`
@@ -872,7 +882,9 @@ func (r *V1AddonUpdateParams) UnmarshalJSON(data []byte) error {
 	return apijson.UnmarshalRoot(data, r)
 }
 
-// Pricing configuration to set on the addon draft
+// Pricing configuration to set on the addon draft. Unlike the rest of this
+// request, this is a full replace of the pricing configuration, not a merge — see
+// SetPackagePricingRequest.
 //
 // The property PricingType is required.
 type V1AddonUpdateParamsCharges struct {
@@ -888,9 +900,11 @@ type V1AddonUpdateParamsCharges struct {
 	//
 	// Any of "ON_SUBSCRIPTION_RENEWAL", "MONTHLY".
 	OverageBillingPeriod string `json:"overageBillingPeriod,omitzero"`
-	// Array of overage pricing model configurations
+	// Array of overage pricing model configurations. Replaces all existing overage
+	// pricing models on the draft — omit this to end up with no overage pricing.
 	OveragePricingModels []V1AddonUpdateParamsChargesOveragePricingModel `json:"overagePricingModels,omitzero"`
-	// Array of pricing model configurations
+	// Array of pricing model configurations. Replaces all existing base pricing models
+	// on the draft — omit this to end up with no base pricing.
 	PricingModels []V1AddonUpdateParamsChargesPricingModel `json:"pricingModels,omitzero"`
 	paramObj
 }
@@ -1764,7 +1778,9 @@ func (r V1AddonListChargesParams) URLQuery() (v url.Values, err error) {
 }
 
 type V1AddonPublishParams struct {
-	// The migration type of the package
+	// Who the published version applies to: NEW_CUSTOMERS (default) leaves existing
+	// subscribers on their current version, ALL_CUSTOMERS moves them onto the new
+	// version immediately.
 	//
 	// Any of "NEW_CUSTOMERS", "ALL_CUSTOMERS".
 	MigrationType  V1AddonPublishParamsMigrationType `json:"migrationType,omitzero" api:"required"`
@@ -1781,7 +1797,9 @@ func (r *V1AddonPublishParams) UnmarshalJSON(data []byte) error {
 	return apijson.UnmarshalRoot(data, r)
 }
 
-// The migration type of the package
+// Who the published version applies to: NEW_CUSTOMERS (default) leaves existing
+// subscribers on their current version, ALL_CUSTOMERS moves them onto the new
+// version immediately.
 type V1AddonPublishParamsMigrationType string
 
 const (

@@ -70,7 +70,13 @@ func (r *V1SubscriptionService) Get(ctx context.Context, id string, query V1Subs
 }
 
 // Updates an active subscription's properties including billing period, add-ons,
-// unit quantities, and discounts.
+// unit quantities, and discounts. This is a partial update — only the fields
+// present in the request body change. Object fields such as `metadata` are
+// replaced wholesale rather than merged, and list fields such as `addons` and
+// `priceOverrides` must be sent in full: any existing item that isn't included in
+// the array is removed from the subscription. Changes classified as a downgrade
+// may be scheduled for the end of the current billing period instead of applying
+// immediately, depending on your update scheduling configuration.
 func (r *V1SubscriptionService) Update(ctx context.Context, id string, params V1SubscriptionUpdateParams, opts ...option.RequestOption) (res *Subscription, err error) {
 	if !param.IsOmitted(params.XAccountID) {
 		opts = append(opts, option.WithHeader("X-ACCOUNT-ID", fmt.Sprintf("%v", params.XAccountID.Value)))
@@ -138,8 +144,10 @@ func (r *V1SubscriptionService) Cancel(ctx context.Context, id string, params V1
 	return res, err
 }
 
-// Delegates the payment responsibility of a subscription to a different customer.
-// The delegated customer will be billed for this subscription.
+// Delegates a subscription to a different customer, who becomes responsible for
+// managing it. The original customer remains the paying customer for this
+// subscription, unless payment was already delegated to the target customer, in
+// which case the target customer becomes the paying customer as well.
 func (r *V1SubscriptionService) Delegate(ctx context.Context, id string, params V1SubscriptionDelegateParams, opts ...option.RequestOption) (res *Subscription, err error) {
 	if !param.IsOmitted(params.XAccountID) {
 		opts = append(opts, option.WithHeader("X-ACCOUNT-ID", fmt.Sprintf("%v", params.XAccountID.Value)))
@@ -315,7 +323,8 @@ type SubscriptionData struct {
 	FutureUpdates []SubscriptionDataFutureUpdate `json:"futureUpdates"`
 	// Latest invoice for the subscription
 	LatestInvoice SubscriptionDataLatestInvoice `json:"latestInvoice" api:"nullable"`
-	// Additional metadata for the subscription
+	// Additional metadata for the subscription, stored as an arbitrary flat key-value
+	// object.
 	Metadata map[string]string `json:"metadata"`
 	// Minimum spend configuration
 	MinimumSpend SubscriptionDataMinimumSpend `json:"minimumSpend" api:"nullable"`
@@ -622,7 +631,9 @@ type SubscriptionDataPrice struct {
 	Amount float64 `json:"amount"`
 	// Whether this is a base charge override
 	BaseCharge bool `json:"baseCharge"`
-	// The billing country code of the price
+	// ISO 3166-1 alpha-2 country code this price applies to. Omit for the default
+	// price shown to all countries; set one or more country-specific price periods on
+	// the same currency to localize the amount by billing country.
 	BillingCountryCode string `json:"billingCountryCode"`
 	// Block size for pricing
 	BlockSize float64 `json:"blockSize"`
@@ -854,7 +865,8 @@ type V1SubscriptionListResponse struct {
 	FutureUpdates []V1SubscriptionListResponseFutureUpdate `json:"futureUpdates"`
 	// Latest invoice for the subscription
 	LatestInvoice V1SubscriptionListResponseLatestInvoice `json:"latestInvoice" api:"nullable"`
-	// Additional metadata for the subscription
+	// Additional metadata for the subscription, stored as an arbitrary flat key-value
+	// object.
 	Metadata map[string]string `json:"metadata"`
 	// Minimum spend configuration
 	MinimumSpend V1SubscriptionListResponseMinimumSpend `json:"minimumSpend" api:"nullable"`
@@ -1218,7 +1230,9 @@ type V1SubscriptionListResponsePrice struct {
 	Amount float64 `json:"amount"`
 	// Whether this is a base charge override
 	BaseCharge bool `json:"baseCharge"`
-	// The billing country code of the price
+	// ISO 3166-1 alpha-2 country code this price applies to. Omit for the default
+	// price shown to all countries; set one or more country-specific price periods on
+	// the same currency to localize the amount by billing country.
 	BillingCountryCode string `json:"billingCountryCode"`
 	// Block size for pricing
 	BlockSize float64 `json:"blockSize"`
@@ -1455,7 +1469,12 @@ type V1SubscriptionPreviewResponseData struct {
 	FreeItems []V1SubscriptionPreviewResponseDataFreeItem `json:"freeItems"`
 	// Whether updates are scheduled
 	HasScheduledUpdates bool `json:"hasScheduledUpdates"`
-	// Whether this is a downgrade
+	// Whether this change is classified as a downgrade. Stigg determines this by
+	// ranking the target plan against the customer's current plan — primarily by
+	// calculated price (or by plan parent/child inheritance, when your catalog uses
+	// it) — rather than by a manually assigned plan order. Downgrades can be scheduled
+	// to take effect at the end of the current billing period instead of immediately,
+	// depending on your update scheduling configuration.
 	IsPlanDowngrade bool `json:"isPlanDowngrade"`
 	// Recurring invoice preview
 	RecurringInvoice V1SubscriptionPreviewResponseDataRecurringInvoice `json:"recurringInvoice"`
@@ -2170,7 +2189,8 @@ type V1SubscriptionProvisionResponseDataSubscription struct {
 	FutureUpdates []V1SubscriptionProvisionResponseDataSubscriptionFutureUpdate `json:"futureUpdates"`
 	// Latest invoice for the subscription
 	LatestInvoice V1SubscriptionProvisionResponseDataSubscriptionLatestInvoice `json:"latestInvoice" api:"nullable"`
-	// Additional metadata for the subscription
+	// Additional metadata for the subscription, stored as an arbitrary flat key-value
+	// object.
 	Metadata map[string]string `json:"metadata"`
 	// Minimum spend configuration
 	MinimumSpend V1SubscriptionProvisionResponseDataSubscriptionMinimumSpend `json:"minimumSpend" api:"nullable"`
@@ -2487,7 +2507,9 @@ type V1SubscriptionProvisionResponseDataSubscriptionPrice struct {
 	Amount float64 `json:"amount"`
 	// Whether this is a base charge override
 	BaseCharge bool `json:"baseCharge"`
-	// The billing country code of the price
+	// ISO 3166-1 alpha-2 country code this price applies to. Omit for the default
+	// price shown to all countries; set one or more country-specific price periods on
+	// the same currency to localize the amount by billing country.
 	BillingCountryCode string `json:"billingCountryCode"`
 	// Block size for pricing
 	BlockSize float64 `json:"blockSize"`
@@ -2699,7 +2721,8 @@ type V1SubscriptionUpdateParams struct {
 	BillingPeriod V1SubscriptionUpdateParamsBillingPeriod      `json:"billingPeriod,omitzero"`
 	Charges       []V1SubscriptionUpdateParamsCharge           `json:"charges,omitzero"`
 	Entitlements  []V1SubscriptionUpdateParamsEntitlementUnion `json:"entitlements,omitzero"`
-	// Additional metadata for the subscription
+	// Additional metadata for the subscription, stored as an arbitrary flat key-value
+	// object.
 	Metadata       map[string]string                         `json:"metadata,omitzero"`
 	PriceOverrides []V1SubscriptionUpdateParamsPriceOverride `json:"priceOverrides,omitzero"`
 	// Any of "END_OF_BILLING_PERIOD", "END_OF_BILLING_MONTH", "IMMEDIATE".
@@ -2837,7 +2860,8 @@ type V1SubscriptionUpdateParamsBillingInformation struct {
 	TaxPercentage           param.Opt[float64] `json:"taxPercentage,omitzero"`
 	// Physical address
 	BillingAddress V1SubscriptionUpdateParamsBillingInformationBillingAddress `json:"billingAddress,omitzero"`
-	// Additional metadata for the subscription
+	// Additional metadata for the subscription, stored as an arbitrary flat key-value
+	// object.
 	Metadata map[string]string `json:"metadata,omitzero"`
 	// Any of "INVOICE_IMMEDIATELY", "CREATE_PRORATIONS", "NONE".
 	ProrationBehavior string                                              `json:"prorationBehavior,omitzero"`
@@ -3419,9 +3443,9 @@ const (
 )
 
 type V1SubscriptionDelegateParams struct {
-	// The unique identifier of the customer who will assume payment responsibility for
-	// this subscription. This customer must already exist in your Stigg account and
-	// have a valid payment method if the subscription requires payment.
+	// The unique identifier of the customer who will manage this subscription going
+	// forward. This customer must already exist in your Stigg account. The paying
+	// customer for the subscription does not change as a result of this request.
 	TargetCustomerID string            `json:"targetCustomerId" api:"required"`
 	XAccountID       param.Opt[string] `header:"X-ACCOUNT-ID,omitzero" json:"-"`
 	XEnvironmentID   param.Opt[string] `header:"X-ENVIRONMENT-ID,omitzero" json:"-"`
@@ -3476,7 +3500,8 @@ type V1SubscriptionImportParamsSubscription struct {
 	// Any of "MONTHLY", "ANNUALLY".
 	BillingPeriod string                                         `json:"billingPeriod,omitzero"`
 	Charges       []V1SubscriptionImportParamsSubscriptionCharge `json:"charges,omitzero"`
-	// Additional metadata for the subscription
+	// Additional metadata for the subscription, stored as an arbitrary flat key-value
+	// object.
 	Metadata map[string]string `json:"metadata,omitzero"`
 	paramObj
 }
@@ -3967,7 +3992,8 @@ type V1SubscriptionProvisionParams struct {
 	// Checkout page configuration for payment collection
 	CheckoutOptions V1SubscriptionProvisionParamsCheckoutOptions    `json:"checkoutOptions,omitzero"`
 	Entitlements    []V1SubscriptionProvisionParamsEntitlementUnion `json:"entitlements,omitzero"`
-	// Additional metadata for the subscription
+	// Additional metadata for the subscription, stored as an arbitrary flat key-value
+	// object.
 	Metadata map[string]string `json:"metadata,omitzero"`
 	// How payments should be collected for this subscription
 	//
@@ -4129,7 +4155,8 @@ type V1SubscriptionProvisionParamsBillingInformation struct {
 	TaxPercentage param.Opt[float64] `json:"taxPercentage,omitzero"`
 	// Billing address for the subscription
 	BillingAddress V1SubscriptionProvisionParamsBillingInformationBillingAddress `json:"billingAddress,omitzero"`
-	// Additional metadata for the subscription
+	// Additional metadata for the subscription, stored as an arbitrary flat key-value
+	// object.
 	Metadata map[string]string `json:"metadata,omitzero"`
 	// How to handle proration for billing changes
 	//
@@ -4612,7 +4639,9 @@ type V1SubscriptionProvisionParamsPriceOverride struct {
 	Amount param.Opt[float64] `json:"amount,omitzero"`
 	// Whether this is a base charge override
 	BaseCharge param.Opt[bool] `json:"baseCharge,omitzero"`
-	// The billing country code of the price
+	// ISO 3166-1 alpha-2 country code this price applies to. Omit for the default
+	// price shown to all countries; set one or more country-specific price periods on
+	// the same currency to localize the amount by billing country.
 	BillingCountryCode param.Opt[string] `json:"billingCountryCode,omitzero"`
 	// Block size for pricing
 	BlockSize param.Opt[float64] `json:"blockSize,omitzero"`

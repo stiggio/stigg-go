@@ -106,7 +106,10 @@ func (r *V1CreditGrantService) Void(ctx context.Context, id string, body V1Credi
 
 // Response object
 type CreditGrantResponse struct {
-	// Credit grant object representing allocated credits for a customer
+	// Credit grant object representing allocated credits for a customer. Credit grants
+	// cannot be edited after creation via this API — void the grant to stop further
+	// consumption from it, then create a new grant with the corrected amount,
+	// priority, or expiration.
 	Data CreditGrantResponseData `json:"data" api:"required"`
 	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
 	JSON struct {
@@ -122,7 +125,10 @@ func (r *CreditGrantResponse) UnmarshalJSON(data []byte) error {
 	return apijson.UnmarshalRoot(data, r)
 }
 
-// Credit grant object representing allocated credits for a customer
+// Credit grant object representing allocated credits for a customer. Credit grants
+// cannot be edited after creation via this API — void the grant to stop further
+// consumption from it, then create a new grant with the corrected amount,
+// priority, or expiration.
 type CreditGrantResponseData struct {
 	// The unique readable identifier of the credit grant
 	ID string `json:"id" api:"required"`
@@ -168,7 +174,11 @@ type CreditGrantResponseData struct {
 	//
 	// Any of "PRICE", "PLAN_ENTITLEMENT", "ADDON_ENTITLEMENT".
 	SourceType string `json:"sourceType" api:"required"`
-	// The effective status of the credit grant
+	// The effective status of the credit grant. A grant with paymentCollectionMethod
+	// NONE or CHARGE becomes ACTIVE (and its credits become usable) as soon as it's
+	// created (or as soon as the charge succeeds). A grant with
+	// paymentCollectionMethod INVOICE stays PAYMENT_PENDING — its credits are not
+	// usable — until the invoice is paid.
 	//
 	// Any of "PAYMENT_PENDING", "ACTIVE", "EXPIRED", "VOIDED", "SCHEDULED".
 	Status string `json:"status" api:"required"`
@@ -301,9 +311,11 @@ type CreditGrantResponseDataSyncState struct {
 	//
 	// Any of "PENDING", "ERROR", "SUCCESS", "NO_SYNC_REQUIRED".
 	Status string `json:"status" api:"required"`
-	// Synced entity id
+	// The external entity ID this record is linked to in the vendor system (e.g. the
+	// Stripe customer ID). Null until the link has synced; required when creating the
+	// link.
 	SyncedEntityID string `json:"syncedEntityId" api:"required"`
-	// The vendor identifier of integration
+	// The vendor identifier of the integration (e.g. STRIPE, SALESFORCE, SNOWFLAKE)
 	//
 	// Any of "AUTH0", "ZUORA", "STRIPE", "HUBSPOT", "AWS_MARKETPLACE", "SNOWFLAKE",
 	// "SALESFORCE", "BIG_QUERY", "OPEN_FGA", "APP_STORE", "RECEIVED", "PREQUEL",
@@ -325,7 +337,10 @@ func (r *CreditGrantResponseDataSyncState) UnmarshalJSON(data []byte) error {
 	return apijson.UnmarshalRoot(data, r)
 }
 
-// Credit grant object representing allocated credits for a customer
+// Credit grant object representing allocated credits for a customer. Credit grants
+// cannot be edited after creation via this API — void the grant to stop further
+// consumption from it, then create a new grant with the corrected amount,
+// priority, or expiration.
 type V1CreditGrantListResponse struct {
 	// The unique readable identifier of the credit grant
 	ID string `json:"id" api:"required"`
@@ -371,7 +386,11 @@ type V1CreditGrantListResponse struct {
 	//
 	// Any of "PRICE", "PLAN_ENTITLEMENT", "ADDON_ENTITLEMENT".
 	SourceType V1CreditGrantListResponseSourceType `json:"sourceType" api:"required"`
-	// The effective status of the credit grant
+	// The effective status of the credit grant. A grant with paymentCollectionMethod
+	// NONE or CHARGE becomes ACTIVE (and its credits become usable) as soon as it's
+	// created (or as soon as the charge succeeds). A grant with
+	// paymentCollectionMethod INVOICE stays PAYMENT_PENDING — its credits are not
+	// usable — until the invoice is paid.
 	//
 	// Any of "PAYMENT_PENDING", "ACTIVE", "EXPIRED", "VOIDED", "SCHEDULED".
 	Status V1CreditGrantListResponseStatus `json:"status" api:"required"`
@@ -528,7 +547,11 @@ const (
 	V1CreditGrantListResponseSourceTypeAddonEntitlement V1CreditGrantListResponseSourceType = "ADDON_ENTITLEMENT"
 )
 
-// The effective status of the credit grant
+// The effective status of the credit grant. A grant with paymentCollectionMethod
+// NONE or CHARGE becomes ACTIVE (and its credits become usable) as soon as it's
+// created (or as soon as the charge succeeds). A grant with
+// paymentCollectionMethod INVOICE stays PAYMENT_PENDING — its credits are not
+// usable — until the invoice is paid.
 type V1CreditGrantListResponseStatus string
 
 const (
@@ -544,9 +567,11 @@ type V1CreditGrantListResponseSyncState struct {
 	//
 	// Any of "PENDING", "ERROR", "SUCCESS", "NO_SYNC_REQUIRED".
 	Status string `json:"status" api:"required"`
-	// Synced entity id
+	// The external entity ID this record is linked to in the vendor system (e.g. the
+	// Stripe customer ID). Null until the link has synced; required when creating the
+	// link.
 	SyncedEntityID string `json:"syncedEntityId" api:"required"`
-	// The vendor identifier of integration
+	// The vendor identifier of the integration (e.g. STRIPE, SALESFORCE, SNOWFLAKE)
 	//
 	// Any of "AUTH0", "ZUORA", "STRIPE", "HUBSPOT", "AWS_MARKETPLACE", "SNOWFLAKE",
 	// "SALESFORCE", "BIG_QUERY", "OPEN_FGA", "APP_STORE", "RECEIVED", "PREQUEL",
@@ -581,7 +606,10 @@ type V1CreditGrantNewParams struct {
 	//
 	// Any of "PAID", "PROMOTIONAL".
 	GrantType V1CreditGrantNewParamsGrantType `json:"grantType,omitzero" api:"required"`
-	// Whether to wait for payment confirmation before returning (default: true)
+	// Whether to wait for payment confirmation before returning (default: true). When
+	// false, the request returns immediately while payment (if any) is collected
+	// asynchronously; check the returned status to see whether the credits are already
+	// usable.
 	AwaitPaymentConfirmation param.Opt[bool] `json:"awaitPaymentConfirmation,omitzero"`
 	// An optional comment on the credit grant
 	Comment param.Opt[string] `json:"comment,omitzero"`
@@ -589,19 +617,31 @@ type V1CreditGrantNewParams struct {
 	EffectiveAt param.Opt[time.Time] `json:"effectiveAt,omitzero" format:"date-time"`
 	// The date when the credit grant expires
 	ExpireAt param.Opt[time.Time] `json:"expireAt,omitzero" format:"date-time"`
-	// The priority of the credit grant (lower number = higher priority)
+	// Determines which grant is drawn down first when the customer has multiple active
+	// grants in the same currency (0-100). Lower numbers are consumed first. Defaults
+	// to 50 — the same default used for recurring credits granted by a plan or price —
+	// so without setting this explicitly, draw order against plan-included credits
+	// falls back to expiration date and grant type. To have this grant consumed before
+	// or after plan-included credits, set a lower or higher priority than the
+	// plan/price credit configuration.
 	Priority param.Opt[int64] `json:"priority,omitzero"`
 	// The resource ID to scope the grant to
 	ResourceID     param.Opt[string] `json:"resourceId,omitzero"`
 	XAccountID     param.Opt[string] `header:"X-ACCOUNT-ID,omitzero" json:"-"`
 	XEnvironmentID param.Opt[string] `header:"X-ENVIRONMENT-ID,omitzero" json:"-"`
-	// Billing information for the credit grant
+	// Billing information for the credit grant, used when the grant has a payment
+	// collection method that requires collecting payment (e.g. invoice due date,
+	// billing address).
 	BillingInformation V1CreditGrantNewParamsBillingInformation `json:"billingInformation,omitzero"`
 	// The monetary cost of the credit grant
 	Cost V1CreditGrantNewParamsCost `json:"cost,omitzero"`
 	// Additional metadata for the credit grant
 	Metadata map[string]string `json:"metadata,omitzero"`
-	// The payment collection method (CHARGE, INVOICE, NONE)
+	// The payment collection method (CHARGE, INVOICE, NONE). Optional if the grant has
+	// no `cost`, since there is nothing to collect payment for. With NONE or CHARGE,
+	// the grant is active and its credits are usable right away (or as soon as the
+	// charge succeeds). With INVOICE, the grant stays pending — its credits are not
+	// usable — until the generated invoice is paid.
 	//
 	// Any of "CHARGE", "INVOICE", "NONE".
 	PaymentCollectionMethod V1CreditGrantNewParamsPaymentCollectionMethod `json:"paymentCollectionMethod,omitzero"`
@@ -624,7 +664,9 @@ const (
 	V1CreditGrantNewParamsGrantTypePromotional V1CreditGrantNewParamsGrantType = "PROMOTIONAL"
 )
 
-// Billing information for the credit grant
+// Billing information for the credit grant, used when the grant has a payment
+// collection method that requires collecting payment (e.g. invoice due date,
+// billing address).
 type V1CreditGrantNewParamsBillingInformation struct {
 	// Days until the invoice is due
 	InvoiceDaysUntilDue param.Opt[float64] `json:"invoiceDaysUntilDue,omitzero"`
@@ -705,7 +747,11 @@ func init() {
 	)
 }
 
-// The payment collection method (CHARGE, INVOICE, NONE)
+// The payment collection method (CHARGE, INVOICE, NONE). Optional if the grant has
+// no `cost`, since there is nothing to collect payment for. With NONE or CHARGE,
+// the grant is active and its credits are usable right away (or as soon as the
+// charge succeeds). With INVOICE, the grant stays pending — its credits are not
+// usable — until the generated invoice is paid.
 type V1CreditGrantNewParamsPaymentCollectionMethod string
 
 const (

@@ -160,13 +160,17 @@ func (r *V1CustomerIntegrationService) Unlink(ctx context.Context, integrationID
 	return res, err
 }
 
-// External billing or CRM integration link
+// Links this customer to their record in a specific configured integration (e.g.
+// their Stripe customer ID under your Stripe integration). A customer has at most
+// one link per integration.
 type V1CustomerIntegrationListResponse struct {
-	// Integration details
+	// The internal ID of the integration this record is linked to
 	ID string `json:"id" api:"required"`
-	// Synced entity id
+	// The external entity ID this record is linked to in the vendor system (e.g. the
+	// Stripe customer ID). Null until the link has synced; required when creating the
+	// link.
 	SyncedEntityID string `json:"syncedEntityId" api:"required"`
-	// The vendor identifier of integration
+	// The vendor identifier of the integration (e.g. STRIPE, SALESFORCE, SNOWFLAKE)
 	//
 	// Any of "AUTH0", "ZUORA", "STRIPE", "HUBSPOT", "AWS_MARKETPLACE", "SNOWFLAKE",
 	// "SALESFORCE", "BIG_QUERY", "OPEN_FGA", "APP_STORE", "RECEIVED", "PREQUEL",
@@ -192,7 +196,7 @@ func (r *V1CustomerIntegrationListResponse) UnmarshalJSON(data []byte) error {
 	return apijson.UnmarshalRoot(data, r)
 }
 
-// The vendor identifier of integration
+// The vendor identifier of the integration (e.g. STRIPE, SALESFORCE, SNOWFLAKE)
 type V1CustomerIntegrationListResponseVendorIdentifier string
 
 const (
@@ -337,7 +341,9 @@ type V1CustomerIntegrationGetParams struct {
 }
 
 type V1CustomerIntegrationUpdateParams struct {
-	// Synced entity id
+	// The external entity ID this record is linked to in the vendor system (e.g. the
+	// Stripe customer ID). Null until the link has synced; required when creating the
+	// link.
 	SyncedEntityID param.Opt[string] `json:"syncedEntityId,omitzero" api:"required"`
 	ID             string            `path:"id" api:"required" json:"-"`
 	XAccountID     param.Opt[string] `header:"X-ACCOUNT-ID,omitzero" json:"-"`
@@ -382,11 +388,13 @@ func (r V1CustomerIntegrationListParams) URLQuery() (v url.Values, err error) {
 }
 
 type V1CustomerIntegrationLinkParams struct {
-	// Integration details
+	// The internal ID of the integration this record is linked to
 	ID string `json:"id" api:"required"`
-	// Synced entity id
+	// The external entity ID this record is linked to in the vendor system (e.g. the
+	// Stripe customer ID). Null until the link has synced; required when creating the
+	// link.
 	SyncedEntityID string `json:"syncedEntityId" api:"required"`
-	// The vendor identifier of integration
+	// The vendor identifier of the integration (e.g. STRIPE, SALESFORCE, SNOWFLAKE)
 	//
 	// Any of "AUTH0", "ZUORA", "STRIPE", "HUBSPOT", "AWS_MARKETPLACE", "SNOWFLAKE",
 	// "SALESFORCE", "BIG_QUERY", "OPEN_FGA", "APP_STORE", "RECEIVED", "PREQUEL",
@@ -405,7 +413,7 @@ func (r *V1CustomerIntegrationLinkParams) UnmarshalJSON(data []byte) error {
 	return apijson.UnmarshalRoot(data, r)
 }
 
-// The vendor identifier of integration
+// The vendor identifier of the integration (e.g. STRIPE, SALESFORCE, SNOWFLAKE)
 type V1CustomerIntegrationLinkParamsVendorIdentifier string
 
 const (

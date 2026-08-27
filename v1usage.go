@@ -359,7 +359,10 @@ type V1UsageReportResponseData struct {
 	CurrentUsage float64 `json:"currentUsage" api:"nullable"`
 	// The date when the next usage reset will occur
 	NextResetDate time.Time `json:"nextResetDate" api:"nullable" format:"date-time"`
-	// Resource id
+	// The customer resource this usage applies to. Optional — only required if the
+	// customer has multiple resources (for example, one subscription per workspace or
+	// site) and usage needs to be tracked separately per resource; omit it to report
+	// usage at the customer level.
 	ResourceID string `json:"resourceId" api:"nullable"`
 	// The end date of the usage period in which this measurement resides (for
 	// entitlements with a reset period)
@@ -438,15 +441,22 @@ type V1UsageEstimateParams struct {
 	CustomerID string `json:"customerId" api:"required"`
 	// Feature id
 	FeatureID string `json:"featureId" api:"required"`
-	// The value to report for usage
+	// The value to report for usage. Must be a whole number — the REST API does not
+	// accept fractional (float) usage values; scale up (e.g. report cents instead of
+	// dollars, or milliseconds instead of seconds) if you need sub-unit precision.
 	Value int64 `json:"value" api:"required"`
-	// Resource id
+	// The customer resource this usage applies to. Optional — only required if the
+	// customer has multiple resources (for example, one subscription per workspace or
+	// site) and usage needs to be tracked separately per resource; omit it to report
+	// usage at the customer level.
 	ResourceID     param.Opt[string] `json:"resourceId,omitzero"`
 	XAccountID     param.Opt[string] `header:"X-ACCOUNT-ID,omitzero" json:"-"`
 	XEnvironmentID param.Opt[string] `header:"X-ENVIRONMENT-ID,omitzero" json:"-"`
 	// Additional dimensions for the usage report
 	Dimensions map[string]V1UsageEstimateParamsDimensionUnion `json:"dimensions,omitzero"`
-	// The method by which the usage value should be updated
+	// How the reported value is applied: DELTA (default) adds it to the feature's
+	// current usage; SET treats it as the new absolute usage total, and Stigg computes
+	// the delta internally.
 	//
 	// Any of "DELTA", "SET".
 	UpdateBehavior V1UsageEstimateParamsUpdateBehavior `json:"updateBehavior,omitzero"`
@@ -489,7 +499,9 @@ func (u *V1UsageEstimateParamsDimensionUnion) asAny() any {
 	return nil
 }
 
-// The method by which the usage value should be updated
+// How the reported value is applied: DELTA (default) adds it to the feature's
+// current usage; SET treats it as the new absolute usage total, and Stigg computes
+// the delta internally.
 type V1UsageEstimateParamsUpdateBehavior string
 
 const (
@@ -501,7 +513,10 @@ type V1UsageHistoryParams struct {
 	CustomerID string `path:"customerId" api:"required" json:"-"`
 	// The start date of the range
 	StartDate time.Time `query:"startDate" api:"required" format:"date-time" json:"-"`
-	// Resource id
+	// The customer resource this usage applies to. Optional — only required if the
+	// customer has multiple resources (for example, one subscription per workspace or
+	// site) and usage needs to be tracked separately per resource; omit it to report
+	// usage at the customer level.
 	ResourceID param.Opt[string] `query:"resourceId,omitzero" json:"-"`
 	// The end date of the range
 	EndDate param.Opt[time.Time] `query:"endDate,omitzero" format:"date-time" json:"-"`
@@ -544,17 +559,26 @@ type V1UsageReportParamsUsage struct {
 	CustomerID string `json:"customerId" api:"required"`
 	// Feature id
 	FeatureID string `json:"featureId" api:"required"`
-	// The value to report for usage
+	// The value to report for usage. Must be a whole number — the REST API does not
+	// accept fractional (float) usage values; scale up (e.g. report cents instead of
+	// dollars, or milliseconds instead of seconds) if you need sub-unit precision.
 	Value int64 `json:"value" api:"required"`
-	// Resource id
+	// The customer resource this usage applies to. Optional — only required if the
+	// customer has multiple resources (for example, one subscription per workspace or
+	// site) and usage needs to be tracked separately per resource; omit it to report
+	// usage at the customer level.
 	ResourceID param.Opt[string] `json:"resourceId,omitzero"`
 	// Timestamp of when the record was created
 	CreatedAt param.Opt[time.Time] `json:"createdAt,omitzero" format:"date-time"`
-	// Idempotency key
+	// A key you provide to safely retry the same usage report without double-counting
+	// it. Reports with a previously-seen idempotency key are deduplicated for 7 days;
+	// after that window a retry is treated as new usage.
 	IdempotencyKey param.Opt[string] `json:"idempotencyKey,omitzero"`
 	// Additional dimensions for the usage report
 	Dimensions map[string]V1UsageReportParamsUsageDimensionUnion `json:"dimensions,omitzero"`
-	// The method by which the usage value should be updated
+	// How the reported value is applied: DELTA (default) adds it to the feature's
+	// current usage; SET treats it as the new absolute usage total, and Stigg computes
+	// the delta internally.
 	//
 	// Any of "DELTA", "SET".
 	UpdateBehavior string `json:"updateBehavior,omitzero"`

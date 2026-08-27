@@ -226,7 +226,11 @@ func (r *V1PlanService) ListOverageChargesAutoPaging(ctx context.Context, id str
 	return pagination.NewMyCursorIDPageAutoPager(r.ListOverageCharges(ctx, id, params, opts...))
 }
 
-// Publishes a draft plan, making it available for use in subscriptions.
+// Publishes a draft plan, making it available for use in subscriptions. The
+// required `migrationType` field controls whether existing subscribers are moved
+// onto the new version immediately (`ALL_CUSTOMERS`) or stay on the version they
+// subscribed to — grandfathered — until you explicitly migrate them, e.g. via the
+// migrate subscription endpoint (`NEW_CUSTOMERS`).
 func (r *V1PlanService) Publish(ctx context.Context, id string, params V1PlanPublishParams, opts ...option.RequestOption) (res *V1PlanPublishResponse, err error) {
 	if !param.IsOmitted(params.XAccountID) {
 		opts = append(opts, option.WithHeader("X-ACCOUNT-ID", fmt.Sprintf("%v", params.XAccountID.Value)))
@@ -289,7 +293,9 @@ type PlanData struct {
 	CompatibleAddonIDs []string `json:"compatibleAddonIds" api:"required"`
 	// Timestamp of when the record was created
 	CreatedAt time.Time `json:"createdAt" api:"required" format:"date-time"`
-	// Default trial configuration for the plan
+	// Default trial configuration for the plan. When set, subscriptions provisioned on
+	// this plan without explicit trial settings automatically start in trial for the
+	// configured duration; leave unset for no automatic trial.
 	DefaultTrialConfig PlanDataDefaultTrialConfig `json:"defaultTrialConfig" api:"required"`
 	// The description of the package
 	Description string `json:"description" api:"required"`
@@ -301,7 +307,9 @@ type PlanData struct {
 	IsLatest bool `json:"isLatest" api:"required"`
 	// Metadata associated with the entity
 	Metadata map[string]string `json:"metadata" api:"required"`
-	// The ID of the parent plan, if applicable
+	// The ID of the parent plan, if this plan should inherit entitlements from another
+	// plan. Optional — omit to create a standalone plan with no inherited
+	// entitlements.
 	ParentPlanID string `json:"parentPlanId" api:"required"`
 	// The pricing type of the package
 	//
@@ -346,7 +354,9 @@ func (r *PlanData) UnmarshalJSON(data []byte) error {
 	return apijson.UnmarshalRoot(data, r)
 }
 
-// Default trial configuration for the plan
+// Default trial configuration for the plan. When set, subscriptions provisioned on
+// this plan without explicit trial settings automatically start in trial for the
+// configured duration; leave unset for no automatic trial.
 type PlanDataDefaultTrialConfig struct {
 	// The duration of the trial in the specified units
 	Duration float64 `json:"duration" api:"required"`
@@ -428,7 +438,9 @@ type V1PlanListResponse struct {
 	CompatibleAddonIDs []string `json:"compatibleAddonIds" api:"required"`
 	// Timestamp of when the record was created
 	CreatedAt time.Time `json:"createdAt" api:"required" format:"date-time"`
-	// Default trial configuration for the plan
+	// Default trial configuration for the plan. When set, subscriptions provisioned on
+	// this plan without explicit trial settings automatically start in trial for the
+	// configured duration; leave unset for no automatic trial.
 	DefaultTrialConfig V1PlanListResponseDefaultTrialConfig `json:"defaultTrialConfig" api:"required"`
 	// The description of the package
 	Description string `json:"description" api:"required"`
@@ -440,7 +452,9 @@ type V1PlanListResponse struct {
 	IsLatest bool `json:"isLatest" api:"required"`
 	// Metadata associated with the entity
 	Metadata map[string]string `json:"metadata" api:"required"`
-	// The ID of the parent plan, if applicable
+	// The ID of the parent plan, if this plan should inherit entitlements from another
+	// plan. Optional — omit to create a standalone plan with no inherited
+	// entitlements.
 	ParentPlanID string `json:"parentPlanId" api:"required"`
 	// The pricing type of the package
 	//
@@ -485,7 +499,9 @@ func (r *V1PlanListResponse) UnmarshalJSON(data []byte) error {
 	return apijson.UnmarshalRoot(data, r)
 }
 
-// Default trial configuration for the plan
+// Default trial configuration for the plan. When set, subscriptions provisioned on
+// this plan without explicit trial settings automatically start in trial for the
+// configured duration; leave unset for no automatic trial.
 type V1PlanListResponseDefaultTrialConfig struct {
 	// The duration of the trial in the specified units
 	Duration float64 `json:"duration" api:"required"`
@@ -1209,11 +1225,15 @@ type V1PlanNewParams struct {
 	BillingID param.Opt[string] `json:"billingId,omitzero"`
 	// The description of the package
 	Description param.Opt[string] `json:"description,omitzero"`
-	// The ID of the parent plan, if applicable
+	// The ID of the parent plan, if this plan should inherit entitlements from another
+	// plan. Optional — omit to create a standalone plan with no inherited
+	// entitlements.
 	ParentPlanID   param.Opt[string] `json:"parentPlanId,omitzero"`
 	XAccountID     param.Opt[string] `header:"X-ACCOUNT-ID,omitzero" json:"-"`
 	XEnvironmentID param.Opt[string] `header:"X-ENVIRONMENT-ID,omitzero" json:"-"`
-	// Default trial configuration for the plan
+	// Default trial configuration for the plan. When set, subscriptions provisioned on
+	// this plan without explicit trial settings automatically start in trial for the
+	// configured duration; leave unset for no automatic trial.
 	DefaultTrialConfig V1PlanNewParamsDefaultTrialConfig `json:"defaultTrialConfig,omitzero"`
 	// The pricing type of the package
 	//
@@ -1236,7 +1256,9 @@ func (r *V1PlanNewParams) UnmarshalJSON(data []byte) error {
 	return apijson.UnmarshalRoot(data, r)
 }
 
-// Default trial configuration for the plan
+// Default trial configuration for the plan. When set, subscriptions provisioned on
+// this plan without explicit trial settings automatically start in trial for the
+// configured duration; leave unset for no automatic trial.
 //
 // The properties Duration, Units are required.
 type V1PlanNewParamsDefaultTrialConfig struct {
@@ -1320,16 +1342,22 @@ type V1PlanUpdateParams struct {
 	BillingID param.Opt[string] `json:"billingId,omitzero"`
 	// The description of the package
 	Description param.Opt[string] `json:"description,omitzero"`
-	// The ID of the parent plan, if applicable
+	// The ID of the parent plan, if this plan should inherit entitlements from another
+	// plan. Optional — omit to create a standalone plan with no inherited
+	// entitlements.
 	ParentPlanID param.Opt[string] `json:"parentPlanId,omitzero"`
 	// The display name of the package
 	DisplayName        param.Opt[string] `json:"displayName,omitzero"`
 	XAccountID         param.Opt[string] `header:"X-ACCOUNT-ID,omitzero" json:"-"`
 	XEnvironmentID     param.Opt[string] `header:"X-ENVIRONMENT-ID,omitzero" json:"-"`
 	CompatibleAddonIDs []string          `json:"compatibleAddonIds,omitzero"`
-	// Default trial configuration for the plan
+	// Default trial configuration for the plan. When set, subscriptions provisioned on
+	// this plan without explicit trial settings automatically start in trial for the
+	// configured duration; leave unset for no automatic trial.
 	DefaultTrialConfig V1PlanUpdateParamsDefaultTrialConfig `json:"defaultTrialConfig,omitzero"`
-	// Pricing configuration to set on the plan draft
+	// Pricing configuration to set on the plan draft. Unlike the rest of this request,
+	// this is a full replace of the pricing configuration, not a merge — see
+	// SetPackagePricingRequest.
 	Charges V1PlanUpdateParamsCharges `json:"charges,omitzero"`
 	// Metadata associated with the entity
 	Metadata map[string]string `json:"metadata,omitzero"`
@@ -1344,7 +1372,9 @@ func (r *V1PlanUpdateParams) UnmarshalJSON(data []byte) error {
 	return apijson.UnmarshalRoot(data, r)
 }
 
-// Pricing configuration to set on the plan draft
+// Pricing configuration to set on the plan draft. Unlike the rest of this request,
+// this is a full replace of the pricing configuration, not a merge — see
+// SetPackagePricingRequest.
 //
 // The property PricingType is required.
 type V1PlanUpdateParamsCharges struct {
@@ -1360,9 +1390,11 @@ type V1PlanUpdateParamsCharges struct {
 	//
 	// Any of "ON_SUBSCRIPTION_RENEWAL", "MONTHLY".
 	OverageBillingPeriod string `json:"overageBillingPeriod,omitzero"`
-	// Array of overage pricing model configurations
+	// Array of overage pricing model configurations. Replaces all existing overage
+	// pricing models on the draft — omit this to end up with no overage pricing.
 	OveragePricingModels []V1PlanUpdateParamsChargesOveragePricingModel `json:"overagePricingModels,omitzero"`
-	// Array of pricing model configurations
+	// Array of pricing model configurations. Replaces all existing base pricing models
+	// on the draft — omit this to end up with no base pricing.
 	PricingModels []V1PlanUpdateParamsChargesPricingModel `json:"pricingModels,omitzero"`
 	paramObj
 }
@@ -2143,7 +2175,9 @@ func init() {
 	)
 }
 
-// Default trial configuration for the plan
+// Default trial configuration for the plan. When set, subscriptions provisioned on
+// this plan without explicit trial settings automatically start in trial for the
+// configured duration; leave unset for no automatic trial.
 //
 // The properties Duration, Units are required.
 type V1PlanUpdateParamsDefaultTrialConfig struct {
@@ -2303,7 +2337,9 @@ func (r V1PlanListOverageChargesParams) URLQuery() (v url.Values, err error) {
 }
 
 type V1PlanPublishParams struct {
-	// The migration type of the package
+	// Who the published version applies to: NEW_CUSTOMERS (default) leaves existing
+	// subscribers on their current version, ALL_CUSTOMERS moves them onto the new
+	// version immediately.
 	//
 	// Any of "NEW_CUSTOMERS", "ALL_CUSTOMERS".
 	MigrationType  V1PlanPublishParamsMigrationType `json:"migrationType,omitzero" api:"required"`
@@ -2320,7 +2356,9 @@ func (r *V1PlanPublishParams) UnmarshalJSON(data []byte) error {
 	return apijson.UnmarshalRoot(data, r)
 }
 
-// The migration type of the package
+// Who the published version applies to: NEW_CUSTOMERS (default) leaves existing
+// subscribers on their current version, ALL_CUSTOMERS moves them onto the new
+// version immediately.
 type V1PlanPublishParamsMigrationType string
 
 const (

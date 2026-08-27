@@ -234,12 +234,14 @@ type ProductDataProductSettings struct {
 	//
 	// Any of "PLAN_SELECTION", "TRIAL_PERIOD", "FREE_PLAN".
 	SubscriptionStartSetup string `json:"subscriptionStartSetup" api:"required"`
-	// ID of the plan to downgrade to at the end of the billing period
+	// ID of the plan to downgrade to at the end of the billing period. Only relevant
+	// when subscriptionEndSetup is DOWNGRADE_TO_FREE — ignored otherwise.
 	DowngradePlanID string `json:"downgradePlanId" api:"nullable"`
 	// Indicates if the subscription should be prorated at the end of the billing
 	// period
 	ProrateAtEndOfBillingPeriod bool `json:"prorateAtEndOfBillingPeriod" api:"nullable"`
-	// ID of the plan to start the subscription with
+	// ID of the plan to start the subscription with. Only relevant when
+	// subscriptionStartSetup is PLAN_SELECTION — ignored otherwise.
 	SubscriptionStartPlanID string `json:"subscriptionStartPlanId" api:"nullable"`
 	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
 	JSON struct {
@@ -326,12 +328,14 @@ type V1ProductListProductsResponseProductSettings struct {
 	//
 	// Any of "PLAN_SELECTION", "TRIAL_PERIOD", "FREE_PLAN".
 	SubscriptionStartSetup string `json:"subscriptionStartSetup" api:"required"`
-	// ID of the plan to downgrade to at the end of the billing period
+	// ID of the plan to downgrade to at the end of the billing period. Only relevant
+	// when subscriptionEndSetup is DOWNGRADE_TO_FREE — ignored otherwise.
 	DowngradePlanID string `json:"downgradePlanId" api:"nullable"`
 	// Indicates if the subscription should be prorated at the end of the billing
 	// period
 	ProrateAtEndOfBillingPeriod bool `json:"prorateAtEndOfBillingPeriod" api:"nullable"`
-	// ID of the plan to start the subscription with
+	// ID of the plan to start the subscription with. Only relevant when
+	// subscriptionStartSetup is PLAN_SELECTION — ignored otherwise.
 	SubscriptionStartPlanID string `json:"subscriptionStartPlanId" api:"nullable"`
 	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
 	JSON struct {
@@ -468,7 +472,9 @@ type V1ProductUpdateProductParams struct {
 	MultipleSubscriptions param.Opt[bool]   `json:"multipleSubscriptions,omitzero"`
 	XAccountID            param.Opt[string] `header:"X-ACCOUNT-ID,omitzero" json:"-"`
 	XEnvironmentID        param.Opt[string] `header:"X-ENVIRONMENT-ID,omitzero" json:"-"`
-	// Additional metadata for the product
+	// Additional metadata for the product. When included, this replaces the product's
+	// entire metadata object rather than merging with the existing keys — omit the
+	// field to leave existing metadata untouched.
 	Metadata        map[string]string                           `json:"metadata,omitzero"`
 	ProductSettings V1ProductUpdateProductParamsProductSettings `json:"productSettings,omitzero"`
 	// Rule defining when usage resets upon subscription update.
@@ -499,12 +505,14 @@ type V1ProductUpdateProductParamsProductSettings struct {
 	//
 	// Any of "PLAN_SELECTION", "TRIAL_PERIOD", "FREE_PLAN".
 	SubscriptionStartSetup string `json:"subscriptionStartSetup,omitzero" api:"required"`
-	// ID of the plan to downgrade to at the end of the billing period
+	// ID of the plan to downgrade to at the end of the billing period. Only relevant
+	// when subscriptionEndSetup is DOWNGRADE_TO_FREE — ignored otherwise.
 	DowngradePlanID param.Opt[string] `json:"downgradePlanId,omitzero"`
 	// Indicates if the subscription should be prorated at the end of the billing
 	// period
 	ProrateAtEndOfBillingPeriod param.Opt[bool] `json:"prorateAtEndOfBillingPeriod,omitzero"`
-	// ID of the plan to start the subscription with
+	// ID of the plan to start the subscription with. Only relevant when
+	// subscriptionStartSetup is PLAN_SELECTION — ignored otherwise.
 	SubscriptionStartPlanID param.Opt[string] `json:"subscriptionStartPlanId,omitzero"`
 	paramObj
 }

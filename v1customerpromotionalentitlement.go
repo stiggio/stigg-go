@@ -134,7 +134,11 @@ func (r *V1CustomerPromotionalEntitlementNewResponse) UnmarshalJSON(data []byte)
 	return apijson.UnmarshalRoot(data, r)
 }
 
-// Granted feature entitlement
+// A feature entitlement granted to a customer outside of their subscription plan.
+// Promotional entitlements are applied on top of whatever the subscription already
+// grants and are not removed when a plan or subscription changes; once past their
+// end date they keep appearing in the customer's entitlement list with an Expired
+// status rather than disappearing.
 type V1CustomerPromotionalEntitlementNewResponseData struct {
 	// Unique identifier for the entity
 	ID string `json:"id" api:"required" format:"uuid"`
@@ -315,7 +319,11 @@ func (r *V1CustomerPromotionalEntitlementNewResponseDataResetPeriodConfiguration
 	return apijson.UnmarshalRoot(data, r)
 }
 
-// Granted feature entitlement
+// A feature entitlement granted to a customer outside of their subscription plan.
+// Promotional entitlements are applied on top of whatever the subscription already
+// grants and are not removed when a plan or subscription changes; once past their
+// end date they keep appearing in the customer's entitlement list with an Expired
+// status rather than disappearing.
 type V1CustomerPromotionalEntitlementListResponse struct {
 	// Unique identifier for the entity
 	ID string `json:"id" api:"required" format:"uuid"`
@@ -530,7 +538,11 @@ const (
 
 // Response object
 type V1CustomerPromotionalEntitlementRevokeResponse struct {
-	// Granted feature entitlement
+	// A feature entitlement granted to a customer outside of their subscription plan.
+	// Promotional entitlements are applied on top of whatever the subscription already
+	// grants and are not removed when a plan or subscription changes; once past their
+	// end date they keep appearing in the customer's entitlement list with an Expired
+	// status rather than disappearing.
 	Data V1CustomerPromotionalEntitlementRevokeResponseData `json:"data" api:"required"`
 	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
 	JSON struct {
@@ -546,7 +558,11 @@ func (r *V1CustomerPromotionalEntitlementRevokeResponse) UnmarshalJSON(data []by
 	return apijson.UnmarshalRoot(data, r)
 }
 
-// Granted feature entitlement
+// A feature entitlement granted to a customer outside of their subscription plan.
+// Promotional entitlements are applied on top of whatever the subscription already
+// grants and are not removed when a plan or subscription changes; once past their
+// end date they keep appearing in the customer's entitlement list with an Expired
+// status rather than disappearing.
 type V1CustomerPromotionalEntitlementRevokeResponseData struct {
 	// Unique identifier for the entity
 	ID string `json:"id" api:"required" format:"uuid"`
@@ -743,7 +759,9 @@ func (r *V1CustomerPromotionalEntitlementNewParams) UnmarshalJSON(data []byte) e
 	return apijson.UnmarshalRoot(data, r)
 }
 
-// Single entitlement grant config
+// Single entitlement grant config. Granting again for the same customer and
+// feature replaces the existing promotional entitlement for that feature rather
+// than stacking a second one.
 //
 // The properties CustomEndDate, EnumValues, FeatureID, HasSoftLimit,
 // HasUnlimitedUsage, IsVisible, MonthlyResetPeriodConfiguration, Period,

@@ -191,7 +191,8 @@ type FeatureData struct {
 	//
 	// Any of "NEW", "SUSPENDED", "ACTIVE".
 	FeatureStatus string `json:"featureStatus" api:"required"`
-	// The type of the feature
+	// The type of the feature: BOOLEAN (on/off access), NUMBER (a numeric limit or
+	// quantity), or ENUM (one of a fixed set of values).
 	//
 	// Any of "BOOLEAN", "NUMBER", "ENUM".
 	FeatureType string `json:"featureType" api:"required"`
@@ -203,7 +204,11 @@ type FeatureData struct {
 	Metadata map[string]string `json:"metadata" api:"required"`
 	// Event meter that turns reported events into usage for a metered feature
 	Meter FeatureDataMeter `json:"meter" api:"required"`
-	// The meter type for the feature
+	// How usage accumulates for this feature. `Incremental` and `Fluctuating` features
+	// track usage from reported events; `None` means the feature's value isn't
+	// usage-tracked — it's just a numeric or enum value carried by the plan (for
+	// example, a seat count or a tier setting) rather than something customers
+	// consume.
 	//
 	// Any of "None", "FLUCTUATING", "INCREMENTAL".
 	MeterType string `json:"meterType" api:"required"`
@@ -395,7 +400,8 @@ type V1FeatureListFeaturesResponse struct {
 	//
 	// Any of "NEW", "SUSPENDED", "ACTIVE".
 	FeatureStatus V1FeatureListFeaturesResponseFeatureStatus `json:"featureStatus" api:"required"`
-	// The type of the feature
+	// The type of the feature: BOOLEAN (on/off access), NUMBER (a numeric limit or
+	// quantity), or ENUM (one of a fixed set of values).
 	//
 	// Any of "BOOLEAN", "NUMBER", "ENUM".
 	FeatureType V1FeatureListFeaturesResponseFeatureType `json:"featureType" api:"required"`
@@ -407,7 +413,11 @@ type V1FeatureListFeaturesResponse struct {
 	Metadata map[string]string `json:"metadata" api:"required"`
 	// Event meter that turns reported events into usage for a metered feature
 	Meter V1FeatureListFeaturesResponseMeter `json:"meter" api:"required"`
-	// The meter type for the feature
+	// How usage accumulates for this feature. `Incremental` and `Fluctuating` features
+	// track usage from reported events; `None` means the feature's value isn't
+	// usage-tracked — it's just a numeric or enum value carried by the plan (for
+	// example, a seat count or a tier setting) rather than something customers
+	// consume.
 	//
 	// Any of "None", "FLUCTUATING", "INCREMENTAL".
 	MeterType V1FeatureListFeaturesResponseMeterType `json:"meterType" api:"required"`
@@ -471,7 +481,8 @@ const (
 	V1FeatureListFeaturesResponseFeatureStatusActive    V1FeatureListFeaturesResponseFeatureStatus = "ACTIVE"
 )
 
-// The type of the feature
+// The type of the feature: BOOLEAN (on/off access), NUMBER (a numeric limit or
+// quantity), or ENUM (one of a fixed set of values).
 type V1FeatureListFeaturesResponseFeatureType string
 
 const (
@@ -572,7 +583,11 @@ func (r *V1FeatureListFeaturesResponseMeterFilterCondition) UnmarshalJSON(data [
 	return apijson.UnmarshalRoot(data, r)
 }
 
-// The meter type for the feature
+// How usage accumulates for this feature. `Incremental` and `Fluctuating` features
+// track usage from reported events; `None` means the feature's value isn't
+// usage-tracked — it's just a numeric or enum value carried by the plan (for
+// example, a seat count or a tier setting) rather than something customers
+// consume.
 type V1FeatureListFeaturesResponseMeterType string
 
 const (
@@ -621,7 +636,8 @@ type V1FeatureNewFeatureParams struct {
 	ID string `json:"id" api:"required"`
 	// The display name for the feature
 	DisplayName string `json:"displayName" api:"required"`
-	// The type of the feature
+	// The type of the feature: BOOLEAN (on/off access), NUMBER (a numeric limit or
+	// quantity), or ENUM (one of a fixed set of values).
 	//
 	// Any of "BOOLEAN", "NUMBER", "ENUM".
 	FeatureType V1FeatureNewFeatureParamsFeatureType `json:"featureType,omitzero" api:"required"`
@@ -645,7 +661,11 @@ type V1FeatureNewFeatureParams struct {
 	Metadata map[string]string `json:"metadata,omitzero"`
 	// Event meter that turns reported events into usage for a metered feature
 	Meter V1FeatureNewFeatureParamsMeter `json:"meter,omitzero"`
-	// The meter type for the feature
+	// How usage accumulates for this feature. `Incremental` and `Fluctuating` features
+	// track usage from reported events; `None` means the feature's value isn't
+	// usage-tracked — it's just a numeric or enum value carried by the plan (for
+	// example, a seat count or a tier setting) rather than something customers
+	// consume.
 	//
 	// Any of "None", "FLUCTUATING", "INCREMENTAL".
 	MeterType V1FeatureNewFeatureParamsMeterType `json:"meterType,omitzero"`
@@ -660,7 +680,8 @@ func (r *V1FeatureNewFeatureParams) UnmarshalJSON(data []byte) error {
 	return apijson.UnmarshalRoot(data, r)
 }
 
-// The type of the feature
+// The type of the feature: BOOLEAN (on/off access), NUMBER (a numeric limit or
+// quantity), or ENUM (one of a fixed set of values).
 type V1FeatureNewFeatureParamsFeatureType string
 
 const (
@@ -786,7 +807,11 @@ func init() {
 	)
 }
 
-// The meter type for the feature
+// How usage accumulates for this feature. `Incremental` and `Fluctuating` features
+// track usage from reported events; `None` means the feature's value isn't
+// usage-tracked — it's just a numeric or enum value carried by the plan (for
+// example, a seat count or a tier setting) rather than something customers
+// consume.
 type V1FeatureNewFeatureParamsMeterType string
 
 const (

@@ -57,8 +57,8 @@ func (r *V1EventService) Estimate(ctx context.Context, params V1EventEstimatePar
 	return res, err
 }
 
-// Reports raw usage events for event-based metering. Events are ingested
-// asynchronously and aggregated into usage totals.
+// Reports raw usage events for event-based metering. Events are validated and
+// stored synchronously, then aggregated into usage totals asynchronously.
 func (r *V1EventService) Report(ctx context.Context, params V1EventReportParams, opts ...option.RequestOption) (res *V1EventReportResponse, err error) {
 	if !param.IsOmitted(params.XAccountID) {
 		opts = append(opts, option.WithHeader("X-ACCOUNT-ID", fmt.Sprintf("%v", params.XAccountID.Value)))
@@ -195,7 +195,10 @@ type V1EventEstimateParams struct {
 	CustomerID string `json:"customerId" api:"required"`
 	// The name of the usage event
 	EventName string `json:"eventName" api:"required"`
-	// Resource id
+	// The customer resource this usage applies to. Optional — only required if the
+	// customer has multiple resources (for example, one subscription per workspace or
+	// site) and usage needs to be tracked separately per resource; omit it to report
+	// usage at the customer level.
 	ResourceID     param.Opt[string] `json:"resourceId,omitzero"`
 	XAccountID     param.Opt[string] `header:"X-ACCOUNT-ID,omitzero" json:"-"`
 	XEnvironmentID param.Opt[string] `header:"X-ENVIRONMENT-ID,omitzero" json:"-"`
@@ -264,9 +267,14 @@ type V1EventReportParamsEvent struct {
 	CustomerID string `json:"customerId" api:"required"`
 	// The name of the usage event
 	EventName string `json:"eventName" api:"required"`
-	// Idempotency key
+	// A key you provide to safely retry the same usage report without double-counting
+	// it. Reports with a previously-seen idempotency key are deduplicated for 7 days;
+	// after that window a retry is treated as new usage.
 	IdempotencyKey string `json:"idempotencyKey" api:"required"`
-	// Resource id
+	// The customer resource this usage applies to. Optional — only required if the
+	// customer has multiple resources (for example, one subscription per workspace or
+	// site) and usage needs to be tracked separately per resource; omit it to report
+	// usage at the customer level.
 	ResourceID param.Opt[string] `json:"resourceId,omitzero"`
 	// Timestamp
 	Timestamp param.Opt[time.Time] `json:"timestamp,omitzero" format:"date-time"`
