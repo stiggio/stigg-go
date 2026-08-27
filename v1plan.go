@@ -612,7 +612,7 @@ type V1PlanListChargesResponse struct {
 	BillingPeriod V1PlanListChargesResponseBillingPeriod `json:"billingPeriod" api:"required"`
 	// Timestamp when the charge was created
 	CreatedAt time.Time `json:"createdAt" api:"required" format:"date-time"`
-	// ISO country code for localized pricing, if any
+	// ISO country code (or "eu" for Eurozone) for localized pricing, if any
 	BillingCountryCode string `json:"billingCountryCode" api:"nullable"`
 	// Identifier in the external billing integration (e.g. Stripe price id), if any
 	BillingID string `json:"billingId" api:"nullable"`
@@ -889,7 +889,7 @@ type V1PlanListOverageChargesResponse struct {
 	BillingPeriod V1PlanListOverageChargesResponseBillingPeriod `json:"billingPeriod" api:"required"`
 	// Timestamp when the charge was created
 	CreatedAt time.Time `json:"createdAt" api:"required" format:"date-time"`
-	// ISO country code for localized pricing, if any
+	// ISO country code (or "eu" for Eurozone) for localized pricing, if any
 	BillingCountryCode string `json:"billingCountryCode" api:"nullable"`
 	// Identifier in the external billing integration (e.g. Stripe price id), if any
 	BillingID string `json:"billingId" api:"nullable"`
@@ -1514,7 +1514,7 @@ type V1PlanUpdateParamsChargesOveragePricingModelPricePeriod struct {
 	//
 	// Any of "MONTHLY", "ANNUALLY".
 	BillingPeriod string `json:"billingPeriod,omitzero" api:"required"`
-	// ISO country code for localized pricing
+	// ISO country code (or "eu" for Eurozone) for localized pricing
 	BillingCountryCode param.Opt[string] `json:"billingCountryCode,omitzero"`
 	// Block size for usage-based pricing
 	BlockSize param.Opt[float64] `json:"blockSize,omitzero"`
@@ -1914,7 +1914,7 @@ type V1PlanUpdateParamsChargesPricingModelPricePeriod struct {
 	//
 	// Any of "MONTHLY", "ANNUALLY".
 	BillingPeriod string `json:"billingPeriod,omitzero" api:"required"`
-	// ISO country code for localized pricing
+	// ISO country code (or "eu" for Eurozone) for localized pricing
 	BillingCountryCode param.Opt[string] `json:"billingCountryCode,omitzero"`
 	// Block size for usage-based pricing
 	BlockSize param.Opt[float64] `json:"blockSize,omitzero"`
