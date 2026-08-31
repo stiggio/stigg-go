@@ -461,7 +461,8 @@ type V1AddonListChargesResponse struct {
 	BillingPeriod V1AddonListChargesResponseBillingPeriod `json:"billingPeriod" api:"required"`
 	// Timestamp when the charge was created
 	CreatedAt time.Time `json:"createdAt" api:"required" format:"date-time"`
-	// ISO country code (or "eu" for Eurozone) for localized pricing, if any
+	// ISO country code for localized pricing, or "eu" for the European Union group you
+	// map countries into, if any
 	BillingCountryCode string `json:"billingCountryCode" api:"nullable"`
 	// Identifier in the external billing integration (e.g. Stripe price id), if any
 	BillingID string `json:"billingId" api:"nullable"`
@@ -1024,7 +1025,8 @@ type V1AddonUpdateParamsChargesOveragePricingModelPricePeriod struct {
 	//
 	// Any of "MONTHLY", "ANNUALLY".
 	BillingPeriod string `json:"billingPeriod,omitzero" api:"required"`
-	// ISO country code (or "eu" for Eurozone) for localized pricing
+	// ISO country code for localized pricing, or "eu" for the European Union group you
+	// map countries into
 	BillingCountryCode param.Opt[string] `json:"billingCountryCode,omitzero"`
 	// Block size for usage-based pricing
 	BlockSize param.Opt[float64] `json:"blockSize,omitzero"`
@@ -1424,7 +1426,8 @@ type V1AddonUpdateParamsChargesPricingModelPricePeriod struct {
 	//
 	// Any of "MONTHLY", "ANNUALLY".
 	BillingPeriod string `json:"billingPeriod,omitzero" api:"required"`
-	// ISO country code (or "eu" for Eurozone) for localized pricing
+	// ISO country code for localized pricing, or "eu" for the European Union group you
+	// map countries into
 	BillingCountryCode param.Opt[string] `json:"billingCountryCode,omitzero"`
 	// Block size for usage-based pricing
 	BlockSize param.Opt[float64] `json:"blockSize,omitzero"`

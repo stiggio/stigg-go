@@ -631,10 +631,10 @@ type SubscriptionDataPrice struct {
 	Amount float64 `json:"amount"`
 	// Whether this is a base charge override
 	BaseCharge bool `json:"baseCharge"`
-	// ISO 3166-1 alpha-2 country code this price applies to, or "eu" for the Eurozone
-	// region. Omit for the default price shown to all countries; set one or more
-	// country-specific price periods on the same currency to localize the amount by
-	// billing country.
+	// ISO 3166-1 alpha-2 country code this price applies to, or "eu" for the European
+	// Union group you map countries into. Omit for the default price shown to all
+	// countries; set one or more country-specific price periods on the same currency
+	// to localize the amount by billing country.
 	BillingCountryCode string `json:"billingCountryCode"`
 	// Block size for pricing
 	BlockSize float64 `json:"blockSize"`
@@ -1231,10 +1231,10 @@ type V1SubscriptionListResponsePrice struct {
 	Amount float64 `json:"amount"`
 	// Whether this is a base charge override
 	BaseCharge bool `json:"baseCharge"`
-	// ISO 3166-1 alpha-2 country code this price applies to, or "eu" for the Eurozone
-	// region. Omit for the default price shown to all countries; set one or more
-	// country-specific price periods on the same currency to localize the amount by
-	// billing country.
+	// ISO 3166-1 alpha-2 country code this price applies to, or "eu" for the European
+	// Union group you map countries into. Omit for the default price shown to all
+	// countries; set one or more country-specific price periods on the same currency
+	// to localize the amount by billing country.
 	BillingCountryCode string `json:"billingCountryCode"`
 	// Block size for pricing
 	BlockSize float64 `json:"blockSize"`
@@ -2509,10 +2509,10 @@ type V1SubscriptionProvisionResponseDataSubscriptionPrice struct {
 	Amount float64 `json:"amount"`
 	// Whether this is a base charge override
 	BaseCharge bool `json:"baseCharge"`
-	// ISO 3166-1 alpha-2 country code this price applies to, or "eu" for the Eurozone
-	// region. Omit for the default price shown to all countries; set one or more
-	// country-specific price periods on the same currency to localize the amount by
-	// billing country.
+	// ISO 3166-1 alpha-2 country code this price applies to, or "eu" for the European
+	// Union group you map countries into. Omit for the default price shown to all
+	// countries; set one or more country-specific price periods on the same currency
+	// to localize the amount by billing country.
 	BillingCountryCode string `json:"billingCountryCode"`
 	// Block size for pricing
 	BlockSize float64 `json:"blockSize"`
@@ -3603,8 +3603,8 @@ type V1SubscriptionPreviewParams struct {
 	CustomerID string `json:"customerId" api:"required"`
 	// Plan ID
 	PlanID string `json:"planId" api:"required"`
-	// Country code selecting a localized price ("eu" for Eurozone); the default price
-	// applies when none matches
+	// Country code selecting a localized price, or "eu" for the European Union group
+	// you map countries into; the default price applies when none matches
 	BillingCountryCode param.Opt[string] `json:"billingCountryCode,omitzero"`
 	// Paying customer ID for delegated billing
 	PayingCustomerID param.Opt[string] `json:"payingCustomerId,omitzero"`
@@ -3955,8 +3955,9 @@ type V1SubscriptionProvisionParams struct {
 	CustomerID string `json:"customerId" api:"required"`
 	// Plan ID to provision
 	PlanID string `json:"planId" api:"required"`
-	// The country code used to select a localized price (or "eu" for Eurozone),
-	// falling back to the default price when none matches
+	// The country code used to select a localized price, or "eu" for the European
+	// Union group you map countries into, falling back to the default price when none
+	// matches
 	BillingCountryCode param.Opt[string] `json:"billingCountryCode,omitzero"`
 	// External billing system identifier
 	BillingID param.Opt[string] `json:"billingId,omitzero"`
@@ -4644,10 +4645,10 @@ type V1SubscriptionProvisionParamsPriceOverride struct {
 	Amount param.Opt[float64] `json:"amount,omitzero"`
 	// Whether this is a base charge override
 	BaseCharge param.Opt[bool] `json:"baseCharge,omitzero"`
-	// ISO 3166-1 alpha-2 country code this price applies to, or "eu" for the Eurozone
-	// region. Omit for the default price shown to all countries; set one or more
-	// country-specific price periods on the same currency to localize the amount by
-	// billing country.
+	// ISO 3166-1 alpha-2 country code this price applies to, or "eu" for the European
+	// Union group you map countries into. Omit for the default price shown to all
+	// countries; set one or more country-specific price periods on the same currency
+	// to localize the amount by billing country.
 	BillingCountryCode param.Opt[string] `json:"billingCountryCode,omitzero"`
 	// Block size for pricing
 	BlockSize param.Opt[float64] `json:"blockSize,omitzero"`
