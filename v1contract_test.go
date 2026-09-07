@@ -28,7 +28,13 @@ func TestV1ContractNewWithOptionalParams(t *testing.T) {
 		option.WithAPIKey("My API Key"),
 	)
 	_, err := client.V1.Contracts.New(context.TODO(), stigg.V1ContractNewParams{
-		CustomerID: "customerId",
+		CustomerID:          "customerId",
+		ActivationEndDate:   stigg.Time(time.Now()),
+		ActivationStartDate: stigg.Time(time.Now()),
+		ContractID:          stigg.String("contractId"),
+		Name:                stigg.String("name"),
+		PoNumber:            stigg.String("poNumber"),
+		SetupBilling:        stigg.Bool(true),
 		Subscriptions: []stigg.V1ContractNewParamsSubscription{{
 			ExistingSubscriptionID: stigg.String("existingSubscriptionId"),
 			NewSubscription: stigg.V1ContractNewParamsSubscriptionNewSubscription{
@@ -171,13 +177,8 @@ func TestV1ContractNewWithOptionalParams(t *testing.T) {
 				UnitQuantity: stigg.Int(0),
 			},
 		}},
-		ActivationEndDate:   stigg.Time(time.Now()),
-		ActivationStartDate: stigg.Time(time.Now()),
-		Name:                stigg.String("name"),
-		PoNumber:            stigg.String("poNumber"),
-		SetupBilling:        stigg.Bool(true),
-		XAccountID:          stigg.String("X-ACCOUNT-ID"),
-		XEnvironmentID:      stigg.String("X-ENVIRONMENT-ID"),
+		XAccountID:     stigg.String("X-ACCOUNT-ID"),
+		XEnvironmentID: stigg.String("X-ENVIRONMENT-ID"),
 	})
 	if err != nil {
 		var apierr *stigg.Error

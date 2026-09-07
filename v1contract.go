@@ -98,10 +98,9 @@ func (r *V1ContractService) Update(ctx context.Context, id string, params V1Cont
 	return res, err
 }
 
-// Retrieves a cursor-paginated list of contracts in the environment, fetched live
-// from the connected billing provider. Each contract is enriched with a preview of
-// its upcoming (next) invoice when one is available. Returns an empty list when no
-// billing provider is connected. Supports filtering by customer external ID,
+// Retrieves a cursor-paginated list of contracts in the environment. Each contract
+// that has a billing contract is enriched with a preview of its upcoming (next)
+// invoice when one is available. Supports filtering by customer external ID,
 // state, and name.
 func (r *V1ContractService) List(ctx context.Context, params V1ContractListParams, opts ...option.RequestOption) (res *pagination.MyCursorIDPage[V1ContractListResponse], err error) {
 	var raw *http.Response
@@ -126,10 +125,9 @@ func (r *V1ContractService) List(ctx context.Context, params V1ContractListParam
 	return res, nil
 }
 
-// Retrieves a cursor-paginated list of contracts in the environment, fetched live
-// from the connected billing provider. Each contract is enriched with a preview of
-// its upcoming (next) invoice when one is available. Returns an empty list when no
-// billing provider is connected. Supports filtering by customer external ID,
+// Retrieves a cursor-paginated list of contracts in the environment. Each contract
+// that has a billing contract is enriched with a preview of its upcoming (next)
+// invoice when one is available. Supports filtering by customer external ID,
 // state, and name.
 func (r *V1ContractService) ListAutoPaging(ctx context.Context, params V1ContractListParams, opts ...option.RequestOption) *pagination.MyCursorIDPageAutoPager[V1ContractListResponse] {
 	return pagination.NewMyCursorIDPageAutoPager(r.List(ctx, params, opts...))
@@ -1284,10 +1282,6 @@ func (r *V1ContractDeleteResponseDataSubscription) UnmarshalJSON(data []byte) er
 type V1ContractNewParams struct {
 	// The customer ref ID the contract belongs to
 	CustomerID string `json:"customerId" api:"required"`
-	// The subscriptions to attach to the contract (must be non-empty). Each entry is
-	// either a new subscription to create or a reference to an existing custom
-	// subscription.
-	Subscriptions []V1ContractNewParamsSubscription `json:"subscriptions,omitzero" api:"required"`
 	// Optional contract name
 	Name param.Opt[string] `json:"name,omitzero"`
 	// Optional purchase-order number
@@ -1296,12 +1290,23 @@ type V1ContractNewParams struct {
 	ActivationEndDate param.Opt[time.Time] `json:"activationEndDate,omitzero" format:"date-time"`
 	// Optional contract activation start date
 	ActivationStartDate param.Opt[time.Time] `json:"activationStartDate,omitzero" format:"date-time"`
+	// Your own ID for the contract, which makes this call idempotent: sending the same
+	// one again returns the existing contract instead of creating a second. Omit it
+	// and one is generated for you, but then a retry cannot be told apart from a new
+	// contract — and contracts cannot be deleted. Recommended whenever a retry is
+	// possible, e.g. building a contract from an order form.
+	ContractID param.Opt[string] `json:"contractId,omitzero"`
 	// Whether to set up billing for the contract by creating a billing contract in the
 	// connected billing provider. When false, the contract only provisions access
 	// (grants entitlements) and no billing contract is created. Defaults to true.
 	SetupBilling   param.Opt[bool]   `json:"setupBilling,omitzero"`
 	XAccountID     param.Opt[string] `header:"X-ACCOUNT-ID,omitzero" json:"-"`
 	XEnvironmentID param.Opt[string] `header:"X-ENVIRONMENT-ID,omitzero" json:"-"`
+	// The subscriptions to attach to the contract. Each entry is either a new
+	// subscription to create or a reference to an existing custom subscription.
+	// Optional — omit it (or pass an empty list) to create a contract with no
+	// subscriptions and attach them later.
+	Subscriptions []V1ContractNewParamsSubscription `json:"subscriptions,omitzero"`
 	paramObj
 }
 

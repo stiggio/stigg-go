@@ -175,10 +175,9 @@ func (r *V1CustomerService) Import(ctx context.Context, params V1CustomerImportP
 	return res, err
 }
 
-// Retrieves a customer's contracts, fetched live from the connected billing
-// provider, each enriched with a preview of its upcoming (next) invoice when
-// available. Returns an empty list when no billing provider is connected or the
-// customer is not synced.
+// Retrieves a customer's contracts. Each contract that has a billing contract is
+// enriched with a preview of its upcoming (next) invoice when available. Returns
+// an empty list when the customer has no contracts.
 func (r *V1CustomerService) ListContracts(ctx context.Context, id string, query V1CustomerListContractsParams, opts ...option.RequestOption) (res *V1CustomerListContractsResponse, err error) {
 	if !param.IsOmitted(query.XAccountID) {
 		opts = append(opts, option.WithHeader("X-ACCOUNT-ID", fmt.Sprintf("%v", query.XAccountID.Value)))
