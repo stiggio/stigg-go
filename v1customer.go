@@ -606,7 +606,7 @@ type CustomerResponseDataDefaultPaymentMethod struct {
 	CardLast4Digits string `json:"cardLast4Digits" api:"required"`
 	// The default payment method type
 	//
-	// Any of "CARD", "BANK", "CASH_APP".
+	// Any of "CARD", "BANK", "CASH_APP", "PAYPAL".
 	Type string `json:"type" api:"required"`
 	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
 	JSON struct {
@@ -1095,7 +1095,7 @@ type V1CustomerListResponseDefaultPaymentMethod struct {
 	CardLast4Digits string `json:"cardLast4Digits" api:"required"`
 	// The default payment method type
 	//
-	// Any of "CARD", "BANK", "CASH_APP".
+	// Any of "CARD", "BANK", "CASH_APP", "PAYPAL".
 	Type string `json:"type" api:"required"`
 	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
 	JSON struct {
@@ -3167,7 +3167,7 @@ type V1CustomerProvisionParamsDefaultPaymentMethod struct {
 	CardLast4Digits param.Opt[string] `json:"cardLast4Digits,omitzero" api:"required"`
 	// The default payment method type
 	//
-	// Any of "CARD", "BANK", "CASH_APP".
+	// Any of "CARD", "BANK", "CASH_APP", "PAYPAL".
 	Type string `json:"type,omitzero" api:"required"`
 	paramObj
 }
@@ -3182,7 +3182,7 @@ func (r *V1CustomerProvisionParamsDefaultPaymentMethod) UnmarshalJSON(data []byt
 
 func init() {
 	apijson.RegisterFieldValidator[V1CustomerProvisionParamsDefaultPaymentMethod](
-		"type", "CARD", "BANK", "CASH_APP",
+		"type", "CARD", "BANK", "CASH_APP", "PAYPAL",
 	)
 }
 
