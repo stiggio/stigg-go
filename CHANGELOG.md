@@ -1,5 +1,14 @@
 # Changelog
 
+## [0.1.0-beta.50](https://github.com/stiggio/stigg-go/compare/v0.1.0-beta.49...v0.1.0-beta.50) (2026-09-29)
+
+
+### Bug Fixes
+
+* **STIGG-9768:** stop exporting skipped workflow runs as failures ([91491d2](https://github.com/stiggio/stigg-go/commit/91491d2acf61d8ffcfea92983a3962c533e1c6af))
+* **STIGG-9768:** stop exporting skipped workflow runs as failures ([36f0f8a](https://github.com/stiggio/stigg-go/commit/36f0f8a85817bcc70a17dfafad6b3c37c948bec7))
+* sync OpenAPI spec from stigg-api ([b566f7e](https://github.com/stiggio/stigg-go/commit/b566f7ee77b267dcdf6b5a18b41d455964833226))
+
 ## [0.1.0-beta.49](https://github.com/stiggio/stigg-go/compare/v0.1.0-beta.48...v0.1.0-beta.49) (2026-08-12)
 
 
