@@ -170,11 +170,9 @@ type V1CustomerIntegrationListResponse struct {
 	// Stripe customer ID). Null until the link has synced; required when creating the
 	// link.
 	SyncedEntityID string `json:"syncedEntityId" api:"required"`
-	// The vendor identifier of the integration (e.g. STRIPE, SALESFORCE, SNOWFLAKE)
+	// The vendor whose system holds the customer record
 	//
-	// Any of "AUTH0", "ZUORA", "STRIPE", "HUBSPOT", "AWS_MARKETPLACE", "SNOWFLAKE",
-	// "SALESFORCE", "BIG_QUERY", "OPEN_FGA", "APP_STORE", "RECEIVED", "PREQUEL",
-	// "AIRWALLEX", "STRIPE_INVOICING".
+	// Any of "STRIPE", "ZUORA", "HUBSPOT", "AWS_MARKETPLACE".
 	VendorIdentifier V1CustomerIntegrationListResponseVendorIdentifier `json:"vendorIdentifier" api:"required"`
 	// Price billing sync revision data containing billing ID, link URL, and price
 	// group package billing ID
@@ -196,24 +194,14 @@ func (r *V1CustomerIntegrationListResponse) UnmarshalJSON(data []byte) error {
 	return apijson.UnmarshalRoot(data, r)
 }
 
-// The vendor identifier of the integration (e.g. STRIPE, SALESFORCE, SNOWFLAKE)
+// The vendor whose system holds the customer record
 type V1CustomerIntegrationListResponseVendorIdentifier string
 
 const (
-	V1CustomerIntegrationListResponseVendorIdentifierAuth0           V1CustomerIntegrationListResponseVendorIdentifier = "AUTH0"
-	V1CustomerIntegrationListResponseVendorIdentifierZuora           V1CustomerIntegrationListResponseVendorIdentifier = "ZUORA"
-	V1CustomerIntegrationListResponseVendorIdentifierStripe          V1CustomerIntegrationListResponseVendorIdentifier = "STRIPE"
-	V1CustomerIntegrationListResponseVendorIdentifierHubspot         V1CustomerIntegrationListResponseVendorIdentifier = "HUBSPOT"
-	V1CustomerIntegrationListResponseVendorIdentifierAwsMarketplace  V1CustomerIntegrationListResponseVendorIdentifier = "AWS_MARKETPLACE"
-	V1CustomerIntegrationListResponseVendorIdentifierSnowflake       V1CustomerIntegrationListResponseVendorIdentifier = "SNOWFLAKE"
-	V1CustomerIntegrationListResponseVendorIdentifierSalesforce      V1CustomerIntegrationListResponseVendorIdentifier = "SALESFORCE"
-	V1CustomerIntegrationListResponseVendorIdentifierBigQuery        V1CustomerIntegrationListResponseVendorIdentifier = "BIG_QUERY"
-	V1CustomerIntegrationListResponseVendorIdentifierOpenFga         V1CustomerIntegrationListResponseVendorIdentifier = "OPEN_FGA"
-	V1CustomerIntegrationListResponseVendorIdentifierAppStore        V1CustomerIntegrationListResponseVendorIdentifier = "APP_STORE"
-	V1CustomerIntegrationListResponseVendorIdentifierReceived        V1CustomerIntegrationListResponseVendorIdentifier = "RECEIVED"
-	V1CustomerIntegrationListResponseVendorIdentifierPrequel         V1CustomerIntegrationListResponseVendorIdentifier = "PREQUEL"
-	V1CustomerIntegrationListResponseVendorIdentifierAirwallex       V1CustomerIntegrationListResponseVendorIdentifier = "AIRWALLEX"
-	V1CustomerIntegrationListResponseVendorIdentifierStripeInvoicing V1CustomerIntegrationListResponseVendorIdentifier = "STRIPE_INVOICING"
+	V1CustomerIntegrationListResponseVendorIdentifierStripe         V1CustomerIntegrationListResponseVendorIdentifier = "STRIPE"
+	V1CustomerIntegrationListResponseVendorIdentifierZuora          V1CustomerIntegrationListResponseVendorIdentifier = "ZUORA"
+	V1CustomerIntegrationListResponseVendorIdentifierHubspot        V1CustomerIntegrationListResponseVendorIdentifier = "HUBSPOT"
+	V1CustomerIntegrationListResponseVendorIdentifierAwsMarketplace V1CustomerIntegrationListResponseVendorIdentifier = "AWS_MARKETPLACE"
 )
 
 // V1CustomerIntegrationListResponseSyncDataUnion contains all possible properties
@@ -371,9 +359,7 @@ type V1CustomerIntegrationListParams struct {
 	// Filter by vendor identifier. Supports comma-separated values for multiple
 	// vendors (e.g., STRIPE,HUBSPOT)
 	//
-	// Any of "AUTH0", "ZUORA", "STRIPE", "HUBSPOT", "AWS_MARKETPLACE", "SNOWFLAKE",
-	// "SALESFORCE", "BIG_QUERY", "OPEN_FGA", "APP_STORE", "RECEIVED", "PREQUEL",
-	// "AIRWALLEX", "STRIPE_INVOICING".
+	// Any of "STRIPE", "ZUORA", "HUBSPOT", "AWS_MARKETPLACE".
 	VendorIdentifier []string `query:"vendorIdentifier,omitzero" json:"-"`
 	paramObj
 }
@@ -394,11 +380,9 @@ type V1CustomerIntegrationLinkParams struct {
 	// Stripe customer ID). Null until the link has synced; required when creating the
 	// link.
 	SyncedEntityID string `json:"syncedEntityId" api:"required"`
-	// The vendor identifier of the integration (e.g. STRIPE, SALESFORCE, SNOWFLAKE)
+	// The vendor whose system holds the customer record
 	//
-	// Any of "AUTH0", "ZUORA", "STRIPE", "HUBSPOT", "AWS_MARKETPLACE", "SNOWFLAKE",
-	// "SALESFORCE", "BIG_QUERY", "OPEN_FGA", "APP_STORE", "RECEIVED", "PREQUEL",
-	// "AIRWALLEX", "STRIPE_INVOICING".
+	// Any of "STRIPE", "ZUORA", "HUBSPOT", "AWS_MARKETPLACE".
 	VendorIdentifier V1CustomerIntegrationLinkParamsVendorIdentifier `json:"vendorIdentifier,omitzero" api:"required"`
 	XAccountID       param.Opt[string]                               `header:"X-ACCOUNT-ID,omitzero" json:"-"`
 	XEnvironmentID   param.Opt[string]                               `header:"X-ENVIRONMENT-ID,omitzero" json:"-"`
@@ -413,24 +397,14 @@ func (r *V1CustomerIntegrationLinkParams) UnmarshalJSON(data []byte) error {
 	return apijson.UnmarshalRoot(data, r)
 }
 
-// The vendor identifier of the integration (e.g. STRIPE, SALESFORCE, SNOWFLAKE)
+// The vendor whose system holds the customer record
 type V1CustomerIntegrationLinkParamsVendorIdentifier string
 
 const (
-	V1CustomerIntegrationLinkParamsVendorIdentifierAuth0           V1CustomerIntegrationLinkParamsVendorIdentifier = "AUTH0"
-	V1CustomerIntegrationLinkParamsVendorIdentifierZuora           V1CustomerIntegrationLinkParamsVendorIdentifier = "ZUORA"
-	V1CustomerIntegrationLinkParamsVendorIdentifierStripe          V1CustomerIntegrationLinkParamsVendorIdentifier = "STRIPE"
-	V1CustomerIntegrationLinkParamsVendorIdentifierHubspot         V1CustomerIntegrationLinkParamsVendorIdentifier = "HUBSPOT"
-	V1CustomerIntegrationLinkParamsVendorIdentifierAwsMarketplace  V1CustomerIntegrationLinkParamsVendorIdentifier = "AWS_MARKETPLACE"
-	V1CustomerIntegrationLinkParamsVendorIdentifierSnowflake       V1CustomerIntegrationLinkParamsVendorIdentifier = "SNOWFLAKE"
-	V1CustomerIntegrationLinkParamsVendorIdentifierSalesforce      V1CustomerIntegrationLinkParamsVendorIdentifier = "SALESFORCE"
-	V1CustomerIntegrationLinkParamsVendorIdentifierBigQuery        V1CustomerIntegrationLinkParamsVendorIdentifier = "BIG_QUERY"
-	V1CustomerIntegrationLinkParamsVendorIdentifierOpenFga         V1CustomerIntegrationLinkParamsVendorIdentifier = "OPEN_FGA"
-	V1CustomerIntegrationLinkParamsVendorIdentifierAppStore        V1CustomerIntegrationLinkParamsVendorIdentifier = "APP_STORE"
-	V1CustomerIntegrationLinkParamsVendorIdentifierReceived        V1CustomerIntegrationLinkParamsVendorIdentifier = "RECEIVED"
-	V1CustomerIntegrationLinkParamsVendorIdentifierPrequel         V1CustomerIntegrationLinkParamsVendorIdentifier = "PREQUEL"
-	V1CustomerIntegrationLinkParamsVendorIdentifierAirwallex       V1CustomerIntegrationLinkParamsVendorIdentifier = "AIRWALLEX"
-	V1CustomerIntegrationLinkParamsVendorIdentifierStripeInvoicing V1CustomerIntegrationLinkParamsVendorIdentifier = "STRIPE_INVOICING"
+	V1CustomerIntegrationLinkParamsVendorIdentifierStripe         V1CustomerIntegrationLinkParamsVendorIdentifier = "STRIPE"
+	V1CustomerIntegrationLinkParamsVendorIdentifierZuora          V1CustomerIntegrationLinkParamsVendorIdentifier = "ZUORA"
+	V1CustomerIntegrationLinkParamsVendorIdentifierHubspot        V1CustomerIntegrationLinkParamsVendorIdentifier = "HUBSPOT"
+	V1CustomerIntegrationLinkParamsVendorIdentifierAwsMarketplace V1CustomerIntegrationLinkParamsVendorIdentifier = "AWS_MARKETPLACE"
 )
 
 type V1CustomerIntegrationUnlinkParams struct {

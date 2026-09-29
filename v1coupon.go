@@ -172,8 +172,9 @@ type CouponData struct {
 	CreatedAt time.Time `json:"createdAt" api:"required" format:"date-time"`
 	// Description of the coupon
 	Description string `json:"description" api:"required"`
-	// How many billing cycles the discount applies for once redeemed. Leave unset for
-	// a discount that lasts for the lifetime of the subscription.
+	// How many calendar months the discount applies for once redeemed, counted from
+	// when the coupon is applied (not tied to the subscription's billing period).
+	// Leave unset for a discount that lasts for the lifetime of the subscription.
 	DurationInMonths int64 `json:"durationInMonths" api:"required"`
 	// Metadata associated with the entity
 	Metadata map[string]string `json:"metadata" api:"required"`
@@ -271,8 +272,9 @@ type V1CouponListResponse struct {
 	CreatedAt time.Time `json:"createdAt" api:"required" format:"date-time"`
 	// Description of the coupon
 	Description string `json:"description" api:"required"`
-	// How many billing cycles the discount applies for once redeemed. Leave unset for
-	// a discount that lasts for the lifetime of the subscription.
+	// How many calendar months the discount applies for once redeemed, counted from
+	// when the coupon is applied (not tied to the subscription's billing period).
+	// Leave unset for a discount that lasts for the lifetime of the subscription.
 	DurationInMonths int64 `json:"durationInMonths" api:"required"`
 	// Metadata associated with the entity
 	Metadata map[string]string `json:"metadata" api:"required"`
@@ -383,8 +385,9 @@ const (
 type V1CouponNewParams struct {
 	// Description of the coupon
 	Description param.Opt[string] `json:"description,omitzero" api:"required"`
-	// How many billing cycles the discount applies for once redeemed. Leave unset for
-	// a discount that lasts for the lifetime of the subscription.
+	// How many calendar months the discount applies for once redeemed, counted from
+	// when the coupon is applied (not tied to the subscription's billing period).
+	// Leave unset for a discount that lasts for the lifetime of the subscription.
 	DurationInMonths param.Opt[int64] `json:"durationInMonths,omitzero" api:"required"`
 	// Percentage discount off the original price. Provide exactly one of percentOff or
 	// amountsOff — not both, not neither.

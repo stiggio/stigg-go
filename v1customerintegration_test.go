@@ -96,7 +96,7 @@ func TestV1CustomerIntegrationListWithOptionalParams(t *testing.T) {
 			After:            stigg.String("182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e"),
 			Before:           stigg.String("182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e"),
 			Limit:            stigg.Int(1),
-			VendorIdentifier: []string{"AUTH0"},
+			VendorIdentifier: []string{"STRIPE"},
 			XAccountID:       stigg.String("X-ACCOUNT-ID"),
 			XEnvironmentID:   stigg.String("X-ENVIRONMENT-ID"),
 		},
@@ -129,7 +129,7 @@ func TestV1CustomerIntegrationLinkWithOptionalParams(t *testing.T) {
 		stigg.V1CustomerIntegrationLinkParams{
 			ID:               "id",
 			SyncedEntityID:   "syncedEntityId",
-			VendorIdentifier: stigg.V1CustomerIntegrationLinkParamsVendorIdentifierAuth0,
+			VendorIdentifier: stigg.V1CustomerIntegrationLinkParamsVendorIdentifierStripe,
 			XAccountID:       stigg.String("X-ACCOUNT-ID"),
 			XEnvironmentID:   stigg.String("X-ENVIRONMENT-ID"),
 		},

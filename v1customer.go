@@ -357,11 +357,9 @@ type CustomerIntegrationResponseData struct {
 	// Stripe customer ID). Null until the link has synced; required when creating the
 	// link.
 	SyncedEntityID string `json:"syncedEntityId" api:"required"`
-	// The vendor identifier of the integration (e.g. STRIPE, SALESFORCE, SNOWFLAKE)
+	// The vendor whose system holds the customer record
 	//
-	// Any of "AUTH0", "ZUORA", "STRIPE", "HUBSPOT", "AWS_MARKETPLACE", "SNOWFLAKE",
-	// "SALESFORCE", "BIG_QUERY", "OPEN_FGA", "APP_STORE", "RECEIVED", "PREQUEL",
-	// "AIRWALLEX", "STRIPE_INVOICING".
+	// Any of "STRIPE", "ZUORA", "HUBSPOT", "AWS_MARKETPLACE".
 	VendorIdentifier string `json:"vendorIdentifier" api:"required"`
 	// Price billing sync revision data containing billing ID, link URL, and price
 	// group package billing ID
