@@ -596,6 +596,9 @@ func (r *CustomerResponseData) UnmarshalJSON(data []byte) error {
 type CustomerResponseDataDefaultPaymentMethod struct {
 	// The default payment method id
 	BillingID string `json:"billingId" api:"required"`
+	// The card brand of the default payment method, as reported by the billing
+	// provider (e.g. visa, mastercard, amex)
+	CardBrand string `json:"cardBrand" api:"required"`
 	// The expiration month of the default payment method
 	CardExpiryMonth float64 `json:"cardExpiryMonth" api:"required"`
 	// The expiration year of the default payment method
@@ -606,13 +609,18 @@ type CustomerResponseDataDefaultPaymentMethod struct {
 	//
 	// Any of "CARD", "BANK", "CASH_APP", "PAYPAL".
 	Type string `json:"type" api:"required"`
+	// The digital wallet used to add the default card payment method, as reported by
+	// the billing provider (e.g. apple_pay, google_pay)
+	WalletType string `json:"walletType" api:"required"`
 	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
 	JSON struct {
 		BillingID       respjson.Field
+		CardBrand       respjson.Field
 		CardExpiryMonth respjson.Field
 		CardExpiryYear  respjson.Field
 		CardLast4Digits respjson.Field
 		Type            respjson.Field
+		WalletType      respjson.Field
 		ExtraFields     map[string]respjson.Field
 		raw             string
 	} `json:"-"`
@@ -1085,6 +1093,9 @@ const (
 type V1CustomerListResponseDefaultPaymentMethod struct {
 	// The default payment method id
 	BillingID string `json:"billingId" api:"required"`
+	// The card brand of the default payment method, as reported by the billing
+	// provider (e.g. visa, mastercard, amex)
+	CardBrand string `json:"cardBrand" api:"required"`
 	// The expiration month of the default payment method
 	CardExpiryMonth float64 `json:"cardExpiryMonth" api:"required"`
 	// The expiration year of the default payment method
@@ -1095,13 +1106,18 @@ type V1CustomerListResponseDefaultPaymentMethod struct {
 	//
 	// Any of "CARD", "BANK", "CASH_APP", "PAYPAL".
 	Type string `json:"type" api:"required"`
+	// The digital wallet used to add the default card payment method, as reported by
+	// the billing provider (e.g. apple_pay, google_pay)
+	WalletType string `json:"walletType" api:"required"`
 	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
 	JSON struct {
 		BillingID       respjson.Field
+		CardBrand       respjson.Field
 		CardExpiryMonth respjson.Field
 		CardExpiryYear  respjson.Field
 		CardLast4Digits respjson.Field
 		Type            respjson.Field
+		WalletType      respjson.Field
 		ExtraFields     map[string]respjson.Field
 		raw             string
 	} `json:"-"`
