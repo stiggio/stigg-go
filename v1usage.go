@@ -79,7 +79,10 @@ func (r *V1UsageService) History(ctx context.Context, featureID string, params V
 }
 
 // Reports usage measurements for metered features. The reported usage is used to
-// track, limit, and bill customer consumption.
+// track, limit, and bill customer consumption. Deprecated: use
+// `POST /api/v2/usage`.
+//
+// Deprecated: deprecated
 func (r *V1UsageService) Report(ctx context.Context, params V1UsageReportParams, opts ...option.RequestOption) (res *V1UsageReportResponse, err error) {
 	if !param.IsOmitted(params.XAccountID) {
 		opts = append(opts, option.WithHeader("X-ACCOUNT-ID", fmt.Sprintf("%v", params.XAccountID.Value)))

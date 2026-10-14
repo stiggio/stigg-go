@@ -96,6 +96,11 @@ type V1CreditConsumptionConsumeResponseData struct {
 	// The optimistic credit balance after consumption (when sync credit consumption is
 	// enabled)
 	Credit V1CreditConsumptionConsumeResponseDataCredit `json:"credit" api:"nullable"`
+	// The current usage of each governance entitlement this request counted towards.
+	// Absent when governance is not enabled or the usage is unknown. Entitlements
+	// whose usage could not be read, and those of repeated idempotent requests, are
+	// left out
+	Entities []V1CreditConsumptionConsumeResponseDataEntity `json:"entities"`
 	// The resource the consumption was attributed to
 	ResourceID string `json:"resourceId" api:"nullable"`
 	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
@@ -105,6 +110,7 @@ type V1CreditConsumptionConsumeResponseData struct {
 		CustomerID  respjson.Field
 		Timestamp   respjson.Field
 		Credit      respjson.Field
+		Entities    respjson.Field
 		ResourceID  respjson.Field
 		ExtraFields map[string]respjson.Field
 		raw         string
@@ -150,6 +156,50 @@ type V1CreditConsumptionConsumeResponseDataCredit struct {
 // Returns the unmodified JSON received from the API
 func (r V1CreditConsumptionConsumeResponseDataCredit) RawJSON() string { return r.JSON.raw }
 func (r *V1CreditConsumptionConsumeResponseDataCredit) UnmarshalJSON(data []byte) error {
+	return apijson.UnmarshalRoot(data, r)
+}
+
+// The usage counted against one governance entitlement
+type V1CreditConsumptionConsumeResponseDataEntity struct {
+	// The absolute usage counted against the entitlement
+	CurrentUsage float64 `json:"currentUsage" api:"required"`
+	// The customer whose usage counted towards the entitlement
+	CustomerID string `json:"customerId" api:"required"`
+	// The governance entitlement the usage counts towards
+	EntitlementID string `json:"entitlementId" api:"required"`
+	// The governance entity the entitlement belongs to
+	EntityID string `json:"entityId" api:"required"`
+	// The customer resource the usage counted from; `null` for customer-level usage
+	ResourceID string `json:"resourceId" api:"required"`
+	// The entities the entitlement is scoped to (empty when it is not scoped)
+	ScopeEntityIDs []string `json:"scopeEntityIds" api:"required"`
+	// When the entitlement usage was last updated
+	UsageUpdatedAt time.Time `json:"usageUpdatedAt" api:"required" format:"date-time"`
+	// The credit currency the entitlement governs (exactly one of featureId and
+	// currencyId is set)
+	CurrencyID string `json:"currencyId"`
+	// The feature the entitlement governs (exactly one of featureId and currencyId is
+	// set)
+	FeatureID string `json:"featureId"`
+	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
+	JSON struct {
+		CurrentUsage   respjson.Field
+		CustomerID     respjson.Field
+		EntitlementID  respjson.Field
+		EntityID       respjson.Field
+		ResourceID     respjson.Field
+		ScopeEntityIDs respjson.Field
+		UsageUpdatedAt respjson.Field
+		CurrencyID     respjson.Field
+		FeatureID      respjson.Field
+		ExtraFields    map[string]respjson.Field
+		raw            string
+	} `json:"-"`
+}
+
+// Returns the unmodified JSON received from the API
+func (r V1CreditConsumptionConsumeResponseDataEntity) RawJSON() string { return r.JSON.raw }
+func (r *V1CreditConsumptionConsumeResponseDataEntity) UnmarshalJSON(data []byte) error {
 	return apijson.UnmarshalRoot(data, r)
 }
 
