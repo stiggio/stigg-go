@@ -279,15 +279,17 @@ type V1CreditGetUsageResponseDataSeries struct {
 	// is not additive across series, because an event matched by several meters
 	// appears in more than one series.
 	EventCount float64 `json:"eventCount" api:"required"`
-	// The feature ID; null when grouping by dimensions only
+	// The feature ID; null when grouping by dimensions without `featureId`
 	FeatureID string `json:"featureId" api:"required"`
-	// The display name of the feature; null when grouping by dimensions only
+	// The display name of the feature; null when grouping by dimensions without
+	// `featureId`
 	FeatureName string `json:"featureName" api:"required"`
 	// Time-series data points for this feature
 	Points []V1CreditGetUsageResponseDataSeriesPoint `json:"points" api:"required"`
 	// Total credits consumed by this feature in the time range
 	TotalCredits float64 `json:"totalCredits" api:"required"`
-	// Dimension key/value pairs identifying this series when groupBy is applied
+	// Dimension key/value pairs identifying this series when groupBy includes
+	// dimension keys (`featureId` is returned in its own field, not as a tag)
 	Tags []V1CreditGetUsageResponseDataSeriesTag `json:"tags"`
 	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
 	JSON struct {
@@ -443,8 +445,10 @@ type V1CreditGetUsageParams struct {
 	// End date for the credit usage time range (ISO 8601). Defaults to now when
 	// startDate is provided
 	EndDate param.Opt[time.Time] `query:"endDate,omitzero" format:"date-time" json:"-"`
-	// Comma-separated list of feature dimension keys to group usage series by (up to
-	// 3). Each key matches /^[a-zA-Z0-9_$-]+$/
+	// Comma-separated list of keys to group usage series by: up to 3 custom dimension
+	// keys, optionally combined with the reserved key `featureId` to also split each
+	// series by feature (e.g. `featureId,userId`). Each key matches
+	// /^[a-zA-Z0-9_$-]+$/
 	GroupBy param.Opt[string] `query:"groupBy,omitzero" json:"-"`
 	// Maximum number of items to return
 	Limit param.Opt[int64] `query:"limit,omitzero" json:"-"`
