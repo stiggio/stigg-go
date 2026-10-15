@@ -1,5 +1,18 @@
 # Changelog
 
+## [0.1.0-beta.51](https://github.com/stiggio/stigg-go/compare/v0.1.0-beta.50...v0.1.0-beta.51) (2026-10-15)
+
+
+### Features
+
+* **STIGG-10154:** generate the v2 usage report ([d39a703](https://github.com/stiggio/stigg-go/commit/d39a7034027a383ef0f6e524ceac876ccd8ff9a3))
+
+
+### Bug Fixes
+
+* sync OpenAPI spec from stigg-api ([0d3fed0](https://github.com/stiggio/stigg-go/commit/0d3fed0e113273316d4071efb4484834c9059f3d))
+* sync OpenAPI spec from stigg-api ([49925de](https://github.com/stiggio/stigg-go/commit/49925de525785cb784de5ad48a70b358f85ba9da))
+
 ## [0.1.0-beta.50](https://github.com/stiggio/stigg-go/compare/v0.1.0-beta.49...v0.1.0-beta.50) (2026-09-29)
 
 
