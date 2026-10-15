@@ -436,3 +436,15 @@ Methods:
 
 - <code title="get /api/v1-beta/entity-types">client.V1Beta.EntityTypes.<a href="https://pkg.go.dev/github.com/stiggio/stigg-go#V1BetaEntityTypeService.List">List</a>(ctx <a href="https://pkg.go.dev/context">context</a>.<a href="https://pkg.go.dev/context#Context">Context</a>, params <a href="https://pkg.go.dev/github.com/stiggio/stigg-go">stigg</a>.<a href="https://pkg.go.dev/github.com/stiggio/stigg-go#V1BetaEntityTypeListParams">V1BetaEntityTypeListParams</a>) (\*<a href="https://pkg.go.dev/github.com/stiggio/stigg-go/packages/pagination">pagination</a>.<a href="https://pkg.go.dev/github.com/stiggio/stigg-go/packages/pagination#MyCursorIDPage">MyCursorIDPage</a>[<a href="https://pkg.go.dev/github.com/stiggio/stigg-go">stigg</a>.<a href="https://pkg.go.dev/github.com/stiggio/stigg-go#V1BetaEntityTypeListResponse">V1BetaEntityTypeListResponse</a>], <a href="https://pkg.go.dev/builtin#error">error</a>)</code>
 - <code title="put /api/v1-beta/entity-types">client.V1Beta.EntityTypes.<a href="https://pkg.go.dev/github.com/stiggio/stigg-go#V1BetaEntityTypeService.Upsert">Upsert</a>(ctx <a href="https://pkg.go.dev/context">context</a>.<a href="https://pkg.go.dev/context#Context">Context</a>, params <a href="https://pkg.go.dev/github.com/stiggio/stigg-go">stigg</a>.<a href="https://pkg.go.dev/github.com/stiggio/stigg-go#V1BetaEntityTypeUpsertParams">V1BetaEntityTypeUpsertParams</a>) (\*<a href="https://pkg.go.dev/github.com/stiggio/stigg-go">stigg</a>.<a href="https://pkg.go.dev/github.com/stiggio/stigg-go#V1BetaEntityTypeUpsertResponse">V1BetaEntityTypeUpsertResponse</a>, <a href="https://pkg.go.dev/builtin#error">error</a>)</code>
+
+# V2
+
+## Usage
+
+Response Types:
+
+- <a href="https://pkg.go.dev/github.com/stiggio/stigg-go">stigg</a>.<a href="https://pkg.go.dev/github.com/stiggio/stigg-go#V2UsageReportResponse">V2UsageReportResponse</a>
+
+Methods:
+
+- <code title="post /api/v2/usage">client.V2.Usage.<a href="https://pkg.go.dev/github.com/stiggio/stigg-go#V2UsageService.Report">Report</a>(ctx <a href="https://pkg.go.dev/context">context</a>.<a href="https://pkg.go.dev/context#Context">Context</a>, params <a href="https://pkg.go.dev/github.com/stiggio/stigg-go">stigg</a>.<a href="https://pkg.go.dev/github.com/stiggio/stigg-go#V2UsageReportParams">V2UsageReportParams</a>) (\*<a href="https://pkg.go.dev/github.com/stiggio/stigg-go">stigg</a>.<a href="https://pkg.go.dev/github.com/stiggio/stigg-go#V2UsageReportResponse">V2UsageReportResponse</a>, <a href="https://pkg.go.dev/builtin#error">error</a>)</code>

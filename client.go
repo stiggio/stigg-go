@@ -20,6 +20,7 @@ type Client struct {
 	Options []option.RequestOption
 	V1      V1Service
 	V1Beta  V1BetaService
+	V2      V2Service
 }
 
 // DefaultClientOptions read from the environment (STIGG_API_KEY, STIGG_BASE_URL).
@@ -54,6 +55,7 @@ func NewClient(opts ...option.RequestOption) (r Client) {
 
 	r.V1 = NewV1Service(opts...)
 	r.V1Beta = NewV1BetaService(opts...)
+	r.V2 = NewV2Service(opts...)
 
 	return
 }
