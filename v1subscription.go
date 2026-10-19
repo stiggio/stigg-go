@@ -1926,23 +1926,35 @@ type V1SubscriptionProvisionResponseDataEntitlementUnion struct {
 	// This field is from variant
 	// [V1SubscriptionProvisionResponseDataEntitlementUnionObjectVariant1].
 	UsageUpdatedAt time.Time `json:"usageUpdatedAt"`
-	JSON           struct {
-		AccessDeniedReason   respjson.Field
-		IsGranted            respjson.Field
-		Type                 respjson.Field
-		CurrentUsage         respjson.Field
-		EntitlementUpdatedAt respjson.Field
-		Feature              respjson.Field
-		HasUnlimitedUsage    respjson.Field
-		ResetPeriod          respjson.Field
-		UsageLimit           respjson.Field
-		UsagePeriodAnchor    respjson.Field
-		UsagePeriodEnd       respjson.Field
-		UsagePeriodStart     respjson.Field
-		ValidUntil           respjson.Field
-		Currency             respjson.Field
-		UsageUpdatedAt       respjson.Field
-		raw                  string
+	// This field is from variant
+	// [V1SubscriptionProvisionResponseDataEntitlementUnionObjectVariant1].
+	Reservation V1SubscriptionProvisionResponseDataEntitlementUnionObjectVariant1Reservation `json:"reservation"`
+	// This field is from variant
+	// [V1SubscriptionProvisionResponseDataEntitlementUnionObjectVariant1].
+	Reserved float64 `json:"reserved"`
+	// This field is from variant
+	// [V1SubscriptionProvisionResponseDataEntitlementUnionObjectVariant1].
+	ReservedOnExpiredGrants float64 `json:"reservedOnExpiredGrants"`
+	JSON                    struct {
+		AccessDeniedReason      respjson.Field
+		IsGranted               respjson.Field
+		Type                    respjson.Field
+		CurrentUsage            respjson.Field
+		EntitlementUpdatedAt    respjson.Field
+		Feature                 respjson.Field
+		HasUnlimitedUsage       respjson.Field
+		ResetPeriod             respjson.Field
+		UsageLimit              respjson.Field
+		UsagePeriodAnchor       respjson.Field
+		UsagePeriodEnd          respjson.Field
+		UsagePeriodStart        respjson.Field
+		ValidUntil              respjson.Field
+		Currency                respjson.Field
+		UsageUpdatedAt          respjson.Field
+		Reservation             respjson.Field
+		Reserved                respjson.Field
+		ReservedOnExpiredGrants respjson.Field
+		raw                     string
 	} `json:"-"`
 }
 
@@ -2070,24 +2082,37 @@ type V1SubscriptionProvisionResponseDataEntitlementUnionObjectVariant1 struct {
 	UsageUpdatedAt time.Time `json:"usageUpdatedAt" api:"required" format:"date-time"`
 	// Timestamp of the last update to the entitlement grant or configuration.
 	EntitlementUpdatedAt time.Time `json:"entitlementUpdatedAt" format:"date-time"`
+	// The reservation created by this request, when it asked to reserve credits and
+	// was granted.
+	Reservation V1SubscriptionProvisionResponseDataEntitlementUnionObjectVariant1Reservation `json:"reservation" api:"nullable"`
+	// Credits held by open reservations on active grants. Already included in
+	// currentUsage, so usageLimit - currentUsage is the available balance.
+	Reserved float64 `json:"reserved"`
+	// Credits still held by open reservations on grants that expired during the hold.
+	// They can still be released, but are not part of currentUsage or the balance and
+	// must not be subtracted from it.
+	ReservedOnExpiredGrants float64 `json:"reservedOnExpiredGrants"`
 	// The end date of the current billing period for recurring credit grants.
 	UsagePeriodEnd time.Time `json:"usagePeriodEnd" format:"date-time"`
 	// The next time the entitlement should be recalculated
 	ValidUntil time.Time `json:"validUntil" format:"date-time"`
 	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
 	JSON struct {
-		AccessDeniedReason   respjson.Field
-		Currency             respjson.Field
-		CurrentUsage         respjson.Field
-		IsGranted            respjson.Field
-		Type                 respjson.Field
-		UsageLimit           respjson.Field
-		UsageUpdatedAt       respjson.Field
-		EntitlementUpdatedAt respjson.Field
-		UsagePeriodEnd       respjson.Field
-		ValidUntil           respjson.Field
-		ExtraFields          map[string]respjson.Field
-		raw                  string
+		AccessDeniedReason      respjson.Field
+		Currency                respjson.Field
+		CurrentUsage            respjson.Field
+		IsGranted               respjson.Field
+		Type                    respjson.Field
+		UsageLimit              respjson.Field
+		UsageUpdatedAt          respjson.Field
+		EntitlementUpdatedAt    respjson.Field
+		Reservation             respjson.Field
+		Reserved                respjson.Field
+		ReservedOnExpiredGrants respjson.Field
+		UsagePeriodEnd          respjson.Field
+		ValidUntil              respjson.Field
+		ExtraFields             map[string]respjson.Field
+		raw                     string
 	} `json:"-"`
 }
 
@@ -2131,6 +2156,39 @@ func (r V1SubscriptionProvisionResponseDataEntitlementUnionObjectVariant1Currenc
 	return r.JSON.raw
 }
 func (r *V1SubscriptionProvisionResponseDataEntitlementUnionObjectVariant1Currency) UnmarshalJSON(data []byte) error {
+	return apijson.UnmarshalRoot(data, r)
+}
+
+// The reservation created by this request, when it asked to reserve credits and
+// was granted.
+type V1SubscriptionProvisionResponseDataEntitlementUnionObjectVariant1Reservation struct {
+	// The client-provided reservation ID.
+	ID string `json:"id" api:"required"`
+	// The amount of credits held.
+	Amount float64 `json:"amount" api:"required"`
+	// When the reservation expires. Unreleased credits return to the balance at this
+	// time.
+	ExpiresAt time.Time `json:"expiresAt" api:"required" format:"date-time"`
+	// The status of the reservation.
+	//
+	// Any of "ACTIVE", "RELEASED".
+	Status string `json:"status" api:"required"`
+	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
+	JSON struct {
+		ID          respjson.Field
+		Amount      respjson.Field
+		ExpiresAt   respjson.Field
+		Status      respjson.Field
+		ExtraFields map[string]respjson.Field
+		raw         string
+	} `json:"-"`
+}
+
+// Returns the unmodified JSON received from the API
+func (r V1SubscriptionProvisionResponseDataEntitlementUnionObjectVariant1Reservation) RawJSON() string {
+	return r.JSON.raw
+}
+func (r *V1SubscriptionProvisionResponseDataEntitlementUnionObjectVariant1Reservation) UnmarshalJSON(data []byte) error {
 	return apijson.UnmarshalRoot(data, r)
 }
 
