@@ -2940,6 +2940,20 @@ type V1CustomerCheckEntitlementParams struct {
 	// Requested usage amount to evaluate against the entitlement limit (numeric
 	// features only)
 	RequestedUsage param.Opt[int64] `query:"requestedUsage,omitzero" json:"-"`
+	// When the reservation expires (ISO 8601, at most 24 hours ahead). Mutually
+	// exclusive with `reservationTtlSeconds`.
+	ReservationExpiresAt param.Opt[time.Time] `query:"reservationExpiresAt,omitzero" format:"date-time" json:"-"`
+	// Client-provided reservation ID, required with `reserveAmount`. Retry with the
+	// same ID to get the same result; reuse with different parameters is a conflict.
+	ReservationID param.Opt[string] `query:"reservationId,omitzero" json:"-"`
+	// JSON-encoded object of string values to attach to the reservation.
+	ReservationMetadata param.Opt[string] `query:"reservationMetadata,omitzero" json:"-"`
+	// How long the reservation holds the credits, in seconds (1–86400, default 3600).
+	// Mutually exclusive with `reservationExpiresAt`.
+	ReservationTtlSeconds param.Opt[int64] `query:"reservationTtlSeconds,omitzero" json:"-"`
+	// Credits to reserve (credit entitlements only). The check is decided and the
+	// credits held atomically; `requestedUsage` is ignored.
+	ReserveAmount param.Opt[float64] `query:"reserveAmount,omitzero" json:"-"`
 	// Resource ID to scope the entitlement check to a specific resource
 	ResourceID     param.Opt[string] `query:"resourceId,omitzero" json:"-"`
 	XAccountID     param.Opt[string] `header:"X-ACCOUNT-ID,omitzero" json:"-"`
