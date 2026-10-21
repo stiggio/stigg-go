@@ -357,7 +357,70 @@ func (r *V1CreditGetUsageResponseDataSeriesTag) UnmarshalJSON(data []byte) error
 
 // A credit ledger event representing a change to credit balance
 type V1CreditListLedgerResponse struct {
-	// The credit amount for this event
+	// The amount of the ledger event. Reservation events carry their net effect on the
+	// balance: a reserve is negative, and so is a release that consumed more than was
+	// held
+	Amount float64 `json:"amount" api:"required"`
+	// On a released reservation, the credits consumed from each grant
+	Breakdown []V1CreditListLedgerResponseBreakdown `json:"breakdown" api:"required"`
+	// The credit currency ID
+	CreditCurrencyID string `json:"creditCurrencyId" api:"required"`
+	// The credit grant ID associated with this event
+	CreditGrantID string `json:"creditGrantId" api:"required"`
+	// The customer ID this event belongs to
+	CustomerID string `json:"customerId" api:"required"`
+	// The unique event identifier
+	EventID string `json:"eventId" api:"required"`
+	// The type of credit event
+	//
+	// Any of "CREDITS_GRANTED", "CREDITS_EXPIRED", "CREDITS_CONSUMED",
+	// "CREDITS_VOIDED", "CREDITS_UPDATED", "CREDITS_CONSUMPTION_TRANSFER_SOURCE",
+	// "CREDITS_CONSUMPTION_TRANSFER_TARGET", "CREDITS_RESERVED",
+	// "CREDITS_RESERVATION_RELEASED", "CREDITS_RESERVATION_EXPIRED".
+	EventType V1CreditListLedgerResponseEventType `json:"eventType" api:"required"`
+	// The feature ID associated with this event
+	FeatureID string `json:"featureId" api:"required"`
+	// On a released reservation, the held amount returned to the balance before
+	// consumed credits are deducted
+	HoldReturnedAmount float64 `json:"holdReturnedAmount" api:"required"`
+	// The metadata sent with the credit reservation
+	Metadata map[string]string `json:"metadata" api:"required"`
+	// The credit reservation this event belongs to
+	ReservationID string `json:"reservationId" api:"required"`
+	// The resource ID this event is scoped to
+	ResourceID string `json:"resourceId" api:"required"`
+	// The timestamp when the event occurred
+	Timestamp time.Time `json:"timestamp" api:"required" format:"date-time"`
+	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
+	JSON struct {
+		Amount             respjson.Field
+		Breakdown          respjson.Field
+		CreditCurrencyID   respjson.Field
+		CreditGrantID      respjson.Field
+		CustomerID         respjson.Field
+		EventID            respjson.Field
+		EventType          respjson.Field
+		FeatureID          respjson.Field
+		HoldReturnedAmount respjson.Field
+		Metadata           respjson.Field
+		ReservationID      respjson.Field
+		ResourceID         respjson.Field
+		Timestamp          respjson.Field
+		ExtraFields        map[string]respjson.Field
+		raw                string
+	} `json:"-"`
+}
+
+// Returns the unmodified JSON received from the API
+func (r V1CreditListLedgerResponse) RawJSON() string { return r.JSON.raw }
+func (r *V1CreditListLedgerResponse) UnmarshalJSON(data []byte) error {
+	return apijson.UnmarshalRoot(data, r)
+}
+
+type V1CreditListLedgerResponseBreakdown struct {
+	// The amount of the ledger event. Reservation events carry their net effect on the
+	// balance: a reserve is negative, and so is a release that consumed more than was
+	// held
 	Amount float64 `json:"amount" api:"required"`
 	// The credit currency ID
 	CreditCurrencyID string `json:"creditCurrencyId" api:"required"`
@@ -371,10 +434,13 @@ type V1CreditListLedgerResponse struct {
 	//
 	// Any of "CREDITS_GRANTED", "CREDITS_EXPIRED", "CREDITS_CONSUMED",
 	// "CREDITS_VOIDED", "CREDITS_UPDATED", "CREDITS_CONSUMPTION_TRANSFER_SOURCE",
-	// "CREDITS_CONSUMPTION_TRANSFER_TARGET".
-	EventType V1CreditListLedgerResponseEventType `json:"eventType" api:"required"`
+	// "CREDITS_CONSUMPTION_TRANSFER_TARGET", "CREDITS_RESERVED",
+	// "CREDITS_RESERVATION_RELEASED", "CREDITS_RESERVATION_EXPIRED".
+	EventType string `json:"eventType" api:"required"`
 	// The feature ID associated with this event
 	FeatureID string `json:"featureId" api:"required"`
+	// The credit reservation this event belongs to
+	ReservationID string `json:"reservationId" api:"required"`
 	// The resource ID this event is scoped to
 	ResourceID string `json:"resourceId" api:"required"`
 	// The timestamp when the event occurred
@@ -388,6 +454,7 @@ type V1CreditListLedgerResponse struct {
 		EventID          respjson.Field
 		EventType        respjson.Field
 		FeatureID        respjson.Field
+		ReservationID    respjson.Field
 		ResourceID       respjson.Field
 		Timestamp        respjson.Field
 		ExtraFields      map[string]respjson.Field
@@ -396,8 +463,8 @@ type V1CreditListLedgerResponse struct {
 }
 
 // Returns the unmodified JSON received from the API
-func (r V1CreditListLedgerResponse) RawJSON() string { return r.JSON.raw }
-func (r *V1CreditListLedgerResponse) UnmarshalJSON(data []byte) error {
+func (r V1CreditListLedgerResponseBreakdown) RawJSON() string { return r.JSON.raw }
+func (r *V1CreditListLedgerResponseBreakdown) UnmarshalJSON(data []byte) error {
 	return apijson.UnmarshalRoot(data, r)
 }
 
@@ -412,6 +479,9 @@ const (
 	V1CreditListLedgerResponseEventTypeCreditsUpdated                   V1CreditListLedgerResponseEventType = "CREDITS_UPDATED"
 	V1CreditListLedgerResponseEventTypeCreditsConsumptionTransferSource V1CreditListLedgerResponseEventType = "CREDITS_CONSUMPTION_TRANSFER_SOURCE"
 	V1CreditListLedgerResponseEventTypeCreditsConsumptionTransferTarget V1CreditListLedgerResponseEventType = "CREDITS_CONSUMPTION_TRANSFER_TARGET"
+	V1CreditListLedgerResponseEventTypeCreditsReserved                  V1CreditListLedgerResponseEventType = "CREDITS_RESERVED"
+	V1CreditListLedgerResponseEventTypeCreditsReservationReleased       V1CreditListLedgerResponseEventType = "CREDITS_RESERVATION_RELEASED"
+	V1CreditListLedgerResponseEventTypeCreditsReservationExpired        V1CreditListLedgerResponseEventType = "CREDITS_RESERVATION_EXPIRED"
 )
 
 type V1CreditGetAutoRechargeParams struct {
@@ -499,6 +569,8 @@ type V1CreditListLedgerParams struct {
 	EventType param.Opt[string] `query:"eventType,omitzero" json:"-"`
 	// Maximum number of items to return
 	Limit param.Opt[int64] `query:"limit,omitzero" json:"-"`
+	// Filter by credit reservation ID
+	ReservationID param.Opt[string] `query:"reservationId,omitzero" json:"-"`
 	// Filter by resource ID
 	ResourceID     param.Opt[string] `query:"resourceId,omitzero" json:"-"`
 	XAccountID     param.Opt[string] `header:"X-ACCOUNT-ID,omitzero" json:"-"`
