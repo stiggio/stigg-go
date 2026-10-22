@@ -1368,7 +1368,7 @@ type V1AddonUpdateParamsChargesPricingModel struct {
 	PricePeriods []V1AddonUpdateParamsChargesPricingModelPricePeriod `json:"pricePeriods,omitzero" api:"required"`
 	// The feature ID this pricing model is associated with
 	FeatureID param.Opt[string] `json:"featureId,omitzero"`
-	// Maximum number of units (max 999999)
+	// Maximum number of units
 	MaxUnitQuantity param.Opt[int64] `json:"maxUnitQuantity,omitzero"`
 	// Minimum number of units
 	MinUnitQuantity param.Opt[int64] `json:"minUnitQuantity,omitzero"`
