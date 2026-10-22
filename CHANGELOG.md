@@ -1,5 +1,20 @@
 # Changelog
 
+## [0.1.0-beta.54](https://github.com/stiggio/stigg-go/compare/v0.1.0-beta.53...v0.1.0-beta.54) (2026-10-22)
+
+
+### Features
+
+* **STIGG-10078:** credit reservation release in the sdks ([45f7899](https://github.com/stiggio/stigg-go/commit/45f78999f59249233750f8cc2cb0e5863378b873))
+
+
+### Bug Fixes
+
+* sync OpenAPI spec from stigg-api ([16b3405](https://github.com/stiggio/stigg-go/commit/16b3405b13c44f43da97b3296faf057c026449ac))
+* sync OpenAPI spec from stigg-api ([618e73a](https://github.com/stiggio/stigg-go/commit/618e73afb400079b2cefd66be8789be4e6045824))
+* sync OpenAPI spec from stigg-api ([5bc7b57](https://github.com/stiggio/stigg-go/commit/5bc7b57c0e20a778fa901950e556d324d71e8a5d))
+* sync OpenAPI spec from stigg-api ([e239aa1](https://github.com/stiggio/stigg-go/commit/e239aa15948f261a00d8ffdcbfcb926796cc49ef))
+
 ## [0.1.0-beta.53](https://github.com/stiggio/stigg-go/compare/v0.1.0-beta.52...v0.1.0-beta.53) (2026-10-20)
 
 
