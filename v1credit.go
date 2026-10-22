@@ -32,6 +32,7 @@ type V1CreditService struct {
 	// Operations related to custom currencies
 	CustomCurrencies V1CreditCustomCurrencyService
 	Consumption      V1CreditConsumptionService
+	Reservations     V1CreditReservationService
 }
 
 // NewV1CreditService generates a new service that applies the given options to
@@ -43,6 +44,7 @@ func NewV1CreditService(opts ...option.RequestOption) (r V1CreditService) {
 	r.Grants = NewV1CreditGrantService(opts...)
 	r.CustomCurrencies = NewV1CreditCustomCurrencyService(opts...)
 	r.Consumption = NewV1CreditConsumptionService(opts...)
+	r.Reservations = NewV1CreditReservationService(opts...)
 	return
 }
 

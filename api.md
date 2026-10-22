@@ -241,6 +241,16 @@ Methods:
 - <code title="post /api/v1/credits/consumption">client.V1.Credits.Consumption.<a href="https://pkg.go.dev/github.com/stiggio/stigg-go#V1CreditConsumptionService.Consume">Consume</a>(ctx <a href="https://pkg.go.dev/context">context</a>.<a href="https://pkg.go.dev/context#Context">Context</a>, params <a href="https://pkg.go.dev/github.com/stiggio/stigg-go">stigg</a>.<a href="https://pkg.go.dev/github.com/stiggio/stigg-go#V1CreditConsumptionConsumeParams">V1CreditConsumptionConsumeParams</a>) (\*<a href="https://pkg.go.dev/github.com/stiggio/stigg-go">stigg</a>.<a href="https://pkg.go.dev/github.com/stiggio/stigg-go#V1CreditConsumptionConsumeResponse">V1CreditConsumptionConsumeResponse</a>, <a href="https://pkg.go.dev/builtin#error">error</a>)</code>
 - <code title="post /api/v1/credits/consumption/async">client.V1.Credits.Consumption.<a href="https://pkg.go.dev/github.com/stiggio/stigg-go#V1CreditConsumptionService.ConsumeAsync">ConsumeAsync</a>(ctx <a href="https://pkg.go.dev/context">context</a>.<a href="https://pkg.go.dev/context#Context">Context</a>, params <a href="https://pkg.go.dev/github.com/stiggio/stigg-go">stigg</a>.<a href="https://pkg.go.dev/github.com/stiggio/stigg-go#V1CreditConsumptionConsumeAsyncParams">V1CreditConsumptionConsumeAsyncParams</a>) (\*<a href="https://pkg.go.dev/github.com/stiggio/stigg-go">stigg</a>.<a href="https://pkg.go.dev/github.com/stiggio/stigg-go#V1CreditConsumptionConsumeAsyncResponse">V1CreditConsumptionConsumeAsyncResponse</a>, <a href="https://pkg.go.dev/builtin#error">error</a>)</code>
 
+### Reservations
+
+Response Types:
+
+- <a href="https://pkg.go.dev/github.com/stiggio/stigg-go">stigg</a>.<a href="https://pkg.go.dev/github.com/stiggio/stigg-go#V1CreditReservationReleaseResponse">V1CreditReservationReleaseResponse</a>
+
+Methods:
+
+- <code title="post /api/v1/credits/reservations/{reservationId}/release">client.V1.Credits.Reservations.<a href="https://pkg.go.dev/github.com/stiggio/stigg-go#V1CreditReservationService.Release">Release</a>(ctx <a href="https://pkg.go.dev/context">context</a>.<a href="https://pkg.go.dev/context#Context">Context</a>, reservationID <a href="https://pkg.go.dev/builtin#string">string</a>, params <a href="https://pkg.go.dev/github.com/stiggio/stigg-go">stigg</a>.<a href="https://pkg.go.dev/github.com/stiggio/stigg-go#V1CreditReservationReleaseParams">V1CreditReservationReleaseParams</a>) (\*<a href="https://pkg.go.dev/github.com/stiggio/stigg-go">stigg</a>.<a href="https://pkg.go.dev/github.com/stiggio/stigg-go#V1CreditReservationReleaseResponse">V1CreditReservationReleaseResponse</a>, <a href="https://pkg.go.dev/builtin#error">error</a>)</code>
+
 ## Features
 
 Response Types:
