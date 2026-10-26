@@ -143,7 +143,7 @@ type V1CreditReservationReleaseResponseDataReservation struct {
 	ExpiresAt time.Time `json:"expiresAt" api:"required" format:"date-time"`
 	// The status of the reservation.
 	//
-	// Any of "ACTIVE", "RELEASED".
+	// Any of "ACTIVE", "RELEASED", "EXPIRED".
 	Status string `json:"status" api:"required"`
 	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
 	JSON struct {
