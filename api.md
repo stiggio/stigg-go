@@ -435,6 +435,16 @@ Methods:
 - <code title="get /api/v1-beta/customers/{id}/assignments">client.V1Beta.Customers.Assignments.<a href="https://pkg.go.dev/github.com/stiggio/stigg-go#V1BetaCustomerAssignmentService.List">List</a>(ctx <a href="https://pkg.go.dev/context">context</a>.<a href="https://pkg.go.dev/context#Context">Context</a>, id <a href="https://pkg.go.dev/builtin#string">string</a>, params <a href="https://pkg.go.dev/github.com/stiggio/stigg-go">stigg</a>.<a href="https://pkg.go.dev/github.com/stiggio/stigg-go#V1BetaCustomerAssignmentListParams">V1BetaCustomerAssignmentListParams</a>) (\*<a href="https://pkg.go.dev/github.com/stiggio/stigg-go/packages/pagination">pagination</a>.<a href="https://pkg.go.dev/github.com/stiggio/stigg-go/packages/pagination#MyCursorIDPage">MyCursorIDPage</a>[<a href="https://pkg.go.dev/github.com/stiggio/stigg-go">stigg</a>.<a href="https://pkg.go.dev/github.com/stiggio/stigg-go#V1BetaCustomerAssignmentListResponse">V1BetaCustomerAssignmentListResponse</a>], <a href="https://pkg.go.dev/builtin#error">error</a>)</code>
 - <code title="put /api/v1-beta/customers/{id}/assignments">client.V1Beta.Customers.Assignments.<a href="https://pkg.go.dev/github.com/stiggio/stigg-go#V1BetaCustomerAssignmentService.Upsert">Upsert</a>(ctx <a href="https://pkg.go.dev/context">context</a>.<a href="https://pkg.go.dev/context#Context">Context</a>, id <a href="https://pkg.go.dev/builtin#string">string</a>, params <a href="https://pkg.go.dev/github.com/stiggio/stigg-go">stigg</a>.<a href="https://pkg.go.dev/github.com/stiggio/stigg-go#V1BetaCustomerAssignmentUpsertParams">V1BetaCustomerAssignmentUpsertParams</a>) (\*<a href="https://pkg.go.dev/github.com/stiggio/stigg-go">stigg</a>.<a href="https://pkg.go.dev/github.com/stiggio/stigg-go#V1BetaCustomerAssignmentUpsertResponse">V1BetaCustomerAssignmentUpsertResponse</a>, <a href="https://pkg.go.dev/builtin#error">error</a>)</code>
 
+### Governance
+
+Response Types:
+
+- <a href="https://pkg.go.dev/github.com/stiggio/stigg-go">stigg</a>.<a href="https://pkg.go.dev/github.com/stiggio/stigg-go#V1BetaCustomerGovernanceListResponse">V1BetaCustomerGovernanceListResponse</a>
+
+Methods:
+
+- <code title="get /api/v1-beta/customers/{id}/governance">client.V1Beta.Customers.Governance.<a href="https://pkg.go.dev/github.com/stiggio/stigg-go#V1BetaCustomerGovernanceService.List">List</a>(ctx <a href="https://pkg.go.dev/context">context</a>.<a href="https://pkg.go.dev/context#Context">Context</a>, id <a href="https://pkg.go.dev/builtin#string">string</a>, params <a href="https://pkg.go.dev/github.com/stiggio/stigg-go">stigg</a>.<a href="https://pkg.go.dev/github.com/stiggio/stigg-go#V1BetaCustomerGovernanceListParams">V1BetaCustomerGovernanceListParams</a>) (\*<a href="https://pkg.go.dev/github.com/stiggio/stigg-go/packages/pagination">pagination</a>.<a href="https://pkg.go.dev/github.com/stiggio/stigg-go/packages/pagination#MyCursorIDPage">MyCursorIDPage</a>[<a href="https://pkg.go.dev/github.com/stiggio/stigg-go">stigg</a>.<a href="https://pkg.go.dev/github.com/stiggio/stigg-go#V1BetaCustomerGovernanceListResponse">V1BetaCustomerGovernanceListResponse</a>], <a href="https://pkg.go.dev/builtin#error">error</a>)</code>
+
 ## EntityTypes
 
 Response Types:
