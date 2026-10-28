@@ -271,7 +271,8 @@ type V1BetaCustomerAssignmentUpsertParamsAssignment struct {
 	EntityID string `json:"entityId" api:"required"`
 	// Parent entity ID in the hierarchy. Omit to leave the current parent untouched (a
 	// new node defaults to a root); `null` detaches to a root; an ID sets or changes
-	// the parent. Reparenting an existing node is leaf-only.
+	// the parent. Reparenting or detaching an existing node is leaf-only; place a
+	// parent before its children, or in the same batch.
 	ParentID param.Opt[string] `json:"parentId,omitzero"`
 	// Maximum usage allowed within one cadence window (required on create)
 	UsageLimit param.Opt[float64] `json:"usageLimit,omitzero"`
