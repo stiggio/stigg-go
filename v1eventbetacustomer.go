@@ -154,9 +154,12 @@ type V1EventBetaCustomerGetGovernanceResponsePagination struct {
 	// Cursor for fetching the next page of results, or null if no additional pages
 	// exist
 	Next string `json:"next" api:"required"`
+	// Cursor for fetching the previous page of results, or null if at the beginning
+	Prev string `json:"prev" api:"required"`
 	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
 	JSON struct {
 		Next        respjson.Field
+		Prev        respjson.Field
 		ExtraFields map[string]respjson.Field
 		raw         string
 	} `json:"-"`
@@ -169,8 +172,12 @@ func (r *V1EventBetaCustomerGetGovernanceResponsePagination) UnmarshalJSON(data 
 }
 
 type V1EventBetaCustomerGetGovernanceParams struct {
-	// Return items that come after this cursor
+	// Opaque cursor from a page’s `next`; returns the page after it. Mutually
+	// exclusive with `before`.
 	After param.Opt[string] `query:"after,omitzero" json:"-"`
+	// Opaque cursor from a page’s `prev`; returns the page before it. Mutually
+	// exclusive with `after`.
+	Before param.Opt[string] `query:"before,omitzero" json:"-"`
 	// Case-insensitive substring match on the entity id or its display name (`%`/`_`
 	// matched literally).
 	EntityIDSearch param.Opt[string] `query:"entityIdSearch,omitzero" json:"-"`
@@ -181,16 +188,15 @@ type V1EventBetaCustomerGetGovernanceParams struct {
 	MinUtilization param.Opt[float64] `query:"minUtilization,omitzero" json:"-"`
 	XAccountID     param.Opt[string]  `header:"X-ACCOUNT-ID,omitzero" json:"-"`
 	XEnvironmentID param.Opt[string]  `header:"X-ENVIRONMENT-ID,omitzero" json:"-"`
-	// Currency ids to include, repeated per value (e.g. `?currencyIds=credits`). Omit
-	// both featureIds and currencyIds for tree mode.
+	// Currency ids to include, comma-separated (e.g. `?currencyIds=credits`), up
+	// to 100. Omit both featureIds and currencyIds for tree mode.
 	CurrencyIDs []string `query:"currencyIds,omitzero" json:"-"`
-	// Filter to one or more entity types, repeated per value (e.g.
-	// `?entityTypeIds=team&entityTypeIds=user`).
+	// Filter to one or more entity types, comma-separated (e.g.
+	// `?entityTypeIds=team,user`), up to 100.
 	EntityTypeIDs []string `query:"entityTypeIds,omitzero" json:"-"`
-	// Feature ids to include, repeated per value (e.g.
-	// `?featureIds=ai-tokens&featureIds=seats`). Omit both featureIds and currencyIds
-	// for tree mode — every node in the hierarchy with no usage configuration
-	// attached.
+	// Feature ids to include, comma-separated (e.g. `?featureIds=ai-tokens,seats`), up
+	// to 100. Omit both featureIds and currencyIds for tree mode — every node in the
+	// hierarchy with no usage configuration attached.
 	FeatureIDs []string `query:"featureIds,omitzero" json:"-"`
 	// Sort direction: `asc` or `desc` (default `desc`).
 	//

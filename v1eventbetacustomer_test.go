@@ -31,6 +31,7 @@ func TestV1EventBetaCustomerGetGovernanceWithOptionalParams(t *testing.T) {
 		"id",
 		stigg.V1EventBetaCustomerGetGovernanceParams{
 			After:          stigg.String("after"),
+			Before:         stigg.String("before"),
 			CurrencyIDs:    []string{"string"},
 			EntityIDSearch: stigg.String("x"),
 			EntityTypeIDs:  []string{"string"},
