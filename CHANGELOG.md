@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.1.0-beta.56](https://github.com/stiggio/stigg-go/compare/v0.1.0-beta.55...v0.1.0-beta.56) (2026-10-28)
+
+
+### Bug Fixes
+
+* **stainless:** restore edge.api.stigg.io as the production server ([e3a3aa8](https://github.com/stiggio/stigg-go/commit/e3a3aa82b6f888e2542d46aed25d98c05c81e487))
+
 ## [0.1.0-beta.55](https://github.com/stiggio/stigg-go/compare/v0.1.0-beta.54...v0.1.0-beta.55) (2026-10-28)
 
 
