@@ -293,8 +293,11 @@ type V1BetaCustomerAssignmentUpsertParamsAssignment struct {
 	// `featureId`.
 	CurrencyID param.Opt[string] `json:"currencyId,omitzero"`
 	// Feature ID this assignment grants. Mutually exclusive with `currencyId`.
-	FeatureID      param.Opt[string] `json:"featureId,omitzero"`
-	ScopeEntityIDs []string          `json:"scopeEntityIds,omitzero"`
+	FeatureID param.Opt[string] `json:"featureId,omitzero"`
+	// Dimension-scoped sub-budget: the set of entity IDs this budget applies to
+	// (order-insensitive, unique, at most 5). Omit or leave empty for the node-wide
+	// budget.
+	ScopeEntityIDs []string `json:"scopeEntityIds,omitzero"`
 	paramObj
 }
 
