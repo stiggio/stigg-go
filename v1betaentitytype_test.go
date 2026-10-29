@@ -27,11 +27,12 @@ func TestV1BetaEntityTypeListWithOptionalParams(t *testing.T) {
 		option.WithAPIKey("My API Key"),
 	)
 	_, err := client.V1Beta.EntityTypes.List(context.TODO(), stigg.V1BetaEntityTypeListParams{
-		After:          stigg.String("182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e"),
-		Before:         stigg.String("182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e"),
-		Limit:          stigg.Int(1),
-		XAccountID:     stigg.String("X-ACCOUNT-ID"),
-		XEnvironmentID: stigg.String("X-ENVIRONMENT-ID"),
+		After:           stigg.String("182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e"),
+		Before:          stigg.String("182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e"),
+		IncludeArchived: stigg.V1BetaEntityTypeListParamsIncludeArchivedTrue,
+		Limit:           stigg.Int(1),
+		XAccountID:      stigg.String("X-ACCOUNT-ID"),
+		XEnvironmentID:  stigg.String("X-ENVIRONMENT-ID"),
 	})
 	if err != nil {
 		var apierr *stigg.Error

@@ -40,7 +40,8 @@ func NewV1BetaEntityTypeService(opts ...option.RequestOption) (r V1BetaEntityTyp
 
 // Returns a cursor-paginated list of entity types defined in the environment.
 // Entity types are vendor-defined categories of resource that can be governed
-// (e.g. Org, Team, User).
+// (e.g. Org, Team, User). Archived entity types are excluded unless
+// includeArchived=true.
 func (r *V1BetaEntityTypeService) List(ctx context.Context, params V1BetaEntityTypeListParams, opts ...option.RequestOption) (res *pagination.MyCursorIDPage[V1BetaEntityTypeListResponse], err error) {
 	var raw *http.Response
 	if !param.IsOmitted(params.XAccountID) {
@@ -66,14 +67,15 @@ func (r *V1BetaEntityTypeService) List(ctx context.Context, params V1BetaEntityT
 
 // Returns a cursor-paginated list of entity types defined in the environment.
 // Entity types are vendor-defined categories of resource that can be governed
-// (e.g. Org, Team, User).
+// (e.g. Org, Team, User). Archived entity types are excluded unless
+// includeArchived=true.
 func (r *V1BetaEntityTypeService) ListAutoPaging(ctx context.Context, params V1BetaEntityTypeListParams, opts ...option.RequestOption) *pagination.MyCursorIDPageAutoPager[V1BetaEntityTypeListResponse] {
 	return pagination.NewMyCursorIDPageAutoPager(r.List(ctx, params, opts...))
 }
 
 // Batched create-or-update of entity types. Existing types matched by id are
 // updated; new ids are created. Idempotent — re-submitting the same payload
-// converges to the same state.
+// converges to the same state. An upsert of an archived entity type restores it.
 func (r *V1BetaEntityTypeService) Upsert(ctx context.Context, params V1BetaEntityTypeUpsertParams, opts ...option.RequestOption) (res *V1BetaEntityTypeUpsertResponse, err error) {
 	if !param.IsOmitted(params.XAccountID) {
 		opts = append(opts, option.WithHeader("X-ACCOUNT-ID", fmt.Sprintf("%v", params.XAccountID.Value)))
@@ -94,6 +96,8 @@ func (r *V1BetaEntityTypeService) Upsert(ctx context.Context, params V1BetaEntit
 type V1BetaEntityTypeListResponse struct {
 	// The unique identifier for the entity
 	ID string `json:"id" api:"required"`
+	// Timestamp of when the record was deleted
+	ArchivedAt time.Time `json:"archivedAt" api:"required" format:"date-time"`
 	// Dimension keys used to attribute usage events to instances of this type (e.g.
 	// ["orgId"]). Empty array means no attribution.
 	AttributionKeys []string `json:"attributionKeys" api:"required"`
@@ -109,6 +113,7 @@ type V1BetaEntityTypeListResponse struct {
 	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
 	JSON struct {
 		ID              respjson.Field
+		ArchivedAt      respjson.Field
 		AttributionKeys respjson.Field
 		CreatedAt       respjson.Field
 		Description     respjson.Field
@@ -149,6 +154,8 @@ func (r *V1BetaEntityTypeUpsertResponse) UnmarshalJSON(data []byte) error {
 type V1BetaEntityTypeUpsertResponseData struct {
 	// The unique identifier for the entity
 	ID string `json:"id" api:"required"`
+	// Timestamp of when the record was deleted
+	ArchivedAt time.Time `json:"archivedAt" api:"required" format:"date-time"`
 	// Dimension keys used to attribute usage events to instances of this type (e.g.
 	// ["orgId"]). Empty array means no attribution.
 	AttributionKeys []string `json:"attributionKeys" api:"required"`
@@ -164,6 +171,7 @@ type V1BetaEntityTypeUpsertResponseData struct {
 	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
 	JSON struct {
 		ID              respjson.Field
+		ArchivedAt      respjson.Field
 		AttributionKeys respjson.Field
 		CreatedAt       respjson.Field
 		Description     respjson.Field
@@ -189,6 +197,10 @@ type V1BetaEntityTypeListParams struct {
 	Limit          param.Opt[int64]  `query:"limit,omitzero" json:"-"`
 	XAccountID     param.Opt[string] `header:"X-ACCOUNT-ID,omitzero" json:"-"`
 	XEnvironmentID param.Opt[string] `header:"X-ENVIRONMENT-ID,omitzero" json:"-"`
+	// Whether to include archived entity types. One of: true, false
+	//
+	// Any of "true", "false".
+	IncludeArchived V1BetaEntityTypeListParamsIncludeArchived `query:"includeArchived,omitzero" json:"-"`
 	paramObj
 }
 
@@ -200,6 +212,14 @@ func (r V1BetaEntityTypeListParams) URLQuery() (v url.Values, err error) {
 		NestedFormat: apiquery.NestedQueryFormatBrackets,
 	})
 }
+
+// Whether to include archived entity types. One of: true, false
+type V1BetaEntityTypeListParamsIncludeArchived string
+
+const (
+	V1BetaEntityTypeListParamsIncludeArchivedTrue  V1BetaEntityTypeListParamsIncludeArchived = "true"
+	V1BetaEntityTypeListParamsIncludeArchivedFalse V1BetaEntityTypeListParamsIncludeArchived = "false"
+)
 
 type V1BetaEntityTypeUpsertParams struct {
 	// Entity types to upsert (1–100 per request)

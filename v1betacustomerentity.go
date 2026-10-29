@@ -112,7 +112,10 @@ func (r *V1BetaCustomerEntityService) Archive(ctx context.Context, id string, pa
 	return res, err
 }
 
-// Restores previously archived entities in bulk for the given customer by id.
+// Deprecated: upsert an entity to restore it. Restores previously archived
+// entities in bulk for the given customer by id.
+//
+// Deprecated: deprecated
 func (r *V1BetaCustomerEntityService) Unarchive(ctx context.Context, id string, params V1BetaCustomerEntityUnarchiveParams, opts ...option.RequestOption) (res *V1BetaCustomerEntityUnarchiveResponse, err error) {
 	if !param.IsOmitted(params.XAccountID) {
 		opts = append(opts, option.WithHeader("X-ACCOUNT-ID", fmt.Sprintf("%v", params.XAccountID.Value)))
@@ -131,7 +134,8 @@ func (r *V1BetaCustomerEntityService) Unarchive(ctx context.Context, id string, 
 }
 
 // Creates or updates entities in bulk for the given customer. Existing entities
-// matched by id are updated; new ids are created.
+// matched by id are updated; new ids are created. An upsert of an archived entity
+// restores it. An entity on an archived entity type fails with 400.
 func (r *V1BetaCustomerEntityService) Upsert(ctx context.Context, id string, params V1BetaCustomerEntityUpsertParams, opts ...option.RequestOption) (res *V1BetaCustomerEntityUpsertResponse, err error) {
 	if !param.IsOmitted(params.XAccountID) {
 		opts = append(opts, option.WithHeader("X-ACCOUNT-ID", fmt.Sprintf("%v", params.XAccountID.Value)))
