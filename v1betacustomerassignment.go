@@ -41,7 +41,10 @@ func NewV1BetaCustomerAssignmentService(opts ...option.RequestOption) (r V1BetaC
 
 // Returns a cursor-paginated list of capability assignments for the given
 // customer. An assignment ties an entity to a capability with a usage limit and
-// reset cadence.
+// reset cadence. Deprecated: use
+// `GET /api/v1/customers/{id}/entities/entitlements`.
+//
+// Deprecated: deprecated
 func (r *V1BetaCustomerAssignmentService) List(ctx context.Context, id string, params V1BetaCustomerAssignmentListParams, opts ...option.RequestOption) (res *pagination.MyCursorIDPage[V1BetaCustomerAssignmentListResponse], err error) {
 	var raw *http.Response
 	if !param.IsOmitted(params.XAccountID) {
@@ -71,7 +74,10 @@ func (r *V1BetaCustomerAssignmentService) List(ctx context.Context, id string, p
 
 // Returns a cursor-paginated list of capability assignments for the given
 // customer. An assignment ties an entity to a capability with a usage limit and
-// reset cadence.
+// reset cadence. Deprecated: use
+// `GET /api/v1/customers/{id}/entities/entitlements`.
+//
+// Deprecated: deprecated
 func (r *V1BetaCustomerAssignmentService) ListAutoPaging(ctx context.Context, id string, params V1BetaCustomerAssignmentListParams, opts ...option.RequestOption) *pagination.MyCursorIDPageAutoPager[V1BetaCustomerAssignmentListResponse] {
 	return pagination.NewMyCursorIDPageAutoPager(r.List(ctx, id, params, opts...))
 }
@@ -79,7 +85,11 @@ func (r *V1BetaCustomerAssignmentService) ListAutoPaging(ctx context.Context, id
 // Batched create-or-update of capability assignments. Existing assignments matched
 // by (entityId, capabilityId) are updated; new pairs are created. On update,
 // omitted fields (usageLimit, cadence) are preserved; on create both are required
-// by the governance service.
+// by the governance service. Deprecated: use
+// `PUT /api/v1/customers/{id}/entities/entitlements` with the body key
+// `entityEntitlements`.
+//
+// Deprecated: deprecated
 func (r *V1BetaCustomerAssignmentService) Upsert(ctx context.Context, id string, params V1BetaCustomerAssignmentUpsertParams, opts ...option.RequestOption) (res *V1BetaCustomerAssignmentUpsertResponse, err error) {
 	if !param.IsOmitted(params.XAccountID) {
 		opts = append(opts, option.WithHeader("X-ACCOUNT-ID", fmt.Sprintf("%v", params.XAccountID.Value)))

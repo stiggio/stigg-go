@@ -41,7 +41,9 @@ func NewV1BetaEntityTypeService(opts ...option.RequestOption) (r V1BetaEntityTyp
 // Returns a cursor-paginated list of entity types defined in the environment.
 // Entity types are vendor-defined categories of resource that can be governed
 // (e.g. Org, Team, User). Archived entity types are excluded unless
-// includeArchived=true.
+// includeArchived=true. Deprecated: use `GET /api/v1/entity-types`.
+//
+// Deprecated: deprecated
 func (r *V1BetaEntityTypeService) List(ctx context.Context, params V1BetaEntityTypeListParams, opts ...option.RequestOption) (res *pagination.MyCursorIDPage[V1BetaEntityTypeListResponse], err error) {
 	var raw *http.Response
 	if !param.IsOmitted(params.XAccountID) {
@@ -68,7 +70,9 @@ func (r *V1BetaEntityTypeService) List(ctx context.Context, params V1BetaEntityT
 // Returns a cursor-paginated list of entity types defined in the environment.
 // Entity types are vendor-defined categories of resource that can be governed
 // (e.g. Org, Team, User). Archived entity types are excluded unless
-// includeArchived=true.
+// includeArchived=true. Deprecated: use `GET /api/v1/entity-types`.
+//
+// Deprecated: deprecated
 func (r *V1BetaEntityTypeService) ListAutoPaging(ctx context.Context, params V1BetaEntityTypeListParams, opts ...option.RequestOption) *pagination.MyCursorIDPageAutoPager[V1BetaEntityTypeListResponse] {
 	return pagination.NewMyCursorIDPageAutoPager(r.List(ctx, params, opts...))
 }
@@ -76,6 +80,9 @@ func (r *V1BetaEntityTypeService) ListAutoPaging(ctx context.Context, params V1B
 // Batched create-or-update of entity types. Existing types matched by id are
 // updated; new ids are created. Idempotent — re-submitting the same payload
 // converges to the same state. An upsert of an archived entity type restores it.
+// Deprecated: use `PUT /api/v1/entity-types`.
+//
+// Deprecated: deprecated
 func (r *V1BetaEntityTypeService) Upsert(ctx context.Context, params V1BetaEntityTypeUpsertParams, opts ...option.RequestOption) (res *V1BetaEntityTypeUpsertResponse, err error) {
 	if !param.IsOmitted(params.XAccountID) {
 		opts = append(opts, option.WithHeader("X-ACCOUNT-ID", fmt.Sprintf("%v", params.XAccountID.Value)))

@@ -39,7 +39,10 @@ func NewV1BetaCustomerEntityService(opts ...option.RequestOption) (r V1BetaCusto
 	return
 }
 
-// Retrieves a single entity for the given customer by its identifier.
+// Retrieves a single entity for the given customer by its identifier. Deprecated:
+// use `GET /api/v1/customers/{id}/entities/{entityId}`.
+//
+// Deprecated: deprecated
 func (r *V1BetaCustomerEntityService) Get(ctx context.Context, entityID string, params V1BetaCustomerEntityGetParams, opts ...option.RequestOption) (res *V1BetaCustomerEntityGetResponse, err error) {
 	if !param.IsOmitted(params.XAccountID) {
 		opts = append(opts, option.WithHeader("X-ACCOUNT-ID", fmt.Sprintf("%v", params.XAccountID.Value)))
@@ -61,7 +64,10 @@ func (r *V1BetaCustomerEntityService) Get(ctx context.Context, entityID string, 
 	return res, err
 }
 
-// Retrieves a paginated list of entities for the given customer.
+// Retrieves a paginated list of entities for the given customer. Deprecated: use
+// `GET /api/v1/customers/{id}/entities`.
+//
+// Deprecated: deprecated
 func (r *V1BetaCustomerEntityService) List(ctx context.Context, id string, params V1BetaCustomerEntityListParams, opts ...option.RequestOption) (res *pagination.MyCursorIDPage[V1BetaCustomerEntityListResponse], err error) {
 	var raw *http.Response
 	if !param.IsOmitted(params.XAccountID) {
@@ -89,12 +95,19 @@ func (r *V1BetaCustomerEntityService) List(ctx context.Context, id string, param
 	return res, nil
 }
 
-// Retrieves a paginated list of entities for the given customer.
+// Retrieves a paginated list of entities for the given customer. Deprecated: use
+// `GET /api/v1/customers/{id}/entities`.
+//
+// Deprecated: deprecated
 func (r *V1BetaCustomerEntityService) ListAutoPaging(ctx context.Context, id string, params V1BetaCustomerEntityListParams, opts ...option.RequestOption) *pagination.MyCursorIDPageAutoPager[V1BetaCustomerEntityListResponse] {
 	return pagination.NewMyCursorIDPageAutoPager(r.List(ctx, id, params, opts...))
 }
 
-// Archives entities in bulk for the given customer by id.
+// Archives entities in bulk for the given customer by id. Upsert an archived
+// entity to restore it. Deprecated: use
+// `POST /api/v1/customers/{id}/entities/archive`.
+//
+// Deprecated: deprecated
 func (r *V1BetaCustomerEntityService) Archive(ctx context.Context, id string, params V1BetaCustomerEntityArchiveParams, opts ...option.RequestOption) (res *V1BetaCustomerEntityArchiveResponse, err error) {
 	if !param.IsOmitted(params.XAccountID) {
 		opts = append(opts, option.WithHeader("X-ACCOUNT-ID", fmt.Sprintf("%v", params.XAccountID.Value)))
@@ -112,8 +125,9 @@ func (r *V1BetaCustomerEntityService) Archive(ctx context.Context, id string, pa
 	return res, err
 }
 
-// Deprecated: upsert an entity to restore it. Restores previously archived
-// entities in bulk for the given customer by id.
+// Deprecated: use `PUT /api/v1/customers/{id}/entities` with the entity id to
+// restore it. Restores previously archived entities in bulk for the given customer
+// by id.
 //
 // Deprecated: deprecated
 func (r *V1BetaCustomerEntityService) Unarchive(ctx context.Context, id string, params V1BetaCustomerEntityUnarchiveParams, opts ...option.RequestOption) (res *V1BetaCustomerEntityUnarchiveResponse, err error) {
@@ -135,7 +149,10 @@ func (r *V1BetaCustomerEntityService) Unarchive(ctx context.Context, id string, 
 
 // Creates or updates entities in bulk for the given customer. Existing entities
 // matched by id are updated; new ids are created. An upsert of an archived entity
-// restores it. An entity on an archived entity type fails with 400.
+// restores it. An entity on an archived entity type fails with 400. Deprecated:
+// use `PUT /api/v1/customers/{id}/entities`.
+//
+// Deprecated: deprecated
 func (r *V1BetaCustomerEntityService) Upsert(ctx context.Context, id string, params V1BetaCustomerEntityUpsertParams, opts ...option.RequestOption) (res *V1BetaCustomerEntityUpsertResponse, err error) {
 	if !param.IsOmitted(params.XAccountID) {
 		opts = append(opts, option.WithHeader("X-ACCOUNT-ID", fmt.Sprintf("%v", params.XAccountID.Value)))
