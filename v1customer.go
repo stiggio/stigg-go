@@ -562,6 +562,8 @@ type CustomerResponseData struct {
 	Name string `json:"name" api:"nullable"`
 	// Vendor-specific billing passthrough fields.
 	Passthrough CustomerResponseDataPassthrough `json:"passthrough"`
+	// The unique identifier for the customer in Salesforce integration
+	SalesforceID string `json:"salesforceId" api:"nullable"`
 	// Timezone to use for this customer
 	Timezone string `json:"timezone" api:"nullable"`
 	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
@@ -580,6 +582,7 @@ type CustomerResponseData struct {
 		Metadata             respjson.Field
 		Name                 respjson.Field
 		Passthrough          respjson.Field
+		SalesforceID         respjson.Field
 		Timezone             respjson.Field
 		ExtraFields          map[string]respjson.Field
 		raw                  string
@@ -930,6 +933,8 @@ type V1CustomerListResponse struct {
 	Name string `json:"name" api:"nullable"`
 	// Vendor-specific billing passthrough fields.
 	Passthrough V1CustomerListResponsePassthrough `json:"passthrough"`
+	// The unique identifier for the customer in Salesforce integration
+	SalesforceID string `json:"salesforceId" api:"nullable"`
 	// Timezone to use for this customer
 	Timezone string `json:"timezone" api:"nullable"`
 	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
@@ -948,6 +953,7 @@ type V1CustomerListResponse struct {
 		Metadata             respjson.Field
 		Name                 respjson.Field
 		Passthrough          respjson.Field
+		SalesforceID         respjson.Field
 		Timezone             respjson.Field
 		ExtraFields          map[string]respjson.Field
 		raw                  string
@@ -2491,6 +2497,8 @@ type V1CustomerUpdateParams struct {
 	Language param.Opt[string] `json:"language,omitzero"`
 	// The name of the customer
 	Name param.Opt[string] `json:"name,omitzero"`
+	// The unique identifier for the customer in Salesforce integration
+	SalesforceID param.Opt[string] `json:"salesforceId,omitzero"`
 	// Timezone to use for this customer
 	Timezone       param.Opt[string] `json:"timezone,omitzero"`
 	XAccountID     param.Opt[string] `header:"X-ACCOUNT-ID,omitzero" json:"-"`
@@ -3119,6 +3127,8 @@ type V1CustomerProvisionParams struct {
 	Language param.Opt[string] `json:"language,omitzero"`
 	// The name of the customer
 	Name param.Opt[string] `json:"name,omitzero"`
+	// The unique identifier for the customer in Salesforce integration
+	SalesforceID param.Opt[string] `json:"salesforceId,omitzero"`
 	// Timezone to use for this customer
 	Timezone       param.Opt[string] `json:"timezone,omitzero"`
 	XAccountID     param.Opt[string] `header:"X-ACCOUNT-ID,omitzero" json:"-"`
