@@ -43,6 +43,9 @@ func NewV1BetaCustomerEntitlementService(opts ...option.RequestOption) (r V1Beta
 // Experimental — request and response shapes may change without notice. Same
 // semantics as `Check entitlement`, plus an optional `dimensions` query param that
 // resolves to per-entity governance limits surfaced as `chains` on the response.
+// Deprecated: use `GET /api/v1/customers/{id}/entitlements/check`.
+//
+// Deprecated: deprecated
 func (r *V1BetaCustomerEntitlementService) Check(ctx context.Context, id string, params V1BetaCustomerEntitlementCheckParams, opts ...option.RequestOption) (res *V1BetaCustomerEntitlementCheckResponse, err error) {
 	if !param.IsOmitted(params.XAccountID) {
 		opts = append(opts, option.WithHeader("X-ACCOUNT-ID", fmt.Sprintf("%v", params.XAccountID.Value)))
@@ -288,7 +291,7 @@ type V1BetaCustomerEntitlementCheckResponseDataFeatureChain struct {
 	// node-wide budget; a non-empty set is the dimension-scoped budget that matched
 	// this request — use it to tell apart multiple budgets on the same entity.
 	ScopeEntityIDs []string `json:"scopeEntityIds" api:"required"`
-	// Hard usage limit for this node; null when no assignment is configured.
+	// Hard usage limit for this node; null when the entity has no entity entitlement.
 	UsageLimit float64 `json:"usageLimit" api:"required"`
 	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
 	JSON struct {
@@ -446,7 +449,7 @@ type V1BetaCustomerEntitlementCheckResponseDataCreditChain struct {
 	// node-wide budget; a non-empty set is the dimension-scoped budget that matched
 	// this request — use it to tell apart multiple budgets on the same entity.
 	ScopeEntityIDs []string `json:"scopeEntityIds" api:"required"`
-	// Hard usage limit for this node; null when no assignment is configured.
+	// Hard usage limit for this node; null when the entity has no entity entitlement.
 	UsageLimit float64 `json:"usageLimit" api:"required"`
 	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
 	JSON struct {
@@ -512,8 +515,9 @@ type V1BetaCustomerEntitlementCheckParams struct {
 	ResourceID     param.Opt[string] `query:"resourceId,omitzero" json:"-"`
 	XAccountID     param.Opt[string] `header:"X-ACCOUNT-ID,omitzero" json:"-"`
 	XEnvironmentID param.Opt[string] `header:"X-ENVIRONMENT-ID,omitzero" json:"-"`
-	// Optional attribution map (e.g. `dimensions[userId]=u1`). When provided, the
-	// response includes a `chains` array with per-entity governance limits.
+	// Attribution map of the entities the usage is attributed to (e.g.
+	// `dimensions[userId]=u1`). When provided, their governance budgets are checked
+	// too and the response includes `chains`.
 	Dimensions map[string]string `query:"dimensions,omitzero" json:"-"`
 	// Requested values to evaluate against allowed values (enum features only)
 	RequestedValues []string `query:"requestedValues,omitzero" json:"-"`

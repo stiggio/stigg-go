@@ -137,12 +137,14 @@ func (r *V1CustomerService) Archive(ctx context.Context, id string, body V1Custo
 
 // Checks a single entitlement (feature or credit) for a customer or resource.
 // Supports `requestedUsage` and `requestedValues` to evaluate against limits or
-// enum values. Each call reaches the Stigg API directly, so latency reflects a
-// network round trip. For entitlement checks on a hot path (e.g. gating a request
-// in real time), the Stigg Node Server SDK (with its built-in cache) or the
-// Sidecar will typically respond faster and keep working through brief Stigg
-// outages; reach for this endpoint when a live HTTP call is the natural fit, such
-// as from a non-Node backend or a server-side job.
+// enum values. Pass `dimensions` to also check the governance budgets of the
+// entities the usage is attributed to; the response then includes `chains`. Each
+// call reaches the Stigg API directly, so latency reflects a network round trip.
+// For entitlement checks on a hot path (e.g. gating a request in real time), the
+// Stigg Node Server SDK (with its built-in cache) or the Sidecar will typically
+// respond faster and keep working through brief Stigg outages; reach for this
+// endpoint when a live HTTP call is the natural fit, such as from a non-Node
+// backend or a server-side job.
 func (r *V1CustomerService) CheckEntitlement(ctx context.Context, id string, params V1CustomerCheckEntitlementParams, opts ...option.RequestOption) (res *V1CustomerCheckEntitlementResponse, err error) {
 	if !param.IsOmitted(params.XAccountID) {
 		opts = append(opts, option.WithHeader("X-ACCOUNT-ID", fmt.Sprintf("%v", params.XAccountID.Value)))
@@ -1416,9 +1418,13 @@ type V1CustomerCheckEntitlementResponseDataUnion struct {
 	AccessDeniedReason string `json:"accessDeniedReason"`
 	IsGranted          bool   `json:"isGranted"`
 	// Any of "FEATURE", "CREDIT".
-	Type                 string    `json:"type"`
-	CurrentUsage         float64   `json:"currentUsage"`
-	EntitlementUpdatedAt time.Time `json:"entitlementUpdatedAt"`
+	Type string `json:"type"`
+	// This field is a union of
+	// [[][]V1CustomerCheckEntitlementResponseDataFeatureChain],
+	// [[][]V1CustomerCheckEntitlementResponseDataCreditChain]
+	Chains               V1CustomerCheckEntitlementResponseDataUnionChains `json:"chains"`
+	CurrentUsage         float64                                           `json:"currentUsage"`
+	EntitlementUpdatedAt time.Time                                         `json:"entitlementUpdatedAt"`
 	// This field is from variant [V1CustomerCheckEntitlementResponseDataFeature].
 	Feature V1CustomerCheckEntitlementResponseDataFeatureFeature `json:"feature"`
 	// This field is from variant [V1CustomerCheckEntitlementResponseDataFeature].
@@ -1446,6 +1452,7 @@ type V1CustomerCheckEntitlementResponseDataUnion struct {
 		AccessDeniedReason      respjson.Field
 		IsGranted               respjson.Field
 		Type                    respjson.Field
+		Chains                  respjson.Field
 		CurrentUsage            respjson.Field
 		EntitlementUpdatedAt    respjson.Field
 		Feature                 respjson.Field
@@ -1512,6 +1519,30 @@ func (r *V1CustomerCheckEntitlementResponseDataUnion) UnmarshalJSON(data []byte)
 	return apijson.UnmarshalRoot(data, r)
 }
 
+// V1CustomerCheckEntitlementResponseDataUnionChains is an implicit subunion of
+// [V1CustomerCheckEntitlementResponseDataUnion].
+// V1CustomerCheckEntitlementResponseDataUnionChains provides convenient access to
+// the sub-properties of the union.
+//
+// For type safety it is recommended to directly use a variant of the
+// [V1CustomerCheckEntitlementResponseDataUnion].
+//
+// If the underlying value is not a json object, one of the following properties
+// will be valid: OfChains]
+type V1CustomerCheckEntitlementResponseDataUnionChains struct {
+	// This field will be present if the value is a
+	// [[][]V1CustomerCheckEntitlementResponseDataFeatureChain] instead of an object.
+	OfChains [][]V1CustomerCheckEntitlementResponseDataFeatureChain `json:",inline"`
+	JSON     struct {
+		OfChains respjson.Field
+		raw      string
+	} `json:"-"`
+}
+
+func (r *V1CustomerCheckEntitlementResponseDataUnionChains) UnmarshalJSON(data []byte) error {
+	return apijson.UnmarshalRoot(data, r)
+}
+
 type V1CustomerCheckEntitlementResponseDataFeature struct {
 	// Any of "FeatureNotFound", "CustomerNotFound", "CustomerIsArchived",
 	// "CustomerResourceNotFound", "NoActiveSubscription",
@@ -1521,7 +1552,10 @@ type V1CustomerCheckEntitlementResponseDataFeature struct {
 	AccessDeniedReason string           `json:"accessDeniedReason" api:"required"`
 	IsGranted          bool             `json:"isGranted" api:"required"`
 	Type               constant.Feature `json:"type" default:"FEATURE"`
-	CurrentUsage       float64          `json:"currentUsage"`
+	// Per-entity rollups, one chain per resolved dimension. Omitted when dimensions
+	// was not provided.
+	Chains       [][]V1CustomerCheckEntitlementResponseDataFeatureChain `json:"chains"`
+	CurrentUsage float64                                                `json:"currentUsage"`
 	// Timestamp of the last update to the entitlement grant or configuration.
 	EntitlementUpdatedAt time.Time                                            `json:"entitlementUpdatedAt" format:"date-time"`
 	Feature              V1CustomerCheckEntitlementResponseDataFeatureFeature `json:"feature"`
@@ -1545,6 +1579,7 @@ type V1CustomerCheckEntitlementResponseDataFeature struct {
 		AccessDeniedReason   respjson.Field
 		IsGranted            respjson.Field
 		Type                 respjson.Field
+		Chains               respjson.Field
 		CurrentUsage         respjson.Field
 		EntitlementUpdatedAt respjson.Field
 		Feature              respjson.Field
@@ -1563,6 +1598,39 @@ type V1CustomerCheckEntitlementResponseDataFeature struct {
 // Returns the unmodified JSON received from the API
 func (r V1CustomerCheckEntitlementResponseDataFeature) RawJSON() string { return r.JSON.raw }
 func (r *V1CustomerCheckEntitlementResponseDataFeature) UnmarshalJSON(data []byte) error {
+	return apijson.UnmarshalRoot(data, r)
+}
+
+// Per-entity governance node — limit and current usage for a single resolved
+// entity.
+type V1CustomerCheckEntitlementResponseDataFeatureChain struct {
+	// Amount consumed by this entity in the current cadence period.
+	CurrentUsage float64 `json:"currentUsage" api:"required"`
+	// External id of the entity within the customer.
+	EntityID string `json:"entityId" api:"required"`
+	// Whether this node alone permits the requested usage.
+	IsGranted bool `json:"isGranted" api:"required"`
+	// External ids of the entities this budget is scoped to. Empty (`[]`) is the
+	// node-wide budget; a non-empty set is the dimension-scoped budget that matched
+	// this request — use it to tell apart multiple budgets on the same entity.
+	ScopeEntityIDs []string `json:"scopeEntityIds" api:"required"`
+	// Hard usage limit for this node; null when the entity has no entity entitlement.
+	UsageLimit float64 `json:"usageLimit" api:"required"`
+	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
+	JSON struct {
+		CurrentUsage   respjson.Field
+		EntityID       respjson.Field
+		IsGranted      respjson.Field
+		ScopeEntityIDs respjson.Field
+		UsageLimit     respjson.Field
+		ExtraFields    map[string]respjson.Field
+		raw            string
+	} `json:"-"`
+}
+
+// Returns the unmodified JSON received from the API
+func (r V1CustomerCheckEntitlementResponseDataFeatureChain) RawJSON() string { return r.JSON.raw }
+func (r *V1CustomerCheckEntitlementResponseDataFeatureChain) UnmarshalJSON(data []byte) error {
 	return apijson.UnmarshalRoot(data, r)
 }
 
@@ -1611,6 +1679,9 @@ type V1CustomerCheckEntitlementResponseDataCredit struct {
 	UsageLimit   float64                                              `json:"usageLimit" api:"required"`
 	// Timestamp of the last update to the credit usage.
 	UsageUpdatedAt time.Time `json:"usageUpdatedAt" api:"required" format:"date-time"`
+	// Per-entity rollups, one chain per resolved dimension. Omitted when dimensions
+	// was not provided.
+	Chains [][]V1CustomerCheckEntitlementResponseDataCreditChain `json:"chains"`
 	// Timestamp of the last update to the entitlement grant or configuration.
 	EntitlementUpdatedAt time.Time `json:"entitlementUpdatedAt" format:"date-time"`
 	// The reservation created by this request, when it asked to reserve credits and
@@ -1636,6 +1707,7 @@ type V1CustomerCheckEntitlementResponseDataCredit struct {
 		Type                    respjson.Field
 		UsageLimit              respjson.Field
 		UsageUpdatedAt          respjson.Field
+		Chains                  respjson.Field
 		EntitlementUpdatedAt    respjson.Field
 		Reservation             respjson.Field
 		Reserved                respjson.Field
@@ -1683,6 +1755,39 @@ type V1CustomerCheckEntitlementResponseDataCreditCurrency struct {
 // Returns the unmodified JSON received from the API
 func (r V1CustomerCheckEntitlementResponseDataCreditCurrency) RawJSON() string { return r.JSON.raw }
 func (r *V1CustomerCheckEntitlementResponseDataCreditCurrency) UnmarshalJSON(data []byte) error {
+	return apijson.UnmarshalRoot(data, r)
+}
+
+// Per-entity governance node — limit and current usage for a single resolved
+// entity.
+type V1CustomerCheckEntitlementResponseDataCreditChain struct {
+	// Amount consumed by this entity in the current cadence period.
+	CurrentUsage float64 `json:"currentUsage" api:"required"`
+	// External id of the entity within the customer.
+	EntityID string `json:"entityId" api:"required"`
+	// Whether this node alone permits the requested usage.
+	IsGranted bool `json:"isGranted" api:"required"`
+	// External ids of the entities this budget is scoped to. Empty (`[]`) is the
+	// node-wide budget; a non-empty set is the dimension-scoped budget that matched
+	// this request — use it to tell apart multiple budgets on the same entity.
+	ScopeEntityIDs []string `json:"scopeEntityIds" api:"required"`
+	// Hard usage limit for this node; null when the entity has no entity entitlement.
+	UsageLimit float64 `json:"usageLimit" api:"required"`
+	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
+	JSON struct {
+		CurrentUsage   respjson.Field
+		EntityID       respjson.Field
+		IsGranted      respjson.Field
+		ScopeEntityIDs respjson.Field
+		UsageLimit     respjson.Field
+		ExtraFields    map[string]respjson.Field
+		raw            string
+	} `json:"-"`
+}
+
+// Returns the unmodified JSON received from the API
+func (r V1CustomerCheckEntitlementResponseDataCreditChain) RawJSON() string { return r.JSON.raw }
+func (r *V1CustomerCheckEntitlementResponseDataCreditChain) UnmarshalJSON(data []byte) error {
 	return apijson.UnmarshalRoot(data, r)
 }
 
@@ -2960,12 +3065,17 @@ type V1CustomerCheckEntitlementParams struct {
 	// Mutually exclusive with `reservationExpiresAt`.
 	ReservationTtlSeconds param.Opt[int64] `query:"reservationTtlSeconds,omitzero" json:"-"`
 	// Credits to reserve (credit entitlements only). The check is decided and the
-	// credits held atomically; `requestedUsage` is ignored.
+	// credits held atomically; `requestedUsage` is ignored. Not supported with
+	// `dimensions`.
 	ReserveAmount param.Opt[float64] `query:"reserveAmount,omitzero" json:"-"`
 	// Resource ID to scope the entitlement check to a specific resource
 	ResourceID     param.Opt[string] `query:"resourceId,omitzero" json:"-"`
 	XAccountID     param.Opt[string] `header:"X-ACCOUNT-ID,omitzero" json:"-"`
 	XEnvironmentID param.Opt[string] `header:"X-ENVIRONMENT-ID,omitzero" json:"-"`
+	// Attribution map of the entities the usage is attributed to (e.g.
+	// `dimensions[userId]=u1`). When provided, their governance budgets are checked
+	// too and the response includes `chains`.
+	Dimensions map[string]string `query:"dimensions,omitzero" json:"-"`
 	// Requested values to evaluate against allowed values (enum features only)
 	RequestedValues []string `query:"requestedValues,omitzero" json:"-"`
 	paramObj

@@ -221,7 +221,10 @@ func TestV1CustomerCheckEntitlementWithOptionalParams(t *testing.T) {
 		context.TODO(),
 		"x",
 		stigg.V1CustomerCheckEntitlementParams{
-			CurrencyID:            stigg.String("x"),
+			CurrencyID: stigg.String("x"),
+			Dimensions: map[string]string{
+				"foo": "string",
+			},
 			FeatureID:             stigg.String("x"),
 			RequestedUsage:        stigg.Int(0),
 			RequestedValues:       []string{"string"},
