@@ -42,7 +42,7 @@ func NewV1BetaCustomerEntityService(opts ...option.RequestOption) (r V1BetaCusto
 // Retrieves a single entity for the given customer by its identifier. Deprecated:
 // use `GET /api/v1/customers/{id}/entities/{entityId}`.
 //
-// Deprecated: deprecated
+// Deprecated: Use `v1.customers.entities.retrieve` instead.
 func (r *V1BetaCustomerEntityService) Get(ctx context.Context, entityID string, params V1BetaCustomerEntityGetParams, opts ...option.RequestOption) (res *V1BetaCustomerEntityGetResponse, err error) {
 	if !param.IsOmitted(params.XAccountID) {
 		opts = append(opts, option.WithHeader("X-ACCOUNT-ID", fmt.Sprintf("%v", params.XAccountID.Value)))
@@ -67,7 +67,7 @@ func (r *V1BetaCustomerEntityService) Get(ctx context.Context, entityID string, 
 // Retrieves a paginated list of entities for the given customer. Deprecated: use
 // `GET /api/v1/customers/{id}/entities`.
 //
-// Deprecated: deprecated
+// Deprecated: Use `v1.customers.entities.list` instead.
 func (r *V1BetaCustomerEntityService) List(ctx context.Context, id string, params V1BetaCustomerEntityListParams, opts ...option.RequestOption) (res *pagination.MyCursorIDPage[V1BetaCustomerEntityListResponse], err error) {
 	var raw *http.Response
 	if !param.IsOmitted(params.XAccountID) {
@@ -98,7 +98,7 @@ func (r *V1BetaCustomerEntityService) List(ctx context.Context, id string, param
 // Retrieves a paginated list of entities for the given customer. Deprecated: use
 // `GET /api/v1/customers/{id}/entities`.
 //
-// Deprecated: deprecated
+// Deprecated: Use `v1.customers.entities.list` instead.
 func (r *V1BetaCustomerEntityService) ListAutoPaging(ctx context.Context, id string, params V1BetaCustomerEntityListParams, opts ...option.RequestOption) *pagination.MyCursorIDPageAutoPager[V1BetaCustomerEntityListResponse] {
 	return pagination.NewMyCursorIDPageAutoPager(r.List(ctx, id, params, opts...))
 }
@@ -107,7 +107,7 @@ func (r *V1BetaCustomerEntityService) ListAutoPaging(ctx context.Context, id str
 // entity to restore it. Deprecated: use
 // `POST /api/v1/customers/{id}/entities/archive`.
 //
-// Deprecated: deprecated
+// Deprecated: Use `v1.customers.entities.archive` instead.
 func (r *V1BetaCustomerEntityService) Archive(ctx context.Context, id string, params V1BetaCustomerEntityArchiveParams, opts ...option.RequestOption) (res *V1BetaCustomerEntityArchiveResponse, err error) {
 	if !param.IsOmitted(params.XAccountID) {
 		opts = append(opts, option.WithHeader("X-ACCOUNT-ID", fmt.Sprintf("%v", params.XAccountID.Value)))
@@ -129,7 +129,8 @@ func (r *V1BetaCustomerEntityService) Archive(ctx context.Context, id string, pa
 // restore it. Restores previously archived entities in bulk for the given customer
 // by id.
 //
-// Deprecated: deprecated
+// Deprecated: Use `v1.customers.entities.upsert` with the entity id to restore an
+// archived entity.
 func (r *V1BetaCustomerEntityService) Unarchive(ctx context.Context, id string, params V1BetaCustomerEntityUnarchiveParams, opts ...option.RequestOption) (res *V1BetaCustomerEntityUnarchiveResponse, err error) {
 	if !param.IsOmitted(params.XAccountID) {
 		opts = append(opts, option.WithHeader("X-ACCOUNT-ID", fmt.Sprintf("%v", params.XAccountID.Value)))
@@ -152,7 +153,7 @@ func (r *V1BetaCustomerEntityService) Unarchive(ctx context.Context, id string, 
 // restores it. An entity on an archived entity type fails with 400. Deprecated:
 // use `PUT /api/v1/customers/{id}/entities`.
 //
-// Deprecated: deprecated
+// Deprecated: Use `v1.customers.entities.upsert` instead.
 func (r *V1BetaCustomerEntityService) Upsert(ctx context.Context, id string, params V1BetaCustomerEntityUpsertParams, opts ...option.RequestOption) (res *V1BetaCustomerEntityUpsertResponse, err error) {
 	if !param.IsOmitted(params.XAccountID) {
 		opts = append(opts, option.WithHeader("X-ACCOUNT-ID", fmt.Sprintf("%v", params.XAccountID.Value)))

@@ -45,7 +45,7 @@ func NewV1BetaCustomerEntitlementService(opts ...option.RequestOption) (r V1Beta
 // resolves to per-entity governance limits surfaced as `chains` on the response.
 // Deprecated: use `GET /api/v1/customers/{id}/entitlements/check`.
 //
-// Deprecated: deprecated
+// Deprecated: Use `v1.customers.check_entitlement` instead.
 func (r *V1BetaCustomerEntitlementService) Check(ctx context.Context, id string, params V1BetaCustomerEntitlementCheckParams, opts ...option.RequestOption) (res *V1BetaCustomerEntitlementCheckResponse, err error) {
 	if !param.IsOmitted(params.XAccountID) {
 		opts = append(opts, option.WithHeader("X-ACCOUNT-ID", fmt.Sprintf("%v", params.XAccountID.Value)))

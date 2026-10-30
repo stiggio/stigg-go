@@ -43,7 +43,7 @@ func NewV1BetaEntityTypeService(opts ...option.RequestOption) (r V1BetaEntityTyp
 // (e.g. Org, Team, User). Archived entity types are excluded unless
 // includeArchived=true. Deprecated: use `GET /api/v1/entity-types`.
 //
-// Deprecated: deprecated
+// Deprecated: Use `v1.entity_types.list` instead.
 func (r *V1BetaEntityTypeService) List(ctx context.Context, params V1BetaEntityTypeListParams, opts ...option.RequestOption) (res *pagination.MyCursorIDPage[V1BetaEntityTypeListResponse], err error) {
 	var raw *http.Response
 	if !param.IsOmitted(params.XAccountID) {
@@ -72,7 +72,7 @@ func (r *V1BetaEntityTypeService) List(ctx context.Context, params V1BetaEntityT
 // (e.g. Org, Team, User). Archived entity types are excluded unless
 // includeArchived=true. Deprecated: use `GET /api/v1/entity-types`.
 //
-// Deprecated: deprecated
+// Deprecated: Use `v1.entity_types.list` instead.
 func (r *V1BetaEntityTypeService) ListAutoPaging(ctx context.Context, params V1BetaEntityTypeListParams, opts ...option.RequestOption) *pagination.MyCursorIDPageAutoPager[V1BetaEntityTypeListResponse] {
 	return pagination.NewMyCursorIDPageAutoPager(r.List(ctx, params, opts...))
 }
@@ -82,7 +82,7 @@ func (r *V1BetaEntityTypeService) ListAutoPaging(ctx context.Context, params V1B
 // converges to the same state. An upsert of an archived entity type restores it.
 // Deprecated: use `PUT /api/v1/entity-types`.
 //
-// Deprecated: deprecated
+// Deprecated: Use `v1.entity_types.upsert` instead.
 func (r *V1BetaEntityTypeService) Upsert(ctx context.Context, params V1BetaEntityTypeUpsertParams, opts ...option.RequestOption) (res *V1BetaEntityTypeUpsertResponse, err error) {
 	if !param.IsOmitted(params.XAccountID) {
 		opts = append(opts, option.WithHeader("X-ACCOUNT-ID", fmt.Sprintf("%v", params.XAccountID.Value)))

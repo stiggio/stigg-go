@@ -44,7 +44,7 @@ func NewV1BetaCustomerAssignmentService(opts ...option.RequestOption) (r V1BetaC
 // reset cadence. Deprecated: use
 // `GET /api/v1/customers/{id}/entities/entitlements`.
 //
-// Deprecated: deprecated
+// Deprecated: Use `v1.customers.entities.entitlements.list` instead.
 func (r *V1BetaCustomerAssignmentService) List(ctx context.Context, id string, params V1BetaCustomerAssignmentListParams, opts ...option.RequestOption) (res *pagination.MyCursorIDPage[V1BetaCustomerAssignmentListResponse], err error) {
 	var raw *http.Response
 	if !param.IsOmitted(params.XAccountID) {
@@ -77,7 +77,7 @@ func (r *V1BetaCustomerAssignmentService) List(ctx context.Context, id string, p
 // reset cadence. Deprecated: use
 // `GET /api/v1/customers/{id}/entities/entitlements`.
 //
-// Deprecated: deprecated
+// Deprecated: Use `v1.customers.entities.entitlements.list` instead.
 func (r *V1BetaCustomerAssignmentService) ListAutoPaging(ctx context.Context, id string, params V1BetaCustomerAssignmentListParams, opts ...option.RequestOption) *pagination.MyCursorIDPageAutoPager[V1BetaCustomerAssignmentListResponse] {
 	return pagination.NewMyCursorIDPageAutoPager(r.List(ctx, id, params, opts...))
 }
@@ -89,7 +89,8 @@ func (r *V1BetaCustomerAssignmentService) ListAutoPaging(ctx context.Context, id
 // `PUT /api/v1/customers/{id}/entities/entitlements` with the body key
 // `entityEntitlements`.
 //
-// Deprecated: deprecated
+// Deprecated: Use `v1.customers.entities.entitlements.upsert` instead. Its body
+// key is `entityEntitlements`.
 func (r *V1BetaCustomerAssignmentService) Upsert(ctx context.Context, id string, params V1BetaCustomerAssignmentUpsertParams, opts ...option.RequestOption) (res *V1BetaCustomerAssignmentUpsertResponse, err error) {
 	if !param.IsOmitted(params.XAccountID) {
 		opts = append(opts, option.WithHeader("X-ACCOUNT-ID", fmt.Sprintf("%v", params.XAccountID.Value)))
