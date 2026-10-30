@@ -1,5 +1,19 @@
 # Changelog
 
+## [0.1.0-beta.58](https://github.com/stiggio/stigg-go/compare/v0.1.0-beta.57...v0.1.0-beta.58) (2026-10-30)
+
+
+### Features
+
+* **STIGG-9594:** add the v1 governance resources and v1-beta deprecation messages ([cb429c8](https://github.com/stiggio/stigg-go/commit/cb429c8223ff59dcf8c2e12d10c0c7619eabdf4c))
+
+
+### Bug Fixes
+
+* sync OpenAPI spec from stigg-api ([f562370](https://github.com/stiggio/stigg-go/commit/f56237095878ff36c30ef491fd557b700263cfd6))
+* sync OpenAPI spec from stigg-api ([a952f82](https://github.com/stiggio/stigg-go/commit/a952f82c7bfba8ede21a8bd64718691f7603fc95))
+* sync OpenAPI spec from stigg-api ([5c748b8](https://github.com/stiggio/stigg-go/commit/5c748b8f6fb9f82f555ecb5106f61188fd00b4f9))
+
 ## [0.1.0-beta.57](https://github.com/stiggio/stigg-go/compare/v0.1.0-beta.56...v0.1.0-beta.57) (2026-10-29)
 
 
