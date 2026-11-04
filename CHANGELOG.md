@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.1.0-beta.59](https://github.com/stiggio/stigg-go/compare/v0.1.0-beta.58...v0.1.0-beta.59) (2026-11-04)
+
+
+### Bug Fixes
+
+* sync OpenAPI spec from stigg-api ([748cd59](https://github.com/stiggio/stigg-go/commit/748cd59196c6526edf64ef34388a3d9bd5d30224))
+
 ## [0.1.0-beta.58](https://github.com/stiggio/stigg-go/compare/v0.1.0-beta.57...v0.1.0-beta.58) (2026-10-30)
 
 
