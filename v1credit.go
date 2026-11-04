@@ -567,6 +567,8 @@ type V1CreditListLedgerParams struct {
 	Before param.Opt[string] `query:"before,omitzero" json:"-"`
 	// Filter by currency ID
 	CurrencyID param.Opt[string] `query:"currencyId,omitzero" json:"-"`
+	// Filter to events with a timestamp on or before this date, inclusive (ISO 8601)
+	EndDate param.Opt[time.Time] `query:"endDate,omitzero" format:"date-time" json:"-"`
 	// Filter by event type(s), comma-separated
 	EventType param.Opt[string] `query:"eventType,omitzero" json:"-"`
 	// Maximum number of items to return
@@ -574,9 +576,11 @@ type V1CreditListLedgerParams struct {
 	// Filter by credit reservation ID
 	ReservationID param.Opt[string] `query:"reservationId,omitzero" json:"-"`
 	// Filter by resource ID
-	ResourceID     param.Opt[string] `query:"resourceId,omitzero" json:"-"`
-	XAccountID     param.Opt[string] `header:"X-ACCOUNT-ID,omitzero" json:"-"`
-	XEnvironmentID param.Opt[string] `header:"X-ENVIRONMENT-ID,omitzero" json:"-"`
+	ResourceID param.Opt[string] `query:"resourceId,omitzero" json:"-"`
+	// Filter to events with a timestamp on or after this date, inclusive (ISO 8601)
+	StartDate      param.Opt[time.Time] `query:"startDate,omitzero" format:"date-time" json:"-"`
+	XAccountID     param.Opt[string]    `header:"X-ACCOUNT-ID,omitzero" json:"-"`
+	XEnvironmentID param.Opt[string]    `header:"X-ENVIRONMENT-ID,omitzero" json:"-"`
 	paramObj
 }
 
