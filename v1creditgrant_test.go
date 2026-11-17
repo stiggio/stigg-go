@@ -28,7 +28,7 @@ func TestV1CreditGrantNewWithOptionalParams(t *testing.T) {
 		option.WithAPIKey("My API Key"),
 	)
 	_, err := client.V1.Credits.Grants.New(context.TODO(), stigg.V1CreditGrantNewParams{
-		Amount:                   0,
+		Amount:                   9007199254,
 		CurrencyID:               "currencyId",
 		CustomerID:               "customerId",
 		DisplayName:              "displayName",
