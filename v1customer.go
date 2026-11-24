@@ -2243,12 +2243,16 @@ type V1CustomerGetEntitlementsResponseData struct {
 	AccessDeniedReason string `json:"accessDeniedReason" api:"required"`
 	// List of effective feature and credit entitlements
 	Entitlements []V1CustomerGetEntitlementsResponseDataEntitlementUnion `json:"entitlements" api:"required"`
+	// When these entitlements last changed, on the same clock as the
+	// entitlementsUpdated event; always set, also when the list is empty.
+	EntitlementsUpdatedAt time.Time `json:"entitlementsUpdatedAt" api:"required" format:"date-time"`
 	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
 	JSON struct {
-		AccessDeniedReason respjson.Field
-		Entitlements       respjson.Field
-		ExtraFields        map[string]respjson.Field
-		raw                string
+		AccessDeniedReason    respjson.Field
+		Entitlements          respjson.Field
+		EntitlementsUpdatedAt respjson.Field
+		ExtraFields           map[string]respjson.Field
+		raw                   string
 	} `json:"-"`
 }
 
