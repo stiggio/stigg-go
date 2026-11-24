@@ -110,6 +110,9 @@ type V1CustomerEntityEntitlementListResponse struct {
 	CreatedAt time.Time `json:"createdAt" api:"required" format:"date-time"`
 	// The entity ID this entity entitlement is attached to
 	EntityID string `json:"entityId" api:"required"`
+	// Whether usage past `usageLimit` is allowed and still counted, instead of
+	// blocked.
+	HasSoftLimit bool `json:"hasSoftLimit" api:"required"`
 	// Parent entity ID in the hierarchy, or `null` for a root.
 	ParentID string `json:"parentId" api:"required"`
 	// Dimension-scoped sub-limit key: the set of entity IDs this limit applies to.
@@ -131,6 +134,7 @@ type V1CustomerEntityEntitlementListResponse struct {
 		Cadence        respjson.Field
 		CreatedAt      respjson.Field
 		EntityID       respjson.Field
+		HasSoftLimit   respjson.Field
 		ParentID       respjson.Field
 		ScopeEntityIDs respjson.Field
 		UpdatedAt      respjson.Field
@@ -178,6 +182,9 @@ type V1CustomerEntityEntitlementUpsertResponseData struct {
 	CreatedAt time.Time `json:"createdAt" api:"required" format:"date-time"`
 	// The entity ID this entity entitlement is attached to
 	EntityID string `json:"entityId" api:"required"`
+	// Whether usage past `usageLimit` is allowed and still counted, instead of
+	// blocked.
+	HasSoftLimit bool `json:"hasSoftLimit" api:"required"`
 	// Parent entity ID in the hierarchy, or `null` for a root.
 	ParentID string `json:"parentId" api:"required"`
 	// Dimension-scoped sub-limit key: the set of entity IDs this limit applies to.
@@ -199,6 +206,7 @@ type V1CustomerEntityEntitlementUpsertResponseData struct {
 		Cadence        respjson.Field
 		CreatedAt      respjson.Field
 		EntityID       respjson.Field
+		HasSoftLimit   respjson.Field
 		ParentID       respjson.Field
 		ScopeEntityIDs respjson.Field
 		UpdatedAt      respjson.Field
@@ -286,6 +294,9 @@ type V1CustomerEntityEntitlementUpsertParamsEntityEntitlement struct {
 	CurrencyID param.Opt[string] `json:"currencyId,omitzero"`
 	// Feature ID this entity entitlement grants. Mutually exclusive with `currencyId`.
 	FeatureID param.Opt[string] `json:"featureId,omitzero"`
+	// Allow usage past `usageLimit` and keep counting it, instead of blocking.
+	// Defaults to `false` on create; omit on update to keep the current value.
+	HasSoftLimit param.Opt[bool] `json:"hasSoftLimit,omitzero"`
 	// Dimension-scoped sub-limit: the set of entity IDs this limit applies to
 	// (order-insensitive, unique, at most 5). Omit or leave empty for the node-wide
 	// limit.

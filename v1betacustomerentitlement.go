@@ -285,18 +285,22 @@ type V1BetaCustomerEntitlementCheckResponseDataFeatureChain struct {
 	CurrentUsage float64 `json:"currentUsage" api:"required"`
 	// External id of the entity within the customer.
 	EntityID string `json:"entityId" api:"required"`
+	// Whether this node allows usage past `usageLimit` and keeps counting it. When
+	// `true`, the node does not deny on its own limit.
+	HasSoftLimit bool `json:"hasSoftLimit" api:"required"`
 	// Whether this node alone permits the requested usage.
 	IsGranted bool `json:"isGranted" api:"required"`
 	// External ids of the entities this budget is scoped to. Empty (`[]`) is the
 	// node-wide budget; a non-empty set is the dimension-scoped budget that matched
 	// this request — use it to tell apart multiple budgets on the same entity.
 	ScopeEntityIDs []string `json:"scopeEntityIds" api:"required"`
-	// Hard usage limit for this node; null when the entity has no entity entitlement.
+	// Usage limit for this node; null when the entity has no entity entitlement.
 	UsageLimit float64 `json:"usageLimit" api:"required"`
 	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
 	JSON struct {
 		CurrentUsage   respjson.Field
 		EntityID       respjson.Field
+		HasSoftLimit   respjson.Field
 		IsGranted      respjson.Field
 		ScopeEntityIDs respjson.Field
 		UsageLimit     respjson.Field
@@ -443,18 +447,22 @@ type V1BetaCustomerEntitlementCheckResponseDataCreditChain struct {
 	CurrentUsage float64 `json:"currentUsage" api:"required"`
 	// External id of the entity within the customer.
 	EntityID string `json:"entityId" api:"required"`
+	// Whether this node allows usage past `usageLimit` and keeps counting it. When
+	// `true`, the node does not deny on its own limit.
+	HasSoftLimit bool `json:"hasSoftLimit" api:"required"`
 	// Whether this node alone permits the requested usage.
 	IsGranted bool `json:"isGranted" api:"required"`
 	// External ids of the entities this budget is scoped to. Empty (`[]`) is the
 	// node-wide budget; a non-empty set is the dimension-scoped budget that matched
 	// this request — use it to tell apart multiple budgets on the same entity.
 	ScopeEntityIDs []string `json:"scopeEntityIds" api:"required"`
-	// Hard usage limit for this node; null when the entity has no entity entitlement.
+	// Usage limit for this node; null when the entity has no entity entitlement.
 	UsageLimit float64 `json:"usageLimit" api:"required"`
 	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
 	JSON struct {
 		CurrentUsage   respjson.Field
 		EntityID       respjson.Field
+		HasSoftLimit   respjson.Field
 		IsGranted      respjson.Field
 		ScopeEntityIDs respjson.Field
 		UsageLimit     respjson.Field
