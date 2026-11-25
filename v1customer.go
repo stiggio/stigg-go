@@ -3065,8 +3065,8 @@ type V1CustomerCheckEntitlementParams struct {
 	// Feature ID (refId) to check. Mutually exclusive with `currencyId`.
 	FeatureID param.Opt[string] `query:"featureId,omitzero" json:"-"`
 	// Requested usage amount to evaluate against the entitlement limit (numeric
-	// features only)
-	RequestedUsage param.Opt[int64] `query:"requestedUsage,omitzero" json:"-"`
+	// features only); negative for usage given back
+	RequestedUsage param.Opt[float64] `query:"requestedUsage,omitzero" json:"-"`
 	// When the reservation expires (ISO 8601, at most 24 hours ahead). Mutually
 	// exclusive with `reservationTtlSeconds`.
 	ReservationExpiresAt param.Opt[time.Time] `query:"reservationExpiresAt,omitzero" format:"date-time" json:"-"`

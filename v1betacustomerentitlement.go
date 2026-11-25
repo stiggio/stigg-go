@@ -517,8 +517,8 @@ type V1BetaCustomerEntitlementCheckParams struct {
 	// Feature ID (refId) to check. Mutually exclusive with `currencyId`.
 	FeatureID param.Opt[string] `query:"featureId,omitzero" json:"-"`
 	// Requested usage amount to evaluate against the entitlement limit (numeric
-	// features only)
-	RequestedUsage param.Opt[int64] `query:"requestedUsage,omitzero" json:"-"`
+	// features only); negative for usage given back
+	RequestedUsage param.Opt[float64] `query:"requestedUsage,omitzero" json:"-"`
 	// Resource ID to scope the entitlement check to a specific resource
 	ResourceID     param.Opt[string] `query:"resourceId,omitzero" json:"-"`
 	XAccountID     param.Opt[string] `header:"X-ACCOUNT-ID,omitzero" json:"-"`

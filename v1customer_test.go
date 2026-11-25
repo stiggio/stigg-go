@@ -226,7 +226,7 @@ func TestV1CustomerCheckEntitlementWithOptionalParams(t *testing.T) {
 				"foo": "string",
 			},
 			FeatureID:             stigg.String("x"),
-			RequestedUsage:        stigg.Int(0),
+			RequestedUsage:        stigg.Float(-9007199254740991),
 			RequestedValues:       []string{"string"},
 			ReservationExpiresAt:  stigg.Time(time.Now()),
 			ReservationID:         stigg.String("x"),

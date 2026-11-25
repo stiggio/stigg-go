@@ -230,8 +230,13 @@ func (r *V2UsageReportResponseDataCredit) UnmarshalJSON(data []byte) error {
 
 // The usage counted against one governance entitlement
 type V2UsageReportResponseDataEntity struct {
-	// The absolute usage counted against the entitlement
+	// The usage counted against the entitlement, rounded up to a whole number and
+	// never below zero (readable by older SDKs). See currentUsageExact for the exact
+	// value
 	CurrentUsage float64 `json:"currentUsage" api:"required"`
+	// The exact usage counted against the entitlement, to the millionth; negative
+	// after a negative usage report takes it below zero
+	CurrentUsageExact float64 `json:"currentUsageExact" api:"required"`
 	// The customer whose usage counted towards the entitlement
 	CustomerID string `json:"customerId" api:"required"`
 	// The governance entitlement the usage counts towards
@@ -252,17 +257,18 @@ type V2UsageReportResponseDataEntity struct {
 	FeatureID string `json:"featureId"`
 	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
 	JSON struct {
-		CurrentUsage   respjson.Field
-		CustomerID     respjson.Field
-		EntitlementID  respjson.Field
-		EntityID       respjson.Field
-		ResourceID     respjson.Field
-		ScopeEntityIDs respjson.Field
-		UsageUpdatedAt respjson.Field
-		CurrencyID     respjson.Field
-		FeatureID      respjson.Field
-		ExtraFields    map[string]respjson.Field
-		raw            string
+		CurrentUsage      respjson.Field
+		CurrentUsageExact respjson.Field
+		CustomerID        respjson.Field
+		EntitlementID     respjson.Field
+		EntityID          respjson.Field
+		ResourceID        respjson.Field
+		ScopeEntityIDs    respjson.Field
+		UsageUpdatedAt    respjson.Field
+		CurrencyID        respjson.Field
+		FeatureID         respjson.Field
+		ExtraFields       map[string]respjson.Field
+		raw               string
 	} `json:"-"`
 }
 

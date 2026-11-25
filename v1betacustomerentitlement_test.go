@@ -35,7 +35,7 @@ func TestV1BetaCustomerEntitlementCheckWithOptionalParams(t *testing.T) {
 				"foo": "string",
 			},
 			FeatureID:       stigg.String("x"),
-			RequestedUsage:  stigg.Int(0),
+			RequestedUsage:  stigg.Float(-9007199254740991),
 			RequestedValues: []string{"string"},
 			ResourceID:      stigg.String("x"),
 			XAccountID:      stigg.String("X-ACCOUNT-ID"),
