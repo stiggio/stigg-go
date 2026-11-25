@@ -1,5 +1,15 @@
 # Changelog
 
+## [0.1.0-beta.60](https://github.com/stiggio/stigg-go/compare/v0.1.0-beta.59...v0.1.0-beta.60) (2026-11-25)
+
+
+### Bug Fixes
+
+* sync OpenAPI spec from stigg-api ([ee8dc5a](https://github.com/stiggio/stigg-go/commit/ee8dc5ad620a42cc931b01312510e24f57d68b6d))
+* sync OpenAPI spec from stigg-api ([a83be2d](https://github.com/stiggio/stigg-go/commit/a83be2dc8218537ca062548c3321a86ba0ad1c23))
+* sync OpenAPI spec from stigg-api ([c7be005](https://github.com/stiggio/stigg-go/commit/c7be005749b2a8984106365afa85f02ebcfd5c54))
+* sync OpenAPI spec from stigg-api ([f809e1f](https://github.com/stiggio/stigg-go/commit/f809e1f7010263d75711c2050150da552b40864f))
+
 ## [0.1.0-beta.59](https://github.com/stiggio/stigg-go/compare/v0.1.0-beta.58...v0.1.0-beta.59) (2026-11-04)
 
 
